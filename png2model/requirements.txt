@@ -1,0 +1,21 @@
+# PNG转3D模型模块依赖包
+# 安装命令: pip install -r requirements.txt
+
+# HTTP请求库
+requests>=2.28.0
+
+# 路径处理
+pathlib2>=2.3.7; python_version < "3.4"
+
+# 日志处理
+colorlog>=6.7.0
+
+# 进度条显示（可选）
+tqdm>=4.64.0
+
+# 图像处理（可选，用于图片预处理）
+Pillow>=9.0.0
+
+# 3D模型处理（可选，用于模型后处理）
+# trimesh>=3.15.0
+# pygltflib>=1.15.0
