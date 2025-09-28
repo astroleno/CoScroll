@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useCallback, useRef } from 'react'
 import { useAudioStore } from '@/stores/audioStore'
-import * as Tone from 'tone'
+import { start, getContext, Reverb, Player, context } from 'tone'
 
 // useAudio Hook - 音频管理和同步控制
 export function useAudio() {
@@ -22,25 +22,25 @@ export function useAudio() {
   const [error, setError] = useState<string | null>(null)
 
   // Tone.js 播放器引用
-  const playerRef = useRef<Tone.Player | null>(null)
-  const reverbRef = useRef<Tone.Reverb | null>(null)
+  const playerRef = useRef<InstanceType<typeof Player> | null>(null)
+  const reverbRef = useRef<InstanceType<typeof Reverb> | null>(null)
 
   // 初始化音频系统
   const initAudio = useCallback(async () => {
     try {
       // 启动 Tone.js 音频上下文
-      await Tone.start()
-      setAudioContext(Tone.context)
+      await start()
+      setAudioContext(context)
 
       // 创建混响效果
-      const reverb = new Tone.Reverb({
+      const reverb = new Reverb({
         decay: 4,
         wet: 0.3
       }).toDestination()
       reverbRef.current = reverb
 
       // 创建音频播放器
-      const player = new Tone.Player({
+      const player = new Player({
         url: '/audio/heart_sutra.mp3', // MVP 阶段的音频文件路径
         loop: true,
         autostart: false,
@@ -67,8 +67,8 @@ export function useAudio() {
   const play = useCallback(async () => {
     if (playerRef.current && isAudioReady) {
       try {
-        if (Tone.context.state !== 'running') {
-          await Tone.start()
+        if (context.state !== 'running') {
+          await start()
         }
         playerRef.current.start()
         setIsPlaying(true)

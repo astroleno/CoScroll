@@ -1,97 +1,48 @@
 'use client'
 
-import { useRef, useState } from 'react'
+import { useRef } from 'react'
 import { useFrame } from '@react-three/fiber'
-import { useGLTF } from '@react-three/drei'
-import { useScroll } from '@/hooks/useScroll'
-import { useModel } from '@/hooks/useModel'
 import * as THREE from 'three'
 
-// Model3D 组件 - 3D 书法模型渲染和旋转控制
-export default function Model3D() {
-  const modelRef = useRef<THREE.Group>(null)
-  const [isLoading, setIsLoading] = useState(true)
+// Model3D 组件 - 3D 书法模型渲染和自动旋转控制
+interface Model3DProps {
+  modelPath?: string
+  anchorChar?: string
+  textLength?: number
+  playbackSpeed?: number
+}
 
-  // 使用自定义 hooks
-  const { scrollSpeed } = useScroll()
-  const { currentModelPath } = useModel()
+export default function Model3D({
+  modelPath = '/models/10k/003_道.glb',
+  anchorChar = '道',
+  textLength = 10,
+  playbackSpeed = 1.0
+}: Model3DProps) {
+  const meshRef = useRef<THREE.Mesh>(null)
 
-  // 加载现有的道字模型
-  const { scene } = useGLTF('/models/10k/003_道.glb')
+  // 计算旋转参数
+  const rotationCycles = textLength > 30 ? 2 : 1  // 长段落2圈，短段落1圈
+  const baseRotationSpeed = (rotationCycles * Math.PI * 2) / (textLength > 30 ? 25 : 15) // 基础速度
+  const currentRotationSpeed = baseRotationSpeed * playbackSpeed
 
-  // 模型旋转状态
-  const [rotationSpeed, setRotationSpeed] = useState(0)
-
-  // 每帧更新模型旋转
+  // 每帧更新球体旋转
   useFrame((state, delta) => {
-    if (modelRef.current) {
-      // 根据滚动速度计算旋转速度
-      const targetRotationSpeed = Math.abs(scrollSpeed) * 0.01
-
-      // 平滑过渡到目标旋转速度
-      setRotationSpeed(prev =>
-        THREE.MathUtils.lerp(prev, targetRotationSpeed, 0.1)
-      )
-
-      // 应用旋转
-      modelRef.current.rotation.y += rotationSpeed * delta
+    if (meshRef.current) {
+      // 应用自动旋转
+      meshRef.current.rotation.y += currentRotationSpeed * delta
+      meshRef.current.rotation.x += currentRotationSpeed * delta * 0.3
 
       // 添加微妙的上下浮动效果
-      modelRef.current.position.y = Math.sin(state.clock.elapsedTime * 0.5) * 0.1
+      meshRef.current.position.y = Math.sin(state.clock.elapsedTime * 0.5) * 0.1
     }
   })
 
-  // 模型加载完成处理
-  const handleModelLoad = () => {
-    setIsLoading(false)
-    if (modelRef.current) {
-      // 调整模型大小和位置
-      modelRef.current.scale.setScalar(2)
-      modelRef.current.position.set(0, 0, 0)
-    }
-  }
-
   return (
-    <group>
-      {isLoading && (
-        // 加载指示器 (简单的几何体)
-        <mesh position={[0, 0, 0]}>
-          <boxGeometry args={[1, 1, 1]} />
-          <meshStandardMaterial color="#64748b" wireframe />
-        </mesh>
-      )}
-
-      <primitive
-        ref={modelRef}
-        object={scene.clone()}
-        position={[0, 0, 0]}
-        scale={[2, 2, 2]}
-        onUpdate={handleModelLoad}
+    <mesh ref={meshRef} position={[0, 0, 0]}>
+      <sphereGeometry args={[1.5, 32, 32]} />
+      <meshBasicMaterial
+        color="#ff0000"
       />
-
-      {/* 环境装饰 - 简单的粒子效果 */}
-      <group>
-        {Array.from({ length: 20 }).map((_, i) => (
-          <mesh
-            key={i}
-            position={[
-              (Math.random() - 0.5) * 20,
-              (Math.random() - 0.5) * 20,
-              (Math.random() - 0.5) * 20
-            ]}
-          >
-            <sphereGeometry args={[0.05, 8, 8]} />
-            <meshBasicMaterial
-              color="#64748b"
-              transparent
-              opacity={0.3}
-            />
-          </mesh>
-        ))}
-      </group>
-    </group>
+    </mesh>
   )
 }
-
-// 预加载模型
-useGLTF.preload('/models/10k/003_道.glb')

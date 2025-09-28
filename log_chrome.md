@@ -17,63 +17,39 @@ app-index.js:34 Warning: Extra attributes from the server: mpa-version,mpa-exten
     at RSCComponent
     at Root (webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/app-index.js:144:11)
 window.console.error @ app-index.js:34
-favicon.ico:1  Failed to load resource: the server responded with a status of 404 (Not Found)
-content.js:5213 Uncaught (in promise) Object
-:3001/:1 Uncaught (in promise) Object
-:3001/:1 Uncaught (in promise) Object
-hot-reloader-client.js:162 [Fast Refresh] rebuilding
 hot-reloader-client.js:210 ./src/hooks/useAudio.ts
-Attempted import error: 'start' is not exported from 'tone' (imported as 'Tone').
-
-Import trace for requested module:
-./src/hooks/useAudio.ts
-./src/components/core/AudioController.tsx
-./src/components/core/ScrollCanvas.tsx
-./src/app/experience/page.tsx
+Attempted import error: 'start' is not exported from 'tone' (imported as 'start').
 processMessage @ hot-reloader-client.js:210
 hot-reloader-client.js:210 ./src/hooks/useAudio.ts
-Attempted import error: 'context' is not exported from 'tone' (imported as 'Tone').
-
-Import trace for requested module:
-./src/hooks/useAudio.ts
-./src/components/core/AudioController.tsx
-./src/components/core/ScrollCanvas.tsx
-./src/app/experience/page.tsx
+Attempted import error: 'context' is not exported from 'tone' (imported as 'context').
 processMessage @ hot-reloader-client.js:210
 hot-reloader-client.js:210 ./src/hooks/useAudio.ts
-Attempted import error: 'Reverb' is not exported from 'tone' (imported as 'Tone').
-
-Import trace for requested module:
-./src/hooks/useAudio.ts
-./src/components/core/AudioController.tsx
-./src/components/core/ScrollCanvas.tsx
-./src/app/experience/page.tsx
+Attempted import error: 'Reverb' is not exported from 'tone' (imported as 'Reverb').
 processMessage @ hot-reloader-client.js:210
 hot-reloader-client.js:210 ./src/hooks/useAudio.ts
-Attempted import error: 'Player' is not exported from 'tone' (imported as 'Tone').
-
-Import trace for requested module:
-./src/hooks/useAudio.ts
-./src/components/core/AudioController.tsx
-./src/components/core/ScrollCanvas.tsx
-./src/app/experience/page.tsx
+Attempted import error: 'Player' is not exported from 'tone' (imported as 'Player').
 processMessage @ hot-reloader-client.js:210
 hot-reloader-client.js:210 ./src/hooks/useAudio.ts
-Attempted import error: 'context' is not exported from 'tone' (imported as 'Tone').
-
-Import trace for requested module:
-./src/hooks/useAudio.ts
-./src/components/core/AudioController.tsx
-./src/components/core/ScrollCanvas.tsx
-./src/app/experience/page.tsx
+Attempted import error: 'context' is not exported from 'tone' (imported as 'context').
 processMessage @ hot-reloader-client.js:210
 hot-reloader-client.js:207 There were more warnings in other files.
 You can find a complete log in the terminal.
 processMessage @ hot-reloader-client.js:207
 Tone.js:3  * Tone.js v14.9.17 * 
+Tone.js:3 The AudioContext was not allowed to start. It must be resumed (or created) after a user gesture on the page. https://developer.chrome.com/blog/autoplay/#web_audio
+oe @ Tone.js:3
+Tone.js:3 The AudioContext was not allowed to start. It must be resumed (or created) after a user gesture on the page. https://developer.chrome.com/blog/autoplay/#web_audio
+start @ Tone.js:3
+content.js:5213 Uncaught (in promise) Object
+experience:1 Uncaught (in promise) Object
+experience:1 Uncaught (in promise) Object
+app-index.js:34 Audio initialization error: TypeError: (0 , tone__WEBPACK_IMPORTED_MODULE_2__.start) is not a function
+    at eval (useAudio.ts:32:18)
+    at HTMLDocument.handleUserInteraction (AudioController.tsx:27:15)
+window.console.error @ app-index.js:34
 hot-reloader-client.js:162 [Fast Refresh] rebuilding
 hot-reloader-client.js:210 ./src/hooks/useAudio.ts
-Attempted import error: 'start' is not exported from 'tone' (imported as 'Tone').
+Attempted import error: 'start' is not exported from 'tone' (imported as 'start').
 
 Import trace for requested module:
 ./src/hooks/useAudio.ts
@@ -82,7 +58,7 @@ Import trace for requested module:
 ./src/app/experience/page.tsx
 processMessage @ hot-reloader-client.js:210
 hot-reloader-client.js:210 ./src/hooks/useAudio.ts
-Attempted import error: 'context' is not exported from 'tone' (imported as 'Tone').
+Attempted import error: 'context' is not exported from 'tone' (imported as 'context').
 
 Import trace for requested module:
 ./src/hooks/useAudio.ts
@@ -91,7 +67,7 @@ Import trace for requested module:
 ./src/app/experience/page.tsx
 processMessage @ hot-reloader-client.js:210
 hot-reloader-client.js:210 ./src/hooks/useAudio.ts
-Attempted import error: 'Reverb' is not exported from 'tone' (imported as 'Tone').
+Attempted import error: 'Reverb' is not exported from 'tone' (imported as 'Reverb').
 
 Import trace for requested module:
 ./src/hooks/useAudio.ts
@@ -100,7 +76,7 @@ Import trace for requested module:
 ./src/app/experience/page.tsx
 processMessage @ hot-reloader-client.js:210
 hot-reloader-client.js:210 ./src/hooks/useAudio.ts
-Attempted import error: 'Player' is not exported from 'tone' (imported as 'Tone').
+Attempted import error: 'Player' is not exported from 'tone' (imported as 'Player').
 
 Import trace for requested module:
 ./src/hooks/useAudio.ts
@@ -109,7 +85,7 @@ Import trace for requested module:
 ./src/app/experience/page.tsx
 processMessage @ hot-reloader-client.js:210
 hot-reloader-client.js:210 ./src/hooks/useAudio.ts
-Attempted import error: 'context' is not exported from 'tone' (imported as 'Tone').
+Attempted import error: 'context' is not exported from 'tone' (imported as 'context').
 
 Import trace for requested module:
 ./src/hooks/useAudio.ts
@@ -120,10 +96,58 @@ processMessage @ hot-reloader-client.js:210
 hot-reloader-client.js:207 There were more warnings in other files.
 You can find a complete log in the terminal.
 processMessage @ hot-reloader-client.js:207
-2819165c-acbe-4d1c-8956-4dccae10a13f:21 Failure loading font http://localhost:3001/fonts/chinese-font.woff Error: Not Found
-    at request.onload (2819165c-acbe-4d1c-8956-4dccae10a13f:29:19)
-onError @ 2819165c-acbe-4d1c-8956-4dccae10a13f:21
-app-index.js:34 Audio initialization error: TypeError: tone__WEBPACK_IMPORTED_MODULE_2__.start is not a function
-    at eval (useAudio.ts:32:13)
-    at HTMLDocument.handleUserInteraction (AudioController.tsx:27:15)
-window.console.error @ app-index.js:34
+hot-reloader-client.js:162 [Fast Refresh] rebuilding
+hot-reloader-client.js:210 ./src/hooks/useAudio.ts
+Attempted import error: 'start' is not exported from 'tone' (imported as 'start').
+
+Import trace for requested module:
+./src/hooks/useAudio.ts
+./src/components/core/AudioController.tsx
+./src/components/core/ScrollCanvas.tsx
+./src/app/experience/page.tsx
+processMessage @ hot-reloader-client.js:210
+handler @ hot-reloader-client.js:362
+hot-reloader-client.js:210 ./src/hooks/useAudio.ts
+Attempted import error: 'context' is not exported from 'tone' (imported as 'context').
+
+Import trace for requested module:
+./src/hooks/useAudio.ts
+./src/components/core/AudioController.tsx
+./src/components/core/ScrollCanvas.tsx
+./src/app/experience/page.tsx
+processMessage @ hot-reloader-client.js:210
+handler @ hot-reloader-client.js:362
+hot-reloader-client.js:210 ./src/hooks/useAudio.ts
+Attempted import error: 'Reverb' is not exported from 'tone' (imported as 'Reverb').
+
+Import trace for requested module:
+./src/hooks/useAudio.ts
+./src/components/core/AudioController.tsx
+./src/components/core/ScrollCanvas.tsx
+./src/app/experience/page.tsx
+processMessage @ hot-reloader-client.js:210
+handler @ hot-reloader-client.js:362
+hot-reloader-client.js:210 ./src/hooks/useAudio.ts
+Attempted import error: 'Player' is not exported from 'tone' (imported as 'Player').
+
+Import trace for requested module:
+./src/hooks/useAudio.ts
+./src/components/core/AudioController.tsx
+./src/components/core/ScrollCanvas.tsx
+./src/app/experience/page.tsx
+processMessage @ hot-reloader-client.js:210
+handler @ hot-reloader-client.js:362
+hot-reloader-client.js:210 ./src/hooks/useAudio.ts
+Attempted import error: 'context' is not exported from 'tone' (imported as 'context').
+
+Import trace for requested module:
+./src/hooks/useAudio.ts
+./src/components/core/AudioController.tsx
+./src/components/core/ScrollCanvas.tsx
+./src/app/experience/page.tsx
+processMessage @ hot-reloader-client.js:210
+handler @ hot-reloader-client.js:362
+hot-reloader-client.js:207 There were more warnings in other files.
+You can find a complete log in the terminal.
+processMessage @ hot-reloader-client.js:207
+handler @ hot-reloader-client.js:362

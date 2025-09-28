@@ -83,7 +83,24 @@ a {
 
 /* 中文字体优化 */
 .font-chinese {
-  font-family: 'PingFang SC', 'Hiragino Sans GB', 'Noto Sans CJK SC', 'Source Han Sans SC', 'Microsoft YaHei', sans-serif;
+  font-family: 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', 'SimHei', sans-serif;
+  font-weight: 400;
+  letter-spacing: 0.05em;
+}
+
+/* 心经文本样式 */
+.heart-sutra-text {
+  font-family: 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', 'SimHei', sans-serif;
+  font-weight: 400;
+  letter-spacing: 0.1em;
+  line-height: 1.8;
+}
+
+/* 锚字特殊样式 */
+.anchor-char {
+  font-family: 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', 'SimHei', sans-serif;
+  font-weight: 500;
+  letter-spacing: 0.05em;
 }
 
 /* 禁用选择和拖拽 */
