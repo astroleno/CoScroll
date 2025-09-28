@@ -8,7 +8,17 @@ import SegmentTransition from '../core/SegmentTransition'
 
 // 锚字区域 - 3D书法模型显示 (自动播放版本)
 export default function AnchorGlyphRegion() {
-  const { currentSegment, playbackSpeed, getSegmentProgress, getTotalProgress, isTransitioning } = usePlaybackControl()
+  const {
+    currentSegment,
+    playbackSpeed,
+    getSegmentProgress,
+    getTotalProgress,
+    isTransitioning,
+    currentTime,
+    volume,
+    isAutoPlaying,
+    toggleAutoPlay
+  } = usePlaybackControl()
 
   // 启动自动切换定时器
   useSegmentTimer()

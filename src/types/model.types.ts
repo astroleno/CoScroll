@@ -6,7 +6,7 @@ export interface Model3DInfo {
   name: string
   filePath: string
   category: ModelCategory
-  tags: string[]
+  tags: readonly string[]
   fileSize: number
   dimensions?: ModelDimensions
   description?: string

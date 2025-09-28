@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { useScroll } from '@/hooks/useScroll'
 import BackgroundCanvas from './BackgroundCanvas'
 import AnchorGlyphRegion from './AnchorGlyphRegion'
 import SubtitlesPane from './SubtitlesPane'
@@ -8,6 +9,9 @@ import SubtitlesPane from './SubtitlesPane'
 // 三层分离布局组件 - 基于GPT风格建议
 export default function DreamyLayout() {
   const [isMobile, setIsMobile] = useState(false)
+
+  // 初始化滚动处理
+  useScroll()
 
   useEffect(() => {
     const checkMobile = () => setIsMobile(window.innerWidth < 768)

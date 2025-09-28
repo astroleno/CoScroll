@@ -3,13 +3,14 @@
 import { useState, useEffect, useCallback } from 'react'
 import { useScrollStore } from '@/stores/scrollStore'
 import { useHeartSutraAudio } from './useHeartSutraAudio'
+import { useContentSegments } from './useContentPackage'
 
 // 播放控制 Hook - 音频同步版本
-export function usePlaybackControl() {
+export function usePlaybackControl(contentId?: string) {
   const [isTransitioning, setIsTransitioning] = useState(false)
 
   // 获取滚动状态和音频状态
-  const { scrollVelocity } = useScrollStore()
+  const { scrollSpeed } = useScrollStore()
   const {
     currentLyric,
     isPlaying,
@@ -18,10 +19,13 @@ export function usePlaybackControl() {
     togglePlay,
     setVolume,
     volume
-  } = useHeartSutraAudio()
+  } = useHeartSutraAudio(contentId)
+
+  // 获取内容包段落数据
+  const { segments, getCurrentSegment } = useContentSegments(contentId)
 
   // 滚动影响音频播放速度（通过音量或其他方式体现）
-  const playbackSpeed = Math.max(0.2, Math.min(3.0, 1.0 + scrollVelocity * 0.5))
+  const playbackSpeed = Math.max(0.2, Math.min(3.0, 1.0 + scrollSpeed * 0.01))
 
   // 当前段落基于音频歌词
   const currentSegment = currentLyric ? {
@@ -43,6 +47,13 @@ export function usePlaybackControl() {
   const getTotalProgress = useCallback(() => {
     return progress
   }, [progress])
+
+  // 计算段落持续时间
+  const getSegmentDuration = useCallback((text: string) => {
+    // 基于文本长度计算持续时间
+    const baseDuration = text.length > 30 ? 25000 : 15000 // 长段落25秒，短段落15秒
+    return baseDuration / playbackSpeed
+  }, [playbackSpeed])
 
   // 音频控制方法
   const nextSegment = useCallback(() => {
@@ -81,6 +92,7 @@ export function usePlaybackControl() {
     // 进度
     getSegmentProgress,
     getTotalProgress,
+    getSegmentDuration,
 
     // 控制方法
     nextSegment,
@@ -94,6 +106,6 @@ export function usePlaybackControl() {
     setVolume,
 
     // 元数据
-    totalSegments: 32 // LRC中大约32行
+    totalSegments: segments.length
   }
 }

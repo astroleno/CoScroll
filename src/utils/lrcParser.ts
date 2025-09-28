@@ -68,5 +68,5 @@ export function getCurrentLyric(lyrics: LyricLine[], currentTime: number): Lyric
   return currentIndex >= 0 ? lyrics[currentIndex] : null
 }
 
-// 心经循环截止时间 (2:44 = 164秒)
-export const HEART_SUTRA_LOOP_END = 164
+// 心经循环截止时间 - 现在改为2:35开始渐弱，到2:44完全消失
+export const HEART_SUTRA_LOOP_END = 155  // 2:35 = 155秒

@@ -90,3 +90,84 @@ export type TextNavigation = {
   canGoPrev: boolean
   progress: number // 0 to 100
 }
+
+// ==================== 内容包系统类型定义 ====================
+
+// 内容包元数据
+export interface ContentMetadata {
+  id: string
+  title: string
+  description: string
+  category: 'buddhist-sutra' | 'taoist-text' | 'meditation' | 'custom'
+  difficulty: 'beginner' | 'intermediate' | 'advanced'
+  duration: string  // 格式: "2:44"
+  tags: string[]
+  author?: string
+  version: string
+  createdAt?: string
+  updatedAt?: string
+}
+
+// 内容包音频配置
+export interface ContentAudioConfig {
+  file: string
+  loopEndTime: number  // 循环截止时间（秒）
+  fadeOutDuration: number  // 渐弱时长（秒）
+  volume?: number
+}
+
+// 内容包歌词配置
+export interface ContentLyricsConfig {
+  file: string
+  encoding?: string
+}
+
+// 内容包视觉配置
+export interface ContentVisualConfig {
+  model?: string
+  fallbackColor: string
+  rotationSpeed: number
+  backgroundStyle?: 'default' | 'neon' | 'classical' | 'modern'
+}
+
+// 内容包交互配置
+export interface ContentInteractionConfig {
+  scrollSensitivity: number
+  speedRange: [number, number]  // [最小速度, 最大速度]
+  controlMode?: 'scroll' | 'breath' | 'gesture'
+}
+
+// 内容段落
+export interface ContentSegment {
+  id: number
+  text: string
+  anchor: string
+  startTime?: number  // 可选：在LRC中的开始时间
+  endTime?: number    // 可选：在LRC中的结束时间
+}
+
+// 完整的内容包接口
+export interface ContentPackage {
+  meta: ContentMetadata
+  audio: ContentAudioConfig
+  lyrics: ContentLyricsConfig
+  visuals: ContentVisualConfig
+  interaction: ContentInteractionConfig
+  segments: ContentSegment[]
+}
+
+// 内容包加载状态
+export interface ContentLoadState {
+  isLoading: boolean
+  isLoaded: boolean
+  error: string | null
+  package: ContentPackage | null
+}
+
+// 内容库配置
+export interface ContentLibraryConfig {
+  defaultContentId: string
+  availableContents: ContentMetadata[]
+  cachingEnabled: boolean
+  preloadContents: string[]  // 需要预加载的内容ID列表
+}

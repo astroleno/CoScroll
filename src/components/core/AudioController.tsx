@@ -1,72 +1,64 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { useAudio } from '@/hooks/useAudio'
-import { useScroll } from '@/hooks/useScroll'
+import { useHeartSutraAudio } from '@/hooks/useHeartSutraAudio'
+import { useScrollStore } from '@/stores/scrollStore'
 
 // AudioController 组件 - 音频播放控制和同步
 export default function AudioController() {
-  const [isInitialized, setIsInitialized] = useState(false)
-  const [isPlaying, setIsPlaying] = useState(false)
+  const [userInteracted, setUserInteracted] = useState(false)
 
-  // 使用自定义 hooks
-  const { scrollSpeed } = useScroll()
+  // 使用心经音频 hook
   const {
-    audioContext,
-    initAudio,
+    isPlaying,
+    currentTime,
+    duration,
+    volume,
+    isLoading,
+    currentLyric,
     play,
     pause,
-    setPlaybackRate,
-    isAudioReady
-  } = useAudio()
+    togglePlay,
+    progress,
+    config,
+    userControlled,
+    playbackRate
+  } = useHeartSutraAudio()
 
-  // 初始化音频系统
-  useEffect(() => {
-    const handleUserInteraction = async () => {
-      if (!isInitialized) {
-        await initAudio()
-        setIsInitialized(true)
-      }
-    }
+  // 使用滚动状态
+  const { scrollSpeed } = useScrollStore()
 
-    // 监听用户交互事件
-    document.addEventListener('click', handleUserInteraction)
-    document.addEventListener('scroll', handleUserInteraction)
+  // 处理用户点击播放按钮
+  const handlePlayClick = async () => {
+    setUserInteracted(true)
+    console.log('用户点击播放按钮')
+    await togglePlay()
+  }
 
-    return () => {
-      document.removeEventListener('click', handleUserInteraction)
-      document.removeEventListener('scroll', handleUserInteraction)
-    }
-  }, [isInitialized, initAudio])
-
-  // 根据滚动速度调整音频播放倍速
-  useEffect(() => {
-    if (isAudioReady && audioContext) {
-      const baseRate = 1.0
-      const speedFactor = scrollSpeed / 100
-      const newRate = Math.max(0.5, Math.min(2.0, baseRate + speedFactor))
-
-      setPlaybackRate(newRate)
-    }
-  }, [scrollSpeed, isAudioReady, audioContext, setPlaybackRate])
-
-  // 播放/暂停控制
-  const togglePlayback = () => {
-    if (isPlaying) {
-      pause()
-    } else {
-      play()
-    }
-    setIsPlaying(!isPlaying)
+  // 添加测试函数
+  const testAudio = () => {
+    console.log('测试音频播放...')
+    const testAudioElement = new Audio('/audio/心经.mp3')
+    testAudioElement.volume = 1.0
+    testAudioElement.play()
+      .then(() => console.log('测试音频播放成功 ✓'))
+      .catch(err => console.error('测试音频播放失败:', err))
   }
 
   return (
     <div className="absolute bottom-20 left-1/2 transform -translate-x-1/2 z-30">
+      {/* 用户交互提示 */}
+      {!userInteracted && !isLoading && (
+        <div className="absolute -top-16 left-1/2 transform -translate-x-1/2 bg-red-500 text-white px-4 py-2 rounded-lg text-sm animate-pulse">
+          点击任意位置开始播放
+        </div>
+      )}
+
       <div className="bg-paper-light/90 backdrop-blur-sm rounded-full px-6 py-3 flex items-center space-x-4">
         {/* 播放/暂停按钮 */}
         <button
-          onClick={togglePlayback}
-          disabled={!isAudioReady}
+          onClick={handlePlayClick}
+          disabled={isLoading}
           className="w-10 h-10 rounded-full bg-ink text-paper-light hover:bg-ink-light transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
         >
           {isPlaying ? (
@@ -85,19 +77,62 @@ export default function AudioController() {
         {/* 音频状态指示 */}
         <div className="flex items-center space-x-2 text-sm text-ink">
           <div className={`w-2 h-2 rounded-full ${
-            isAudioReady ? 'bg-green-500' : 'bg-yellow-500'
+            !isLoading ? 'bg-green-500' : 'bg-yellow-500'
           }`} />
           <span className="font-chinese">
-            {isAudioReady ? '音频就绪' : '音频加载中...'}
+            {!isLoading ? '音频就绪' : '音频加载中...'}
           </span>
         </div>
 
-        {/* 播放倍速显示 */}
-        {isAudioReady && (
-          <div className="text-xs text-ink-light">
-            倍速: {(1 + scrollSpeed / 100).toFixed(1)}x
+        {/* 当前歌词显示 */}
+        {currentLyric && (
+          <div className="text-xs text-ink max-w-32 truncate">
+            {currentLyric.text}
           </div>
         )}
+
+        {/* DJ模式指示 */}
+        {userControlled && (
+          <div className="text-xs text-red-500 font-bold animate-pulse">
+            🎧 DJ模式
+          </div>
+        )}
+
+        {/* 当前歌词显示 */}
+        {currentLyric && (
+          <div className="text-xs text-ink max-w-40 truncate">
+            🎵 {currentLyric.text}
+          </div>
+        )}
+
+        {/* 播放状态 */}
+        {!isLoading && (
+          <div className="text-xs text-ink-light">
+            {userControlled ? '⏸️ 手动控制' : '▶️ 自动播放'}
+          </div>
+        )}
+
+        {/* 播放进度和时间 */}
+        {!isLoading && (
+          <div className="text-xs text-ink-light">
+            {Math.floor(currentTime / 60)}:{(Math.floor(currentTime % 60)).toString().padStart(2, '0')} ({Math.floor(progress * 100)}%)
+          </div>
+        )}
+
+        {/* 滚动速度显示 */}
+        {Math.abs(scrollSpeed) > 30 && (
+          <div className={`text-xs font-bold ${userControlled ? 'text-red-500' : 'text-blue-500'}`}>
+            {scrollSpeed > 0 ? '⬇️ 快进' : '⬆️ 倒退'} {Math.abs(scrollSpeed).toFixed(0)}
+          </div>
+        )}
+
+        {/* 测试按钮 */}
+        <button
+          onClick={testAudio}
+          className="text-xs bg-green-500 text-white px-2 py-1 rounded"
+        >
+          测试音频
+        </button>
       </div>
     </div>
   )

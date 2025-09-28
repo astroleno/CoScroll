@@ -6,6 +6,7 @@ interface ScrollState {
   // 基础状态
   scrollPosition: number
   scrollSpeed: number
+  scrollVelocity: number
   isScrolling: boolean
   direction: 'up' | 'down' | 'idle'
 
@@ -38,6 +39,7 @@ interface ScrollState {
 const initialState = {
   scrollPosition: 0,
   scrollSpeed: 0,
+  scrollVelocity: 0,
   isScrolling: false,
   direction: 'idle' as const,
   sensitivity: 1.0,
@@ -72,6 +74,7 @@ export const useScrollStore = create<ScrollState>()(
 
       set({
         scrollSpeed: speed,
+        scrollVelocity: speed, // 同步设置 velocity
         direction,
         lastScrollTime: Date.now()
       })

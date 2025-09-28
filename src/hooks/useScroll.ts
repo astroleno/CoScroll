@@ -42,7 +42,7 @@ export function useScroll() {
     const speed = deltaTime > 0 ? delta / deltaTime : 0
 
     // 更新滚动状态
-    setScrollPosition(prev => prev + delta)
+    setScrollPosition(scrollPosition + delta)
     setScrollSpeed(speed * 100) // 放大倍数以便于使用
     setIsScrolling(true)
 

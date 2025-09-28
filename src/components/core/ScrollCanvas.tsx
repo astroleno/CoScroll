@@ -3,6 +3,7 @@
 import { Suspense } from 'react'
 import { ErrorBoundary } from '@/components/ui/ErrorBoundary'
 import { Loader } from '@/components/ui/Loader'
+import { ContentProvider } from '@/contexts/ContentContext'
 import DreamyLayout from '../layout/DreamyLayout'
 import AudioController from './AudioController'
 import ProgressBar from './ProgressBar'
@@ -11,16 +12,18 @@ import ProgressBar from './ProgressBar'
 export default function ScrollCanvas() {
   return (
     <ErrorBoundary>
-      <div className="relative w-full h-full">
-        {/* 三层布局架构 */}
-        <Suspense fallback={<Loader />}>
-          <DreamyLayout />
-        </Suspense>
+      <ContentProvider>
+        <div className="relative w-full h-full">
+          {/* 三层布局架构 */}
+          <Suspense fallback={<Loader />}>
+            <DreamyLayout />
+          </Suspense>
 
-        {/* UI 控制层组件 */}
-        <AudioController />
-        <ProgressBar />
-      </div>
+          {/* UI 控制层组件 */}
+          <AudioController />
+          <ProgressBar />
+        </div>
+      </ContentProvider>
     </ErrorBoundary>
   )
 }
