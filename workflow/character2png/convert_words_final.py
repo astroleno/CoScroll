@@ -79,13 +79,13 @@ def create_text_image_final(text, font_name=None, font_size=400, image_size=(102
         return None, None
 
 
-def convert_20_words_final():
-    """最终转换 - 使用用户字体，固定输出目录"""
-    print("🚀 开始转换20个字 (使用用户字体版本)...")
+def convert_100_words_final():
+    """最终转换 - 使用用户字体，固定输出目录为words_100_output"""
+    print("🚀 开始转换100个字 (使用用户字体版本)...")
     
     # 加载文字
     try:
-        with open('words_20.txt', 'r', encoding='utf-8') as f:
+        with open('words_100_fixed.txt', 'r', encoding='utf-8') as f:
             content = f.read().strip()
         text_list = [line.strip() for line in content.split('\n') if line.strip()]
         print(f"📖 加载了 {len(text_list)} 个文字")
@@ -97,7 +97,7 @@ def convert_20_words_final():
     user_font = find_user_font()
     
     # 使用固定的输出目录
-    output_dir = 'words_output'  # 固定目录名
+    output_dir = 'words_100_output'  # 固定目录名
     os.makedirs(output_dir, exist_ok=True)
     
     print(f"\n🎨 开始生成1024x1024图片...")
@@ -106,10 +106,12 @@ def convert_20_words_final():
     
     generated_files = []
     
-    # 逐个生成
-    for i, word in enumerate(text_list, 1):
+    # 只生成第94号"色"字
+    target_index = 94
+    if target_index <= len(text_list):
+        word = text_list[target_index - 1]  # 数组索引从0开始
         try:
-            print(f"\n🔄 正在生成第 {i} 个字: {word}")
+            print(f"\n🔄 正在生成第 {target_index} 个字: {word}")
             
             # 创建图片
             fig, ax = create_text_image_final(
@@ -120,11 +122,11 @@ def convert_20_words_final():
             )
             
             if fig is None:
-                print(f"❌ 第 {i} 个字生成失败")
-                continue
+                print(f"❌ 第 {target_index} 个字生成失败")
+                return
             
-            # 固定文件名格式：001_X.png
-            filename = f"{i:03d}_{word}.png"
+            # 固定文件名格式：094_色.png
+            filename = f"{target_index:03d}_{word}.png"
             filepath = os.path.join(output_dir, filename)
             
             # 保存图片
@@ -142,8 +144,11 @@ def convert_20_words_final():
             print(f"✅ 已生成: {filename}")
             
         except Exception as e:
-            print(f"❌ 生成第 {i} 个文字失败: {word} - {e}")
-            continue
+            print(f"❌ 生成第 {target_index} 个文字失败: {word} - {e}")
+            return
+    else:
+        print(f"❌ 第 {target_index} 个字不存在，总共只有 {len(text_list)} 个字")
+        return
     
     print(f"\n🎉 转换完成！生成了 {len(generated_files)} 个文件")
     print("\n📁 生成的文件:")
@@ -162,4 +167,4 @@ def convert_20_words_final():
 
 
 if __name__ == "__main__":
-    convert_20_words_final()
+    convert_100_words_final()

@@ -10,14 +10,15 @@
     "type-check": "tsc --noEmit"
   },
   "dependencies": {
-    "@react-three/drei": "^9.88.13",
-    "@react-three/fiber": "^8.15.11",
-    "@tanstack/react-query": "^5.8.4",
-    "framer-motion": "^10.16.4",
-    "next": "14.0.0",
+    "@react-three/drei": "^9.100.0",
+    "@react-three/fiber": "^8.16.0",
+    "@react-three/postprocessing": "^2.16.0",
+    "@tanstack/react-query": "^5.15.0",
+    "framer-motion": "^10.18.0",
+    "next": "^14.0.4",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "three": "^0.158.0",
+    "three": "^0.160.0",
     "tone": "^14.7.77",
     "zustand": "^4.4.7"
   },
