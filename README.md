@@ -134,6 +134,49 @@ npm run dev
 2. 在 `mvp-content.ts` 的 `models` 对象中添加模型信息
 3. 确保文件路径正确
 
+### Shader3 独立组件（弥散霓虹风格）
+
+提供全新的独立组件与材质，参考 `docs/shader3实现.md`：
+
+使用示例：
+
+```tsx
+import { Shader3Model3D } from '@/components/core/Shader3'
+
+export default function Demo(){
+  return (
+    <div style={{width:'100%',height:'100vh'}}>
+      <Shader3Model3D
+        modelPath={'/models/10k/003_道.glb'}
+        config={{
+          mainColor: '#ffb27d',
+          secondaryColor: '#7dbbff',
+          rimColor: '#ffd6c2',
+          fresnelIntensity: 2.4,
+          innerGlowIntensity: 1.8,
+          gradientStrength: 0.55,
+          grainIntensity: 0.55,
+          breathingSpeed: 0.6,
+          noiseScale: 1.2,
+          noiseLayers: 4,
+          noiseAmplitude: 0.6
+        }}
+      />
+    </div>
+  )
+}
+```
+
+参数说明（可选，均有默认值）：
+- mainColor, secondaryColor, rimColor: 颜色控制
+- fresnelIntensity, innerGlowIntensity: 边缘与内部发光强度
+- gradientStrength: 垂直渐变强度
+- grainIntensity: 胶片噪点强度
+- breathingSpeed: 呼吸节奏
+- noiseScale, noiseLayers, noiseAmplitude: FBM 噪声尺度/层数/幅度
+
+演示页面：`/shader3`
+
 ### 音频集成
 
 1. 将音频文件放置在 `/public/audio/` 目录

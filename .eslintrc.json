@@ -1,11 +1,25 @@
 {
   "extends": [
-    "next/core-web-vitals",
-    "next/typescript"
+    "next/core-web-vitals"
   ],
+  "parser": "@typescript-eslint/parser",
   "rules": {
     "react-hooks/exhaustive-deps": "warn",
-    "@typescript-eslint/no-unused-vars": "warn",
-    "@typescript-eslint/no-explicit-any": "warn"
+    "no-unused-vars": [
+      "warn",
+      {
+        "args": "after-used",
+        "argsIgnorePattern": "^_",
+        "varsIgnorePattern": "^_",
+        "ignoreRestSiblings": true
+      }
+    ],
+    "no-restricted-syntax": [
+      "warn",
+      {
+        "selector": "TSAnyKeyword",
+        "message": "尽量避免使用`any`类型"
+      }
+    ]
   }
 }
