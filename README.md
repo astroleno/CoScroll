@@ -86,6 +86,28 @@ npm run dev
 3. **观察同步**: 文字、3D模型旋转和音频播放会根据滚动速度同步变化
 4. **音频控制**: 点击底部播放按钮控制音频播放
 
+### p5 重构（实验性入口）
+
+参见 `docs/p5_migration.md` 获取迁移指引。
+
+若要在现有项目中试跑 p5 骨架：
+
+```ts
+// 示例：仅在浏览器端动态挂载 p5（避免 SSR 报错）
+useEffect(() => {
+  (async () => {
+    try {
+      const { createSketch } = await import("@/p5/sketch");
+      createSketch({ debug: true });
+    } catch (e) {
+      console.error("[README example] p5 mount error", e);
+    }
+  })();
+}, []);
+```
+
+注意：p5 WEBGL 与 GLB 模型共存需选型（见指引“GLB 模型策略”章节）。
+
 ## 开发指南
 
 ### 核心组件
