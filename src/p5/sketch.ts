@@ -24,19 +24,22 @@ export function createSketch(options: SketchOptions = {}) {
     let scrollVelocity = 0;
     let lastScrollY = 0;
 
-    // 资源占位
-    let shader: any = null;
-    let torus: any = null;
-    let sphere: any = null;
+    // 体积渲染资源
+    let neonShader: any = null;
+    let bgShader: any = null;
+
+    // OBJ模型资源
+    let objModel: any = null;
 
     p.preload = () => {
       try {
-        const vert = (window as any).__NEON_VERT__ || undefined;
-        const frag = (window as any).__NEON_FRAG__ || undefined;
-        if (!vert || !frag) {
-          // 通过相对路径加载打包后的资源
-          // 注意：Next 静态打包时需要允许加载这些文本资源。这里用 fetch 读取。
-        }
+        // 加载书法OBJ模型
+        objModel = p.loadModel('/models/10k_obj/001_空.obj', true);
+        console.log("[p5] Loading OBJ model: 001_空.obj");
+
+        // 加载柔软体积shader
+        neonShader = p.loadShader('/p5/shaders/soft_volume.vert', '/p5/shaders/soft_volume.frag');
+        console.log("[p5] Loading soft volume shader");
       } catch (err) {
         console.error("[p5] preload error", err);
       }
@@ -49,15 +52,17 @@ export function createSketch(options: SketchOptions = {}) {
         p.noStroke();
         if (verbose) console.log("[p5] setup complete");
 
-        // 创建材质（从内联字符串创建，避免额外构建配置）
-        // 直接内嵌 shader 源码，避免构建器特殊配置
-        const neonVert = `precision mediump float;attribute vec3 aPosition;attribute vec3 aNormal;uniform mat4 uModelViewMatrix;uniform mat4 uProjectionMatrix;varying vec3 vNormal;varying vec3 vViewDir;void main(){vec4 worldPos=uModelViewMatrix*vec4(aPosition,1.0);gl_Position=uProjectionMatrix*worldPos;vViewDir=normalize(-worldPos.xyz);vNormal=mat3(uModelViewMatrix)*aNormal;}`;
-        const neonFrag = `precision mediump float;varying vec3 vNormal;varying vec3 vViewDir;uniform float uTime;uniform vec3 uMainColor;uniform vec3 uSecondaryColor;uniform vec3 uRimColor;uniform float uNoiseScale;uniform float uBreathingSpeed;uniform float uFresnelIntensity;uniform float uNoiseLayers;float hash(vec3 p){p=vec3(dot(p,vec3(127.1,311.7,74.7)),dot(p,vec3(269.5,183.3,246.1)),dot(p,vec3(113.5,271.9,124.6)));return fract(sin(p)*43758.5453123).x;}float noise(vec3 x){vec3 i=floor(x);vec3 f=fract(x);f=f*f*(3.0-2.0*f);float n000=hash(i+vec3(0,0,0));float n100=hash(i+vec3(1,0,0));float n010=hash(i+vec3(0,1,0));float n110=hash(i+vec3(1,1,0));float n001=hash(i+vec3(0,0,1));float n101=hash(i+vec3(1,0,1));float n011=hash(i+vec3(0,1,1));float n111=hash(i+vec3(1,1,1));float nx00=mix(n000,n100,f.x);float nx10=mix(n010,n110,f.x);float nx01=mix(n001,n101,f.x);float nx11=mix(n011,n111,f.x);float nxy0=mix(nx00,nx10,f.y);float nxy1=mix(nx01,nx11,f.y);return mix(nxy0,nxy1,f.z);}float fbm(vec3 p,float layers){float v=0.0;float a=0.5;for(float i=0.0;i<8.0;i+=1.0){if(i>=layers)break;v+=a*noise(p);p*=2.0;a*=0.5;}return v;}void main(){vec3 n=normalize(vNormal);vec3 v=normalize(vViewDir);float fres=pow(1.0-max(dot(n,v),0.0),uFresnelIntensity);vec3 p=v*uNoiseScale+vec3(0.0,0.0,-uTime*0.1);float f=fbm(p,uNoiseLayers);f=pow(f*0.5+0.75,3.0);float breath=0.5+0.5*sin(uTime*uBreathingSpeed);vec3 baseCol=mix(uMainColor,uSecondaryColor,f);vec3 col=baseCol*(0.6+0.4*breath)+uRimColor*fres;gl_FragColor=vec4(col,1.0);}`;
+        // 背景 shader（setup 创建一次）
+        const bgVert = `precision mediump float;attribute vec3 aPosition;attribute vec2 aTexCoord;uniform mat4 uModelViewMatrix;uniform mat4 uProjectionMatrix;varying vec2 vUV;void main(){vUV=aTexCoord;gl_Position=uProjectionMatrix*uModelViewMatrix*vec4(aPosition,1.0);}`;
+        const bgFrag = `precision mediump float;varying vec2 vUV;uniform float uTime;vec3 palette(float t){vec3 a=vec3(0.98,0.92,0.86);vec3 b=vec3(0.65,0.70,0.95);vec3 c=vec3(0.55,0.80,0.90);vec3 d=vec3(0.95,0.75,0.85);return mix(mix(a,b,t),mix(c,d,1.0-t),0.5+0.5*sin(t*6.2831));}void main(){vec2 uv=vUV;float tl=distance(uv,vec2(0.0,0.0));float tr=distance(uv,vec2(1.0,0.0));float bl=distance(uv,vec2(0.0,1.0));float br=distance(uv,vec2(1.0,1.0));float t=(tl+(1.0-tr)+(1.0-bl)+br)*0.25;vec3 col=palette(t);float r=length(uv-0.5);float vignette=smoothstep(0.95,0.35,r);col*=mix(0.9,1.0,vignette);gl_FragColor=vec4(col,1.0);}`;
         try {
-          shader = p.createShader(neonVert, neonFrag);
+          bgShader = p.createShader(bgVert, bgFrag);
         } catch (e) {
-          console.error('[p5] createShader error', e);
+          console.error('[p5] create bg shader error', e);
         }
+
+        // 简化设置 - 直接使用主canvas渲染
+        console.log('[p5] Using direct shader rendering on main canvas');
 
         // 初始化滚动监听（简单示例，可换 IntersectionObserver + 自定义采样）
         lastScrollY = window.scrollY;
@@ -81,40 +86,53 @@ export function createSketch(options: SketchOptions = {}) {
 
     p.draw = () => {
       try {
-        // 背景与坐标
-        p.push();
+        p.clear();
         p.background(6, 8, 12);
 
-        const rotation = p.millis() * 0.0003 + scrollVelocity * 0.002;
-
-        if (shader) {
-          p.shader(shader);
-          shader.setUniform('uTime', p.millis() / 1000.0);
-          shader.setUniform('uMainColor', [1.0, 0.72, 0.49]);
-          shader.setUniform('uSecondaryColor', [0.49, 0.73, 1.0]);
-          shader.setUniform('uRimColor', [1.0, 0.86, 0.76]);
-          shader.setUniform('uNoiseScale', 1.2);
-          shader.setUniform('uBreathingSpeed', 0.6);
-          shader.setUniform('uFresnelIntensity', 2.4);
-          shader.setUniform('uNoiseLayers', 4.0);
-
+        // 背景渐变
+        if (bgShader) {
           p.push();
-          p.rotateX(-Math.PI/2);
-          p.rotateY(rotation);
-          // 近似 ShaderPark 中 torus + sphere 组合
-          p.torus(160, 28, 64, 32);
-          p.pop();
-
-          p.push();
-          p.rotateY(rotation * 0.6);
-          p.translate(0, 0, 0);
-          p.sphere(120, 48, 32);
+          p.resetMatrix();
+          p.shader(bgShader);
+          bgShader.setUniform('uTime', p.millis()/1000.0);
+          p.rectMode(p.CORNERS);
+          p.noStroke();
+          p.rect(-p.width/2, -p.height/2, p.width/2, p.height/2);
           p.pop();
         }
 
-        p.pop();
+        // 用柔软体积shader渲染OBJ
+        if (objModel && neonShader) {
+          p.push();
 
-        // 衰减滚动速度（简单的阻尼）
+          // 🔑 启用alpha混合 (关键！)
+          p.blendMode(p.BLEND);
+
+          // 调整相机 - FOV和距离解决显示不全
+          const fov = Math.PI / 3; // 60度视野
+          const aspect = p.width / p.height;
+          p.perspective(fov, aspect, 0.1, 5000);
+          p.camera(0, 0, 600, 0, 0, 0, 0, 1, 0);
+
+          p.shader(neonShader);
+
+          // 简化的uniforms
+          neonShader.setUniform('uTime', p.millis() / 1000.0);
+          neonShader.setUniform('uMainColor', [0.3, 0.9, 0.5]);
+          neonShader.setUniform('uSecondaryColor', [0.9, 0.7, 0.3]);
+          neonShader.setUniform('uRimColor', [0.9, 0.4, 0.8]);
+          neonShader.setUniform('uSoftness', 0.8); // 🔑 更高柔软度
+
+          // 渲染模型
+          p.scale(2.2);
+          p.rotateX(Math.PI); // 修正上下颠倒
+          p.rotateY(p.millis() / 2000.0);
+          p.model(objModel);
+
+          p.pop();
+        }
+
+        // 衰减滚动速度
         scrollVelocity *= 0.9;
       } catch (err) {
         console.error("[p5] draw error", err);

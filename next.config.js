@@ -13,6 +13,12 @@ const nextConfig = {
       type: 'asset/resource',
     });
 
+    // 支持加载shader文件
+    config.module.rules.push({
+      test: /\.(vert|frag|glsl)$/,
+      type: 'asset/source',
+    });
+
     return config;
   },
   // 静态文件优化
