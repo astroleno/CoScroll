@@ -1,50 +1,82 @@
-对，你抓到关键了 👍。
+是的，边缘的“半透明”现在不够明显。主要有三类原因：
+	1.	透明链路没真正生效（深度、混合方式、顺序）。
+	2.	边缘函数太窄或被 Bloom/ToneMapping 洗白。
+	3.	背景过白，对比不足。
 
-你现在这个球已经有“光晕 + 柔和渐变”的雏形，但因为只有一层实心表面，它还是偏“光滑塑料球”。如果再加上半透明外壳层，就能逼近你说的“麻薯 / 糯米团子”的质感。
+下面按“最小改动→增强效果”给出具体做法。
 
-⸻
+1. 让透明真正生效（three.js 设置）
+	•	对外壳层：
+	•	material.transparent = true
+	•	material.depthWrite = false（重要，否则先写深度会挡住后面的光晕）
+	•	material.depthTest = true（保留遮挡关系）
+	•	material.blending = THREE.AdditiveBlending 或自定义混合（更柔）：
 
-为什么要加外壳（Shell）？
-	•	层次感：单一表面只有一个法线 + 一个 Fresnel，外壳能制造出多层叠的光衰减。
-	•	绵密感：半透明壳叠在一起，会形成“半透糯米”的视觉，类似麻薯 / 雪媚娘。
-	•	边缘发光更柔：壳的叠加能让 halo 不是“一道光圈”，而是“厚厚的糯米粉边”。
+material.blending = THREE.CustomBlending;
+material.blendEquation = THREE.AddEquation;
+material.blendSrc = THREE.SrcAlphaFactor;
+material.blendDst = THREE.OneMinusSrcAlphaFactor;
+renderer.getContext().blendFuncSeparate(
+  gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA, gl.ONE, gl.ONE_MINUS_SRC_ALPHA
+);
 
-⸻
 
-怎么实现（不需要 SDF）
+	•	渲染顺序：内核在前，外壳在后
+inner.renderOrder = 0; shell.renderOrder = 1;
+	•	画布：若要更干净的边缘合成，renderer.premultipliedAlpha = true。
 
-方法 A：几何外壳叠加
-	1.	用 OBJ 球 → 在顶点着色器里按法线膨胀一点：
-position += normal * shellStep;
-	2.	给外壳更高的透明度（alpha < 0.1~0.2）、更强 Fresnel + Bloom。
-	3.	至少叠 2–3 层，半径稍微不同，每层颜色 / alpha 有点变化。
+2. 放宽并“提亮”边缘函数
 
-→ 效果：像麻薯一样外表糯糯的，有光泽但不是硬反射。
+外壳片元里用 Fresnel 驱动 alpha，并加宽过渡区：
 
-方法 B：单几何 + Fragment 伪外壳
+// N, V 已单位化
+float f = 1.0 - max(dot(N, V), 0.0);       // 0..1
+// 使用 fwidth 做自适应软化，避免锯齿/过窄
+float rim = smoothstep(0.15, 0.75, f + fwidth(f)*1.5);
+// Gamma/幂次微调边缘形状
+rim = pow(rim, 0.8);
+// 半透明与自发光分开控制
+float alpha = 0.25 * rim;                   // 透明度（决定“看穿度”）
+vec3  glow  = rim * vec3(0.9,0.95,1.0) * 0.6; // 颜色（决定“亮度/溢光”）
 
-在片元里手动模拟 2–3 次 Fresnel / thickness 混合（不增加几何），本质是重复采样不同权重的 Fresnel rim。
+要“更透”，提升 alpha（0.25→0.35），同时适当降低 glow，避免 Bloom 把透明边洗白。
 
-float fres1 = pow(1.0 - dot(N, V), 2.0);
-float fres2 = pow(1.0 - dot(N, V), 4.0);
-vec3 col = baseColor
-         + fres1 * rimColor1 * 0.5
-         + fres2 * rimColor2 * 0.3;
+3. 加“深度衰减”来显式拉出半透明
 
-→ 效果：比叠几何省性能，但没有几何层叠的厚感那么强。
+让边缘随场景深度/自身厚度淡出（对着白底尤其有效）：
 
-⸻
+// 若已有 depthTexture，可做真实深度淡出；没有的话用近似：
+float nv  = 1.0 - max(dot(N,V),0.0);
+float fade = smoothstep(0.0, 0.7, nv);   // 视角越掠，越透明
+alpha *= fade;
 
-调色建议
-	•	内核：饱和度低一点（米白/淡粉/浅紫），保持糯米感。
-	•	外壳：透明度高、亮度高，偏冷色（淡蓝/青紫），突出冰凉糯感。
-	•	Bloom：阈值低，半径大，让外壳的光晕溢出去。
+或（有 depthTexture 时）：
 
-⸻
+float sceneZ = linearizeDepth(texture2D(uDepthTex, vUv).r);
+float fragZ  = linearizeDepth(gl_FragCoord.z);
+float dfade  = smoothstep(0.0, 0.02, sceneZ - fragZ); // 贴近其他表面更透明
+alpha *= dfade;
 
-总结
-	•	你说的对：加壳后球体会更有“麻薯/糯米团子”的质感。
-	•	技术上最简单的是“多层外壳 + 高透明度 + Fresnel”，在 three.js 里几行代码就能叠。
-	•	如果追求性能，可以只模拟 Fresnel 多层，牺牲一些真实厚度。
+4. 两层壳更明显（薄亮外壳 + 稍厚内壳）
+	•	壳1（外层）：alpha≈0.35、AdditiveBlending、颜色偏冷（青/蓝），thicknessOffset≈+1.5%半径
+	•	壳2（内层）：alpha≈0.18、颜色更暖（粉/橙），thicknessOffset≈+0.7%半径
+	•	顶点膨胀：
 
-要不要我帮你写个 three.js 的示例代码，用两层外壳（内核 + 外壳）来直接跑出“麻薯质感”？
+pos += normal * shellStep; // shellStep 不同层不同
+
+
+
+5. 别让 Bloom“抹掉”透明
+	•	UnrealBloomPass: 适度降低 strength（如 0.8→0.6），提高 threshold（0.55→0.65），保留透明层的亮度梯度。
+	•	Tone mapping 保持 ACES，但略降曝光；否则边缘被压平。
+
+6. 给它对比的背景
+
+纯白背景会“吃掉”半透明层。加一层极浅的 pastel 渐变（例如左上淡黄、右下淡蓝，饱和度 5%），立刻让半透明边更可见。
+
+7. 快速排错清单
+	•	看到边缘“只是亮，不透”：大概率是 depthWrite=true 或 Additive + Bloom 过强。
+	•	边缘仍然“硬”：放宽 smoothstep 的阈值（如 0.15,0.75），并加入 fwidth。
+	•	透明排序错位：设置 renderOrder，并保证外壳 depthWrite=false。
+
+按上面调一轮：放宽 rim、提高 alpha、关掉外壳的 depthWrite、适度减 Bloom，再加一层极浅背景渐变。半透明边会立刻变“可读”，而且更像你要的麻薯壳。

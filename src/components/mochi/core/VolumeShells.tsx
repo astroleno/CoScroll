@@ -1,6 +1,8 @@
 'use client';
 
 import * as THREE from 'three';
+import { mochiShellVertexShader } from '../shaders/shell.vert';
+import { mochiShellFragmentShader } from '../shaders/shell.frag';
 
 interface VolumeShellsProps {
   radius: number;
@@ -30,9 +32,15 @@ export default function VolumeShells({
         const shellRadius = radius * (1 + offset);
 
         // 递减透明度（外层更透明，增强厚度感）
-        const baseOpacity = 0.32; // 提高基础透明度
-        const decayFactor = 1.3; // 更缓慢的衰减
-        const opacity = baseOpacity * Math.pow(1 - index / shellOffsets.length, decayFactor);
+        // 更厚的雾带：内层更实、外层仍可读
+        const innerBase = 0.42; // 内层基准
+        const outerBase = 0.26; // 最外层目标
+        const t = index / Math.max(shellOffsets.length - 1, 1);
+        const baseOpacity = innerBase * (1.0 - t) + outerBase * t;
+        const decayFactor = 1.1; // 放缓衰减
+        let opacity = baseOpacity * Math.pow(1 - t, decayFactor);
+        // 最外两层加权，专门增厚雾带外缘
+        if (index >= shellOffsets.length - 2) opacity *= 1.2;
 
         // 每层使用不同颜色
         const color = shellColors[index % shellColors.length];
@@ -40,13 +48,21 @@ export default function VolumeShells({
         return (
           <mesh key={index} renderOrder={2 + index}>
             <sphereGeometry args={[shellRadius, segments / 2, segments / 2]} />
-            <meshBasicMaterial
-              color={color}
+            <shaderMaterial
+              uniforms={{
+                shellColor: { value: new THREE.Color(color).toArray ? new THREE.Color(color) : new THREE.Color(color) },
+                baseOpacity: { value: opacity },
+                layerT: { value: t }
+              }}
+              vertexShader={mochiShellVertexShader}
+              fragmentShader={mochiShellFragmentShader}
               transparent
-              opacity={opacity}
-              blending={THREE.NormalBlending}
-              side={THREE.BackSide}
               depthWrite={false}
+              side={THREE.BackSide}
+              blending={THREE.CustomBlending}
+              blendEquation={THREE.AddEquation}
+              blendSrc={THREE.SrcAlphaFactor}
+              blendDst={THREE.OneMinusSrcAlphaFactor}
             />
           </mesh>
         );

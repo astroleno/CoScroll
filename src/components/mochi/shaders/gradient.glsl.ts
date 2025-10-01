@@ -68,18 +68,16 @@ float snoise(vec3 v) {
 `;
 
 // 冷暖渐变注入代码
-export const gradientInjection = `
+export const gradientHeader = `
 ${simplexNoise3D}
-
-// 在 main() 开始处添加 varying
-// 需要在 vertex shader 传递世界坐标
-varying vec3 vWorldPosition;
-varying vec3 vWorldNormal;
+// 自定义 varying，避免与 three 内部重名
+varying vec3 vMochiWorldPos;
+varying vec3 vMochiWorldNormal;
 `;
 
 export const gradientVertexInjection = `
-vWorldPosition = (modelMatrix * vec4(position, 1.0)).xyz;
-vWorldNormal = normalize((modelMatrix * vec4(normal, 0.0)).xyz);
+vMochiWorldPos = (modelMatrix * vec4(position, 1.0)).xyz;
+vMochiWorldNormal = normalize((modelMatrix * vec4(normal, 0.0)).xyz);
 `;
 
 export const gradientFragmentInjection = `
@@ -89,20 +87,27 @@ vec3 warmColor = vec3(1.0, 0.83, 0.9);    // 粉色 #ffd4e5
 vec3 accentColor = vec3(1.0, 0.93, 0.82); // 暖白 #ffe5d0
 
 // 基于世界空间 Y 轴的渐变（上冷下暖）
-float yGradient = vWorldPosition.y * 0.5 + 0.5; // normalize to 0-1
+float yGradient = vMochiWorldPos.y * 0.5 + 0.5; // normalize to 0-1
 
 // 基于法线的边缘增强（侧面加暖色）
-vec3 viewDir = normalize(cameraPosition - vWorldPosition);
-float fresnel = pow(1.0 - max(dot(vWorldNormal, viewDir), 0.0), 2.0);
+vec3 viewDir = normalize(cameraPosition - vMochiWorldPos);
+float fresnel = pow(1.0 - max(dot(vMochiWorldNormal, viewDir), 0.0), 2.0);
 
 // 3层颜色混合
 vec3 baseGradient = mix(warmColor, coolColor, yGradient);
 vec3 gradientColor = mix(baseGradient, accentColor, fresnel * 0.3);
 
 // 添加细微噪声（颗粒感）
-float noise = snoise(vWorldPosition * 8.0) * 0.03;
+float noise = snoise(vMochiWorldPos * 8.0) * 0.03;
 gradientColor += vec3(noise);
 
-// 应用到 diffuseColor
+// 应用到 diffuseColor（颜色）
 diffuseColor.rgb = gradientColor;
+
+// 追加柔度与透明度地板：边缘更透、中心更实，保证主体可读
+float softness = mix(0.35, 0.7, fresnel); // 0.35~0.7 随边缘提升
+// 对最终输出做地板保护（在 output_fragment 之前插入）
+gl_FragColor.a = max(gl_FragColor.a, softness);
+// 轻度把渐变混入结果，避免纯白：
+gl_FragColor.rgb = mix(gl_FragColor.rgb, gradientColor, 0.2);
 `;

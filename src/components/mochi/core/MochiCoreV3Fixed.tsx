@@ -27,7 +27,9 @@ export default function MochiCoreV3Fixed({
       color2: { value: new THREE.Color('#c4a0ff') },  // 紫粉（冷暖过渡）
       color3: { value: new THREE.Color('#ffb380') },  // 橙色（强化暖色）
       color4: { value: new THREE.Color('#ffe680') },  // 更深的黄（强化暖色）
-      fresnelPower: { value: 3.0 }
+      fresnelPower: { value: 3.0 },
+      alphaMax: { value: 0.95 },    // 提高边缘最大透明度
+      alphaBias: { value: 0.03 }    // 略降偏置，范围更大
     }),
     []
   );
@@ -46,6 +48,7 @@ export default function MochiCoreV3Fixed({
         vertexShader={mochiVertexShader}
         fragmentShader={mochiFixedFragmentShader}
         side={THREE.FrontSide}
+        transparent
       />
     </mesh>
   );

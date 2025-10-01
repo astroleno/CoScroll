@@ -2,8 +2,8 @@
 
 import { Canvas } from '@react-three/fiber';
 import { OrbitControls } from '@react-three/drei';
-import MochiCoreExpanded from '@/components/mochi/core/MochiCoreExpanded';
-import FresnelShell from '@/components/mochi/core/FresnelShell';
+import MochiCoreV3Fixed from '@/components/mochi/core/MochiCoreV3Fixed';
+import VolumeShells from '@/components/mochi/core/VolumeShells';
 import GradientBackgroundV3 from '@/components/mochi/backgrounds/GradientBackgroundV3';
 import MochiComposerFixed from '@/components/mochi/effects/MochiComposerFixed';
 
@@ -24,34 +24,27 @@ export default function MochiExpandedPage() {
         <ambientLight intensity={0.28} />
         <directionalLight position={[5, 5, 5]} intensity={0.6} />
 
-        {/* 方案A：顶点膨胀核心球体（糯米团子质感）*/}
-        <MochiCoreExpanded
+        {/* 方案B：成熟组合（V3 Fixed + VolumeShells）*/}
+        <MochiCoreV3Fixed
           radius={1}
           segments={64}
-          autoRotate={true}
+          autoRotate
           rotationSpeed={0.2}
-          shellLayers={4}
-          shellThickness={0.015}
         />
 
-        {/* Fresnel 发光壳（扩大边缘范围，增强发光）*/}
-        <FresnelShell
+        <VolumeShells
           radius={1}
           segments={64}
-          glowColor="#ffd4b3"
-          fresnelPower={2.2}
-          rimRange={[0.10, 0.95]}
-          glowIntensity={0.6}
+          shellOffsets={[0.012, 0.024, 0.038, 0.055, 0.075, 0.10]}
+          glowColor="#ffb3d9"
         />
 
-        {/* 暂停 Bloom，避免白屏问题 */}
-        {false && (
-          <MochiComposerFixed
-            bloomStrength={1.8}
-            bloomRadius={1.05}
-            bloomThreshold={0.34}
-          />
-        )}
+        {/* 降低 Bloom，避免洗白半透明 */}
+        <MochiComposerFixed
+          bloomStrength={1.3}
+          bloomRadius={1.0}
+          bloomThreshold={0.5}
+        />
 
         <OrbitControls enableDamping dampingFactor={0.05} />
       </Canvas>
@@ -71,7 +64,7 @@ export default function MochiExpandedPage() {
           fontWeight: 'bold'
         }}
       >
-        🍡 方案A - 顶点膨胀糯米团子质感
+        🍡 方案B - V3Fixed + 多层体积壳（成熟方案）
       </div>
     </div>
   );
