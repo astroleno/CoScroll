@@ -86,6 +86,11 @@ export function createSketch(options: SketchOptions = {}) {
 
     p.draw = () => {
       try {
+        if (!neonShader || !objModel) {
+          console.log('[p5] Waiting for resources...', { neonShader: !!neonShader, objModel: !!objModel });
+          return;
+        }
+
         p.clear();
         p.background(6, 8, 12);
 
@@ -116,19 +121,33 @@ export function createSketch(options: SketchOptions = {}) {
 
           p.shader(neonShader);
 
-          // 简化的uniforms
-          neonShader.setUniform('uTime', p.millis() / 1000.0);
-          neonShader.setUniform('uMainColor', [0.3, 0.9, 0.5]);
-          neonShader.setUniform('uSecondaryColor', [0.9, 0.7, 0.3]);
-          neonShader.setUniform('uRimColor', [0.9, 0.4, 0.8]);
-          neonShader.setUniform('uSoftness', 0.8); // 🔑 更高柔软度
+          // 优化的uniforms - 参考图配色
+          try {
+            neonShader.setUniform('uTime', p.millis() / 1000.0);
+            neonShader.setUniform('uMainColor', [0.4, 0.9, 0.7]);    // 青绿中心
+            neonShader.setUniform('uSecondaryColor', [0.6, 0.85, 0.95]); // 浅蓝过渡
+            neonShader.setUniform('uRimColor', [0.95, 0.7, 0.85]);   // 粉紫边缘
+            neonShader.setUniform('uSoftness', 0.92); // 🔑 极致柔软度
+          } catch (err) {
+            console.error('[p5] shader uniform error', err);
+          }
 
-          // 渲染模型
+          // 渲染模型（单层测试）
           p.scale(2.2);
           p.rotateX(Math.PI); // 修正上下颠倒
           p.rotateY(p.millis() / 2000.0);
           p.model(objModel);
 
+          p.pop();
+        } else if (objModel) {
+          // 降级：无shader渲染（测试模型是否加载）
+          p.push();
+          p.fill(100, 200, 255);
+          p.noStroke();
+          p.scale(2.2);
+          p.rotateX(Math.PI);
+          p.rotateY(p.millis() / 2000.0);
+          p.model(objModel);
           p.pop();
         }
 

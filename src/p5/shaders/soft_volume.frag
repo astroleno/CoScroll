@@ -11,6 +11,7 @@ uniform vec3 uMainColor;
 uniform vec3 uSecondaryColor;
 uniform vec3 uRimColor;
 uniform float uSoftness; // 柔软度参数 (0.0-1.0)
+uniform float uLayer;    // 壳体层级 (0=主体, 1-3=外层)
 
 // 3D噪声
 float hash(vec3 p) {
@@ -67,10 +68,13 @@ void main() {
   // Alpha计算 - 核心柔边算法
   float baseAlpha = 1.0 - softFresnel;
 
-  // 🔑 调整alpha范围实现柔边
-  float alphaMin = uSoftness * 0.3; // 软边起点
-  float alphaMax = 0.95; // 固定终点
-  baseAlpha = smoothstep(alphaMin, alphaMax, baseAlpha);
+  // 🔑 分层透明度（PPL方案）
+  float layerAlpha = mix(1.0, 0.15, uLayer / 3.0); // 外层更透明
+
+  // 🔑 调整alpha范围实现柔边（加大模糊区域）
+  float alphaMin = uSoftness * 0.1; // 更早开始衰减
+  float alphaMax = 0.85; // 更早结束，扩大过渡区
+  baseAlpha = smoothstep(alphaMin, alphaMax, baseAlpha) * layerAlpha;
 
   // 5重柔化alpha（关键！）
   baseAlpha = smoothstep(0.0, 1.0, baseAlpha);
@@ -91,6 +95,11 @@ void main() {
   float breath = 0.9 + 0.1 * sin(uTime * 0.3);
   finalColor *= breath;
 
-  // 🔑 最终输出 - 超柔软的alpha
-  gl_FragColor = vec4(finalColor, baseAlpha);
+  // 🔑 体积感增强：边缘额外发光
+  float volumeGlow = pow(softFresnel, 3.0) * 0.4; // 外层晕光
+  finalColor += uRimColor * volumeGlow;
+
+  // 最终输出 - 超柔软的alpha + 体积光晕
+  float finalAlpha = clamp(baseAlpha + volumeGlow * 0.3, 0.0, 1.0);
+  gl_FragColor = vec4(finalColor, finalAlpha);
 }
