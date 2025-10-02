@@ -159,16 +159,16 @@ export interface JadeProps {
  */
 export default function Jade({
   modelPath,
-  // 材质默认值（用户指定 + 方案C优化）
-  color = '#ffffff',
+  // 材质默认值（玉绿主色系，明度对比30%）
+  color = '#65B39A',             // 玉绿主色（调暗以达到30%对比度）
   transmission = 1,
   thickness = 5,
   ior = 1.5,
   roughness = 0.76,              // 用户指定：表面光滑度
   metalness = 0,
   reflectivity = 0.42,           // 降低反射率才能看到穿透效果
-  attenuationColor = '#ffffff',  // 用户指定：白色（方案C可调）
-  attenuationDistance = 0.8,     // 方案C：光穿透距离
+  attenuationColor = '#ffffff',  // 内透色：白色
+  attenuationDistance = 0.8,     // 光穿透距离
   // Clearcoat默认值（用户指定）
   clearcoat = 0.70,              // 用户指定
   clearcoatRoughness = 0.78,     // 用户指定
@@ -186,7 +186,7 @@ export default function Jade({
   autoRotate = true,
 }: JadeProps) {
   const groupRef = useRef<THREE.Group>(null);
-  const { gl } = useThree();
+  const { gl, viewport } = useThree();
 
   const [geometry, setGeometry] = useState<THREE.BufferGeometry | null>(null);
   const [envMap, setEnvMap] = useState<THREE.Texture | null>(null);
@@ -260,7 +260,7 @@ export default function Jade({
     const rgbeLoader = new RGBELoader();
 
     rgbeLoader.load(
-      '/textures/empty_warehouse_01_2k.hdr',
+      '/textures/qwantani_moon_noon_puresky_1k.hdr',
       (texture) => {
         texture.mapping = THREE.EquirectangularReflectionMapping;
         console.log('[Jade] HDR envMap loaded');
@@ -366,6 +366,28 @@ export default function Jade({
     }
   }, [normalMap, normalRepeat]);
 
+  // 响应式尺寸：画面短边的 38-55%（移动端取上限）
+  useEffect(() => {
+    if (groupRef.current && geometry) {
+      const isMobile = viewport.width < 768;
+      const targetRatio = isMobile ? 0.55 : 0.45; // 移动端55%，桌面45%
+      const shortEdge = Math.min(viewport.width, viewport.height);
+      const targetSize = shortEdge * targetRatio;
+
+      // 计算当前几何体的实际尺寸
+      geometry.computeBoundingBox();
+      const bbox = geometry.boundingBox!;
+      const size = bbox.getSize(new THREE.Vector3());
+      const maxDim = Math.max(size.x, size.y, size.z);
+
+      // 计算缩放系数
+      const scale = targetSize / maxDim;
+      groupRef.current.scale.setScalar(scale);
+
+      console.log(`[Jade] Responsive scale: ${scale.toFixed(3)} (viewport: ${viewport.width.toFixed(0)}x${viewport.height.toFixed(0)}, target: ${targetRatio * 100}%)`);
+    }
+  }, [viewport.width, viewport.height, geometry]);
+
   // 自动旋转
   useFrame((state, delta) => {
     if (autoRotate && groupRef.current) {
@@ -401,7 +423,6 @@ export default function Jade({
   return (
     <group ref={groupRef} position={[0, 0, 0]}>
       <mesh geometry={geometry} material={material} />
-      <gridHelper args={[10, 10]} position={[0, -1.5, 0]} />
     </group>
   );
 }

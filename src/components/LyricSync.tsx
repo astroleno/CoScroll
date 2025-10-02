@@ -57,6 +57,7 @@ export default function LyricSync() {
   const lyricsContainerRef = useRef<HTMLDivElement>(null)
   const isProgrammaticScrollRef = useRef(false)
   const animationFrameRef = useRef<number | null>(null)
+  const cycleHeightRef = useRef<number>(0)
 
   // 加载歌词
   useEffect(() => {
@@ -174,6 +175,16 @@ export default function LyricSync() {
     lyricRefs.current = new Array(lyrics.length * 2).fill(null)
   }, [lyrics])
 
+  // 计算一个完整循环的高度（原始列表高度）
+  useEffect(() => {
+    const firstOriginal = lyricRefs.current[0]
+    const firstDuplicate = lyricRefs.current[lyrics.length]
+    if (firstOriginal && firstDuplicate) {
+      // 两者 offsetTop 差值即一个循环的高度
+      cycleHeightRef.current = firstDuplicate.offsetTop - firstOriginal.offsetTop
+    }
+  }, [lyrics])
+
   const getLyricClass = useCallback((index: number) => {
     const distance = Math.abs(index - currentLyricIndex)
 
@@ -253,37 +264,38 @@ export default function LyricSync() {
         setCurrentLyricIndex(lyricIndex)
       }
 
+      // 获取当前歌词元素（原始部分）
       const currentLyric = lyricRefs.current[lyricIndex]
-      const nextLyric = lyricRefs.current[lyricIndex + 1]
+      // 下一句可能是原始部分的下一句，或者是复制部分的第一句
+      let nextLyric: HTMLParagraphElement | null
+      let nextLyricIndex: number
+      
+      if (lyricIndex < lyrics.length - 1) {
+        // 不是最后一句，下一句在原始部分
+        nextLyric = lyricRefs.current[lyricIndex + 1]
+        nextLyricIndex = lyricIndex + 1
+      } else {
+        // 是最后一句，下一句是复制部分的第一句（实现无限循环）
+        nextLyric = lyricRefs.current[lyrics.length] // 复制部分的第一句
+        nextLyricIndex = 0 // 实际对应第一句歌词
+      }
 
-      if (currentLyric) {
+      if (currentLyric && nextLyric) {
         const containerRect = container.getBoundingClientRect()
         const containerCenter = containerRect.height / 2
 
-        let targetCenter: number
+        const currentLyricTime = lyrics[lyricIndex].time
+        const nextLyricTime = lyrics[nextLyricIndex].time
+        const duration = nextLyricTime - currentLyricTime
+        const progress = duration > 0 ? Math.min(1, Math.max(0, (currentTime - currentLyricTime) / duration)) : 0
 
-        // 如果有下一句，进行插值滚动
-        if (nextLyric) {
-          const currentLyricTime = lyrics[lyricIndex].time
-          const nextLyricTime = lyrics[lyricIndex + 1].time
-          const duration = nextLyricTime - currentLyricTime
-          const progress = duration > 0 ? Math.min(1, Math.max(0, (currentTime - currentLyricTime) / duration)) : 0
+        const currentRect = currentLyric.getBoundingClientRect()
+        const nextRect = nextLyric.getBoundingClientRect()
 
-          const currentRect = currentLyric.getBoundingClientRect()
-          const nextRect = nextLyric.getBoundingClientRect()
+        const currentCenter = currentRect.top + currentRect.height / 2 - containerRect.top
+        const nextCenter = nextRect.top + nextRect.height / 2 - containerRect.top
 
-          const currentCenter = currentRect.top + currentRect.height / 2 - containerRect.top
-          const nextCenter = nextRect.top + nextRect.height / 2 - containerRect.top
-
-          // 使用缓动函数让滚动更平滑
-          const easeProgress = progress
-          targetCenter = currentCenter + (nextCenter - currentCenter) * easeProgress
-        } else {
-          // 最后一句，保持居中
-          const currentRect = currentLyric.getBoundingClientRect()
-          targetCenter = currentRect.top + currentRect.height / 2 - containerRect.top
-        }
-
+        const targetCenter = currentCenter + (nextCenter - currentCenter) * progress
         const scrollOffset = targetCenter - containerCenter
 
         // 平滑滚动到目标位置
@@ -297,6 +309,27 @@ export default function LyricSync() {
           setTimeout(() => {
             isProgrammaticScrollRef.current = false
           }, 16)
+        }
+      }
+
+      // 使用“取模归一化”实现真正无缝：将 scrollTop 归一化到一个循环内
+      const firstOriginal = lyricRefs.current[0]
+      const cycleHeight = cycleHeightRef.current
+      if (firstOriginal && cycleHeight > 0) {
+        const baseTop = firstOriginal.offsetTop
+        let normalized = container.scrollTop - baseTop
+        // 向下滚动为主，保持 normalized 在 [0, cycleHeight) 区间
+        if (normalized >= cycleHeight) {
+          normalized = normalized % cycleHeight
+          isProgrammaticScrollRef.current = true
+          container.scrollTop = baseTop + normalized
+          setTimeout(() => { isProgrammaticScrollRef.current = false }, 16)
+        } else if (normalized < 0) {
+          // 防御性处理，避免向上越界
+          normalized = ((normalized % cycleHeight) + cycleHeight) % cycleHeight
+          isProgrammaticScrollRef.current = true
+          container.scrollTop = baseTop + normalized
+          setTimeout(() => { isProgrammaticScrollRef.current = false }, 16)
         }
       }
 

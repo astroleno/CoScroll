@@ -4,29 +4,7 @@ import { Canvas } from '@react-three/fiber';
 import { OrbitControls, Stats } from '@react-three/drei';
 import { Suspense, useState, useEffect } from 'react';
 import { EffectComposer, Bloom } from '@react-three/postprocessing';
-import * as THREE from 'three';
 import Jade from '@/components/jade/Jade';
-
-// 背景组件
-function Background() {
-  const [texture, setTexture] = useState<THREE.Texture | null>(null);
-
-  useEffect(() => {
-    const loader = new THREE.TextureLoader();
-    loader.load('/textures/texture.jpg', (tex) => {
-      setTexture(tex);
-    });
-  }, []);
-
-  if (!texture) return null;
-
-  return (
-    <mesh position={[0, 0, -3]} receiveShadow>
-      <planeGeometry args={[10, 10]} />
-      <meshBasicMaterial map={texture} />
-    </mesh>
-  );
-}
 
 /**
  * Jade玉石质感测试页面
@@ -57,10 +35,10 @@ export default function JadePage() {
     };
   }, []);
 
-  // 玉石材质配置（用户指定）
+  // 玉石材质配置（玉绿主色系，明度对比30%）
   const [config, setConfig] = useState({
     // 基础参数
-    color: '#ffffff',                   // 白色
+    color: '#65B39A',                   // 玉绿主色（调暗以达到30%对比度）
     transmission: 1,
     thickness: 5,
     ior: 1.5,                           // 折射率（玉石典型值）
@@ -69,7 +47,7 @@ export default function JadePage() {
     reflectivity: 0.42,                 // 反射率
 
     // 衰减参数（玉石内透效果）
-    attenuationColor: '#ffffff',        // 用户指定：白色
+    attenuationColor: '#ffffff',        // 内透色：白色
     attenuationDistance: 0.8,
 
     // Clearcoat（表面光泽）
@@ -82,7 +60,7 @@ export default function JadePage() {
     normalRepeat: 3,
 
     // 环境贴图
-    envMapIntensity: 1.8,
+    envMapIntensity: 0.4,               // 降低环境反射（柔和studio效果）
 
     // 几何体优化（用户指定值优先，方案A+B）
     maxEdge: 0.15,                      // 用户指定：0.150（方案A建议0.04-0.08）
@@ -140,7 +118,7 @@ export default function JadePage() {
   return (
     <div style={{ position: 'fixed', inset: 0, width: '100vw', height: '100vh', margin: 0, padding: 0, overflow: 'hidden' }}>
       {/* 3D场景 */}
-      <div style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', background: 'linear-gradient(to bottom, #0a0a0a, #1a1a1a)' }}>
+      <div style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', background: 'linear-gradient(to bottom, #F3F0DF, #E6E1CF)' }}>
         <Canvas
           style={{ width: '100%', height: '100%', display: 'block' }}
           camera={{ position: [0, 0, 5], fov: 45 }}
@@ -149,17 +127,37 @@ export default function JadePage() {
             antialias: true,
           }}
         >
-          <color attach="background" args={['#0f0f0f']} />
+          <color attach="background" args={['#EDE9D7']} />
 
-          {/* 光照 */}
-          <ambientLight intensity={0.3} />
-          <directionalLight position={[5, 5, 5]} intensity={1.2} />
-          <directionalLight position={[-5, -3, -5]} intensity={0.4} color="#4a7c9c" />
-          <pointLight position={[0, 3, 0]} intensity={0.6} color="#ffffff" />
-          <spotLight position={[0, 5, 3]} intensity={0.8} angle={0.3} penumbra={0.5} />
+          {/* 灯光系统：顶侧主光 + 背缘光 */}
+          <ambientLight intensity={0.5} />
 
-          {/* 背景 */}
-          <Background />
+          {/* 顶侧主光：形成主要面的层次 */}
+          <directionalLight
+            position={[3, 5, 4]}
+            intensity={1.8}
+            color="#FFFFFF"
+            castShadow
+          />
+
+          {/* 背缘光：突出边缘轮廓 */}
+          <directionalLight
+            position={[-2, 1, -4]}
+            intensity={1.2}
+            color="#F5F2E8"
+          />
+          <pointLight
+            position={[0, -2, -3]}
+            intensity={0.8}
+            color="#E8E5D8"
+          />
+
+          {/* 补光：柔和环境反射 */}
+          <pointLight
+            position={[2, 0, 2]}
+            intensity={0.4}
+            color="#FFFFFF"
+          />
 
           {/* Jade模型 */}
           <Suspense fallback={null}>
