@@ -131,19 +131,19 @@ export function createScreenSpaceRefractionMaterial(uniformValues: SSRUniforms):
         edge = 1.0 - smoothstep(0.0, 0.01, m);
       }
 
-    // 根据 roughness 进行模糊采样（box blur）
+    // 根据 roughness 进行模糊采样（改进的 box blur）
     vec3 refracted = vec3(0.0);
-    float blurRadius = uRoughness * 0.015; // 模糊半径（像素空间）
+    float blurRadius = uRoughness * 0.05; // 增大模糊半径（从 0.015 提升到 0.05）
     vec2 texelSize = 1.0 / uRenderResolution; // 单个像素大小
     
     if (uRoughness < 0.01) {
       // roughness 接近 0，直接采样（无模糊）
       refracted = texture2D(uRefractionMap, clampedUv).rgb;
     } else {
-      // 3x3 box blur（9 次采样）
+      // 5x5 box blur（25 次采样，更柔和的模糊）
       float totalWeight = 0.0;
-      for (int x = -1; x <= 1; x++) {
-        for (int y = -1; y <= 1; y++) {
+      for (int x = -2; x <= 2; x++) {
+        for (int y = -2; y <= 2; y++) {
           vec2 offset = vec2(float(x), float(y)) * blurRadius * texelSize;
           vec2 sampleUv = clamp(clampedUv + offset, vec2(0.0), vec2(1.0));
           refracted += texture2D(uRefractionMap, sampleUv).rgb;

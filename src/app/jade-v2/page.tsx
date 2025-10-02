@@ -37,7 +37,7 @@ function TestHDRIDisplay() {
 export default function Page() {
   const [enableRotation, setEnableRotation] = useState(false);
   const [showBackground, setShowBackground] = useState(false);
-  const [useDualPassRefraction, setUseDualPassRefraction] = useState(true);  // 默认开启，解决 transmission 背景采样问题
+  const [useDualPassRefraction, setUseDualPassRefraction] = useState(true);  // 开启 SSR，从 OffscreenHDRIRT 采样（解耦背景）
   const [refractionTexture, setRefractionTexture] = useState<any>(null);
   const [rtInfo, setRtInfo] = useState<{ width: number; height: number } | null>(null);
   const [options, setOptions] = useState({
@@ -65,7 +65,11 @@ export default function Page() {
   });
 
   return (
-    <div style={{ width: '100%', height: '100vh', background: '#1f1e1c' }}>
+    <div style={{ 
+      width: '100%', 
+      height: '100vh', 
+      background: '#1f1e1c', // 固定深色背景，背景由内部 BackgroundMaskPlane 提供
+    }}>
       {/* 简易控制条，复刻参考中的 GUI 关键参数 */}
       <div style={{ position: 'absolute', top: 10, left: 10, zIndex: 10, background: 'rgba(0,0,0,0.5)', padding: 12, borderRadius: 8, color: '#fff', fontSize: 12, minWidth: 260 }}>
         <div style={{ marginBottom: 6, display: 'flex', gap: 16, alignItems: 'center', flexWrap: 'wrap' }}>
@@ -208,14 +212,7 @@ export default function Page() {
             normalRepeat={options.normalRepeat}
             autoRotate={enableRotation}
           />
-          {/* 
-            BackgroundMaskPlane - EqualDepth 深度测试遮罩平面
-            原理：
-            1. HDRI 始终作为 scene.background（供 transmission 采样）
-            2. 但视觉上用 BackgroundMaskPlane 替换 HDRI
-            3. 通过 EqualDepth 深度测试，只在深度=1（背景）处绘制
-            4. 不影响主体的颜色/曝光/高光
-          */}
+          {/* BackgroundMaskPlane - 提供可见背景，不影响 SSR 折射 */}
           {!showBackground && (
             <BackgroundMaskPlane
               color={backgroundMaskConfig.color}

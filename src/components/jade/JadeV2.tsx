@@ -352,9 +352,11 @@ export default function JadeV2({
     };
   }, [hdrPath, gl, scene, showBackground]);
 
-  // 根据 showBackground 控制 scene.background
-  // - showBackground=true: 直接显示 HDRI
-  // - showBackground=false: 由 mesh 的 onBeforeRender/onAfterRender 临时切换（供 transmission 采样）
+  // 策略：根据 showBackground 控制 scene.background
+  // - showBackground=true: scene.background = HDRI（直接显示）
+  // - showBackground=false: scene.background = null（透明，显示外部 CSS 背景，但 transmission 无法采样 HDRI）
+  // 注意：这意味着在外部背景模式下，transmission 无法正确工作（会采样到外部背景）
+  // 如需解耦，必须使用 Dual Refraction (SSR)
   useEffect(() => {
     if (!envBackground) return;
     try {
@@ -363,7 +365,7 @@ export default function JadeV2({
         console.log('[JadeV2] scene.background = HDRI (visible)');
       } else {
         scene.background = null;
-        console.log('[JadeV2] scene.background = null (using onBeforeRender switch)');
+        console.log('[JadeV2] scene.background = null (transparent, showing CSS background)');
       }
     } catch (e) {
       console.warn('[JadeV2] 设置 scene.background 失败:', e);
