@@ -10,6 +10,13 @@ export interface SSRUniforms {
   normalScale: number;
   useEdgeFade: boolean;
   renderResolution: { x: number; y: number };
+  // 亮度/色调控制（可选）
+  gain?: number;                // 提升整体亮度（默认 1.0）
+  tint?: THREE.Color | number;  // 颜色微调（默认白色，不改变）
+  tintStrength?: number;        // 0-1，颜色微调强度（默认 0）
+  offsetBoost?: number;         // 折射偏移强度（默认 3.0）
+  baseMix?: number;             // 与基色混合，防止纯黑（默认 0.35）
+  gamma?: number;               // 简易伽马矫正（默认 1.0 不变）
 }
 
 export function createScreenSpaceRefractionMaterial(uniformValues: SSRUniforms): THREE.ShaderMaterial {
@@ -27,9 +34,14 @@ export function createScreenSpaceRefractionMaterial(uniformValues: SSRUniforms):
     uRenderResolution: { value: new THREE.Vector2(uniformValues.renderResolution.x, uniformValues.renderResolution.y) },
     uTime: { value: 0 },
     uBaseColor: { value: new THREE.Color(0x444444) }, // 深灰色，避免 Fresnel 过亮
+    uGain: { value: uniformValues.gain ?? 1.0 },
+    uTint: { value: new THREE.Color((uniformValues.tint as any) ?? 0xffffff) },
+    uTintStrength: { value: uniformValues.tintStrength ?? 0.0 },
     // Debug/visibility helpers
     uDebugMode: { value: 0 },               // 1=输出纯红用于验证是否走到 SSR
-    uOffsetBoost: { value: 3.0 },           // 放大折射偏移，便于观察（默认 3.0）
+    uOffsetBoost: { value: uniformValues.offsetBoost ?? 3.0 },           // 放大折射偏移，便于观察
+    uBaseMix: { value: uniformValues.baseMix ?? 0.35 },
+    uGamma: { value: uniformValues.gamma ?? 1.0 },
   };
 
   const vertex = `
@@ -55,6 +67,11 @@ export function createScreenSpaceRefractionMaterial(uniformValues: SSRUniforms):
     uniform int uUseEdgeFade;
     uniform vec2 uRenderResolution;
     uniform vec3 uBaseColor;
+    uniform float uGain;
+    uniform vec3 uTint;
+    uniform float uTintStrength;
+    uniform float uBaseMix;
+    uniform float uGamma;
     uniform int uDebugMode;
     uniform float uOffsetBoost;
     varying vec2 vUv;
@@ -155,6 +172,12 @@ export function createScreenSpaceRefractionMaterial(uniformValues: SSRUniforms):
     
     // 直接显示折射效果
     vec3 color = refracted;
+    color = mix(color, uTint, clamp(uTintStrength, 0.0, 1.0));
+    color *= max(0.0, uGain);
+    if (uGamma > 0.01) {
+      color = pow(max(color, 0.0), vec3(1.0 / uGamma));
+    }
+    color = mix(uBaseColor, color, clamp(uBaseMix, 0.0, 1.0));
     color *= edge;
     gl_FragColor = vec4(color, 1.0);
     }

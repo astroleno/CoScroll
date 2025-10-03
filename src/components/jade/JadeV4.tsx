@@ -43,6 +43,13 @@ export interface JadeV4Props {
   debugForceReflection?: boolean;
   // 是否启用双通道屏幕后折射（推荐用于背景解耦）
   useDualPassRefraction?: boolean;
+  // 折射外观控制（SSR 模式下生效）
+  refractionGain?: number;
+  refractionTint?: string | number;
+  refractionTintStrength?: number;
+  refractionOffsetBoost?: number;
+  refractionBaseMix?: number;
+  refractionGamma?: number;
 }
 
 function JadeV4Content({
@@ -55,6 +62,12 @@ function JadeV4Content({
   normalMapPath = "/textures/normal.jpg",
   debugForceReflection = false,
   useDualPassRefraction = true,
+  refractionGain = 1.8,
+  refractionTint,
+  refractionTintStrength = 0.0,
+  refractionOffsetBoost = 4.0,
+  refractionBaseMix = 0.35,
+  refractionGamma = 1.0,
   color = 0xffffff,
   metalness = 0.0,
   roughness = 0.55,
@@ -356,6 +369,12 @@ function JadeV4Content({
             normalScale,
             useEdgeFade: true,
             renderResolution: { x: size.width, y: size.height },
+            gain: refractionGain,
+            tint: (refractionTint as any) ?? 0xffffff,
+            tintStrength: refractionTintStrength,
+            offsetBoost: refractionOffsetBoost,
+            baseMix: refractionBaseMix,
+            gamma: refractionGamma,
           });
           (mat.uniforms as any).uDebugMode.value = 0;
           console.log('[JadeV4] ✅ 启用 SSR 折射材质');

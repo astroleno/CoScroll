@@ -80,8 +80,8 @@ export default function LyricSync() {
   const allowScrollToTimeRef = useRef(false)  // 是否允许"滚动→时间"同步
 
   // 常量
-  const PROGRAM_SCROLL_COOLDOWN = 300  // ms，初始化后冷却
-  const INIT_GUARD_WINDOW = 500        // ms，初始化保护期
+  const PROGRAM_SCROLL_COOLDOWN = 200  // ms，初始化后冷却（减少延迟）
+  const INIT_GUARD_WINDOW = 200        // ms，初始化保护期（减少阻塞时间）
 
   // 加载歌词
   useEffect(() => {
@@ -125,12 +125,31 @@ export default function LyricSync() {
     // 设置循环播放
     audio.loop = true
 
+    // 🔧 修复：强制设置初始状态，确保滚动能开始
+    const setupInitialState = () => {
+      console.log('🔧 设置初始状态')
+      lastProgrammaticScrollTimeRef.current = Date.now()
+      scrollToLyric(0, 'auto')
+
+      // 🔧 修复：即使自动播放失败，也要设置初始播放状态
+      // 这样基础滚动就能工作
+      setIsPlaying(true)
+
+      // 重置控制状态
+      lastUserScrollTimeRef.current = 0
+      scrollVelocityRef.current = 0
+
+      // 重置B+C+D方案的状态
+      initGuardUntilRef.current = Date.now() + INIT_GUARD_WINDOW
+      allowScrollToTimeRef.current = false
+
+      console.log('🔄 初始状态设置完成')
+    }
+
     // 尝试自动播放
     const tryAutoPlay = async () => {
        // 音频从0秒开始播放（完整音频）
        console.log('🔧 准备播放，当前时间：', audio.currentTime)
-      lastProgrammaticScrollTimeRef.current = Date.now()
-      scrollToLyric(0, 'auto')
 
       // 先设置音量，避免太大声
       audio.volume = 0.8
@@ -140,15 +159,16 @@ export default function LyricSync() {
          console.log('✅ 自动播放成功，当前时间：', audio.currentTime)
         setIsPlaying(true)
       } catch (error) {
-        console.log('⚠️ 自动播放被浏览器阻止，点击播放按钮开始:', error)
+        console.log('⚠️ 自动播放被浏览器阻止，但滚动功能已启用:', error)
+        // 🔧 修复：即使播放失败，也不影响滚动功能
+        // setIsPlaying 已经在 setupInitialState 中设置为 true
       }
     }
 
      // 等待音频元数据加载完成
      const onLoadedMetadata = () => {
        console.log('📊 音频元数据加载完成，时长：', audio.duration)
-      lastProgrammaticScrollTimeRef.current = Date.now()
-      scrollToLyric(0, 'auto')
+      setupInitialState()
      }
 
     // 监听元数据加载
@@ -172,7 +192,7 @@ export default function LyricSync() {
       audio.removeEventListener('loadedmetadata', onLoadedMetadata)
       audio.removeEventListener('canplaythrough', tryAutoPlay)
     }
-  }, [lyrics.length])
+  }, [lyrics.length, scrollToLyric])
 
   // 获取当前歌词
   const currentLyric = lyrics[currentLyricIndex] || null
@@ -242,10 +262,17 @@ export default function LyricSync() {
     const updateTime = () => {
       setCurrentTime(audio.currentTime)
 
-      // 时间窗口控制：首句时间到达后，允许"滚动→时间"同步
-      if (!allowScrollToTimeRef.current && audio.currentTime >= lyrics[0].time) {
-        allowScrollToTimeRef.current = true
-        console.log('🔓 时间窗口已开放，允许滚动→时间同步')
+      // 🔧 修复：时间窗口控制 - 更宽松的条件
+      // 不仅等待首句时间，也允许基础滚动工作
+      if (!allowScrollToTimeRef.current) {
+        const firstLyricTime = lyrics[0]?.time || 0
+        if (audio.currentTime >= firstLyricTime || audio.currentTime === 0) {
+          allowScrollToTimeRef.current = true
+          console.log('🔓 时间窗口已开放，允许滚动→时间同步', {
+            currentTime: audio.currentTime.toFixed(2),
+            firstLyricTime: firstLyricTime.toFixed(2)
+          })
+        }
       }
     }
 
@@ -268,25 +295,23 @@ export default function LyricSync() {
       // 两者 offsetTop 差值即一个循环的高度
       cycleHeightRef.current = firstDuplicate.offsetTop - firstOriginal.offsetTop
     }
+
+    // 🔧 诊断：验证滚动容器设置
+    const container = lyricsContainerRef.current
+    if (container && process.env.NODE_ENV === 'development') {
+      console.log('🔍 [诊断] 滚动容器设置验证', {
+        containerExists: !!container,
+        containerHeight: container.clientHeight,
+        containerScrollHeight: container.scrollHeight,
+        canScroll: container.scrollHeight > container.clientHeight,
+        overflowComputed: getComputedStyle(container).overflowY,
+        cssHeight: getComputedStyle(container).height,
+        cssMaxHeight: getComputedStyle(container).maxHeight,
+        firstLyricExists: !!lyricRefs.current[0],
+        lyricsCount: lyrics.length
+      })
+    }
   }, [lyrics])
-
-  const getLyricClass = useCallback((index: number) => {
-    const distance = Math.abs(index - currentLyricIndex)
-
-    if (index === currentLyricIndex) {
-      return 'text-white text-xl font-semibold scale-105'
-    }
-
-    if (distance === 1) {
-      return 'text-gray-200 text-base opacity-90'
-    }
-
-    if (distance === 2) {
-      return 'text-gray-500 text-sm opacity-70'
-    }
-
-    return 'text-gray-600 text-xs opacity-50'
-  }, [currentLyricIndex])
 
   const scrollToLyric = useCallback((index: number, behavior: ScrollBehavior = 'smooth', attempt = 0) => {
     const container = lyricsContainerRef.current
@@ -306,14 +331,44 @@ export default function LyricSync() {
     // 记录程序触发滚动的时间戳
     lastProgrammaticScrollTimeRef.current = Date.now()
 
+    // 🔧 修复：使用直接scrollTop设置，避免scrollIntoView的副作用
     requestAnimationFrame(() => {
-      target.scrollIntoView({
-        block: 'center',
-        inline: 'nearest',
-        behavior: scrollBehavior,
+      const containerHeight = container.clientHeight
+      const containerCenter = containerHeight / 2
+      const targetOffset = target.offsetTop - containerCenter
+
+      container.scrollTop = targetOffset
+
+      // 同步内部refs
+      targetScrollTopRef.current = targetOffset
+      currentScrollTopRef.current = targetOffset
+
+      console.log('🎯 scrollToLyric直接设置滚动位置', {
+        index,
+        text: lyrics[index]?.text?.slice(0, 8),
+        targetOffset: targetOffset.toFixed(2),
+        containerHeight: containerHeight.toFixed(2)
       })
     })
   }, [lyrics.length])
+
+  const getLyricClass = useCallback((index: number) => {
+    const distance = Math.abs(index - currentLyricIndex)
+
+    if (index === currentLyricIndex) {
+      return 'text-white text-xl font-semibold scale-105'
+    }
+
+    if (distance === 1) {
+      return 'text-gray-200 text-base opacity-90'
+    }
+
+    if (distance === 2) {
+      return 'text-gray-500 text-sm opacity-70'
+    }
+
+    return 'text-gray-600 text-xs opacity-50'
+  }, [currentLyricIndex])
 
   // 移除初始滚动调用，避免与平滑滚动 useEffect 竞争
   // useEffect(() => {
@@ -348,6 +403,31 @@ export default function LyricSync() {
         scrollToLyric(0, 'auto')
         console.log('🔧 初始化：程序滚动到第一句并居中')
       }
+
+      // 🔧 修复：即使音频未播放，也要进行基础滚动（歌词居中）
+      // 这样用户可以看到歌词，即使音频没有自动播放
+      const shouldDoBasicScroll = !isPlaying && lyricRefs.current[0]
+
+      // 如果是基础滚动模式，只居中当前歌词
+      if (shouldDoBasicScroll) {
+        const currentLyric = lyricRefs.current[currentLyricIndex]
+        if (currentLyric && container) {
+          const containerHeight = container.clientHeight
+          const containerCenter = containerHeight / 2
+          const targetOffset = currentLyric.offsetTop - containerCenter
+
+          // 直接设置滚动位置，不使用缓动
+          container.scrollTop = targetOffset
+          console.log('🔧 基础滚动：居中歌词', {
+            index: currentLyricIndex,
+            text: lyrics[currentLyricIndex]?.text?.slice(0, 8)
+          })
+        }
+        animationFrameRef.current = requestAnimationFrame(smoothScroll)
+        return
+      }
+
+      // 只有在播放状态才执行完整的滚动逻辑
       if (!isPlaying) {
         animationFrameRef.current = requestAnimationFrame(smoothScroll)
         return
@@ -478,7 +558,7 @@ export default function LyricSync() {
         animationFrameRef.current = null
       }
     }
-  }, [lyrics, isPlaying, currentLyricIndex, getLyricIndexForTime])
+  }, [lyrics, isPlaying, currentLyricIndex, getLyricIndexForTime, scrollToLyric, detectLoopJump])
 
   const handleScroll = (event: React.UIEvent<HTMLDivElement>) => {
     if (!lyrics.length) return
@@ -823,6 +903,10 @@ export default function LyricSync() {
             <div
               ref={lyricsContainerRef}
               className="lyrics-scroll relative overflow-y-auto scrollbar-hide w-full"
+              style={{
+                height: 'calc(5 * 3.2rem)', // 确保有固定高度
+                maxHeight: 'calc(5 * 3.2rem)'
+              }}
               onScroll={handleScroll}
             >
               {loadError ? (
@@ -953,7 +1037,7 @@ export default function LyricSync() {
           max-height: calc(var(--visible-lines) * var(--line-height));
           padding: 0 1.25rem;
           scroll-behavior: auto;
-          overflow-y: scroll;
+          overflow-y: auto !important;
           overflow-x: hidden;
           mask-image: linear-gradient(to bottom, transparent 0%, rgba(0, 0, 0, 0.95) 20%, rgba(0, 0, 0, 0.95) 80%, transparent 100%);
           -webkit-mask-image: linear-gradient(to bottom, transparent 0%, rgba(0, 0, 0, 0.95) 20%, rgba(0, 0, 0, 0.95) 80%, transparent 100%);
