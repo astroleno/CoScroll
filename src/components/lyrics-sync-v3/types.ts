@@ -209,6 +209,7 @@ export interface LyricsSyncV3Events {
   onSyncError: (error: number, strategy: AdhesionStrategy) => void;
   onLoopDetected: (wrapTime: number) => void;
   onPerformanceUpdate: (metrics: PerformanceMetrics) => void;
+  onUserScroll: (data: { scrollTop: number; velocity: number }) => void;
 }
 
 // 调试面板状态

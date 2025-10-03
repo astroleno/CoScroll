@@ -89,8 +89,8 @@ export default function LyricSyncV2() {
     const loadLyrics = async () => {
       try {
         setLoadError(null)
-        const resolvedUrl = `${window.location.origin}${encodeURI(LRC_FILE_PATH)}`
-        const response = await fetch(resolvedUrl, { cache: 'no-store' })
+        // 🔧 修复：使用直接路径，避免window.location.origin问题
+        const response = await fetch(LRC_FILE_PATH, { cache: 'no-store' })
 
         if (!response.ok) {
           throw new Error(`加载歌词失败：${response.status}`)
@@ -120,7 +120,13 @@ export default function LyricSyncV2() {
           estimatedDuration: parsedLyrics[parsedLyrics.length - 1]?.time - parsedLyrics[0]?.time
         })
       } catch (error) {
-        console.error(error)
+        console.error('🎵 歌词加载详细错误:', {
+          error,
+          message: error instanceof Error ? error.message : '未知错误',
+          stack: error instanceof Error ? error.stack : undefined,
+          LRC_FILE_PATH,
+          fetchUrl: LRC_FILE_PATH
+        })
         setLoadError(error instanceof Error ? error.message : '加载歌词时出错')
       } finally {
         setIsLoading(false)
@@ -745,7 +751,7 @@ export default function LyricSyncV2() {
   const progressPercentage = safeDuration ? Math.min(100, (currentTime / safeDuration) * 100) : 0
 
   return (
-    <div className="min-h-screen bg-black text-gray-300 antialiased">
+    <div className="min-h-screen text-gray-300 antialiased" style={{ background: 'transparent' }}>
       {/* 背景效果 */}
       <div className="absolute inset-0 fog-effect"></div>
       <div className="absolute inset-0 grainy-overlay opacity-20 mix-blend-soft-light"></div>

@@ -73,10 +73,11 @@ export class AudioEngine {
       console.error('🎵 AudioEngine: 音频错误', error);
     });
 
-    // 音频播放结束（我们处理循环，所以不依赖这个事件）
+    // 音频播放结束 - 让SyncController处理循环
     this.audio.addEventListener('ended', () => {
       console.log('🎵 AudioEngine: 音频自然结束');
-      // 不自动循环，让 SyncController 处理
+      this.state.isPlaying = false;
+      // 不在这里处理循环，让SyncController统一管理
     });
   }
 
@@ -104,8 +105,8 @@ export class AudioEngine {
 
     const clampedTime = Math.max(0, Math.min(time, this.state.duration));
 
-    // 避免频繁的无效 seek
-    if (Math.abs(clampedTime - this.state.currentTime) < 0.01) {
+    // 降低防抖阈值，提高响应性
+    if (Math.abs(clampedTime - this.state.currentTime) < 0.001) {
       return;
     }
 

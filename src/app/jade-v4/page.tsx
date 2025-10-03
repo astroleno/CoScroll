@@ -1,6 +1,7 @@
 "use client";
 
 import JadeV4 from '@/components/jade/JadeV4';
+import LyricSyncV2 from '@/components/LyricSync-v2';
 import { useState } from 'react';
 
 export default function Page() {
@@ -18,32 +19,40 @@ export default function Page() {
 
   return (
     <div style={{ width: '100%', height: '100vh', background: '#1f1e1c', position: 'relative' }}>
-      <JadeV4 
-        showBackground={true}
-        enableRotation={true}
-        hdrExposure={1.5}
-        backgroundColor={'#101014'}
-        // 可分别指定：背景与折射/IBL 环境
-        backgroundHdrPath="/textures/qwantani_moon_noon_puresky_1k.hdr"
-        refractionEnvPath="/textures/qwantani_moon_noon_puresky_1k.hdr"
-        modelPath="/models/10k_obj/001_空.obj"
-        normalMapPath="/textures/normal.jpg"
-        debugForceReflection={false}
-        useDualPassRefraction={true}
-        refractionGain={params.refractionGain}
-        refractionTint={params.refractionTint}
-        refractionTintStrength={params.refractionTintStrength}
-        refractionOffsetBoost={params.refractionOffsetBoost}
-        refractionBaseMix={params.refractionBaseMix}
-        refractionGamma={params.refractionGamma}
-        // 透传核心参数
-        ior={params.ior}
-        thickness={params.thickness}
-        roughness={params.roughness}
-      />
+      {/* 背景层：3D模型 */}
+      <div style={{ position: 'absolute', inset: 0, zIndex: 1 }}>
+        <JadeV4
+          showBackground={true}
+          enableRotation={true}
+          hdrExposure={1.5}
+          backgroundColor={'#101014'}
+          // 可分别指定：背景与折射/IBL 环境
+          backgroundHdrPath="/textures/qwantani_moon_noon_puresky_1k.hdr"
+          refractionEnvPath="/textures/qwantani_moon_noon_puresky_1k.hdr"
+          modelPath="/models/10k_obj/001_空.obj"
+          normalMapPath="/textures/normal.jpg"
+          debugForceReflection={false}
+          useDualPassRefraction={true}
+          refractionGain={params.refractionGain}
+          refractionTint={params.refractionTint}
+          refractionTintStrength={params.refractionTintStrength}
+          refractionOffsetBoost={params.refractionOffsetBoost}
+          refractionBaseMix={params.refractionBaseMix}
+          refractionGamma={params.refractionGamma}
+          // 透传核心参数
+          ior={params.ior}
+          thickness={params.thickness}
+          roughness={params.roughness}
+        />
+      </div>
 
-      {/* 简易调参面板 */}
-      <div style={{ position: 'absolute', top: 16, right: 16, width: 280, background: 'rgba(0,0,0,0.6)', padding: 12, borderRadius: 8, color: '#fff', fontSize: 12, lineHeight: 1.4 }}>
+      {/* 前景层：歌词同步界面 */}
+      <div style={{ position: 'absolute', inset: 0, zIndex: 2 }}>
+        <LyricSyncV2 />
+      </div>
+
+      {/* 调参面板 */}
+      <div style={{ position: 'absolute', top: 16, right: 16, width: 280, background: 'rgba(0,0,0,0.8)', padding: 12, borderRadius: 8, color: '#fff', fontSize: 12, lineHeight: 1.4, zIndex: 3, backdropFilter: 'blur(8px)' }}>
         <div style={{ fontWeight: 600, marginBottom: 8 }}>JadeV4 折射调参</div>
         <label>Gain: {params.refractionGain.toFixed(2)}</label>
         <input type="range" min={0.5} max={6} step={0.1} value={params.refractionGain} onChange={(e)=>setParams(p=>({...p, refractionGain: parseFloat(e.target.value)}))} style={{ width: '100%' }} />
