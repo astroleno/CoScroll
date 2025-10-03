@@ -23,7 +23,8 @@ import OffscreenMochiBackground from '@/components/backgrounds/OffscreenMochiBac
  */
 export interface JadeV2Props {
   modelPath?: string;          // GLB/GLTF 模型路径，默认参考 ref/JadeShader 的 dragon.glb
-  hdrPath?: string;            // HDR 贴图路径
+  hdrPath?: string;            // 环境 IBL 用的 HDR 贴图路径
+  backgroundHdrPath?: string;  // 背景可见图（可与 hdrPath 不同）；不传则与 hdrPath 相同
   backgroundTexturePath?: string; // 背景平面用的纹理（可选，不绘制平面，仅用于与参考一致的贴图来源）
   normalMapPath?: string;      // 法线贴图路径
   showBackground?: boolean;    // 是否显示背景平面
@@ -57,11 +58,14 @@ export interface JadeV2Props {
 
   autoRotate?: boolean;        // 是否缓慢自转
   scale?: number;              // 统一缩放
+  // 环境旋转（弧度）。传入时将覆盖内部自增逻辑
+  envYaw?: number;
 }
 
 export default function JadeV2({
   modelPath = '/models/dragon.glb',
   hdrPath = '/textures/qwantani_moon_noon_puresky_1k.hdr',
+  backgroundHdrPath,
   backgroundTexturePath = '/textures/texture.jpg',
   normalMapPath = '/textures/normal.jpg',
   showBackground = false,
@@ -92,6 +96,7 @@ export default function JadeV2({
 
   autoRotate = true,
   scale = 1,
+  envYaw,
 }: JadeV2Props) {
   const groupRef = useRef<THREE.Group>(null);
   const meshRef = useRef<THREE.Mesh>(null);
@@ -184,13 +189,16 @@ export default function JadeV2({
   // 加载几何体（自动识别 OBJ 或 GLTF/GLB）
   useEffect(() => {
     let disposed = false;
+    // 支持 blob: URL，通过 hash 附带扩展名（如 blob:...#obj / #glb / #gltf）
     const lower = modelPath.toLowerCase();
-    const isOBJ = lower.endsWith('.obj');
+    const hashExt = lower.includes('#') ? lower.split('#').pop() || '' : '';
+    const ext = hashExt || (lower.endsWith('.obj') ? 'obj' : lower.endsWith('.glb') ? 'glb' : lower.endsWith('.gltf') ? 'gltf' : '');
+    const isOBJ = ext === 'obj';
     if (isOBJ) {
       const loader = new OBJLoader();
       try {
         loader.load(
-          modelPath,
+          encodeURI(modelPath),
           (obj) => {
             if (disposed) return;
             try {
@@ -240,7 +248,7 @@ export default function JadeV2({
       const loader = new GLTFLoader();
       try {
         loader.load(
-          modelPath,
+          encodeURI(modelPath),
           (gltf) => {
             if (disposed) return;
             try {
@@ -311,9 +319,16 @@ export default function JadeV2({
             pmrem.compileEquirectangularShader();
             const envRT = pmrem.fromEquirectangular(texture);
             const envTex = envRT.texture;
-            // equirect 原图保留下来用于 scene.background
-            texture.mapping = THREE.EquirectangularReflectionMapping;
-            setEnvBackground(texture);
+            // 背景使用 backgroundHdrPath（若提供）；否则用 hdrPath 同一张
+            const bgLoader = new RGBELoader();
+            const useBg = backgroundHdrPath || hdrPath;
+            bgLoader.load(useBg, (bg) => {
+              if (disposed) return;
+              try {
+                bg.mapping = THREE.EquirectangularReflectionMapping;
+                setEnvBackground(bg);
+              } catch {}
+            });
             // 释放生成器
             pmrem.dispose();
 
@@ -591,13 +606,20 @@ export default function JadeV2({
 
   // 自转 + 背景切换控制
   useFrame((_, delta) => {
-    if (!autoRotate) return;
-    if (groupRef.current) {
-      groupRef.current.rotation.y += delta * 0.3;
+    // 如果显式传入 envYaw，则以外部值为准
+    if (typeof envYaw === 'number') {
+      if (material && (material as any).__envYawUniform) {
+        (material as any).__envYawUniform.value = envYaw;
+      }
+      return;
     }
-    // 让环境贴图缓慢旋转（通过自定义 uniform）
-    if (material && (material as any).__envYawUniform) {
-      (material as any).__envYawUniform.value += delta * 0.15;
+    if (autoRotate) {
+      if (groupRef.current) {
+        groupRef.current.rotation.y += delta * 0.3;
+      }
+      if (material && (material as any).__envYawUniform) {
+        (material as any).__envYawUniform.value += delta * 0.15;
+      }
     }
   });
 
