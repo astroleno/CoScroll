@@ -2,6 +2,13 @@
 
 import { useState, useEffect, useLayoutEffect, useRef, useCallback } from 'react'
 
+// 循环状态枚举
+enum LoopState {
+  NORMAL = 'normal',
+  LOOP_JUMP = 'loop_jump',      // 正在跳跃
+  LOOP_RECOVER = 'loop_recover'  // 跳跃后恢复期
+}
+
 // 歌词数据类型
 interface Lyric {
   time: number
@@ -29,9 +36,9 @@ const parseLRC = (lrcContent: string): Lyric[] => {
       // 转换为秒
       const timeInSeconds = minutes * 60 + seconds + milliseconds / 1000
       
-      // 提取锚字（第一个字符）
-      const anchor = text.charAt(0)
-      
+      // 提取锚字（第一个字符），空文本则用默认字符，强制取首字符
+      const anchor = ((text[0] ?? '').trim() || '观') || '观'
+
       lyrics.push({
         time: timeInSeconds,
         text,
@@ -55,9 +62,26 @@ export default function LyricSync() {
   const [loadError, setLoadError] = useState<string | null>(null)
   const audioRef = useRef<HTMLAudioElement>(null)
   const lyricsContainerRef = useRef<HTMLDivElement>(null)
-  const isProgrammaticScrollRef = useRef(false)
+  const lastProgrammaticScrollTimeRef = useRef(0)
+  const lastUserScrollTimeRef = useRef(0)
   const animationFrameRef = useRef<number | null>(null)
   const cycleHeightRef = useRef<number>(0)
+  const targetScrollTopRef = useRef(0)
+  const currentScrollTopRef = useRef(0)
+  const isInitializedRef = useRef(false)
+  const lastScrollTopRef = useRef(0)
+  const scrollVelocityRef = useRef(0)
+  const isInitializingRef = useRef(false)  // 初始化保护期标志
+  const loopStateRef = useRef<LoopState>(LoopState.NORMAL)  // 循环状态
+  const lastAudioTimeRef = useRef(0)  // 记录上一次音频时间
+
+  // B+C+D 方案的额外refs
+  const initGuardUntilRef = useRef(0)  // 初始化保护期结束的时间戳
+  const allowScrollToTimeRef = useRef(false)  // 是否允许"滚动→时间"同步
+
+  // 常量
+  const PROGRAM_SCROLL_COOLDOWN = 300  // ms，初始化后冷却
+  const INIT_GUARD_WINDOW = 500        // ms，初始化保护期
 
   // 加载歌词
   useEffect(() => {
@@ -102,39 +126,66 @@ export default function LyricSync() {
     audio.loop = true
 
     // 尝试自动播放
-    const tryAutoPlay = () => {
+    const tryAutoPlay = async () => {
+       // 音频从0秒开始播放（完整音频）
+       console.log('🔧 准备播放，当前时间：', audio.currentTime)
+      lastProgrammaticScrollTimeRef.current = Date.now()
+      scrollToLyric(0, 'auto')
+
       // 先设置音量，避免太大声
       audio.volume = 0.8
-      
-      const playPromise = audio.play()
-      
-      if (playPromise !== undefined) {
-        playPromise.then(() => {
-          console.log('✅ 自动播放成功')
-          setIsPlaying(true)
-        }).catch(error => {
-          console.log('⚠️ 自动播放被浏览器阻止，点击播放按钮开始:', error)
-        })
+
+      try {
+        await audio.play()
+         console.log('✅ 自动播放成功，当前时间：', audio.currentTime)
+        setIsPlaying(true)
+      } catch (error) {
+        console.log('⚠️ 自动播放被浏览器阻止，点击播放按钮开始:', error)
       }
     }
 
+     // 等待音频元数据加载完成
+     const onLoadedMetadata = () => {
+       console.log('📊 音频元数据加载完成，时长：', audio.duration)
+      lastProgrammaticScrollTimeRef.current = Date.now()
+      scrollToLyric(0, 'auto')
+     }
+
+    // 监听元数据加载
+    audio.addEventListener('loadedmetadata', onLoadedMetadata, { once: true })
+
     // 多种方式尝试自动播放
-    if (audio.readyState >= 3) {
-      // 音频已经加载足够数据
-      tryAutoPlay()
+    if (audio.readyState >= 2) {
+      // 音频已经加载元数据
+      onLoadedMetadata()
+      if (audio.readyState >= 3) {
+        tryAutoPlay()
+      } else {
+        audio.addEventListener('canplaythrough', tryAutoPlay, { once: true })
+      }
     } else {
       // 等待音频可以播放
       audio.addEventListener('canplaythrough', tryAutoPlay, { once: true })
     }
 
     return () => {
+      audio.removeEventListener('loadedmetadata', onLoadedMetadata)
       audio.removeEventListener('canplaythrough', tryAutoPlay)
     }
   }, [lyrics.length])
 
   // 获取当前歌词
-  const currentLyric = lyrics[currentLyricIndex] || lyrics[0]
-  const currentAnchor = currentLyric?.anchor || '观'
+  const currentLyric = lyrics[currentLyricIndex] || null
+  const currentAnchor = (currentLyric?.anchor || '观').slice(0, 1)
+
+  // 开发模式断点验证
+  if (process.env.NODE_ENV === 'development') {
+    // 验证关键状态
+    console.assert(currentLyricIndex >= 0 && currentLyricIndex < lyrics.length,
+      'Invalid currentLyricIndex', currentLyricIndex)
+    console.assert(currentAnchor.length === 1,
+      'Anchor must be single character', currentAnchor)
+  }
 
   const formatTime = (time: number) => {
     if (!Number.isFinite(time) || time < 0) return '0:00'
@@ -146,22 +197,56 @@ export default function LyricSync() {
   const getLyricIndexForTime = useCallback((time: number) => {
     if (!lyrics.length) return 0
 
+    let foundIndex = 0
     for (let i = lyrics.length - 1; i >= 0; i--) {
       if (time >= lyrics[i].time) {
-        return i
+        foundIndex = i
+        break
       }
     }
 
-    return 0
+    // 🔍 诊断：时间→索引映射验证
+    if (process.env.NODE_ENV === 'development') {
+      // 检查边界情况
+      const isAtBoundary = (time === lyrics[0]?.time) || (foundIndex === lyrics.length - 1)
+
+      if (isAtBoundary || Math.random() < 0.1) { // 10%的随机采样，避免日志过多
+        console.log('🔍 [时间映射] getLyricIndexForTime诊断', {
+          inputTime: time.toFixed(2),
+          returnedIndex: foundIndex,
+          returnedText: lyrics[foundIndex]?.text?.slice(0, 12),
+          returnedTime: lyrics[foundIndex]?.time?.toFixed(2),
+          timeDiff: (time - lyrics[foundIndex]?.time).toFixed(2),
+          isFirstLyric: foundIndex === 0,
+          isLastLyric: foundIndex === lyrics.length - 1,
+          mappingAccuracy: Math.abs(time - lyrics[foundIndex]?.time).toFixed(2)
+        })
+      }
+    }
+
+    return foundIndex
   }, [lyrics])
 
-  // 音频时间更新（仅用于更新时间显示）
+  // 检测循环跳跃
+  const detectLoopJump = useCallback((prevTime: number, currentTime: number) => {
+    // 如果时间差为负且绝对值大于10秒，说明是循环跳跃
+    const timeDiff = currentTime - prevTime
+    return timeDiff < -10
+  }, [])
+
+  // 音频时间更新（仅用于更新时间显示）+ 时间窗口控制
   useEffect(() => {
     const audio = audioRef.current
     if (!audio || !lyrics.length) return
 
     const updateTime = () => {
       setCurrentTime(audio.currentTime)
+
+      // 时间窗口控制：首句时间到达后，允许"滚动→时间"同步
+      if (!allowScrollToTimeRef.current && audio.currentTime >= lyrics[0].time) {
+        allowScrollToTimeRef.current = true
+        console.log('🔓 时间窗口已开放，允许滚动→时间同步')
+      }
     }
 
     audio.addEventListener('timeupdate', updateTime)
@@ -218,29 +303,24 @@ export default function LyricSync() {
 
     const scrollBehavior = attempt ? 'auto' : behavior
 
-    // 标记这是程序触发的滚动
-    isProgrammaticScrollRef.current = true
-    
+    // 记录程序触发滚动的时间戳
+    lastProgrammaticScrollTimeRef.current = Date.now()
+
     requestAnimationFrame(() => {
       target.scrollIntoView({
         block: 'center',
         inline: 'nearest',
         behavior: scrollBehavior,
       })
-      
-      // 滚动完成后重置标记
-      setTimeout(() => {
-        isProgrammaticScrollRef.current = false
-      }, scrollBehavior === 'smooth' ? 500 : 50)
     })
   }, [lyrics.length])
 
-  // 当歌词加载完成时，滚动到第一行
-  useEffect(() => {
-    if (lyrics.length) {
-      scrollToLyric(0, 'auto')
-    }
-  }, [lyrics, scrollToLyric])
+  // 移除初始滚动调用，避免与平滑滚动 useEffect 竞争
+  // useEffect(() => {
+  //   if (lyrics.length) {
+  //     scrollToLyric(0, 'auto')
+  //   }
+  // }, [lyrics, scrollToLyric])
 
   // 平滑连续滚动（使用 requestAnimationFrame 实现真正的连续滚动）
   useEffect(() => {
@@ -250,87 +330,139 @@ export default function LyricSync() {
     const audio = audioRef.current
     if (!container || !audio) return
 
+     // 初始化完成
+
     const smoothScroll = () => {
+      // 检查 refs 是否已准备好
+      if (!lyricRefs.current[0]) {
+        // Refs 还未准备好，等待下一帧
+        animationFrameRef.current = requestAnimationFrame(smoothScroll)
+        return
+      }
+
+       // 只在第一次且 refs 准备好时初始化滚动位置
+      if (!isInitializedRef.current) {
+        lastProgrammaticScrollTimeRef.current = Date.now()
+        isInitializedRef.current = true
+        setCurrentLyricIndex(0)
+        scrollToLyric(0, 'auto')
+        console.log('🔧 初始化：程序滚动到第一句并居中')
+      }
       if (!isPlaying) {
         animationFrameRef.current = requestAnimationFrame(smoothScroll)
         return
       }
 
+      // 统一的歌词索引计算逻辑
       const currentTime = audio.currentTime
-      const lyricIndex = getLyricIndexForTime(currentTime)
-      
-      // 更新当前歌词索引
-      if (lyricIndex !== currentLyricIndex) {
-        setCurrentLyricIndex(lyricIndex)
+
+      // 检测循环跳跃
+      if (detectLoopJump(lastAudioTimeRef.current, currentTime)) {
+        console.log('🔄 检测到循环跳跃', {
+          from: lastAudioTimeRef.current.toFixed(2),
+          to: currentTime.toFixed(2)
+        })
+        loopStateRef.current = LoopState.LOOP_JUMP
+        // 循环跳跃后启动恢复期
+        setTimeout(() => {
+          loopStateRef.current = LoopState.LOOP_RECOVER
+          console.log('🔁 进入循环恢复期')
+          setTimeout(() => {
+            loopStateRef.current = LoopState.NORMAL
+            console.log('✅ 循环恢复期结束，回到正常状态')
+          }, 2000)
+        }, 500)
       }
 
-      // 获取当前歌词元素（原始部分）
-      const currentLyric = lyricRefs.current[lyricIndex]
+      lastAudioTimeRef.current = currentTime
+
+      // 计算当前歌词索引
+      const effectiveLyricIndex = (loopStateRef.current === LoopState.LOOP_JUMP) ? 0 : getLyricIndexForTime(currentTime)
+
+      // 更新当前歌词索引（使用 state，确保渲染一致性）
+      if (effectiveLyricIndex !== currentLyricIndex) {
+        console.log('🎵 RAF更新歌词索引', {
+          audioTime: currentTime.toFixed(2),
+          oldIndex: currentLyricIndex,
+          newIndex: effectiveLyricIndex,
+          loopState: loopStateRef.current
+        })
+        setCurrentLyricIndex(effectiveLyricIndex)
+      }
+
+      // 获取当前歌词元素
+      const actualLyricIndex = effectiveLyricIndex
+      const currentLyric = lyricRefs.current[actualLyricIndex]
+
+      if (!currentLyric) {
+        animationFrameRef.current = requestAnimationFrame(smoothScroll)
+        return
+      }
+
       // 下一句可能是原始部分的下一句，或者是复制部分的第一句
       let nextLyric: HTMLParagraphElement | null
       let nextLyricIndex: number
-      
-      if (lyricIndex < lyrics.length - 1) {
+
+      if (actualLyricIndex < lyrics.length - 1) {
         // 不是最后一句，下一句在原始部分
-        nextLyric = lyricRefs.current[lyricIndex + 1]
-        nextLyricIndex = lyricIndex + 1
+        nextLyric = lyricRefs.current[actualLyricIndex + 1]
+        nextLyricIndex = actualLyricIndex + 1
       } else {
         // 是最后一句，下一句是复制部分的第一句（实现无限循环）
         nextLyric = lyricRefs.current[lyrics.length] // 复制部分的第一句
         nextLyricIndex = 0 // 实际对应第一句歌词
       }
 
-      if (currentLyric && nextLyric) {
-        const containerRect = container.getBoundingClientRect()
-        const containerCenter = containerRect.height / 2
+      // 智能检测用户滚动状态
+      const now = Date.now()
+      const timeSinceUserScroll = now - lastUserScrollTimeRef.current
+      const currentScrollTop = container.scrollTop
+      const scrollDelta = Math.abs(currentScrollTop - lastScrollTopRef.current)
+      
+      // 更新滚动速度
+      scrollVelocityRef.current = scrollDelta
+      lastScrollTopRef.current = currentScrollTop
+      
+      // 基于滚动速度和时间的智能判断 - 进一步优化敏感度
+      const isUserScrolling = timeSinceUserScroll < 300 || scrollVelocityRef.current > 8
 
-        const currentLyricTime = lyrics[lyricIndex].time
-        const nextLyricTime = lyrics[nextLyricIndex].time
-        const duration = nextLyricTime - currentLyricTime
-        const progress = duration > 0 ? Math.min(1, Math.max(0, (currentTime - currentLyricTime) / duration)) : 0
-
-        const currentRect = currentLyric.getBoundingClientRect()
-        const nextRect = nextLyric.getBoundingClientRect()
-
-        const currentCenter = currentRect.top + currentRect.height / 2 - containerRect.top
-        const nextCenter = nextRect.top + nextRect.height / 2 - containerRect.top
-
-        const targetCenter = currentCenter + (nextCenter - currentCenter) * progress
-        const scrollOffset = targetCenter - containerCenter
-
-        // 平滑滚动到目标位置
-        if (Math.abs(scrollOffset) > 0.5) {
-          isProgrammaticScrollRef.current = true
-          container.scrollBy({
-            top: scrollOffset,
-            behavior: 'auto'
-          })
-          
-          setTimeout(() => {
-            isProgrammaticScrollRef.current = false
-          }, 16)
-        }
+      // 如果用户正在滚动，完全跳过自动滚动
+      if (isUserScrolling) {
+        console.log('🚫 用户滚动中，跳过自动滚动', { 
+          timeSince: timeSinceUserScroll, 
+          velocity: scrollVelocityRef.current 
+        })
+        animationFrameRef.current = requestAnimationFrame(smoothScroll)
+        return
       }
 
-      // 使用“取模归一化”实现真正无缝：将 scrollTop 归一化到一个循环内
-      const firstOriginal = lyricRefs.current[0]
-      const cycleHeight = cycleHeightRef.current
-      if (firstOriginal && cycleHeight > 0) {
-        const baseTop = firstOriginal.offsetTop
-        let normalized = container.scrollTop - baseTop
-        // 向下滚动为主，保持 normalized 在 [0, cycleHeight) 区间
-        if (normalized >= cycleHeight) {
-          normalized = normalized % cycleHeight
-          isProgrammaticScrollRef.current = true
-          container.scrollTop = baseTop + normalized
-          setTimeout(() => { isProgrammaticScrollRef.current = false }, 16)
-        } else if (normalized < 0) {
-          // 防御性处理，避免向上越界
-          normalized = ((normalized % cycleHeight) + cycleHeight) % cycleHeight
-          isProgrammaticScrollRef.current = true
-          container.scrollTop = baseTop + normalized
-          setTimeout(() => { isProgrammaticScrollRef.current = false }, 16)
-        }
+      // 只有在非用户滚动时才执行自动滚动
+      if (currentLyric && nextLyric) {
+        // 缓存容器尺寸，减少重复计算
+        const containerHeight = container.clientHeight
+        const containerCenter = containerHeight / 2
+
+        const currentLyricTime = lyrics[actualLyricIndex].time
+        const nextLyricTime = lyrics[nextLyricIndex].time
+        const duration = nextLyricTime - currentLyricTime
+        // 循环跳跃期间，progress固定为0
+        const progress = (loopStateRef.current === LoopState.LOOP_JUMP) ? 0 : (duration > 0 ? Math.min(1, Math.max(0, (currentTime - currentLyricTime) / duration)) : 0)
+
+        // 使用 offsetTop 而非 getBoundingClientRect，性能更好
+        const currentOffset = currentLyric.offsetTop
+        const nextOffset = nextLyric.offsetTop
+
+        // 计算目标滚动位置
+        const targetOffset = currentOffset + (nextOffset - currentOffset) * progress
+        targetScrollTopRef.current = targetOffset - containerCenter
+
+         // 缓动平滑滚动（lerp 线性插值）- 每帧执行，不节流
+         const easeFactor = 0.12 // 缓动系数，增加到0.12提升响应速度
+         currentScrollTopRef.current += (targetScrollTopRef.current - currentScrollTopRef.current) * easeFactor
+
+        // 同步到实际滚动位置（记录时间戳）
+        lastProgrammaticScrollTimeRef.current = now
+        container.scrollTop = currentScrollTopRef.current
       }
 
       // 继续下一帧动画
@@ -356,44 +488,239 @@ export default function LyricSync() {
       return
     }
 
-    // 忽略程序触发的滚动
-    if (isProgrammaticScrollRef.current) {
+    // 首句前禁止"滚动→时间"同步
+    const audio = audioRef.current
+    if (!audio) return
+    if (audio.currentTime < lyrics[0].time) {
+      console.log('🚫 首句时间未到，禁止滚动→时间同步', {
+        currentTime: audio.currentTime,
+        firstLyricTime: lyrics[0].time
+      })
       return
     }
 
-    const container = event.currentTarget
-    // 获取容器的位置信息，用于计算相对位置
-    const containerRect = container.getBoundingClientRect()
-    const containerCenter = containerRect.top + containerRect.height / 2
+    // B+C+D 方案：三重早退机制
+    const now = Date.now()
+
+    // a) 初始化保护期内：忽略滚动
+    if (now < initGuardUntilRef.current) {
+      console.log('🚫 初始化保护期内，忽略滚动', {
+        now,
+        guardUntil: initGuardUntilRef.current
+      })
+      return
+    }
+
+    // b) 程序性滚动冷却期：忽略滚动
+    const timeSinceLastProgrammaticScroll = now - lastProgrammaticScrollTimeRef.current
+    if (timeSinceLastProgrammaticScroll < PROGRAM_SCROLL_COOLDOWN) {
+      console.log('🚫 程序滚动冷却期内，忽略滚动', {
+        timeSince: timeSinceLastProgrammaticScroll,
+        cooldown: PROGRAM_SCROLL_COOLDOWN
+      })
+      return
+    }
+
+    // c) 首句时间未到：暂不允许"滚动→时间"
+    if (!allowScrollToTimeRef.current) {
+      console.log('🚫 时间窗口未开放，忽略滚动')
+      return
+    }
+
+     const container = event.currentTarget
+     
+     // 记录用户滚动时间和速度
+     lastUserScrollTimeRef.current = now
+     const currentScrollTop = container.scrollTop
+     const scrollDelta = Math.abs(currentScrollTop - lastScrollTopRef.current)
+     scrollVelocityRef.current = scrollDelta
+     lastScrollTopRef.current = currentScrollTop
+     
+     console.log('👆 用户开始滚动，暂停自动滚动', { 
+       scrollDelta, 
+       velocity: scrollVelocityRef.current,
+       timeSince: timeSinceLastProgrammaticScroll 
+     })
+     
+    const containerScrollTop = container.scrollTop
+    const containerHeight = container.clientHeight
+    const containerCenter = containerScrollTop + containerHeight / 2
 
     let closestIndex = currentLyricIndex
     let smallestDistance = Number.POSITIVE_INFINITY
 
-    lyricRefs.current.forEach((item, index) => {
-      if (!item) return
-      // 使用 getBoundingClientRect 获取元素相对于视口的准确位置
-      const itemRect = item.getBoundingClientRect()
-      const itemCenter = itemRect.top + itemRect.height / 2
-      // 计算元素中心与容器中心的距离
+    // 开发模式断点验证
+    if (process.env.NODE_ENV === 'development') {
+      console.assert(lyricRefs.current[0] !== null, 'First lyric ref is null')
+      const timeSince = Date.now() - lastProgrammaticScrollTimeRef.current
+      console.assert(timeSince >= PROGRAM_SCROLL_COOLDOWN,
+        'Program scroll cooldown violated', timeSince)
+    }
+
+    // 只检查原始歌词部分（不包括复制部分）
+    const lyricCount = lyrics.length
+    for (let i = 0; i < lyricCount; i++) {
+      const item = lyricRefs.current[i]
+      if (!item) continue
+      // 使用元素中心而非顶部，提高命中准确性
+      const itemCenter = item.offsetTop + item.offsetHeight / 2
       const distance = Math.abs(itemCenter - containerCenter)
-      
+
       if (distance < smallestDistance) {
         smallestDistance = distance
-        closestIndex = index
+        closestIndex = i
       }
-    })
 
-    // 用户手动滚动时，同步更新音频位置和歌词索引
-    if (closestIndex !== currentLyricIndex) {
-      setCurrentLyricIndex(closestIndex)
-      const audio = audioRef.current
-      const targetLyric = lyrics[closestIndex]
-      if (audio && targetLyric) {
-        audio.currentTime = targetLyric.time
-        setCurrentTime(targetLyric.time)
+      // 开发模式：调试命中行匹配
+      if (process.env.NODE_ENV === 'development') {
+        if (i === currentLyricIndex || distance < 50) {
+          console.log('🎯 元素匹配调试', {
+            index: i,
+            text: lyrics[i]?.text?.slice(0, 8) + '...',
+            containerCenter: containerCenter.toFixed(2),
+            itemTop: item.offsetTop.toFixed(2),
+            itemHeight: item.offsetHeight.toFixed(2),
+            itemCenter: itemCenter.toFixed(2),
+            distance: distance.toFixed(2),
+            isClosest: distance < smallestDistance
+          })
+        }
       }
     }
-    // 不暂停自动滚动，立即从新位置继续
+
+    // 开发模式：显示最终匹配结果
+    if (process.env.NODE_ENV === 'development') {
+      console.log('📍 最终匹配结果', {
+        selectedIndex: closestIndex,
+        selectedText: lyrics[closestIndex]?.text?.slice(0, 12) + '...',
+        smallestDistance: smallestDistance.toFixed(2),
+        containerCenter: containerCenter.toFixed(2),
+        currentLyricIndex: currentLyricIndex,
+        willTriggerSync: closestIndex !== currentLyricIndex
+      })
+    }
+
+    // 🔍 深度诊断：检查DOM元素与数组的对应关系
+    if (process.env.NODE_ENV === 'development' && closestIndex !== currentLyricIndex) {
+      console.log('🔍 [诊断] 滚动→时间同步偏差分析', {
+        // 当前状态
+        currentLyricIndex,
+        currentLyricText: lyrics[currentLyricIndex]?.text?.slice(0, 8),
+
+        // 目标状态
+        targetIndex: closestIndex,
+        targetLyricText: lyrics[closestIndex]?.text?.slice(0, 8),
+        targetTime: lyrics[closestIndex]?.time?.toFixed(2),
+
+        // DOM元素信息
+        domElementCount: lyricRefs.current.length,
+        lyricsArrayLength: lyrics.length,
+
+        // 容器信息
+        containerScrollTop: containerScrollTop.toFixed(2),
+        containerCenter: containerCenter.toFixed(2),
+
+        // 距离分析
+        smallestDistance: smallestDistance.toFixed(2),
+
+        // 索引映射验证
+        indexMapping: {
+          'currentLyricIndex': currentLyricIndex,
+          'closestIndex': closestIndex,
+          'difference': closestIndex - currentLyricIndex,
+          'isExpectedBehavior': Math.abs(closestIndex - currentLyricIndex) === 1
+        }
+      })
+
+      // 验证DOM元素与数组元素的一致性
+      if (lyricRefs.current[closestIndex]) {
+        const domElement = lyricRefs.current[closestIndex]
+        const domText = domElement.textContent?.slice(0, 8)
+        const arrayText = lyrics[closestIndex]?.text?.slice(0, 8)
+        console.log('🔍 [诊断] DOM与数组一致性检查', {
+          domText,
+          arrayText,
+          isMatch: domText === arrayText,
+          domElementIndex: closestIndex,
+          arrayIndex: closestIndex
+        })
+      }
+    }
+
+     // 用户手动滚动时，同步更新音频位置和歌词索引
+     if (closestIndex !== currentLyricIndex) {
+       const targetLyric = lyrics[closestIndex]
+
+       // 🔍 诊断：-1偏移模式检测
+       const indexDifference = closestIndex - currentLyricIndex
+       const isNegativeOneOffset = indexDifference === -1
+
+       console.log('🎯 滚动同步：', {
+         from: currentLyricIndex,
+         to: closestIndex,
+         fromText: lyrics[currentLyricIndex]?.text,
+         toText: targetLyric?.text,
+         targetTime: targetLyric?.time.toFixed(2),
+         indexDifference,
+         isNegativeOneOffset,
+         offsetPattern: isNegativeOneOffset ? '🚨 检测到-1偏移模式' : '正常偏移'
+       })
+
+       // 🔍 诊断：详细的时间映射分析
+       if (process.env.NODE_ENV === 'development' && isNegativeOneOffset) {
+         console.log('🔍 [关键诊断] -1偏移详细分析', {
+           '用户滚动到': {
+             index: closestIndex,
+             text: targetLyric?.text?.slice(0, 12),
+             time: targetLyric?.time?.toFixed(2)
+           },
+           '当前音频时间': {
+             index: currentLyricIndex,
+             text: lyrics[currentLyricIndex]?.text?.slice(0, 12),
+             time: lyrics[currentLyricIndex]?.time?.toFixed(2)
+           },
+           '预期行为': '应该同步到目标索引的时间',
+           '实际行为': `将要同步到索引${closestIndex}，但可能存在算法偏差`,
+           '问题假设': [
+             '1. centeredIndex算法计算错误',
+             '2. DOM元素与lyrics数组不对应',
+             '3. 时间映射逻辑存在off-by-one',
+             '4. 滚动事件处理时序问题'
+           ]
+         })
+       }
+
+       const audio = audioRef.current
+       if (audio && targetLyric) {
+         const oldTime = audio.currentTime
+         const newTime = targetLyric.time
+
+         audio.currentTime = newTime
+         setCurrentTime(newTime)
+         setCurrentLyricIndex(closestIndex)
+
+         // 🔍 诊断：时间同步验证
+         if (process.env.NODE_ENV === 'development' && isNegativeOneOffset) {
+           console.log('🔍 [时间同步] 音频时间变更', {
+             oldTime: oldTime.toFixed(2),
+             newTime: newTime.toFixed(2),
+             timeDifference: (newTime - oldTime).toFixed(2),
+             syncedLyricIndex: closestIndex,
+             syncedLyricText: targetLyric?.text?.slice(0, 12)
+           })
+         }
+
+         // 计算并同步目标滚动位置
+         const targetElement = lyricRefs.current[closestIndex]
+         if (targetElement) {
+           const containerHeight = container.clientHeight
+           const containerCenter = containerHeight / 2
+           const targetOffset = targetElement.offsetTop - containerCenter
+           targetScrollTopRef.current = targetOffset
+           currentScrollTopRef.current = targetOffset
+         }
+       }
+     }
   }
 
   // 播放/暂停控制
@@ -403,8 +730,30 @@ export default function LyricSync() {
 
     if (isPlaying) {
       audio.pause()
+      console.log('⏸️ 暂停播放')
     } else {
-      audio.play()
+      // 播放逻辑优化：先标记程序滚动再居中
+      console.log('▶️ 开始播放，当前时间：', audio.currentTime)
+      lastProgrammaticScrollTimeRef.current = Date.now()
+      scrollToLyric(0, 'auto')
+
+      // 先标记程序滚动，再居中，让随后的 onScroll 被冷却窗屏蔽
+      lastProgrammaticScrollTimeRef.current = Date.now()
+      scrollToLyric(0, 'auto')
+
+      // 重置控制状态
+      lastUserScrollTimeRef.current = 0
+      scrollVelocityRef.current = 0
+
+      // 重置B+C+D方案的状态
+      initGuardUntilRef.current = Date.now() + INIT_GUARD_WINDOW
+      allowScrollToTimeRef.current = false
+
+      console.log('🔄 播放重置，B+C+D状态已更新')
+
+      audio.play().then(() => {
+        console.log('✅ 播放开始，实际时间：', audio.currentTime)
+      })
     }
     setIsPlaying(!isPlaying)
   }
@@ -424,8 +773,23 @@ export default function LyricSync() {
 
     const newIndex = getLyricIndexForTime(newTime)
     setCurrentLyricIndex(newIndex)
-    
-    // 自动滚动会立即从新位置继续
+
+    // 计算并同步目标滚动位置（标记为程序滚动）
+    const targetElement = lyricRefs.current[newIndex]
+    const container = lyricsContainerRef.current
+    if (targetElement && container) {
+      const containerHeight = container.clientHeight
+      const containerCenter = containerHeight / 2
+      const targetOffset = targetElement.offsetTop - containerCenter
+      targetScrollTopRef.current = targetOffset
+      currentScrollTopRef.current = targetOffset
+
+      // 标记为程序性滚动
+      lastProgrammaticScrollTimeRef.current = Date.now()
+      container.scrollTop = targetOffset
+
+      console.log('🎯 进度条点击，程序滚动到歌词', { newIndex })
+    }
   }
 
   const rawDuration = audioRef.current?.duration ?? 0
@@ -487,10 +851,10 @@ export default function LyricSync() {
                           data-cycle="0"
                           className={`lyric-line transition-all duration-500 ease-in-out ${getLyricClass(index)}`}
                         >
-                          {lyric.text}
+                          {lyric.text || '♪'}
                         </p>
                       ))}
-                      
+
                       {/* 第二遍：复制歌词实现无限循环视觉效果 */}
                       {lyrics.map((lyric, index) => (
                         <p
@@ -502,10 +866,10 @@ export default function LyricSync() {
                           data-cycle="1"
                           className={`lyric-line transition-all duration-500 ease-in-out ${getLyricClass(index)}`}
                         >
-                          {lyric.text}
+                          {lyric.text || '♪'}
                         </p>
                       ))}
-                      
+
                       {/* 底部占位空间 */}
                       <div style={{ height: 'calc(var(--visible-lines) / 2 * var(--line-height))' }} />
                     </>
