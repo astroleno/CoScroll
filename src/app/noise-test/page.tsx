@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useState } from 'react';
-import AdvancedNoiseOverlay, { useAdvancedNoiseEffect } from '@/components/AdvancedNoiseOverlay';
 
 /**
  * 噪点效果测试页面
@@ -9,7 +8,7 @@ import AdvancedNoiseOverlay, { useAdvancedNoiseEffect } from '@/components/Advan
  */
 export default function NoiseTestPage() {
   const [noiseEnabled, setNoiseEnabled] = useState(true);
-  const [intensity, setIntensity] = useState(0.03);
+  const [intensity, setIntensity] = useState(0.3);
   const [scale, setScale] = useState(1.0);
   const [speed, setSpeed] = useState(1.0);
   const [opacity, setOpacity] = useState(0.8);
@@ -45,8 +44,8 @@ export default function NoiseTestPage() {
             <input
               type="range"
               min="0"
-              max="0.1"
-              step="0.001"
+              max="1"
+              step="0.01"
               value={intensity}
               onChange={(e) => setIntensity(parseFloat(e.target.value))}
               className="w-full"
@@ -230,23 +229,34 @@ export default function NoiseTestPage() {
         </div>
       </div>
 
-      {/* 噪点覆盖层 */}
+      {/* 简单的噪点效果 */}
       {noiseEnabled && (
-        <AdvancedNoiseOverlay
-          intensity={intensity}
-          scale={scale}
-          speed={speed}
-          opacity={opacity}
-          blendMode={blendMode}
-          color={color}
-          animated={true}
-          className="noise-overlay"
-          noiseType={noiseType}
-          frequency={frequency}
-          octaves={octaves}
-          lacunarity={lacunarity}
-          persistence={persistence}
-        />
+        <div 
+          className="fixed inset-0 pointer-events-none z-50"
+          style={{
+            opacity: opacity,
+            background: `
+              radial-gradient(circle at 20% 20%, rgba(255,255,255,${intensity}) 1px, transparent 1px),
+              radial-gradient(circle at 40% 40%, rgba(255,255,255,${intensity}) 1px, transparent 1px),
+              radial-gradient(circle at 60% 60%, rgba(255,255,255,${intensity}) 1px, transparent 1px),
+              radial-gradient(circle at 80% 80%, rgba(255,255,255,${intensity}) 1px, transparent 1px),
+              radial-gradient(circle at 10% 90%, rgba(255,255,255,${intensity}) 1px, transparent 1px),
+              radial-gradient(circle at 90% 10%, rgba(255,255,255,${intensity}) 1px, transparent 1px)
+            `,
+            backgroundSize: '50px 50px, 60px 60px, 40px 40px, 70px 70px, 30px 30px, 80px 80px',
+            animation: 'noise 2s steps(4) infinite'
+          }}
+        >
+          <style jsx>{`
+            @keyframes noise {
+              0% { transform: translate(0, 0); }
+              25% { transform: translate(-1px, -1px); }
+              50% { transform: translate(1px, -1px); }
+              75% { transform: translate(-1px, 1px); }
+              100% { transform: translate(0, 0); }
+            }
+          `}</style>
+        </div>
       )}
     </div>
   );

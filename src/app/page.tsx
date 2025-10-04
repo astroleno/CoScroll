@@ -7,7 +7,7 @@ import useLyrics from '@/components/hooks/useLyrics';
 import LyricsController from '@/components/LyricsController';
 import AudioPlayer from '@/components/AudioPlayer';
 import AutoPlayGuard from '@/components/AutoPlayGuard';
-import AdvancedNoiseOverlay, { useAdvancedNoiseEffect } from '@/components/AdvancedNoiseOverlay';
+import ModelPreloader from '@/components/jade/ModelPreloader';
 import type { LyricLine } from '@/types';
 
 // 动态导入 JadeV6 避免 SSR 问题
@@ -102,13 +102,14 @@ export default function HomePage() {
   // 3D模型相关状态
   const [scrollVelocity, setScrollVelocity] = useState(0);
   const [currentAnchor, setCurrentAnchor] = useState('心');
+  const [modelPreloadStatus, setModelPreloadStatus] = useState({
+    isPreloading: false,
+    loaded: 0,
+    total: 0,
+    currentModel: '',
+    nextModel: ''
+  });
 
-  // 噪点效果相关状态
-  const [noiseEnabled, setNoiseEnabled] = useState(true);
-  const [noiseIntensity, setNoiseIntensity] = useState(0.03);
-  const [noiseScale, setNoiseScale] = useState(1.0);
-  const [noiseSpeed, setNoiseSpeed] = useState(1.0);
-  const [noiseOpacity, setNoiseOpacity] = useState(0.8);
 
   const audioRef = useRef<HTMLAudioElement>(null);
   const isSeekingRef = useRef(false);
@@ -126,6 +127,47 @@ export default function HomePage() {
     const logMessage = `[${timestamp}] ${message}`;
     console.log(logMessage);
     setDebugLogs(prev => [...prev.slice(-4), logMessage]);
+  }, []);
+
+  // 页面初始化预加载逻辑
+  useEffect(() => {
+    const initializePreloading = async () => {
+      try {
+        console.log('[HomePage] 开始页面初始化预加载...');
+        setModelPreloadStatus(prev => ({ ...prev, isPreloading: true }));
+        
+        const preloader = ModelPreloader.getInstance();
+        
+        // 确定优先级模型（前3个锚字对应的模型）
+        const priorityPaths = ANCHOR_TIMELINE.slice(0, 3).map(item => 
+          ANCHOR_MODEL_MAPPING[item.anchor]
+        ).filter(Boolean);
+        
+        console.log('[HomePage] 优先级模型:', priorityPaths);
+        
+        // 开始智能预加载
+        await preloader.preloadAllModels(ALL_MODEL_PATHS, priorityPaths);
+        
+        // 更新状态
+        const status = preloader.getCacheStatus();
+        setModelPreloadStatus({
+          isPreloading: false,
+          loaded: status.loaded,
+          total: status.total,
+          currentModel: getModelPath(currentAnchor),
+          nextModel: ''
+        });
+        
+        console.log('[HomePage] ✅ 页面初始化预加载完成:', status);
+      } catch (error) {
+        console.error('[HomePage] ❌ 页面初始化预加载失败:', error);
+        setModelPreloadStatus(prev => ({ ...prev, isPreloading: false }));
+      }
+    };
+
+    // 延迟一点开始预加载，避免阻塞页面渲染
+    const timer = setTimeout(initializePreloading, 100);
+    return () => clearTimeout(timer);
   }, []);
 
   // 检测移动端
@@ -438,13 +480,30 @@ export default function HomePage() {
   // 使用精确时间轴查找锚字
   const anchorChar = findAnchorCharByTime(currentTime);
 
-  // 更新锚字状态
+  // 更新锚字状态和智能预加载
   useEffect(() => {
     if (anchorChar !== currentAnchor) {
       console.log(`[锚字更新] ${currentAnchor} -> ${anchorChar}`);
       setCurrentAnchor(anchorChar);
+      
+      // 智能预加载下一个模型
+      const preloader = ModelPreloader.getInstance();
+      preloader.preloadNextModel(currentTime, ANCHOR_TIMELINE, ANCHOR_MODEL_MAPPING)
+        .then(() => {
+          // 更新预加载状态
+          const status = preloader.getCacheStatus();
+          setModelPreloadStatus(prev => ({
+            ...prev,
+            loaded: status.loaded,
+            currentModel: getModelPath(anchorChar),
+            nextModel: preloader.predictNextModel(currentTime, ANCHOR_TIMELINE, ANCHOR_MODEL_MAPPING) || ''
+          }));
+        })
+        .catch(error => {
+          console.error('[HomePage] 智能预加载失败:', error);
+        });
     }
-  }, [anchorChar, currentAnchor]);
+  }, [anchorChar, currentAnchor, currentTime]);
 
   // 调试信息：显示当前锚字状态
   useEffect(() => {
@@ -453,6 +512,29 @@ export default function HomePage() {
       console.log(`[当前锚字] ${anchorChar} - ${currentAnchorInfo.text} (${currentAnchorInfo.meaning})`);
     }
   }, [anchorChar]);
+
+  // 模型预加载状态监控
+  useEffect(() => {
+    const preloader = ModelPreloader.getInstance();
+    const status = preloader.getCacheStatus();
+    
+    console.log('[HomePage] 模型预加载状态:', {
+      ...status,
+      currentModel: getModelPath(currentAnchor),
+      nextModel: preloader.predictNextModel(currentTime, ANCHOR_TIMELINE, ANCHOR_MODEL_MAPPING),
+      isCurrentModelCached: preloader.isModelLoaded(getModelPath(currentAnchor)),
+      isCurrentModelLoading: preloader.isModelLoading(getModelPath(currentAnchor))
+    });
+    
+    // 更新状态
+    setModelPreloadStatus(prev => ({
+      ...prev,
+      loaded: status.loaded,
+      total: status.total,
+      currentModel: getModelPath(currentAnchor),
+      nextModel: preloader.predictNextModel(currentTime, ANCHOR_TIMELINE, ANCHOR_MODEL_MAPPING) || ''
+    }));
+  }, [currentAnchor, currentTime]);
 
   console.log('[HomePage] Render state:', { hasUserInteracted, isReady, isPlaying, isIntroPlaying });
 
@@ -534,10 +616,12 @@ export default function HomePage() {
           baseSpeed={0.3}
           speedMultiplier={8.0}
           externalVelocity={scrollVelocity}
-          // 预加载设置（新增）
+          // 预加载设置（优化版）
           enablePreloading={true}
-          preloadAllModels={true}
+          preloadAllModels={false} // 改为false，因为已经在页面初始化时预加载了
           modelPaths={ALL_MODEL_PATHS}
+          // 预加载状态传递
+          preloadStatus={modelPreloadStatus}
         />
       </div>
 
@@ -568,24 +652,6 @@ export default function HomePage() {
         />
       </footer>
 
-      {/* 噪点覆盖层 */}
-      {noiseEnabled && (
-        <AdvancedNoiseOverlay
-          intensity={noiseIntensity}
-          scale={noiseScale}
-          speed={noiseSpeed}
-          opacity={noiseOpacity}
-          blendMode="normal"
-          color="#ffffff"
-          animated={true}
-          className="noise-overlay"
-          noiseType="perlin"
-          frequency={1.0}
-          octaves={4}
-          lacunarity={2.0}
-          persistence={0.5}
-        />
-      )}
     </div>
   );
 }

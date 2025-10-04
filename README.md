@@ -119,6 +119,33 @@ npm run dev
 - **使用场景**: 需要纯色背景但保持高质量折射效果的场景
 - **访问路径**: `/jade-v6`
 
+### 3D字幕系统
+
+#### Lyrics3DRenderer - 3D字幕渲染组件
+- **路径**: `/src/components/lyrics/Lyrics3DRenderer.tsx`
+- **特性**: 基于Troika Text的3D字幕渲染系统
+- **核心功能**:
+  - "前-后-后"循环空间布局
+  - 与锚字3D模型的遮挡交互
+  - 动态LOD系统和性能优化
+  - 视锥剔除和实例化渲染
+- **技术实现**:
+  - Troika Text (SDF技术)
+  - Zustand状态管理
+  - 自适应质量调整
+  - 内存管理和垃圾回收
+- **使用场景**: 沉浸式3D经卷体验
+- **访问路径**: `/lyrics3d-example`
+
+#### Lyrics3DStore - 状态管理系统
+- **路径**: `/src/stores/lyrics3DStore.ts`
+- **特性**: 统一的3D字幕状态管理
+- **核心功能**:
+  - 与LyricsController的状态同步
+  - 性能监控和自适应调整
+  - 锚字模型管理
+  - 质量级别控制
+
 ### 噪点效果组件系列
 
 #### AdvancedNoiseOverlay - 高级噪点覆盖层
@@ -199,8 +226,9 @@ npm run dev
 - [ ] LLM 文本分析集成
 - [ ] 更多书法模型库
 - [ ] 用户自定义内容
-- [ ] 移动端优化
-- [ ] 性能监控
+- [x] 移动端优化
+- [x] 性能监控
+- [x] 3D字幕集成系统
 
 ## 贡献指南
 

@@ -96,6 +96,13 @@ interface JadeV6Props {
   enablePreloading?: boolean;      // 是否启用预加载
   preloadAllModels?: boolean;      // 是否预加载所有模型
   modelPaths?: string[];           // 需要预加载的模型路径列表
+  preloadStatus?: {                // 预加载状态
+    isPreloading: boolean;
+    loaded: number;
+    total: number;
+    currentModel: string;
+    nextModel: string;
+  };
 }
 
 /**
