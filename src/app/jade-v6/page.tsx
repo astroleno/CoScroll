@@ -37,6 +37,11 @@ export default function Page() {
   const [subdivisions, setSubdivisions] = useState(0);
   const [creaseAngle, setCreaseAngle] = useState(30);
   
+  // 平滑着色控制
+  const [smoothShading, setSmoothShading] = useState(true);
+  const [innerSmoothShading, setInnerSmoothShading] = useState(true);
+  const [outerSmoothShading, setOuterSmoothShading] = useState(true);
+  
   const [showHdrBackground, setShowHdrBackground] = useState(false);
   const [showInnerLayer, setShowInnerLayer] = useState(true);
   const [showOuterLayer, setShowOuterLayer] = useState(true);
@@ -359,6 +364,44 @@ export default function Page() {
           </div>
         </div>
         
+        {/* 平滑着色控制 */}
+        <div style={{ marginBottom: '16px', padding: '8px', background: 'rgba(76, 175, 80, 0.1)', borderRadius: '4px' }}>
+          <div style={{ fontWeight: 'bold', marginBottom: '8px', color: '#4CAF50' }}>平滑着色控制</div>
+          
+          <div style={{ marginBottom: '8px' }}>
+            <label style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <input 
+                type="checkbox" 
+                checked={smoothShading}
+                onChange={(e) => setSmoothShading(e.target.checked)}
+              />
+              <span>全局平滑着色</span>
+            </label>
+          </div>
+          
+          <div style={{ marginBottom: '8px' }}>
+            <label style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <input 
+                type="checkbox" 
+                checked={innerSmoothShading}
+                onChange={(e) => setInnerSmoothShading(e.target.checked)}
+              />
+              <span>内层平滑着色</span>
+            </label>
+          </div>
+          
+          <div style={{ marginBottom: '8px' }}>
+            <label style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <input 
+                type="checkbox" 
+                checked={outerSmoothShading}
+                onChange={(e) => setOuterSmoothShading(e.target.checked)}
+              />
+              <span>外层平滑着色</span>
+            </label>
+          </div>
+        </div>
+        
         {/* 图层控制 */}
         <div style={{ marginBottom: '16px', padding: '8px', background: 'rgba(255, 152, 0, 0.1)', borderRadius: '4px' }}>
           <div style={{ fontWeight: 'bold', marginBottom: '8px', color: '#FF9800' }}>图层控制</div>
@@ -460,6 +503,11 @@ export default function Page() {
         maxEdge={maxEdge}
         subdivisions={subdivisions}
         creaseAngle={creaseAngle}
+        
+        // 平滑着色控制
+        smoothShading={smoothShading}
+        innerSmoothShading={innerSmoothShading}
+        outerSmoothShading={outerSmoothShading}
         
         enableRotation={true}
       />

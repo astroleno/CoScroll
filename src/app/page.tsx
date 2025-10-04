@@ -9,8 +9,8 @@ import AudioPlayer from '@/components/AudioPlayer';
 import AutoPlayGuard from '@/components/AutoPlayGuard';
 import type { LyricLine } from '@/types';
 
-// 动态导入 JadeV5 避免 SSR 问题
-const JadeV5 = dynamic(() => import('@/components/jade/JadeV5'), { 
+// 动态导入 JadeV6 避免 SSR 问题
+const JadeV6 = dynamic(() => import('@/components/jade/JadeV6'), { 
   ssr: false,
   loading: () => (
     <div className="fixed inset-0 flex items-center justify-center bg-[#202734]">
@@ -73,8 +73,6 @@ export default function HomePage() {
   const [isMobile, setIsMobile] = useState(false);
   const [audioRestartCount, setAudioRestartCount] = useState(0);
   const [debugLogs, setDebugLogs] = useState<string[]>([]);
-  const [activeLyric, setActiveLyric] = useState<LyricLine | null>(null);
-  const [backLyricTexts, setBackLyricTexts] = useState<string[]>([]);
 
   // 3D模型相关状态
   const [scrollVelocity, setScrollVelocity] = useState(0);
@@ -89,28 +87,6 @@ export default function HomePage() {
   const lastSeekTargetDisplayTimeRef = useRef<number | null>(null);
 
   const lyrics = useLyrics(LRC_LYRICS);
-
-  const handleActiveLyricChange = useCallback((line: LyricLine | null, index: number) => {
-    setActiveLyric(line && line.text.trim() ? line : null);
-
-    if (!lyrics || lyrics.length === 0 || index < 0) {
-      setBackLyricTexts([]);
-      return;
-    }
-
-    const total = lyrics.length;
-    const candidates: string[] = [];
-    for (let offset = 1; offset < total; offset++) {
-      const nextIdx = (index + offset) % total;
-      const nextLine = lyrics[nextIdx];
-      const trimmed = nextLine?.text.trim();
-      if (trimmed) {
-        candidates.push(trimmed);
-        if (candidates.length === 2) break;
-      }
-    }
-    setBackLyricTexts(candidates);
-  }, [lyrics]);
 
   // 添加调试日志
   const addDebugLog = useCallback((message: string) => {
@@ -412,8 +388,6 @@ export default function HomePage() {
 
   const anchorChar = findAnchorChar(currentLineIndex);
 
-  const currentLyricText = activeLyric?.text?.trim() || '';
-
   // 更新锚字状态
   useEffect(() => {
     if (anchorChar !== currentAnchor) {
@@ -475,21 +449,15 @@ export default function HomePage() {
       />
       
       {/* 3D模型背景 - 替代原来的背景字符 */}
-      <div className="fixed inset-0 grid place-items-center pointer-events-none z-10">
-        <JadeV5
+      <div className="fixed inset-0 pointer-events-none z-10" style={{ width: '100%', height: '100%' }}>
+        <JadeV6
           modelPath={getModelPath(currentAnchor)}
-          baseSpeed={0.4}
-          speedMultiplier={3.0}
-          externalVelocity={scrollVelocity}
-          currentLineText={currentLyricText}
-          backLineTexts={backLyricTexts}
-          showModelSwitcher={false}
-          containerStyle={{ 
-            position: 'fixed', 
-            inset: 0, 
-            zIndex: 0,
-            pointerEvents: 'none'
-          }}
+          rotationDurationSec={8}
+          direction={1}
+          fitToView
+          background="#202734"
+          environmentHdrPath="/textures/qwantani_moon_noon_puresky_1k.hdr"
+          environmentIntensity={1.0}
         />
       </div>
 
@@ -504,7 +472,6 @@ export default function HomePage() {
             onSeek={handleSeek}
             isPlaying={isPlaying}
             onScrollVelocityChange={setScrollVelocity}
-            onActiveLineChange={handleActiveLyricChange}
           />
         </div>
       </main>

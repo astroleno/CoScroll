@@ -76,9 +76,35 @@ interface JadeV6Props {
   subdivisions?: number;           // 简化 Loop 细分次数（0-1）
   creaseAngle?: number;            // 折痕角度（30-90）
   
+  // 平滑着色控制
+  smoothShading?: boolean;         // 全局平滑着色开关
+  innerSmoothShading?: boolean;   // 内层平滑着色
+  outerSmoothShading?: boolean;   // 外层平滑着色
+  
   // 渲染设置
   exposure?: number;               // 全局曝光
   enableRotation?: boolean;        // 是否启用旋转
+}
+
+/**
+ * 应用平滑着色（类似 Blender Shade Smooth）
+ */
+function applySmoothShading(geometry: THREE.BufferGeometry): THREE.BufferGeometry {
+  let geo = geometry.clone();
+  
+  try {
+    // 1. 焊接重复顶点（确保共享顶点）
+    geo = mergeVertices(geo);
+    
+    // 2. 计算平滑法线
+    geo.computeVertexNormals();
+    
+    console.log('[JadeV6] 平滑着色已应用');
+  } catch (e) {
+    console.warn('[JadeV6] 平滑着色应用失败:', e);
+  }
+  
+  return geo;
 }
 
 /**
@@ -86,12 +112,13 @@ interface JadeV6Props {
  */
 function optimizeGeometry(
   geometry: THREE.BufferGeometry,
-  options: { maxEdge?: number; subdivisions?: number; creaseAngle?: number } = {}
+  options: { maxEdge?: number; subdivisions?: number; creaseAngle?: number; smoothShading?: boolean } = {}
 ): THREE.BufferGeometry {
   const {
     maxEdge: optMaxEdge = 0.06,
     subdivisions: optSub = 1,
     creaseAngle: optCrease = 50,
+    smoothShading: optSmooth = true,
   } = options;
 
   let geo = geometry;
@@ -110,6 +137,11 @@ function optimizeGeometry(
     if (optCrease < 90) {
       const creaseRad = THREE.MathUtils.degToRad(optCrease);
       geo = toCreasedNormals(geo, creaseRad);
+    }
+    
+    // 应用平滑着色（如果启用）
+    if (optSmooth) {
+      geo = applySmoothShading(geo);
     }
   } catch (e) {
     console.warn('[JadeV6] 几何优化失败，使用原始几何:', e);
@@ -149,7 +181,7 @@ function loopSubdivide(geometry: THREE.BufferGeometry, iterations: number): THRE
 }
 
 // 创建 offset 几何体的函数
-function createOffsetGeometry(originalGeometry: THREE.BufferGeometry, offsetDistance: number, optimizeOptions?: { maxEdge?: number; subdivisions?: number; creaseAngle?: number }): THREE.BufferGeometry {
+function createOffsetGeometry(originalGeometry: THREE.BufferGeometry, offsetDistance: number, optimizeOptions?: { maxEdge?: number; subdivisions?: number; creaseAngle?: number; smoothShading?: boolean }): THREE.BufferGeometry {
   // 克隆原始几何体
   let offsetGeometry = originalGeometry.clone();
   
@@ -203,7 +235,10 @@ function DualLayerModelLoader({
   outerOffset = 0.02,
   maxEdge = 0.15,
   subdivisions = 0,
-  creaseAngle = 30
+  creaseAngle = 30,
+  smoothShading = true,
+  innerSmoothShading = true,
+  outerSmoothShading = true
 }: { 
   modelPath: string; 
   material: THREE.Material;
@@ -215,6 +250,9 @@ function DualLayerModelLoader({
   maxEdge?: number;
   subdivisions?: number;
   creaseAngle?: number;
+  smoothShading?: boolean;
+  innerSmoothShading?: boolean;
+  outerSmoothShading?: boolean;
 }) {
   const [geometry, setGeometry] = useState<THREE.BufferGeometry | null>(null);
   const [offsetGeometry, setOffsetGeometry] = useState<THREE.BufferGeometry | null>(null);
@@ -295,15 +333,15 @@ function DualLayerModelLoader({
   useEffect(() => {
     if (!geometry) return;
     
-    const offset = createOffsetGeometry(geometry, outerOffset, { maxEdge, subdivisions, creaseAngle });
+    const offset = createOffsetGeometry(geometry, outerOffset, { maxEdge, subdivisions, creaseAngle, smoothShading: outerSmoothShading });
     setOffsetGeometry(offset);
     
-    console.log('[JadeV6] Offset 几何体重新创建，偏移距离:', outerOffset, '细分参数:', { maxEdge, subdivisions, creaseAngle });
-  }, [geometry, outerOffset, maxEdge, subdivisions, creaseAngle]);
+    console.log('[JadeV6] Offset 几何体重新创建，偏移距离:', outerOffset, '细分参数:', { maxEdge, subdivisions, creaseAngle, smoothShading: outerSmoothShading });
+  }, [geometry, outerOffset, maxEdge, subdivisions, creaseAngle, outerSmoothShading]);
 
-  // 自动适配视图
+  // 自动适配视图 - 等待几何体完全准备好
   useEffect(() => {
-    if (!geometry || !fitToView || !meshRef.current) return;
+    if (!geometry || !offsetGeometry || !fitToView || !meshRef.current) return;
 
     try {
       const box = new THREE.Box3().setFromObject(meshRef.current);
@@ -311,7 +349,7 @@ function DualLayerModelLoader({
       const center = box.getCenter(new THREE.Vector3());
       
       const maxDim = Math.max(size.x, size.y, size.z);
-      const distance = maxDim * 1.5; // 减少距离，让模型看起来更大
+      const distance = maxDim * 2.14; // 调整距离，让模型看起来更小（70%大小）
       
       camera.position.set(0, 0, distance);
       camera.lookAt(center);
@@ -320,7 +358,7 @@ function DualLayerModelLoader({
     } catch (err) {
       console.warn('[JadeV6] 视图适配失败:', err);
     }
-  }, [geometry, fitToView, camera]);
+  }, [geometry, offsetGeometry, fitToView, camera]);
 
   if (loading) {
     return (
@@ -435,6 +473,11 @@ function JadeV6Content({
   subdivisions = 0,
   creaseAngle = 30,
   
+  // 平滑着色控制
+  smoothShading = true,
+  innerSmoothShading = true,
+  outerSmoothShading = true,
+  
   exposure = 1.0,
   enableRotation = true,
 }: JadeV6Props) {
@@ -454,6 +497,7 @@ function JadeV6Content({
       emissive: enableEmissive ? (typeof innerEmissiveColor === 'string' ? new THREE.Color(innerEmissiveColor) : innerEmissiveColor) : 0x000000,
       emissiveIntensity: enableEmissive ? innerEmissiveIntensity : 0,
       envMapIntensity: innerEnvMapIntensity,
+      flatShading: !innerSmoothShading, // 平滑着色控制
     });
 
     // 设置法线贴图
@@ -468,7 +512,7 @@ function JadeV6Content({
     return mat;
   }, [
     innerColor, innerMetalness, innerRoughness, innerTransmission, innerEmissiveColor, innerEmissiveIntensity, 
-    enableEmissive, innerEnvMapIntensity, normalMap, normalScale, normalRepeat
+    enableEmissive, innerEnvMapIntensity, innerSmoothShading, normalMap, normalScale, normalRepeat
   ]);
 
   // 创建外层材质（折射层）
@@ -486,6 +530,7 @@ function JadeV6Content({
       envMapIntensity: outerEnvMapIntensity,
       transparent: false,
       opacity: 1.0,
+      flatShading: !outerSmoothShading, // 平滑着色控制
     });
 
     // 设置法线贴图
@@ -501,7 +546,7 @@ function JadeV6Content({
   }, [
     outerColor, outerMetalness, outerRoughness, outerTransmission, outerIor, outerReflectivity, 
     outerThickness, outerClearcoat, outerClearcoatRoughness, outerEnvMapIntensity, 
-    normalMap, normalScale, normalRepeat
+    outerSmoothShading, normalMap, normalScale, normalRepeat
   ]);
 
   // 当环境贴图加载后，只更新折射材质（内层不反射）
@@ -687,6 +732,9 @@ function JadeV6Content({
         maxEdge={maxEdge}
         subdivisions={subdivisions}
         creaseAngle={creaseAngle}
+        smoothShading={smoothShading}
+        innerSmoothShading={innerSmoothShading}
+        outerSmoothShading={outerSmoothShading}
       />
     </RotationController>
   );
@@ -703,17 +751,20 @@ export default function JadeV6(props: JadeV6Props) {
     <div style={{ position: 'relative', width: '100%', height: '100%' }}>
       <OrientationGuard />
       <Canvas 
+        style={{ width: '100%', height: '100%', display: 'block' }}
         camera={{ position: [0, 0, 5], fov: 45 }} 
         gl={{ 
           toneMappingExposure: exposure,
-          alpha: true,  // 先试试 alpha: true
+          alpha: true,
           toneMapping: THREE.ACESFilmicToneMapping,
-          outputColorSpace: THREE.SRGBColorSpace
+          outputColorSpace: THREE.SRGBColorSpace,
+          antialias: true,
+          powerPreference: 'high-performance'
         }}
       >
-    <Suspense fallback={null}>
+        <Suspense fallback={null}>
           <JadeV6Content {...contentProps} />
-    </Suspense>
+        </Suspense>
       </Canvas>
     </div>
   );
