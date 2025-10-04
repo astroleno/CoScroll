@@ -20,6 +20,7 @@ export interface LyricsControllerProps {
   onSeek: (time: number) => void;
   isPlaying: boolean;
   onScrollVelocityChange?: (velocity: number) => void;
+  onActiveLineChange?: (line: LyricLine | null, index: number) => void;
 }
 
 export interface AutoPlayGuardProps {

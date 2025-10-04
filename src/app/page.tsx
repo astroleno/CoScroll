@@ -24,78 +24,21 @@ const MOCK_DURATION = 364; // ~6 分 4 秒
 
 // 锚字到模型的映射
 const ANCHOR_MODEL_MAPPING = {
-  '观': '/models/10k_obj/001_观.obj',
-  '心': '/models/10k_obj/002_心.obj', 
-  '道': '/models/10k_obj/003_道.obj',
-  '空': '/models/10k_obj/001_空.obj',
-  '色': '/models/10k_obj/004_色.obj',
-  '舍': '/models/10k_obj/001_空.obj',
-  '照': '/models/10k_obj/001_空.obj',
-  '度': '/models/10k_obj/001_空.obj',
-  '是': '/models/10k_obj/001_空.obj',
-  '无': '/models/10k_obj/001_空.obj',
-  '得': '/models/10k_obj/001_空.obj',
-  '故': '/models/10k_obj/001_空.obj',
-  '菩': '/models/10k_obj/001_空.obj',
-  '萨': '/models/10k_obj/001_空.obj',
-  '依': '/models/10k_obj/001_空.obj',
-  '挂': '/models/10k_obj/001_空.obj',
-  '碍': '/models/10k_obj/001_空.obj',
-  '恐': '/models/10k_obj/001_空.obj',
-  '怖': '/models/10k_obj/001_空.obj',
-  '远': '/models/10k_obj/001_空.obj',
-  '离': '/models/10k_obj/001_空.obj',
-  '颠': '/models/10k_obj/001_空.obj',
-  '倒': '/models/10k_obj/001_空.obj',
-  '梦': '/models/10k_obj/001_空.obj',
-  '想': '/models/10k_obj/001_空.obj',
-  '究': '/models/10k_obj/001_空.obj',
-  '竟': '/models/10k_obj/001_空.obj',
-  '涅': '/models/10k_obj/001_空.obj',
-  '盘': '/models/10k_obj/001_空.obj',
-  '三': '/models/10k_obj/001_空.obj',
-  '世': '/models/10k_obj/001_空.obj',
-  '诸': '/models/10k_obj/001_空.obj',
-  '佛': '/models/10k_obj/001_空.obj',
-  '阿': '/models/10k_obj/001_空.obj',
-  '耨': '/models/10k_obj/001_空.obj',
-  '多': '/models/10k_obj/001_空.obj',
-  '罗': '/models/10k_obj/001_空.obj',
-  '三': '/models/10k_obj/001_空.obj',
-  '藐': '/models/10k_obj/001_空.obj',
-  '提': '/models/10k_obj/001_空.obj',
-  '知': '/models/10k_obj/001_空.obj',
-  '般': '/models/10k_obj/001_空.obj',
-  '若': '/models/10k_obj/001_空.obj',
-  '波': '/models/10k_obj/001_空.obj',
-  '罗': '/models/10k_obj/001_空.obj',
-  '蜜': '/models/10k_obj/001_空.obj',
-  '多': '/models/10k_obj/001_空.obj',
-  '大': '/models/10k_obj/001_空.obj',
-  '神': '/models/10k_obj/001_空.obj',
-  '咒': '/models/10k_obj/001_空.obj',
-  '明': '/models/10k_obj/001_空.obj',
-  '上': '/models/10k_obj/001_空.obj',
-  '等': '/models/10k_obj/001_空.obj',
-  '能': '/models/10k_obj/001_空.obj',
-  '除': '/models/10k_obj/001_空.obj',
-  '一': '/models/10k_obj/001_空.obj',
-  '切': '/models/10k_obj/001_空.obj',
-  '苦': '/models/10k_obj/001_空.obj',
-  '真': '/models/10k_obj/001_空.obj',
-  '实': '/models/10k_obj/001_空.obj',
-  '不': '/models/10k_obj/001_空.obj',
-  '虚': '/models/10k_obj/001_空.obj',
-  '说': '/models/10k_obj/001_空.obj',
-  '即': '/models/10k_obj/001_空.obj',
-  '曰': '/models/10k_obj/001_空.obj',
-  '揭': '/models/10k_obj/001_空.obj',
-  '谛': '/models/10k_obj/001_空.obj',
-  '僧': '/models/10k_obj/001_空.obj',
-  '娑': '/models/10k_obj/001_空.obj',
-  '婆': '/models/10k_obj/001_空.obj',
-  '诃': '/models/10k_obj/001_空.obj',
-  'default': '/models/10k_obj/001_空.obj'
+  // 核心锚字 - 按心经语义层级映射
+  '观': '/models/10k_obj/101_观.obj',      // 起点——觉知开启
+  '空': '/models/10k_obj/001_空.obj',      // 体悟本性
+  '苦': '/models/10k_obj/045_苦.obj',      // 觉悟之因
+  '色': '/models/10k_obj/094_色.obj',      // 现象与本质统一
+  '法': '/models/10k_obj/022_法.obj',      // 法性显现
+  '生': '/models/10k_obj/019_生.obj',      // 生灭寂然
+  '无': '/models/10k_obj/012_无.obj',      // 空寂归无
+  '死': '/models/10k_obj/020_死.obj',      // 轮回消融
+  '道': '/models/10k_obj/003_道.obj',      // 八正道总摄
+  '心': '/models/10k_obj/002_心.obj',      // 安住无碍
+  '悟': '/models/10k_obj/008_悟.obj',      // 智慧圆成
+  '明': '/models/10k_obj/007_明.obj',      // 光明智慧
+  '真': '/models/10k_obj/009_真.obj',      // 终点——实相圆满
+  default: '/models/10k_obj/001_空.obj'
 };
 
 const findCurrentLineIndex = (lyricLines: LyricLine[], time: number, durationParam: number): number => {
@@ -130,6 +73,8 @@ export default function HomePage() {
   const [isMobile, setIsMobile] = useState(false);
   const [audioRestartCount, setAudioRestartCount] = useState(0);
   const [debugLogs, setDebugLogs] = useState<string[]>([]);
+  const [activeLyric, setActiveLyric] = useState<LyricLine | null>(null);
+  const [backLyricTexts, setBackLyricTexts] = useState<string[]>([]);
 
   // 3D模型相关状态
   const [scrollVelocity, setScrollVelocity] = useState(0);
@@ -144,6 +89,28 @@ export default function HomePage() {
   const lastSeekTargetDisplayTimeRef = useRef<number | null>(null);
 
   const lyrics = useLyrics(LRC_LYRICS);
+
+  const handleActiveLyricChange = useCallback((line: LyricLine | null, index: number) => {
+    setActiveLyric(line && line.text.trim() ? line : null);
+
+    if (!lyrics || lyrics.length === 0 || index < 0) {
+      setBackLyricTexts([]);
+      return;
+    }
+
+    const total = lyrics.length;
+    const candidates: string[] = [];
+    for (let offset = 1; offset < total; offset++) {
+      const nextIdx = (index + offset) % total;
+      const nextLine = lyrics[nextIdx];
+      const trimmed = nextLine?.text.trim();
+      if (trimmed) {
+        candidates.push(trimmed);
+        if (candidates.length === 2) break;
+      }
+    }
+    setBackLyricTexts(candidates);
+  }, [lyrics]);
 
   // 添加调试日志
   const addDebugLog = useCallback((message: string) => {
@@ -179,7 +146,7 @@ export default function HomePage() {
   // 设置音频源
   useEffect(() => {
     try {
-      const audioPath = '/audio/心经.mp3';
+      const audioPath = '/audio/心经_2.mp3';
       console.log('[HomePage] Setting audio source:', audioPath);
       setAudioSrc(audioPath);
       
@@ -445,6 +412,8 @@ export default function HomePage() {
 
   const anchorChar = findAnchorChar(currentLineIndex);
 
+  const currentLyricText = activeLyric?.text?.trim() || '';
+
   // 更新锚字状态
   useEffect(() => {
     if (anchorChar !== currentAnchor) {
@@ -455,7 +424,31 @@ export default function HomePage() {
   console.log('[HomePage] Render state:', { hasUserInteracted, isReady, isPlaying, isIntroPlaying });
 
   return (
-    <div className="flex flex-col h-screen bg-[#202734] font-sans overflow-hidden opacity-100 transition-opacity duration-300">
+    <div className="flex flex-col h-screen bg-transparent font-sans overflow-hidden opacity-100 transition-opacity duration-300">
+      <style jsx global>{`
+        @keyframes fadeIn {
+          from { opacity: 0; transform: scale(0.95); }
+          to { opacity: 1; transform: scale(1); }
+        }
+        @keyframes pulseSlow {
+          0%, 100% { opacity: 0.75; transform: scale(1); }
+          50% { opacity: 1; transform: scale(1.05); }
+        }
+        .animate-fade-in {
+          animation: fadeIn 0.5s ease-out forwards;
+        }
+        .animate-pulse-slow {
+          animation: pulseSlow 4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+        /* Robustly hide scrollbar */
+        .no-scrollbar::-webkit-scrollbar {
+          display: none;
+        }
+        .no-scrollbar {
+          -ms-overflow-style: none;  /* IE and Edge */
+          scrollbar-width: none;  /* Firefox */
+        }
+      `}</style>
       {/* 主音频 */}
       <audio
         key={audioSrc} 
@@ -482,11 +475,14 @@ export default function HomePage() {
       />
       
       {/* 3D模型背景 - 替代原来的背景字符 */}
-      <div className="fixed inset-0 grid place-items-center pointer-events-none z-0">
+      <div className="fixed inset-0 grid place-items-center pointer-events-none z-10">
         <JadeV5
           modelPath={getModelPath(currentAnchor)}
           baseSpeed={0.4}
-          speedMultiplier={scrollVelocity * 3.0}
+          speedMultiplier={3.0}
+          externalVelocity={scrollVelocity}
+          currentLineText={currentLyricText}
+          backLineTexts={backLyricTexts}
           showModelSwitcher={false}
           containerStyle={{ 
             position: 'fixed', 
@@ -498,7 +494,7 @@ export default function HomePage() {
       </div>
 
       {/* 歌词控制器 */}
-      <main className="relative w-full flex-grow flex justify-center items-center z-10 py-4 overflow-hidden">
+      <main className="relative w-full flex-grow flex justify-center items-center z-20 py-4 overflow-hidden">
         <div className="relative w-full max-w-4xl h-full pointer-events-auto">
           <LyricsController
             lyrics={lyrics}
@@ -508,9 +504,8 @@ export default function HomePage() {
             onSeek={handleSeek}
             isPlaying={isPlaying}
             onScrollVelocityChange={setScrollVelocity}
+            onActiveLineChange={handleActiveLyricChange}
           />
-          <div aria-hidden="true" className="absolute top-0 inset-x-0 h-64 bg-gradient-to-b from-[#202734] to-transparent z-10 pointer-events-none" />
-          <div aria-hidden="true" className="absolute bottom-0 inset-x-0 h-64 bg-gradient-to-t from-[#202734] to-transparent z-10 pointer-events-none" />
         </div>
       </main>
 

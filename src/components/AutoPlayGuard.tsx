@@ -1,7 +1,13 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import type { AutoPlayGuardProps } from '@/types';
+import { createPortal } from "react-dom";
+
+interface AutoPlayGuardProps {
+  onUserInteraction: () => void;
+  isReady: boolean;
+  isPlaying: boolean;
+}
 
 export default function AutoPlayGuard({ onUserInteraction, isReady, isPlaying }: AutoPlayGuardProps) {
   const [mounted, setMounted] = useState(false);

@@ -23,7 +23,8 @@ const LyricsController: React.FC<LyricsControllerProps> = ({
   scrollTime, 
   onSeek, 
   isPlaying,
-  onScrollVelocityChange 
+  onScrollVelocityChange,
+  onActiveLineChange,
 }) => {
   const scrollerRef = useRef<HTMLDivElement>(null);
   const lineRefs = useRef<(HTMLParagraphElement | null)[]>([]);
@@ -167,6 +168,7 @@ const LyricsController: React.FC<LyricsControllerProps> = ({
     }
 
     isUserInteractingRef.current = true;
+    pointerInteractionRef.current = true;
     lastAutoScrollIndexRef.current = -1;
     scrollDirectionRef.current = 0;
 
@@ -198,6 +200,7 @@ const LyricsController: React.FC<LyricsControllerProps> = ({
         onScrollVelocityChange(delta * 0.1);
       }
     }
+
     lastScrollTopRef.current = currentTop;
 
     handleInteractionStart();
@@ -240,6 +243,9 @@ const LyricsController: React.FC<LyricsControllerProps> = ({
     if (newLineIndex >= 0 && newLineIndex !== currentLineIndexRef.current) {
       currentLineIndexRef.current = newLineIndex;
       setCurrentLineIndex(newLineIndex);
+      if (onActiveLineChange) {
+        onActiveLineChange(lyrics[newLineIndex] || null, newLineIndex);
+      }
     }
 
     if (newLineIndex < 0 || isUserInteractingRef.current) {
@@ -259,6 +265,12 @@ const LyricsController: React.FC<LyricsControllerProps> = ({
       lastLoopFromScrollRef.current = loopFromScroll;
     }
   }, [currentTime, duration, scrollTime, scrollToLine, isInitialized, lyrics]);
+
+  useEffect(() => {
+    if (!isInitialized || !onActiveLineChange) return;
+    const index = currentLineIndexRef.current;
+    onActiveLineChange(lyrics[index] || null, index);
+  }, [isInitialized, lyrics, onActiveLineChange]);
 
   // 清理定时器
   useEffect(() => {
@@ -303,7 +315,7 @@ const LyricsController: React.FC<LyricsControllerProps> = ({
           return (
             <p
               key={`${line.time}-${index}`}
-              ref={(el) => (lineRefs.current[index] = el)}
+              ref={(el) => { lineRefs.current[index] = el; }}
               className={`text-3xl font-semibold w-full px-16 ${
                 isLeft ? 'text-left' : 'text-right'
               }`}

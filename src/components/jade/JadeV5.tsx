@@ -5,6 +5,7 @@ import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import * as THREE from "three";
 import { Suspense, useEffect, useMemo, useRef, useState } from "react";
 import OrientationGuard from "@/components/OrientationGuard";
+import { Text } from "@react-three/drei";
 
 // 动态引入 v2（包含高级材质与折射能力）
 const JadeV2 = dynamic(() => import("@/components/jade/JadeV2"), { ssr: false });
@@ -18,6 +19,7 @@ interface JadeV5Props {
   hdrExposure?: number;          // Canvas 全局曝光
   baseSpeed?: number;            // 基础自转速度（弧度/秒）
   speedMultiplier?: number;      // 滚动/滑动速度放大系数
+  externalVelocity?: number;     // 外部传入的速度增量
 
   // 切换器 UI
   showModelSwitcher?: boolean;   // 是否显示内置的模型切换按钮
@@ -25,6 +27,10 @@ interface JadeV5Props {
 
   // 外层容器样式（可覆盖默认的 100vh 全屏）
   containerStyle?: React.CSSProperties;
+
+  // 歌词文本
+  currentLineText?: string;
+  nextLineText?: string;
 }
 
 // Canvas 内控制器：监听滚动/滑动并在 useFrame 中更新旋转（与 v3b 一致）
@@ -33,16 +39,27 @@ function ScrollRotator({
   baseSpeed,
   speedMultiplier,
   enabled,
+  externalVelocity = 0,
 }: {
   groupRef: React.RefObject<THREE.Group>;
   baseSpeed: number;
   speedMultiplier: number;
   enabled: boolean;
+  externalVelocity?: number;
 }) {
   const { gl } = useThree();
   const prevScrollYRef = useRef(0);
   const targetSpeedRef = useRef(baseSpeed);
   const currentSpeedRef = useRef(baseSpeed);
+  const externalVelocityRef = useRef(externalVelocity);
+
+  useEffect(() => {
+    externalVelocityRef.current = externalVelocity;
+  }, [externalVelocity]);
+
+  useEffect(() => {
+    targetSpeedRef.current = baseSpeed + externalVelocityRef.current;
+  }, [baseSpeed, externalVelocity]);
 
   useEffect(() => {
     prevScrollYRef.current = window.scrollY || 0;
@@ -50,13 +67,15 @@ function ScrollRotator({
       const y = window.scrollY || 0;
       const dy = y - prevScrollYRef.current;
       prevScrollYRef.current = y;
+      const baseWithExternal = baseSpeed + externalVelocityRef.current;
       const scrollVelocity = dy * 0.001; // 灵敏度
-      targetSpeedRef.current = baseSpeed + scrollVelocity * speedMultiplier;
+      targetSpeedRef.current = baseWithExternal + scrollVelocity * speedMultiplier;
     };
     const onWheel = (e: WheelEvent) => {
       const unit = e.deltaMode === 1 ? 16 : 1; // 行→像素
+      const baseWithExternal = baseSpeed + externalVelocityRef.current;
       const scrollVelocity = e.deltaY * unit * 0.001; // 标准化
-      targetSpeedRef.current = baseSpeed + scrollVelocity * speedMultiplier;
+      targetSpeedRef.current = baseWithExternal + scrollVelocity * speedMultiplier;
     };
 
     // 同时挂到 window 和 Canvas，确保事件被捕获
@@ -65,8 +84,9 @@ function ScrollRotator({
     const el = gl.domElement as HTMLCanvasElement;
     const onWheelCanvas = (e: WheelEvent) => {
       const unit = e.deltaMode === 1 ? 16 : 1;
+      const baseWithExternal = baseSpeed + externalVelocityRef.current;
       const scrollVelocity = e.deltaY * unit * 0.001;
-      targetSpeedRef.current = baseSpeed + scrollVelocity * speedMultiplier;
+      targetSpeedRef.current = baseWithExternal + scrollVelocity * speedMultiplier;
       e.preventDefault();
     };
     // 触摸端：用 touchmove 的 dy 作为增量，阻止默认页面滚动
@@ -79,8 +99,9 @@ function ScrollRotator({
       const y = e.touches[0].clientY;
       const dy = lastTouchY.v - y; // 手指上滑→dy>0（对应滚轮下滑）
       lastTouchY.v = y;
+      const baseWithExternal = baseSpeed + externalVelocityRef.current;
       const scrollVelocity = dy * 0.02; // 移动端增益更大一点
-      targetSpeedRef.current = baseSpeed + scrollVelocity * speedMultiplier;
+      targetSpeedRef.current = baseWithExternal + scrollVelocity * speedMultiplier;
       e.preventDefault();
     };
     el.addEventListener("wheel", onWheelCanvas, { passive: false });
@@ -98,7 +119,8 @@ function ScrollRotator({
   useFrame((_, delta) => {
     if (!enabled) return;
     // 自然回落到基础速度
-    targetSpeedRef.current += (baseSpeed - targetSpeedRef.current) * 0.02;
+    const baseWithExternal = baseSpeed + externalVelocityRef.current;
+    targetSpeedRef.current += (baseWithExternal - targetSpeedRef.current) * 0.02;
     // 平滑插值到目标速度
     currentSpeedRef.current += (targetSpeedRef.current - currentSpeedRef.current) * Math.min(1, delta * 10);
     if (groupRef.current) {
@@ -118,9 +140,12 @@ export default function JadeV5({
   hdrExposure = 1.0,
   baseSpeed = 0.4,
   speedMultiplier = 3.0,
+  externalVelocity = 0,
   showModelSwitcher = true,
   initialIndex = 0,
   containerStyle,
+  currentLineText = "",
+  nextLineText = "",
 }: JadeV5Props) {
   const groupRef = useRef<THREE.Group>(null);
 
@@ -165,6 +190,9 @@ export default function JadeV5({
     ...(containerStyle || {}),
   }), [containerStyle]);
 
+  const trimmedCurrent = currentLineText.trim();
+  const trimmedNext = nextLineText.trim();
+
   return (
     <div className="jv5-wrapper" style={wrapperStyle}>
       {/* 移动端横屏遮罩（只在移动端横屏时显示） */}
@@ -177,6 +205,7 @@ export default function JadeV5({
               baseSpeed={baseSpeed}
               speedMultiplier={speedMultiplier}
               enabled={enableRotation}
+              externalVelocity={externalVelocity}
             />
             <JadeV2
               modelPath={models[index]}
@@ -204,6 +233,36 @@ export default function JadeV5({
               autoRotate={false}
             />
       </group>
+      {trimmedNext && (
+        <Text
+          position={[0, -0.9, 0.9]}
+          fontSize={0.32}
+          maxWidth={3.2}
+          lineHeight={1.3}
+          anchorX="center"
+          anchorY="middle"
+          color="#dbe8ff"
+          outlineWidth={0.006}
+          outlineColor="rgba(15,37,68,0.6)"
+        >
+          {trimmedNext}
+        </Text>
+      )}
+      {trimmedCurrent && (
+        <Text
+          position={[0, 0.6, -1.4]}
+          fontSize={0.38}
+          maxWidth={3.4}
+          lineHeight={1.28}
+          anchorX="center"
+          anchorY="middle"
+          color="#ffffff"
+          outlineWidth={0.008}
+          outlineColor="rgba(23,36,64,0.75)"
+        >
+          {trimmedCurrent}
+        </Text>
+      )}
     </Suspense>
       </Canvas>
 

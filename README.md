@@ -106,6 +106,18 @@ npm run dev
    - 音频播放控制和同步
    - 基于 Tone.js 实现
 
+### 玉质渲染组件系列
+
+#### JadeV6 - 背景环境分离组件
+- **路径**: `/src/components/jade/JadeV6.tsx`
+- **特性**: 实现背景显示与环境贴图的完全分离
+- **技术实现**:
+  - `scene.background` = 纯色背景（用户可见）
+  - `scene.environment` = HDR 环境贴图的 PMREM（材质采样）
+  - 支持 MeshPhysicalMaterial 的 transmission 折射
+- **使用场景**: 需要纯色背景但保持高质量折射效果的场景
+- **访问路径**: `/jade-v6`
+
 ### 自定义 Hooks
 
 - **useScroll**: 滚动事件处理和状态管理
@@ -158,7 +170,7 @@ npm run dev
 
 ## 项目状态
 
-### 当前版本: MVP v0.1.0
+### 当前版本: MVP v0.2.0
 
 - [x] 基础框架搭建
 - [x] 核心组件开发
@@ -166,6 +178,7 @@ npm run dev
 - [x] 3D 模型集成
 - [x] 音频同步功能
 - [x] 数据结构设计
+- [x] JadeV6 背景环境分离组件
 
 ### 计划功能
 

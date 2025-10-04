@@ -1,5 +1,13 @@
 import React from 'react';
-import type { AudioPlayerProps } from '@/types';
+
+interface AudioPlayerProps {
+  isPlaying: boolean;
+  isReady: boolean;
+  duration: number;
+  currentTime: number;
+  onPlayPause: () => void;
+  onSeek: (time: number) => void;
+}
 
 const formatTime = (timeInSeconds: number): string => {
   const minutes = Math.floor(timeInSeconds / 60);
@@ -7,14 +15,7 @@ const formatTime = (timeInSeconds: number): string => {
   return `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
 };
 
-const AudioPlayer: React.FC<AudioPlayerProps> = ({ 
-  isPlaying, 
-  isReady, 
-  duration, 
-  currentTime, 
-  onPlayPause, 
-  onSeek 
-}) => {
+const AudioPlayer: React.FC<AudioPlayerProps> = ({ isPlaying, isReady, duration, currentTime, onPlayPause, onSeek }) => {
   const progress = duration > 0 ? (currentTime / duration) * 100 : 0;
 
   const handleSeek = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -34,8 +35,9 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({
     </svg>
   );
 
+
   return (
-    <div className="w-full max-w-2xl p-4 bg-[#2A3447] rounded-xl shadow-lg">
+    <div className="w-full max-w-2xl p-4">
       <div className="flex items-center gap-4">
         <button 
           onClick={onPlayPause}
@@ -53,10 +55,11 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({
                 max={duration || 0}
                 value={currentTime}
                 onChange={handleSeek}
+                onInput={handleSeek}
                 disabled={!isReady}
-                className="w-full h-1.5 bg-gray-600 rounded-lg appearance-none cursor-pointer range-lg disabled:cursor-not-allowed"
+                className="w-full h-1.5 bg-gray-600/40 rounded-lg appearance-none cursor-pointer range-lg disabled:cursor-not-allowed"
                 style={{
-                    background: `linear-gradient(to right, #87CEEB ${progress}%, #4A5568 ${progress}%)`
+                    background: `linear-gradient(to right, #87CEEB ${progress}%, rgba(74,85,104,0.4) ${progress}%)`
                 }}
             />
             <span className="text-sm font-mono text-gray-400 w-12 text-center">{formatTime(duration)}</span>
