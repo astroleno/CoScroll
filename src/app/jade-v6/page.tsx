@@ -46,6 +46,12 @@ export default function Page() {
   const [showInnerLayer, setShowInnerLayer] = useState(true);
   const [showOuterLayer, setShowOuterLayer] = useState(true);
   const [outerOffset, setOuterOffset] = useState(0.001);
+  
+  // 滚动控制参数（新增）
+  const [enableScrollControl, setEnableScrollControl] = useState(true);
+  const [baseSpeed, setBaseSpeed] = useState(0.4);
+  const [speedMultiplier, setSpeedMultiplier] = useState(3.0);
+  const [externalVelocity, setExternalVelocity] = useState(0);
 
   return (
     <div style={{ position: 'fixed', inset: 0, background: '#1f1e1c' }}>
@@ -453,10 +459,66 @@ export default function Page() {
           </div>
         </div>
         
+        {/* 滚动控制参数（新增） */}
+        <div style={{ marginBottom: '16px', padding: '8px', background: 'rgba(255, 193, 7, 0.1)', borderRadius: '4px' }}>
+          <div style={{ fontWeight: 'bold', marginBottom: '8px', color: '#FFC107' }}>滚动控制</div>
+          
+          <div style={{ marginBottom: '8px' }}>
+            <label style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <input 
+                type="checkbox" 
+                checked={enableScrollControl}
+                onChange={(e) => setEnableScrollControl(e.target.checked)}
+              />
+              <span>启用滚动控制</span>
+            </label>
+          </div>
+          
+          <div style={{ marginBottom: '8px' }}>
+            <div style={{ marginBottom: '4px' }}>基础速度: {baseSpeed.toFixed(2)}</div>
+            <input 
+              type="range" 
+              min="0" 
+              max="2" 
+              step="0.01" 
+              value={baseSpeed}
+              onChange={(e) => setBaseSpeed(parseFloat(e.target.value))}
+              style={{ width: '100%' }}
+            />
+          </div>
+          
+          <div style={{ marginBottom: '8px' }}>
+            <div style={{ marginBottom: '4px' }}>速度放大系数: {speedMultiplier.toFixed(1)}</div>
+            <input 
+              type="range" 
+              min="0" 
+              max="10" 
+              step="0.1" 
+              value={speedMultiplier}
+              onChange={(e) => setSpeedMultiplier(parseFloat(e.target.value))}
+              style={{ width: '100%' }}
+            />
+          </div>
+          
+          <div style={{ marginBottom: '8px' }}>
+            <div style={{ marginBottom: '4px' }}>外部速度: {externalVelocity.toFixed(2)}</div>
+            <input 
+              type="range" 
+              min="-2" 
+              max="2" 
+              step="0.01" 
+              value={externalVelocity}
+              onChange={(e) => setExternalVelocity(parseFloat(e.target.value))}
+              style={{ width: '100%' }}
+            />
+          </div>
+        </div>
+        
         <div style={{ fontSize: '10px', opacity: 0.8, marginTop: '8px', borderTop: '1px solid #333', paddingTop: '8px' }}>
           <div>• 内层：{showInnerLayer ? '自发光层' : '隐藏'}</div>
           <div>• 外层：{showOuterLayer ? `折射层 (offset: ${outerOffset.toFixed(3)})` : '隐藏'}</div>
           <div>• 背景：{showHdrBackground ? 'HDR 贴图' : '纯色 #1f1e1c'}</div>
+          <div>• 滚动控制：{enableScrollControl ? `启用 (基础: ${baseSpeed.toFixed(2)}, 放大: ${speedMultiplier.toFixed(1)})` : '禁用'}</div>
         </div>
       </div>
 
@@ -469,6 +531,12 @@ export default function Page() {
         showHdrBackground={showHdrBackground}
         environmentHdrPath="/textures/qwantani_moon_noon_puresky_1k.hdr"
         environmentIntensity={1.4}
+        
+        // 滚动控制参数（新增）
+        enableScrollControl={enableScrollControl}
+        baseSpeed={baseSpeed}
+        speedMultiplier={speedMultiplier}
+        externalVelocity={externalVelocity}
         
         // 内层材质参数
         innerColor={innerColor}

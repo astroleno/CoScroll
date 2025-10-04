@@ -10,6 +10,7 @@ import { mergeVertices } from "three/examples/jsm/utils/BufferGeometryUtils.js";
 import { TessellateModifier } from 'three-stdlib';
 import { toCreasedNormals } from 'three-stdlib';
 import OrientationGuard from "@/components/OrientationGuard";
+import ModelPreloader from "./ModelPreloader";
 
 /**
  * JadeV6 - 背景与环境完全分离的玉质渲染组件
@@ -30,6 +31,12 @@ interface JadeV6Props {
   rotationDurationSec?: number;    // 旋转周期（秒）
   direction?: 1 | -1;              // 旋转方向
   fitToView?: boolean;             // 是否自动适配视图
+  
+  // 滚动控制相关（新增）
+  enableScrollControl?: boolean;  // 是否启用滚动控制
+  baseSpeed?: number;              // 基础旋转速度（弧度/秒）
+  speedMultiplier?: number;        // 滚动速度放大系数
+  externalVelocity?: number;       // 外部传入的速度增量
   
   // 背景相关（显示用）
   background?: string | number;    // 纯色背景（CSS 颜色值）
@@ -84,6 +91,11 @@ interface JadeV6Props {
   // 渲染设置
   exposure?: number;               // 全局曝光
   enableRotation?: boolean;        // 是否启用旋转
+  
+  // 预加载设置
+  enablePreloading?: boolean;      // 是否启用预加载
+  preloadAllModels?: boolean;      // 是否预加载所有模型
+  modelPaths?: string[];           // 需要预加载的模型路径列表
 }
 
 /**
@@ -224,7 +236,7 @@ function createOffsetGeometry(originalGeometry: THREE.BufferGeometry, offsetDist
   return offsetGeometry;
 }
 
-// 双层模型加载器组件：自发光层 + 折射层
+// 双层模型加载器组件：自发光层 + 折射层（支持预加载）
 function DualLayerModelLoader({ 
   modelPath, 
   material,
@@ -238,7 +250,8 @@ function DualLayerModelLoader({
   creaseAngle = 30,
   smoothShading = true,
   innerSmoothShading = true,
-  outerSmoothShading = true
+  outerSmoothShading = true,
+  enablePreloading = true
 }: { 
   modelPath: string; 
   material: THREE.Material;
@@ -253,6 +266,7 @@ function DualLayerModelLoader({
   smoothShading?: boolean;
   innerSmoothShading?: boolean;
   outerSmoothShading?: boolean;
+  enablePreloading?: boolean;
 }) {
   const [geometry, setGeometry] = useState<THREE.BufferGeometry | null>(null);
   const [offsetGeometry, setOffsetGeometry] = useState<THREE.BufferGeometry | null>(null);
@@ -261,7 +275,9 @@ function DualLayerModelLoader({
   const meshRef = useRef<THREE.Mesh>(null);
   const refractionMeshRef = useRef<THREE.Mesh>(null);
   const { camera, scene } = useThree();
+  const preloader = ModelPreloader.getInstance();
 
+  // 模型加载逻辑（使用预加载系统）
   useEffect(() => {
     let disposed = false;
     setLoading(true);
@@ -269,8 +285,40 @@ function DualLayerModelLoader({
 
     const loadModel = async () => {
       try {
-        let loadedGeometry: THREE.BufferGeometry | null = null;
+        console.log('[JadeV6] 开始加载模型:', modelPath);
+        
+        // 首先尝试从预加载缓存获取
+        let loadedGeometry = preloader.getModel(modelPath);
+        
+        if (loadedGeometry) {
+          console.log('[JadeV6] 使用预加载模型:', modelPath);
+          if (disposed) return;
+          setGeometry(loadedGeometry);
+          setLoading(false);
+          return;
+        }
 
+        // 如果预加载缓存中没有，检查是否正在加载
+        if (preloader.isModelLoading(modelPath)) {
+          console.log('[JadeV6] 等待预加载完成:', modelPath);
+          // 等待预加载完成
+          while (preloader.isModelLoading(modelPath)) {
+            await new Promise(resolve => setTimeout(resolve, 50));
+            if (disposed) return;
+          }
+          
+          loadedGeometry = preloader.getModel(modelPath);
+          if (loadedGeometry) {
+            console.log('[JadeV6] 预加载完成，使用模型:', modelPath);
+            if (disposed) return;
+            setGeometry(loadedGeometry);
+            setLoading(false);
+            return;
+          }
+        }
+
+        // 如果预加载系统没有该模型，直接加载
+        console.log('[JadeV6] 直接加载模型:', modelPath);
         if (modelPath.endsWith('.obj')) {
           const loader = new OBJLoader();
           const obj = await new Promise<THREE.Group>((resolve, reject) => {
@@ -327,7 +375,7 @@ function DualLayerModelLoader({
     return () => {
       disposed = true;
     };
-  }, [modelPath]);
+  }, [modelPath, preloader]);
 
   // 当 outerOffset 或细分参数变化时，重新创建 offset 几何体
   useEffect(() => {
@@ -349,7 +397,7 @@ function DualLayerModelLoader({
       const center = box.getCenter(new THREE.Vector3());
       
       const maxDim = Math.max(size.x, size.y, size.z);
-      const distance = maxDim * 2.14; // 调整距离，让模型看起来更小（70%大小）
+      const distance = maxDim * 2.5; // 调整距离，让模型看起来更小（80%大小）
       
       camera.position.set(0, 0, distance);
       camera.lookAt(center);
@@ -360,22 +408,13 @@ function DualLayerModelLoader({
     }
   }, [geometry, offsetGeometry, fitToView, camera]);
 
+
   if (loading) {
-    return (
-      <mesh>
-        <boxGeometry args={[1, 1, 1]} />
-        <meshBasicMaterial color="#666666" wireframe />
-      </mesh>
-    );
+    return null; // 加载期间不显示任何内容
   }
 
   if (error) {
-    return (
-      <mesh>
-        <boxGeometry args={[1, 1, 1]} />
-        <meshBasicMaterial color="#ff0000" />
-      </mesh>
-    );
+    return null; // 错误时也不显示占位立方体
   }
 
   if (!geometry || !offsetGeometry) return null;
@@ -399,16 +438,122 @@ function DualLayerModelLoader({
   );
 }
 
-// 旋转控制器
+// 滚动控制器（类似 JadeV5 的 ScrollRotator）
+function ScrollRotator({
+  groupRef,
+  baseSpeed,
+  speedMultiplier,
+  enabled,
+  externalVelocity = 0,
+}: {
+  groupRef: React.RefObject<THREE.Group>;
+  baseSpeed: number;
+  speedMultiplier: number;
+  enabled: boolean;
+  externalVelocity?: number;
+}) {
+  const { gl } = useThree();
+  const prevScrollYRef = useRef(0);
+  const targetSpeedRef = useRef(baseSpeed);
+  const currentSpeedRef = useRef(baseSpeed);
+  const externalVelocityRef = useRef(externalVelocity);
+
+  useEffect(() => {
+    externalVelocityRef.current = externalVelocity;
+  }, [externalVelocity]);
+
+  useEffect(() => {
+    targetSpeedRef.current = baseSpeed + externalVelocityRef.current;
+  }, [baseSpeed, externalVelocity]);
+
+  useEffect(() => {
+    prevScrollYRef.current = window.scrollY || 0;
+    const onScroll = () => {
+      const y = window.scrollY || 0;
+      const dy = y - prevScrollYRef.current;
+      prevScrollYRef.current = y;
+      const baseWithExternal = baseSpeed + externalVelocityRef.current;
+      const scrollVelocity = dy * 0.001; // 灵敏度
+      targetSpeedRef.current = baseWithExternal + scrollVelocity * speedMultiplier;
+    };
+    const onWheel = (e: WheelEvent) => {
+      const unit = e.deltaMode === 1 ? 16 : 1; // 行→像素
+      const baseWithExternal = baseSpeed + externalVelocityRef.current;
+      const scrollVelocity = e.deltaY * unit * 0.001; // 标准化
+      targetSpeedRef.current = baseWithExternal + scrollVelocity * speedMultiplier;
+    };
+
+    // 同时挂到 window 和 Canvas，确保事件被捕获
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("wheel", onWheel, { passive: true });
+    const el = gl.domElement as HTMLCanvasElement;
+    const onWheelCanvas = (e: WheelEvent) => {
+      const unit = e.deltaMode === 1 ? 16 : 1;
+      const baseWithExternal = baseSpeed + externalVelocityRef.current;
+      const scrollVelocity = e.deltaY * unit * 0.001;
+      targetSpeedRef.current = baseWithExternal + scrollVelocity * speedMultiplier;
+      e.preventDefault();
+    };
+    // 触摸端：用 touchmove 的 dy 作为增量，阻止默认页面滚动
+    const lastTouchY = { v: 0 } as { v: number };
+    const onTouchStart = (e: TouchEvent) => {
+      if (e.touches && e.touches.length > 0) lastTouchY.v = e.touches[0].clientY;
+    };
+    const onTouchMove = (e: TouchEvent) => {
+      if (!e.touches || e.touches.length === 0) return;
+      const y = e.touches[0].clientY;
+      const dy = lastTouchY.v - y; // 手指上滑→dy>0（对应滚轮下滑）
+      lastTouchY.v = y;
+      const baseWithExternal = baseSpeed + externalVelocityRef.current;
+      const scrollVelocity = dy * 0.02; // 移动端增益更大一点
+      targetSpeedRef.current = baseWithExternal + scrollVelocity * speedMultiplier;
+      e.preventDefault();
+    };
+    el.addEventListener("wheel", onWheelCanvas, { passive: false });
+    el.addEventListener("touchstart", onTouchStart, { passive: false });
+    el.addEventListener("touchmove", onTouchMove, { passive: false });
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("wheel", onWheel);
+      el.removeEventListener("wheel", onWheelCanvas);
+      el.removeEventListener("touchstart", onTouchStart as any);
+      el.removeEventListener("touchmove", onTouchMove as any);
+    };
+  }, [baseSpeed, speedMultiplier, gl]);
+
+  useFrame((_, delta) => {
+    if (!enabled) return;
+    // 自然回落到基础速度
+    const baseWithExternal = baseSpeed + externalVelocityRef.current;
+    targetSpeedRef.current += (baseWithExternal - targetSpeedRef.current) * 0.02;
+    // 平滑插值到目标速度
+    currentSpeedRef.current += (targetSpeedRef.current - currentSpeedRef.current) * Math.min(1, delta * 10);
+    if (groupRef.current) {
+      groupRef.current.rotation.y += currentSpeedRef.current * delta;
+    }
+  });
+
+  return null;
+}
+
+// 旋转控制器（支持滚动控制）
 function RotationController({ 
   enabled, 
   durationSec, 
   direction,
+  enableScrollControl = false,
+  baseSpeed = 0.4,
+  speedMultiplier = 3.0,
+  externalVelocity = 0,
   children 
 }: { 
   enabled: boolean; 
   durationSec: number; 
   direction: 1 | -1;
+  enableScrollControl?: boolean;
+  baseSpeed?: number;
+  speedMultiplier?: number;
+  externalVelocity?: number;
   children?: React.ReactNode;
 }) {
   const groupRef = useRef<THREE.Group>(null);
@@ -416,12 +561,25 @@ function RotationController({
   useFrame((_, delta) => {
     if (!enabled || !groupRef.current) return;
     
+    // 如果启用滚动控制，由 ScrollRotator 处理旋转
+    if (enableScrollControl) return;
+    
+    // 否则使用固定速度旋转
     const speed = (2 * Math.PI) / durationSec * direction;
     groupRef.current.rotation.y += speed * delta;
   });
 
   return (
     <group ref={groupRef}>
+      {enableScrollControl && (
+        <ScrollRotator
+          groupRef={groupRef}
+          baseSpeed={baseSpeed}
+          speedMultiplier={speedMultiplier}
+          enabled={enabled}
+          externalVelocity={externalVelocity}
+        />
+      )}
       {children}
     </group>
   );
@@ -433,6 +591,13 @@ function JadeV6Content({
   rotationDurationSec = 8,
   direction = 1,
   fitToView = true,
+  
+  // 滚动控制参数（新增）
+  enableScrollControl = false,
+  baseSpeed = 0.4,
+  speedMultiplier = 3.0,
+  externalVelocity = 0,
+  
   background = "#1f1e1c",
   showHdrBackground = false,
   environmentHdrPath = "/textures/qwantani_moon_noon_puresky_1k.hdr",
@@ -480,12 +645,41 @@ function JadeV6Content({
   
   exposure = 1.0,
   enableRotation = true,
+  
+  // 预加载设置
+  enablePreloading = true,
+  preloadAllModels = false,
+  modelPaths = [],
 }: JadeV6Props) {
   const { scene, gl } = useThree();
   const [envMap, setEnvMap] = useState<THREE.Texture | null>(null);
   const [normalMap, setNormalMap] = useState<THREE.Texture | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const preloader = ModelPreloader.getInstance();
+
+  // 预加载逻辑
+  useEffect(() => {
+    if (!enablePreloading) return;
+
+    const preloadModels = async () => {
+      try {
+        if (preloadAllModels && modelPaths.length > 0) {
+          console.log('[JadeV6] 开始预加载所有模型:', modelPaths);
+          await preloader.preloadAllModels(modelPaths);
+        } else {
+          // 只预加载当前模型
+          console.log('[JadeV6] 预加载当前模型:', modelPath);
+          const allPaths = [modelPath, ...modelPaths];
+          await preloader.preloadAllModels(allPaths);
+        }
+      } catch (err) {
+        console.error('[JadeV6] 预加载失败:', err);
+      }
+    };
+
+    preloadModels();
+  }, [enablePreloading, preloadAllModels, modelPaths, modelPath, preloader]);
 
   // 创建内层材质（自发光层）- 支持透射度
   const innerMaterial = useMemo(() => {
@@ -690,21 +884,11 @@ function JadeV6Content({
   }, [background, showHdrBackground, envMap, scene]);
 
   if (loading) {
-    return (
-      <mesh>
-        <boxGeometry args={[1, 1, 1]} />
-        <meshBasicMaterial color="#666666" wireframe />
-      </mesh>
-    );
+    return null; // 加载期间不显示任何内容
   }
 
   if (error) {
-    return (
-      <mesh>
-        <boxGeometry args={[1, 1, 1]} />
-        <meshBasicMaterial color="#ff0000" />
-      </mesh>
-    );
+    return null; // 错误时也不显示占位立方体
   }
 
   // 调试信息：显示环境贴图状态
@@ -719,7 +903,11 @@ function JadeV6Content({
     <RotationController 
       enabled={enableRotation} 
       durationSec={rotationDurationSec} 
-      direction={direction} 
+      direction={direction}
+      enableScrollControl={enableScrollControl}
+      baseSpeed={baseSpeed}
+      speedMultiplier={speedMultiplier}
+      externalVelocity={externalVelocity}
     >
       <DualLayerModelLoader 
         modelPath={modelPath} 
@@ -735,6 +923,7 @@ function JadeV6Content({
         smoothShading={smoothShading}
         innerSmoothShading={innerSmoothShading}
         outerSmoothShading={outerSmoothShading}
+        enablePreloading={enablePreloading}
       />
     </RotationController>
   );

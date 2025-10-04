@@ -7,6 +7,7 @@ import useLyrics from '@/components/hooks/useLyrics';
 import LyricsController from '@/components/LyricsController';
 import AudioPlayer from '@/components/AudioPlayer';
 import AutoPlayGuard from '@/components/AutoPlayGuard';
+import AdvancedNoiseOverlay, { useAdvancedNoiseEffect } from '@/components/AdvancedNoiseOverlay';
 import type { LyricLine } from '@/types';
 
 // 动态导入 JadeV6 避免 SSR 问题
@@ -22,24 +23,48 @@ const JadeV6 = dynamic(() => import('@/components/jade/JadeV6'), {
 // 默认时长，待真实音频元数据加载后更新
 const MOCK_DURATION = 364; // ~6 分 4 秒
 
-// 锚字到模型的映射
+// 锚字到模型的映射 - 按精确时间轴硬编码
 const ANCHOR_MODEL_MAPPING = {
-  // 核心锚字 - 按心经语义层级映射
-  '观': '/models/10k_obj/101_观.obj',      // 起点——觉知开启
-  '空': '/models/10k_obj/001_空.obj',      // 体悟本性
-  '苦': '/models/10k_obj/045_苦.obj',      // 觉悟之因
-  '色': '/models/10k_obj/094_色.obj',      // 现象与本质统一
-  '法': '/models/10k_obj/022_法.obj',      // 法性显现
-  '生': '/models/10k_obj/019_生.obj',      // 生灭寂然
-  '无': '/models/10k_obj/012_无.obj',      // 空寂归无
-  '死': '/models/10k_obj/020_死.obj',      // 轮回消融
-  '道': '/models/10k_obj/003_道.obj',      // 八正道总摄
-  '心': '/models/10k_obj/002_心.obj',      // 安住无碍
-  '悟': '/models/10k_obj/008_悟.obj',      // 智慧圆成
-  '明': '/models/10k_obj/007_明.obj',      // 光明智慧
-  '真': '/models/10k_obj/009_真.obj',      // 终点——实相圆满
+  // 核心锚字 - 按心经语义层级映射（精确时间轴版本）
+  '观': '/models/10k_obj/101_观.obj',      // [00:11.84] 观自在菩萨 - 起点——觉知开启
+  '空': '/models/10k_obj/001_空.obj',      // [00:28.87] 照见五蕴皆空 - 体悟本性
+  '苦': '/models/10k_obj/045_苦.obj',      // [00:36.79] 度一切苦厄 - 觉悟之因
+  '色': '/models/10k_obj/094_色.obj',      // [00:52.53] 色不异空 - 现象与本质统一
+  '法': '/models/10k_obj/022_法.obj',      // [01:34.09] 是诸法空相 - 法性显现
+  '生': '/models/10k_obj/019_生.obj',      // [01:38.88] 不生不灭 - 生灭寂然
+  '无': '/models/10k_obj/012_无.obj',      // [01:46.77] 是故空中无色 - 空寂归无
+  '死': '/models/10k_obj/020_死.obj',      // [02:20.50] 乃至无老死 - 轮回消融
+  '道': '/models/10k_obj/003_道.obj',      // [02:27.05] 无苦集灭道 - 八正道总摄
+  '心': '/models/10k_obj/002_心.obj',      // [03:14.10] 心无挂碍 - 安住无碍
+  '悟': '/models/10k_obj/008_悟.obj',      // [03:41.27] 得阿耨多罗三藐三菩提 - 智慧圆成
+  '明': '/models/10k_obj/007_明.obj',      // [03:59.06] 是大明咒 - 光明智慧
+  '真': '/models/10k_obj/009_真.obj',      // [04:07.59] 真实不虚 - 终点——实相圆满
+  '圆': '/models/10k_obj/001_空.obj',      // [05:22.62] 波罗揭谛 - 圆满智慧（使用空模型）
   default: '/models/10k_obj/001_空.obj'
 };
+
+// 精确时间轴锚点映射（硬编码版本）
+const ANCHOR_TIMELINE = [
+  { time: 11.84, anchor: '观', text: '观自在菩萨', meaning: '起点——觉知开启' },
+  { time: 28.87, anchor: '空', text: '照见五蕴皆空', meaning: '体悟本性' },
+  { time: 36.79, anchor: '苦', text: '度一切苦厄', meaning: '觉悟之因' },
+  { time: 52.53, anchor: '色', text: '色不异空', meaning: '现象与本质统一' },
+  { time: 94.09, anchor: '法', text: '是诸法空相', meaning: '法性显现' },
+  { time: 98.88, anchor: '生', text: '不生不灭', meaning: '生灭寂然' },
+  { time: 106.77, anchor: '无', text: '是故空中无色', meaning: '空寂归无' },
+  { time: 140.50, anchor: '死', text: '乃至无老死', meaning: '轮回消融' },
+  { time: 147.05, anchor: '道', text: '无苦集灭道', meaning: '八正道总摄' },
+  { time: 194.10, anchor: '心', text: '心无挂碍', meaning: '安住无碍' },
+  { time: 221.27, anchor: '悟', text: '得阿耨多罗三藐三菩提', meaning: '智慧圆成' },
+  { time: 239.06, anchor: '明', text: '是大明咒', meaning: '光明智慧' },
+  { time: 247.59, anchor: '真', text: '真实不虚', meaning: '终点——实相圆满' },
+  { time: 287.91, anchor: '道', text: '故说般若波罗蜜多咒', meaning: '咒语开启' },
+  { time: 322.62, anchor: '圆', text: '波罗揭谛', meaning: '圆满智慧' },
+  { time: 348.83, anchor: '心', text: '菩提娑婆诃', meaning: '心性圆满' }
+];
+
+// 所有需要预加载的模型路径
+const ALL_MODEL_PATHS = Object.values(ANCHOR_MODEL_MAPPING).filter(path => path !== ANCHOR_MODEL_MAPPING.default);
 
 const findCurrentLineIndex = (lyricLines: LyricLine[], time: number, durationParam: number): number => {
   if (!lyricLines || lyricLines.length === 0) return -1;
@@ -77,6 +102,13 @@ export default function HomePage() {
   // 3D模型相关状态
   const [scrollVelocity, setScrollVelocity] = useState(0);
   const [currentAnchor, setCurrentAnchor] = useState('心');
+
+  // 噪点效果相关状态
+  const [noiseEnabled, setNoiseEnabled] = useState(true);
+  const [noiseIntensity, setNoiseIntensity] = useState(0.03);
+  const [noiseScale, setNoiseScale] = useState(1.0);
+  const [noiseSpeed, setNoiseSpeed] = useState(1.0);
+  const [noiseOpacity, setNoiseOpacity] = useState(0.8);
 
   const audioRef = useRef<HTMLAudioElement>(null);
   const isSeekingRef = useRef(false);
@@ -373,6 +405,23 @@ export default function HomePage() {
   // 计算当前歌词行和锚字
   const currentLineIndex = findCurrentLineIndex(lyrics, currentTime, duration);
 
+  // 使用精确时间轴查找锚字
+  const findAnchorCharByTime = (currentTime: number): string => {
+    const loopTime = currentTime % duration;
+    
+    // 从时间轴中找到当前时间对应的锚字
+    for (let i = ANCHOR_TIMELINE.length - 1; i >= 0; i--) {
+      if (loopTime >= ANCHOR_TIMELINE[i].time) {
+        console.log(`[锚字切换] 时间: ${loopTime.toFixed(2)}s -> 锚字: ${ANCHOR_TIMELINE[i].anchor} (${ANCHOR_TIMELINE[i].text})`);
+        return ANCHOR_TIMELINE[i].anchor;
+      }
+    }
+    
+    // 默认返回第一个锚字
+    return ANCHOR_TIMELINE[0].anchor;
+  };
+
+  // 保留原有的歌词行查找逻辑作为备用
   const findAnchorChar = (currentIndex: number): string => {
     if (!lyrics || lyrics.length === 0) return '心';
     for (let i = currentIndex; i >= 0; i--) {
@@ -386,14 +435,24 @@ export default function HomePage() {
     return '心';
   };
 
-  const anchorChar = findAnchorChar(currentLineIndex);
+  // 使用精确时间轴查找锚字
+  const anchorChar = findAnchorCharByTime(currentTime);
 
   // 更新锚字状态
   useEffect(() => {
     if (anchorChar !== currentAnchor) {
+      console.log(`[锚字更新] ${currentAnchor} -> ${anchorChar}`);
       setCurrentAnchor(anchorChar);
     }
   }, [anchorChar, currentAnchor]);
+
+  // 调试信息：显示当前锚字状态
+  useEffect(() => {
+    const currentAnchorInfo = ANCHOR_TIMELINE.find(item => item.anchor === anchorChar);
+    if (currentAnchorInfo) {
+      console.log(`[当前锚字] ${anchorChar} - ${currentAnchorInfo.text} (${currentAnchorInfo.meaning})`);
+    }
+  }, [anchorChar]);
 
   console.log('[HomePage] Render state:', { hasUserInteracted, isReady, isPlaying, isIntroPlaying });
 
@@ -421,6 +480,18 @@ export default function HomePage() {
         .no-scrollbar {
           -ms-overflow-style: none;  /* IE and Edge */
           scrollbar-width: none;  /* Firefox */
+        }
+        /* 噪点覆盖层样式 */
+        .noise-overlay {
+          mix-blend-mode: normal;
+          pointer-events: none;
+          user-select: none;
+        }
+        /* 噪点效果优化 */
+        .noise-overlay canvas {
+          image-rendering: pixelated;
+          image-rendering: -moz-crisp-edges;
+          image-rendering: crisp-edges;
         }
       `}</style>
       {/* 主音频 */}
@@ -458,6 +529,15 @@ export default function HomePage() {
           background="#202734"
           environmentHdrPath="/textures/qwantani_moon_noon_puresky_1k.hdr"
           environmentIntensity={1.0}
+          // 滚动控制参数（新增）
+          enableScrollControl={true}
+          baseSpeed={0.3}
+          speedMultiplier={8.0}
+          externalVelocity={scrollVelocity}
+          // 预加载设置（新增）
+          enablePreloading={true}
+          preloadAllModels={true}
+          modelPaths={ALL_MODEL_PATHS}
         />
       </div>
 
@@ -487,6 +567,25 @@ export default function HomePage() {
           onSeek={(time) => handleSeek(loopCountRef.current * duration + time)}
         />
       </footer>
+
+      {/* 噪点覆盖层 */}
+      {noiseEnabled && (
+        <AdvancedNoiseOverlay
+          intensity={noiseIntensity}
+          scale={noiseScale}
+          speed={noiseSpeed}
+          opacity={noiseOpacity}
+          blendMode="normal"
+          color="#ffffff"
+          animated={true}
+          className="noise-overlay"
+          noiseType="perlin"
+          frequency={1.0}
+          octaves={4}
+          lacunarity={2.0}
+          persistence={0.5}
+        />
+      )}
     </div>
   );
 }

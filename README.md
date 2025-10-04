@@ -13,6 +13,7 @@ CoScroll 是一个结合滚动交互、3D书法模型和音频同步的数字经
 - 📝 **文字交替**: 一行在模型前方，一行在后方交替显示
 - 🎵 **音频同步**: 音频播放速度与滚动速度同步
 - 🧘 **沉浸体验**: 简约设计，专注于内容本身
+- ✨ **噪点效果**: 程序化生成的噪点纹理，增强视觉质感
 
 ## MVP 版本特性
 
@@ -117,6 +118,19 @@ npm run dev
   - 支持 MeshPhysicalMaterial 的 transmission 折射
 - **使用场景**: 需要纯色背景但保持高质量折射效果的场景
 - **访问路径**: `/jade-v6`
+
+### 噪点效果组件系列
+
+#### AdvancedNoiseOverlay - 高级噪点覆盖层
+- **路径**: `/src/components/AdvancedNoiseOverlay.tsx`
+- **特性**: 程序化生成的噪点纹理，支持多种噪点类型和混合模式
+- **技术实现**:
+  - 支持 Perlin、Simplex、White、Blue、Pink 噪声
+  - 分形布朗运动 (FBM) 实现复杂噪点纹理
+  - 多种混合模式：normal、multiply、overlay、screen 等
+  - 实时动画和响应式调整
+- **使用场景**: 增强视觉质感，添加胶片颗粒感
+- **访问路径**: `/noise-test` (测试页面)
 
 ### 自定义 Hooks
 
