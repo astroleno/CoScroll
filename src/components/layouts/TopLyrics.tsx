@@ -38,7 +38,7 @@ export default function TopLyrics(props: TopLyricsProps) {
   const absoluteCurrentIndex = currentLineIndex >= 0 ? loopCount * lyrics.length + currentLineIndex : -1;
   const isLeft = absoluteCurrentIndex % 2 === 0;
 
-  // 获取显示文本 - TopLyrics显示完整的当前行歌词
+  // 获取显示文本 - TopLyrics显示完整的当前行歌词（前层）
   const getDisplayText = () => {
     if (!currentLine || !currentLine.text) return '';
     return currentLine.text.trim();
@@ -57,12 +57,14 @@ export default function TopLyrics(props: TopLyricsProps) {
       <Text
         position={[isLeft ? -1.2 : 1.2, 0.0, -1.0]} // 前层位置，z=-1.0，增大X轴距离以匹配原版px-16
         fontSize={fontSize}
-        color="#E2E8F0" // 与LyricsController当前行颜色一致
+        color="#ffffff" // 白色，与后层保持一致
         anchorX={isLeft ? "left" : "right"} // 根据左右对齐设置锚点
         anchorY="middle"
         material-toneMapped={false}
         material-transparent={false} // 确保不透明
         material-opacity={1.0} // 完全不透明
+        depthWrite={true}
+        depthTest={true}
       >
         {displayText}
       </Text>

@@ -38,41 +38,65 @@ export default function BottomLyrics(props: BottomLyricsProps) {
   const absoluteCurrentIndex = currentLineIndex >= 0 ? loopCount * lyrics.length + currentLineIndex : -1;
   const isLeft = absoluteCurrentIndex % 2 === 0;
 
-  // 获取下一行歌词 - BottomLyrics显示下一行歌词
-  const getNextLineTexts = () => {
+  // 获取下一行和下下行歌词 - BottomLyrics显示后两行歌词（后层）
+  const getNextTwoLinesTexts = () => {
     if (!currentLine || !currentLine.text) return [];
 
+    // 获取下一行歌词
     const nextIndex = currentLineIndex + 1;
     const nextLine = nextIndex < lyrics.length ? lyrics[nextIndex] : null;
 
-    if (nextLine && nextLine.text.trim()) {
-      return [nextLine.text.trim(), null];
-    }
+    // 获取下下行歌词
+    const nextNextIndex = currentLineIndex + 2;
+    const nextNextLine = nextNextIndex < lyrics.length ? lyrics[nextNextIndex] : null;
 
-    return [];
+    const firstLine = nextLine && nextLine.text.trim() ? nextLine.text.trim() : null;
+    const secondLine = nextNextLine && nextNextLine.text.trim() ? nextNextLine.text.trim() : null;
+
+    return [firstLine, secondLine];
   };
 
   // 检测移动端以调整字号
   const isMobile = typeof navigator !== 'undefined' ? /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) : false;
   const fontSize = isMobile ? (typeof window !== 'undefined' && window.innerHeight < 667 ? 0.24 : 0.28) : 0.32; // 对应原版的1.5rem/1.8rem/2rem
 
-  const [firstLine, secondLine] = getNextLineTexts();
+  const [firstLine, secondLine] = getNextTwoLinesTexts();
 
   return (
     <>
-      {/* 下一行歌词 - 后后层位置 */}
+      {/* 下一行歌词 - 后层第一行 */}
       {firstLine && (
         <Text
-          position={[isLeft ? -1.2 : 1.2, 0.0, -1.2]} // 后后层位置，z=-1.2，增大X轴距离以匹配原版px-16
+          position={[isLeft ? -1.2 : 1.2, 0.3, -1.2]} // 后层位置，z=-1.2，Y轴间距增大
           fontSize={fontSize}
-          color="#94A3B8" // 与LyricsController非当前行颜色一致
+          color="#ffffff" // 白色，与前层保持一致
           anchorX={isLeft ? "left" : "right"} // 根据左右对齐设置锚点
           anchorY="middle"
           material-toneMapped={false}
           material-transparent={false} // 确保不透明
           material-opacity={1.0} // 完全不透明
+          depthWrite={true}
+          depthTest={true}
         >
           {firstLine}
+        </Text>
+      )}
+
+      {/* 下下行歌词 - 后层第二行 */}
+      {secondLine && (
+        <Text
+          position={[isLeft ? -1.2 : 1.2, -0.3, -1.2]} // 后层位置，z=-1.2，Y轴间距增大
+          fontSize={fontSize} // 保持相同字号
+          color="#ffffff" // 白色，与前层保持一致
+          anchorX={isLeft ? "left" : "right"} // 根据左右对齐设置锚点
+          anchorY="middle"
+          material-toneMapped={false}
+          material-transparent={false} // 确保不透明
+          material-opacity={1.0} // 完全不透明
+          depthWrite={true}
+          depthTest={true}
+        >
+          {secondLine}
         </Text>
       )}
     </>

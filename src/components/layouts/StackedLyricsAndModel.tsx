@@ -14,7 +14,7 @@ import JadeModelLoader from '@/components/jade/JadeModelLoader';
  * 注意：滚动控制由隐藏的LyricsController处理，此组件专注于渲染
  */
 export default function StackedLyricsAndModel(props: StackedLayoutProps) {
-  const [midOpacity, setMidOpacity] = useState(0.95);
+  const [midOpacity, setMidOpacity] = useState(1.0);
   const middleCanvasRef = useRef<HTMLDivElement>(null);
 
   return (
@@ -22,7 +22,7 @@ export default function StackedLyricsAndModel(props: StackedLayoutProps) {
       {/* Bottom Layer: 后两行歌词 */}
       <div className="col-start-1 row-start-1">
         <Canvas
-          camera={{ position: [0, 0, 3], fov: 50 }}
+          camera={{ position: [0, 0, 5], fov: 45 }}
           gl={{
             alpha: true,
             devicePixelRatio: Math.min(2, typeof window !== 'undefined' ? window.devicePixelRatio : 1)
@@ -42,7 +42,7 @@ export default function StackedLyricsAndModel(props: StackedLayoutProps) {
         style={{ opacity: midOpacity }}
       >
         <Canvas
-          camera={{ position: [0, 0, 3], fov: 50 }}
+          camera={{ position: [0, 0, 5], fov: 45 }}
           gl={{
             alpha: true,
             devicePixelRatio: Math.min(2, typeof window !== 'undefined' ? window.devicePixelRatio : 1)
@@ -102,7 +102,7 @@ export default function StackedLyricsAndModel(props: StackedLayoutProps) {
       {/* Top Layer: 前一行歌词 */}
       <div className="col-start-1 row-start-1 pointer-events-none" aria-hidden>
         <Canvas
-          camera={{ position: [0, 0, 3], fov: 50 }}
+          camera={{ position: [0, 0, 5], fov: 45 }}
           gl={{
             alpha: true,
             devicePixelRatio: Math.min(2, typeof window !== 'undefined' ? window.devicePixelRatio : 1)
