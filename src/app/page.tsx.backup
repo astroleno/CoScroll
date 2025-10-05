@@ -4,13 +4,11 @@ import React, { useState, useCallback, useRef, useEffect } from 'react';
 import dynamic from 'next/dynamic';
 import { LRC_LYRICS } from './constants';
 import useLyrics from '@/components/hooks/useLyrics';
-import { useScrollVelocity } from '@/components/hooks/useScrollVelocity';
 import LyricsController from '@/components/LyricsController';
 import AudioPlayer from '@/components/AudioPlayer';
 import AutoPlayGuard from '@/components/AutoPlayGuard';
 import ModelPreloader from '@/components/jade/ModelPreloader';
 import type { LyricLine } from '@/types';
-import { StackedLyricsAndModel, type LyricsLayout } from '@/components/layouts';
 
 // 动态导入 JadeV6 避免 SSR 问题
 const JadeV6 = dynamic(() => import('@/components/jade/JadeV6'), { 
@@ -101,11 +99,8 @@ export default function HomePage() {
   const [audioRestartCount, setAudioRestartCount] = useState(0);
   const [debugLogs, setDebugLogs] = useState<string[]>([]);
 
-  // 布局开关状态
-  const [lyricsLayout, setLyricsLayout] = useState<LyricsLayout>('front-back-back');
-
   // 3D模型相关状态
-  const { scrollVelocity, handleScrollVelocityChange } = useScrollVelocity();
+  const [scrollVelocity, setScrollVelocity] = useState(0);
   const [currentAnchor, setCurrentAnchor] = useState('心');
   const [modelPreloadStatus, setModelPreloadStatus] = useState({
     isPreloading: false,
@@ -606,111 +601,44 @@ export default function HomePage() {
         isPlaying={isPlaying || isIntroPlaying}
       />
       
-      {/* 布局渲染区域 */}
-      {lyricsLayout === 'front-back-back' ? (
-        <>
-          {/* 传统布局：3D模型背景 + 歌词控制器 */}
-          <div className="fixed inset-0 pointer-events-none z-10" style={{ width: '100%', height: '100%' }}>
-            <JadeV6
-              modelPath={getModelPath(currentAnchor)}
-              rotationDurationSec={8}
-              direction={1}
-              fitToView
-              background="#202734"
-              environmentHdrPath="/textures/qwantani_moon_noon_puresky_1k.hdr"
-              environmentIntensity={1.0}
-              // 滚动控制参数（新增）
-              enableScrollControl={true}
-              baseSpeed={0.3}
-              speedMultiplier={8.0}
-              externalVelocity={scrollVelocity}
-              // 预加载设置（优化版）
-              enablePreloading={true}
-              preloadAllModels={false} // 改为false，因为已经在页面初始化时预加载了
-              modelPaths={ALL_MODEL_PATHS}
-              // 预加载状态传递
-              preloadStatus={modelPreloadStatus}
-            />
-          </div>
+      {/* 3D模型背景 - 替代原来的背景字符 */}
+      <div className="fixed inset-0 pointer-events-none z-10" style={{ width: '100%', height: '100%' }}>
+        <JadeV6
+          modelPath={getModelPath(currentAnchor)}
+          rotationDurationSec={8}
+          direction={1}
+          fitToView
+          background="#202734"
+          environmentHdrPath="/textures/qwantani_moon_noon_puresky_1k.hdr"
+          environmentIntensity={1.0}
+          // 滚动控制参数（新增）
+          enableScrollControl={true}
+          baseSpeed={0.3}
+          speedMultiplier={8.0}
+          externalVelocity={scrollVelocity}
+          // 预加载设置（优化版）
+          enablePreloading={true}
+          preloadAllModels={false} // 改为false，因为已经在页面初始化时预加载了
+          modelPaths={ALL_MODEL_PATHS}
+          // 预加载状态传递
+          preloadStatus={modelPreloadStatus}
+        />
+      </div>
 
-          {/* 歌词控制器 */}
-          <main className="relative w-full flex-grow flex justify-center items-center z-20 py-4 overflow-hidden">
-            <div className="relative w-full max-w-4xl h-full pointer-events-auto">
-              <LyricsController
-                lyrics={lyrics}
-                currentTime={currentTime}
-                duration={duration}
-                scrollTime={scrollTime}
-                onSeek={handleSeek}
-                isPlaying={isPlaying}
-                onScrollVelocityChange={handleScrollVelocityChange}
-              />
-            </div>
-          </main>
-        </>
-      ) : (
-        <>
-          {/* 新布局：三层Canvas叠加 */}
-          <div className="fixed inset-0 z-5" style={{ width: '100%', height: '100%' }}>
-            <StackedLyricsAndModel
-              currentTime={currentTime}
-              scrollTime={scrollTime}
-              duration={duration}
-              isPlaying={isPlaying}
-              currentAnchor={currentAnchor}
-              lyrics={lyrics}
-              onSeek={handleSeek}
-              onScrollVelocityChange={handleScrollVelocityChange}
-              modelPreloadStatus={modelPreloadStatus}
-              scrollVelocity={scrollVelocity}
-            />
-          </div>
-
-          {/* 隐藏的原始LyricsController用于滚动控制 */}
-          <div className="fixed inset-0 z-0 opacity-0 pointer-events-auto" style={{ width: '100%', height: '100%' }}>
-            <div className="relative w-full h-full">
-              <LyricsController
-                lyrics={lyrics}
-                currentTime={currentTime}
-                duration={duration}
-                scrollTime={scrollTime}
-                onSeek={handleSeek}
-                isPlaying={isPlaying}
-                onScrollVelocityChange={handleScrollVelocityChange}
-              />
-            </div>
-          </div>
-        </>
-      )}
-
-      {/* 布局切换控制（开发环境） */}
-      {process.env.NODE_ENV === 'development' && (
-        <div className="fixed right-4 top-4 z-50 bg-black/80 p-4 rounded-lg space-y-4 text-white">
-          <h3 className="text-sm font-semibold">布局切换</h3>
-          <div className="space-y-2">
-            <label className="flex items-center gap-2 text-sm">
-              <input
-                type="radio"
-                name="layout"
-                value="front-back-back"
-                checked={lyricsLayout === 'front-back-back'}
-                onChange={() => setLyricsLayout('front-back-back')}
-              />
-              传统布局
-            </label>
-            <label className="flex items-center gap-2 text-sm">
-              <input
-                type="radio"
-                name="layout"
-                value="stacked-3canvas"
-                checked={lyricsLayout === 'stacked-3canvas'}
-                onChange={() => setLyricsLayout('stacked-3canvas')}
-              />
-              三层叠加
-            </label>
-          </div>
+      {/* 歌词控制器 */}
+      <main className="relative w-full flex-grow flex justify-center items-center z-20 py-4 overflow-hidden">
+        <div className="relative w-full max-w-4xl h-full pointer-events-auto">
+          <LyricsController
+            lyrics={lyrics}
+            currentTime={currentTime}
+            duration={duration}
+            scrollTime={scrollTime}
+            onSeek={handleSeek}
+            isPlaying={isPlaying}
+            onScrollVelocityChange={setScrollVelocity}
+          />
         </div>
-      )}
+      </main>
 
       {/* 音频播放器 */}
       <footer className="w-full flex justify-center py-8 z-20">
