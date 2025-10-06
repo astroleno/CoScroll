@@ -3,6 +3,7 @@
 import { useFrame, useThree } from "@react-three/fiber";
 import * as THREE from "three";
 import { useEffect, useMemo, useRef, useState } from "react";
+import { useTransitionControl } from "@/hooks/useTransitionControl";
 import { RGBELoader } from "three/examples/jsm/loaders/RGBELoader.js";
 import { OBJLoader } from "three/examples/jsm/loaders/OBJLoader.js";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
@@ -21,12 +22,19 @@ interface JadeModelLoaderProps {
   direction?: 1 | -1;
   fitToView?: boolean;
   enableRotation?: boolean;
-  
+
   // 滚动控制参数
   enableScrollControl?: boolean;
   baseSpeed?: number;
   speedMultiplier?: number;
   externalVelocity?: number;
+
+  // 旋转控制增强参数
+  maxAngularVelocity?: number;
+  enableDamping?: boolean;
+  dampingFactor?: number;
+  velocitySmoothing?: number;
+  maxRotationPerFrame?: number;
   
   // 内层材质参数
   innerColor?: string | number;
@@ -195,26 +203,73 @@ function ScrollRotator({
   speedMultiplier,
   enabled,
   externalVelocity = 0,
+  maxAngularVelocity = 2.0,
+  enableDamping = true,
+  dampingFactor = 0.95,
+  velocitySmoothing = 0.1,
+  maxRotationPerFrame = 0.1,
 }: {
   groupRef: React.RefObject<THREE.Group>;
   baseSpeed: number;
   speedMultiplier: number;
   enabled: boolean;
   externalVelocity?: number;
+  maxAngularVelocity?: number;
+  enableDamping?: boolean;
+  dampingFactor?: number;
+  velocitySmoothing?: number;
+  maxRotationPerFrame?: number;
 }) {
   const { gl } = useThree();
   const prevScrollYRef = useRef(0);
   const targetSpeedRef = useRef(baseSpeed);
   const currentSpeedRef = useRef(baseSpeed);
   const externalVelocityRef = useRef(externalVelocity);
+  const smoothedVelocityRef = useRef(0);
+  const totalRotationRef = useRef(0);
+  const lastFrameTimeRef = useRef(0);
+  const lastExternalVelocityRef = useRef(externalVelocity);
+
+  // Transition control for smooth state changes
+  const transitionControl = useTransitionControl({
+    transitionDuration: 800,
+    enableVelocityReset: true,
+    maxTransitionVelocity: 0.8,
+    smoothingFactor: 0.15
+  });
 
   useEffect(() => {
+    const prevVelocity = lastExternalVelocityRef.current;
+    lastExternalVelocityRef.current = externalVelocity;
+
+    // Detect significant velocity changes that might indicate background/foreground transitions
+    const velocityChange = Math.abs(externalVelocity - prevVelocity);
+    const isSignificantChange = velocityChange > 0.5;
+
+    if (isSignificantChange) {
+      console.log('[ScrollRotator] Significant velocity change detected:', {
+        prevVelocity,
+        newVelocity: externalVelocity,
+        change: velocityChange
+      });
+
+      // Handle transition based on velocity change pattern
+      if (Math.abs(prevVelocity) > Math.abs(externalVelocity)) {
+        // Velocity decreasing - likely background to foreground
+        transitionControl.onBackgroundToForeground(currentSpeedRef.current);
+      } else {
+        // Velocity increasing - likely foreground to background
+        transitionControl.onForegroundToBackground(currentSpeedRef.current);
+      }
+    }
+
     externalVelocityRef.current = externalVelocity;
-  }, [externalVelocity]);
+  }, [externalVelocity, transitionControl]);
 
   useEffect(() => {
-    targetSpeedRef.current = baseSpeed + externalVelocityRef.current;
-  }, [baseSpeed, externalVelocity]);
+    const baseWithExternal = Math.max(-maxAngularVelocity, Math.min(maxAngularVelocity, baseSpeed + externalVelocityRef.current));
+    targetSpeedRef.current = baseWithExternal;
+  }, [baseSpeed, externalVelocityRef.current, maxAngularVelocity]);
 
   useEffect(() => {
     prevScrollYRef.current = window.scrollY || 0;
@@ -224,13 +279,29 @@ function ScrollRotator({
       prevScrollYRef.current = y;
       const baseWithExternal = baseSpeed + externalVelocityRef.current;
       const scrollVelocity = dy * 0.001;
-      targetSpeedRef.current = baseWithExternal + scrollVelocity * speedMultiplier;
+
+      // Apply velocity smoothing
+      smoothedVelocityRef.current += (scrollVelocity - smoothedVelocityRef.current) * velocitySmoothing;
+
+      // Calculate target speed with limits
+      let newTargetSpeed = baseWithExternal + smoothedVelocityRef.current * speedMultiplier;
+      newTargetSpeed = Math.max(-maxAngularVelocity, Math.min(maxAngularVelocity, newTargetSpeed));
+
+      targetSpeedRef.current = newTargetSpeed;
     };
     const onWheel = (e: WheelEvent) => {
       const unit = e.deltaMode === 1 ? 16 : 1;
       const baseWithExternal = baseSpeed + externalVelocityRef.current;
       const scrollVelocity = e.deltaY * unit * 0.001;
-      targetSpeedRef.current = baseWithExternal + scrollVelocity * speedMultiplier;
+
+      // Apply velocity smoothing
+      smoothedVelocityRef.current += (scrollVelocity - smoothedVelocityRef.current) * velocitySmoothing;
+
+      // Calculate target speed with limits
+      let newTargetSpeed = baseWithExternal + smoothedVelocityRef.current * speedMultiplier;
+      newTargetSpeed = Math.max(-maxAngularVelocity, Math.min(maxAngularVelocity, newTargetSpeed));
+
+      targetSpeedRef.current = newTargetSpeed;
     };
 
     window.addEventListener("scroll", onScroll, { passive: true });
@@ -240,10 +311,18 @@ function ScrollRotator({
       const unit = e.deltaMode === 1 ? 16 : 1;
       const baseWithExternal = baseSpeed + externalVelocityRef.current;
       const scrollVelocity = e.deltaY * unit * 0.001;
-      targetSpeedRef.current = baseWithExternal + scrollVelocity * speedMultiplier;
+
+      // Apply velocity smoothing
+      smoothedVelocityRef.current += (scrollVelocity - smoothedVelocityRef.current) * velocitySmoothing;
+
+      // Calculate target speed with limits
+      let newTargetSpeed = baseWithExternal + smoothedVelocityRef.current * speedMultiplier;
+      newTargetSpeed = Math.max(-maxAngularVelocity, Math.min(maxAngularVelocity, newTargetSpeed));
+
+      targetSpeedRef.current = newTargetSpeed;
       e.preventDefault();
     };
-    
+
     const lastTouchY = { v: 0 } as { v: number };
     const onTouchStart = (e: TouchEvent) => {
       if (e.touches && e.touches.length > 0) lastTouchY.v = e.touches[0].clientY;
@@ -255,14 +334,22 @@ function ScrollRotator({
       lastTouchY.v = y;
       const baseWithExternal = baseSpeed + externalVelocityRef.current;
       const scrollVelocity = dy * 0.02;
-      targetSpeedRef.current = baseWithExternal + scrollVelocity * speedMultiplier;
+
+      // Apply velocity smoothing
+      smoothedVelocityRef.current += (scrollVelocity - smoothedVelocityRef.current) * velocitySmoothing;
+
+      // Calculate target speed with limits
+      let newTargetSpeed = baseWithExternal + scrollVelocity * speedMultiplier;
+      newTargetSpeed = Math.max(-maxAngularVelocity, Math.min(maxAngularVelocity, newTargetSpeed));
+
+      targetSpeedRef.current = newTargetSpeed;
       e.preventDefault();
     };
-    
+
     el.addEventListener("wheel", onWheelCanvas, { passive: false });
     el.addEventListener("touchstart", onTouchStart, { passive: false });
     el.addEventListener("touchmove", onTouchMove, { passive: false });
-    
+
     return () => {
       window.removeEventListener("scroll", onScroll);
       window.removeEventListener("wheel", onWheel);
@@ -270,47 +357,88 @@ function ScrollRotator({
       el.removeEventListener("touchstart", onTouchStart as any);
       el.removeEventListener("touchmove", onTouchMove as any);
     };
-  }, [baseSpeed, speedMultiplier, gl]);
+  }, [baseSpeed, speedMultiplier, gl, maxAngularVelocity, velocitySmoothing]);
 
   useFrame((_, delta) => {
-    if (!enabled) return;
-    const baseWithExternal = baseSpeed + externalVelocityRef.current;
-    targetSpeedRef.current += (baseWithExternal - targetSpeedRef.current) * 0.02;
-    currentSpeedRef.current += (targetSpeedRef.current - currentSpeedRef.current) * Math.min(1, delta * 10);
-    if (groupRef.current) {
-      groupRef.current.rotation.y += currentSpeedRef.current * delta;
+    if (!enabled || !groupRef.current) return;
+
+    const currentTime = performance.now();
+    const deltaTime = lastFrameTimeRef.current > 0 ? (currentTime - lastFrameTimeRef.current) / 1000 : delta;
+    lastFrameTimeRef.current = currentTime;
+
+    // Get controlled velocity from transition system
+    const transitionVelocity = transitionControl.getCurrentVelocity();
+
+    // Apply damping to target speed when no external input
+    if (enableDamping) {
+      const baseWithExternal = Math.max(-maxAngularVelocity, Math.min(maxAngularVelocity, baseSpeed + externalVelocityRef.current));
+      targetSpeedRef.current += (baseWithExternal - targetSpeedRef.current) * (1 - dampingFactor);
     }
+
+    // Use transition velocity if transitioning, otherwise use normal speed
+    let effectiveSpeed = currentSpeedRef.current;
+    if (transitionControl.isTransitioning()) {
+      effectiveSpeed = transitionVelocity;
+      console.log('[ScrollRotator] Using transition velocity:', transitionVelocity);
+    } else {
+      // Smooth current speed transition
+      currentSpeedRef.current += (targetSpeedRef.current - currentSpeedRef.current) * Math.min(1, deltaTime * 10);
+      effectiveSpeed = currentSpeedRef.current;
+    }
+
+    // Apply maximum rotation per frame limit
+    const maxRotationThisFrame = maxRotationPerFrame * deltaTime * 60; // Normalize to 60fps
+    const rotationDelta = Math.max(-maxRotationThisFrame, Math.min(maxRotationThisFrame, effectiveSpeed * deltaTime));
+
+    // Apply rotation
+    groupRef.current.rotation.y += rotationDelta;
+
+    // Track total rotation
+    totalRotationRef.current += Math.abs(rotationDelta);
+
+    // Gradually decay smoothed velocity
+    smoothedVelocityRef.current *= 0.98;
   });
 
   return null;
 }
 
-function RotationController({ 
-  enabled, 
-  durationSec, 
+function RotationController({
+  enabled,
+  durationSec,
   direction,
   enableScrollControl = false,
   baseSpeed = 0.4,
   speedMultiplier = 3.0,
   externalVelocity = 0,
-  children 
-}: { 
-  enabled: boolean; 
-  durationSec: number; 
+  maxAngularVelocity = 2.0,
+  enableDamping = true,
+  dampingFactor = 0.95,
+  velocitySmoothing = 0.1,
+  maxRotationPerFrame = 0.1,
+  children
+}: {
+  enabled: boolean;
+  durationSec: number;
   direction: 1 | -1;
   enableScrollControl?: boolean;
   baseSpeed?: number;
   speedMultiplier?: number;
   externalVelocity?: number;
+  maxAngularVelocity?: number;
+  enableDamping?: boolean;
+  dampingFactor?: number;
+  velocitySmoothing?: number;
+  maxRotationPerFrame?: number;
   children?: React.ReactNode;
 }) {
   const groupRef = useRef<THREE.Group>(null);
 
   useFrame((_, delta) => {
     if (!enabled || !groupRef.current) return;
-    
+
     if (enableScrollControl) return;
-    
+
     const speed = (2 * Math.PI) / durationSec * direction;
     groupRef.current.rotation.y += speed * delta;
   });
@@ -324,6 +452,11 @@ function RotationController({
           speedMultiplier={speedMultiplier}
           enabled={enabled}
           externalVelocity={externalVelocity}
+          maxAngularVelocity={maxAngularVelocity}
+          enableDamping={enableDamping}
+          dampingFactor={dampingFactor}
+          velocitySmoothing={velocitySmoothing}
+          maxRotationPerFrame={maxRotationPerFrame}
         />
       )}
       {children}
@@ -529,11 +662,18 @@ export default function JadeModelLoader({
   direction = 1,
   fitToView = true,
   enableRotation = true,
-  
+
   enableScrollControl = false,
   baseSpeed = 0.4,
   speedMultiplier = 3.0,
   externalVelocity = 0,
+
+  // 旋转控制增强参数
+  maxAngularVelocity = 2.0,
+  enableDamping = true,
+  dampingFactor = 0.95,
+  velocitySmoothing = 0.1,
+  maxRotationPerFrame = 0.1,
   
   innerColor = 0x2d6d8b,
   innerMetalness = 1.0,
@@ -666,14 +806,19 @@ export default function JadeModelLoader({
   }, [envMap, innerEnvMapIntensity, innerMaterial, outerMaterial]);
 
   return (
-    <RotationController 
-      enabled={enableRotation} 
-      durationSec={rotationDurationSec} 
+    <RotationController
+      enabled={enableRotation}
+      durationSec={rotationDurationSec}
       direction={direction}
       enableScrollControl={enableScrollControl}
       baseSpeed={baseSpeed}
       speedMultiplier={speedMultiplier}
       externalVelocity={externalVelocity}
+      maxAngularVelocity={maxAngularVelocity}
+      enableDamping={enableDamping}
+      dampingFactor={dampingFactor}
+      velocitySmoothing={velocitySmoothing}
+      maxRotationPerFrame={maxRotationPerFrame}
     >
       <DualLayerModelLoader 
         modelPath={modelPath} 

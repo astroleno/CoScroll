@@ -7,6 +7,10 @@ import useLyrics from '@/components/hooks/useLyrics';
 import { useScrollVelocity } from '@/components/hooks/useScrollVelocity';
 import LyricsController from '@/components/LyricsController';
 import AudioPlayer from '@/components/AudioPlayer';
+import EnhancedAudioPlayer from '@/components/audio/EnhancedAudioPlayer';
+import AudioEngine from '@/components/audio/AudioEngine';
+import PageVisibilityManager from '@/components/audio/PageVisibilityManager';
+import SmoothLoopManager from '@/components/audio/SmoothLoopManager';
 import AutoPlayGuard from '@/components/AutoPlayGuard';
 import ModelPreloader from '@/components/jade/ModelPreloader';
 import type { LyricLine } from '@/types';
@@ -91,14 +95,15 @@ export default function HomePage() {
   // 音频相关状态
   const [isPlaying, setIsPlaying] = useState(false);
   const [isReady, setIsReady] = useState(false);
-  const [currentTime, setCurrentTime] = useState(0);
-  const [scrollTime, setScrollTime] = useState(0);
+  const [currentTime, setCurrentTime] = useState(0); // Start from beginning
+  const [scrollTime, setScrollTime] = useState(0); // Start from beginning
   const [duration, setDuration] = useState(MOCK_DURATION);
   const [audioSrc, setAudioSrc] = useState('');
   const [isIntroPlaying, setIsIntroPlaying] = useState(false);
   const [hasUserInteracted, setHasUserInteracted] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
-  const [audioRestartCount, setAudioRestartCount] = useState(0);
+  const [loopCount, setLoopCount] = useState(0);
+  const [isBuffering, setIsBuffering] = useState(false);
   const [debugLogs, setDebugLogs] = useState<string[]>([]);
 
   // 布局开关状态
@@ -117,12 +122,8 @@ export default function HomePage() {
 
 
   const audioRef = useRef<HTMLAudioElement>(null);
-  const isSeekingRef = useRef(false);
-  const seekTimeoutRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
-  const loopCountRef = useRef(0);
-  const isAudioEndedRef = useRef(false);
-  const pendingSeekAbsoluteTimeRef = useRef<number | null>(null);
-  const lastSeekTargetDisplayTimeRef = useRef<number | null>(null);
+  const lastUserInteractionRef = useRef<number>(0);
+  const isVisibilityChangeRef = useRef<boolean>(false);
 
   const lyrics = useLyrics(LRC_LYRICS);
 
@@ -216,238 +217,83 @@ export default function HomePage() {
   // 用户交互处理
   const handleUserInteraction = useCallback(() => {
     addDebugLog(`用户交互触发，移动端: ${isMobile}`);
+    lastUserInteractionRef.current = Date.now();
     setHasUserInteracted(true);
     setIsIntroPlaying(true);
 
-    const initialLoop = 3;
-    const initialScrollTime = MOCK_DURATION * initialLoop;
-    const initialDisplayTime = 0;
-
-    setScrollTime(initialScrollTime);
-    setCurrentTime(initialDisplayTime);
-    loopCountRef.current = initialLoop;
-
-    if (audioRef.current) {
-        audioRef.current.currentTime = initialDisplayTime;
-    }
-
-    const mainAudio = audioRef.current;
-    if (mainAudio) {
-      mainAudio.play()
-        .then(() => {
-          addDebugLog('音频播放成功');
-        })
-        .catch(e => {
-          addDebugLog(`音频播放失败: ${e.message}`);
-        });
-    }
-  }, [isReady, isMobile, addDebugLog]);
+    // Start from the beginning for better user experience
+    const initialTime = 0;
+    setCurrentTime(initialTime);
+    setScrollTime(initialTime);
+    setLoopCount(0);
+  }, [isMobile, addDebugLog]);
 
   // 播放/暂停控制
   const handlePlayPause = useCallback(() => {
-    const audio = audioRef.current;
-    if (!audio || !isReady) return;
-    if (isPlaying) {
-      try {
-        audio.pause();
-      } catch (e) {
-        console.error('[Audio] Pause failed:', e);
-      }
-    } else {
-      audio.play().catch(e => console.error('[Audio] Playback failed:', e));
-    }
-  }, [isPlaying, isReady]);
+    if (!isReady) return;
+
+    // Toggle playing state - AudioEngine will handle the actual play/pause
+    setIsPlaying(prev => !prev);
+  }, [isReady]);
 
   // 跳转处理
   const handleSeek = useCallback((absoluteTime: number) => {
-    isSeekingRef.current = true;
-    if (seekTimeoutRef.current) clearTimeout(seekTimeoutRef.current);
-    const timeoutDuration = isPlaying ? 1000 : 500;
-    seekTimeoutRef.current = setTimeout(() => {
-      isSeekingRef.current = false;
-      lastSeekTargetDisplayTimeRef.current = null;
-    }, timeoutDuration);
-
     const safeDuration = Math.max(1, duration);
     const displayTime = absoluteTime % safeDuration;
+    const newLoopCount = Math.floor(absoluteTime / safeDuration);
+
     setCurrentTime(displayTime);
     setScrollTime(absoluteTime);
-    loopCountRef.current = Math.floor(absoluteTime / safeDuration);
-    lastSeekTargetDisplayTimeRef.current = displayTime;
+    setLoopCount(newLoopCount);
+  }, [duration]);
 
-    try {
-      const audio = audioRef.current;
-      if (audio && isReady) {
-        audio.currentTime = displayTime;
-        pendingSeekAbsoluteTimeRef.current = null;
-      } else {
-        pendingSeekAbsoluteTimeRef.current = absoluteTime;
-      }
-    } catch (err) {
-      console.error('[Audio] Seek failed:', err);
-    }
-  }, [duration, isReady, isPlaying]);
-
-  // 时间更新处理
-  const handleTimeUpdate = useCallback((event: React.SyntheticEvent<HTMLAudioElement>) => {
-    const audio = event.currentTarget;
-    if (!audio) return;
-
-    const newDisplayTime = audio.currentTime;
-
-    if (isSeekingRef.current) {
-      const targetDisplayTime = lastSeekTargetDisplayTimeRef.current;
-      if (targetDisplayTime != null && Math.abs(newDisplayTime - targetDisplayTime) > 0.5) {
-        setCurrentTime(newDisplayTime);
-        setScrollTime(loopCountRef.current * duration + newDisplayTime);
-      }
-      return;
-    }
-
-    if (isAudioEndedRef.current && newDisplayTime > 1.0) {
-      isAudioEndedRef.current = false;
-    }
-
-    const isLooping = !isAudioEndedRef.current &&
-                     ((newDisplayTime < currentTime && currentTime > duration * 0.9) ||
-                      (newDisplayTime < 0.5 && currentTime > duration * 0.9 && loopCountRef.current > 0));
-
-    if (isLooping) {
-      loopCountRef.current++;
-    }
-
-    setCurrentTime(newDisplayTime);
-    setScrollTime(loopCountRef.current * duration + newDisplayTime);
-  }, [currentTime, duration]);
-
-  // 音频元数据加载
-  const handleLoadedMetadata = useCallback((e: React.SyntheticEvent<HTMLAudioElement>) => {
-    try {
-      const target = e.currentTarget;
-      const realDuration = Math.max(1, Math.floor(target.duration));
-      setDuration(realDuration);
-      const pendingAbs = pendingSeekAbsoluteTimeRef.current;
-      if (pendingAbs != null) {
-        const displayTime = pendingAbs % realDuration;
-        try {
-          if (audioRef.current) audioRef.current.currentTime = displayTime;
-          setCurrentTime(displayTime);
-          loopCountRef.current = Math.floor(pendingAbs / realDuration);
-          pendingSeekAbsoluteTimeRef.current = null;
-          lastSeekTargetDisplayTimeRef.current = displayTime;
-        } catch (seekErr) {
-          console.error('[Audio] Failed to apply pending seek after metadata load:', seekErr);
-        }
-      }
-    } catch (err) {
-      console.error('[Audio] Failed to read metadata:', err);
-    }
+  // AudioEngine event handlers
+  const handleAudioTimeUpdate = useCallback((displayTime: number, absoluteTime: number) => {
+    setCurrentTime(displayTime);
+    setScrollTime(absoluteTime);
   }, []);
 
-  // 音频可播放
-  const handleCanPlay = () => {
-    try {
-      setIsReady(true);
-      const pendingAbs = pendingSeekAbsoluteTimeRef.current;
-      const audio = audioRef.current;
-      const safeDuration = Math.max(1, duration);
-      if (pendingAbs != null && audio) {
-        const displayTime = pendingAbs % safeDuration;
-        audio.currentTime = displayTime;
-        setCurrentTime(displayTime);
-        loopCountRef.current = Math.floor(pendingAbs / safeDuration);
-        pendingSeekAbsoluteTimeRef.current = null;
-        lastSeekTargetDisplayTimeRef.current = displayTime;
-      }
-    } catch (err) {
-      console.error('[Audio] canplay handler failed:', err);
+  const handleAudioDurationChange = useCallback((newDuration: number) => {
+    setDuration(newDuration);
+  }, []);
+
+  const handleAudioReady = useCallback(() => {
+    setIsReady(true);
+    addDebugLog('Audio engine ready');
+  }, [addDebugLog]);
+
+  const handleAudioPlayStateChange = useCallback((playing: boolean) => {
+    setIsPlaying(playing);
+  }, []);
+
+  const handleAudioLoopComplete = useCallback((newLoopCount: number) => {
+    setLoopCount(newLoopCount);
+    addDebugLog(`Loop completed: ${newLoopCount}`);
+  }, [addDebugLog]);
+
+  const handleVisibilityChange = useCallback((isVisible: boolean, wasHidden: boolean) => {
+    isVisibilityChangeRef.current = true;
+    if (isVisible && wasHidden) {
+      addDebugLog('Page became visible after being hidden');
     }
-  };
+  }, [addDebugLog]);
 
-  // 音频错误处理
-  const handleAudioError = (e: React.SyntheticEvent<HTMLAudioElement, Event>) => {
-    const err = e.currentTarget.error;
-    if (err) console.error(`Audio Error: Code ${err.code} - ${err.message}`);
-  };
-
-  // 音频结束处理
-  const handleAudioEnded = useCallback(() => {
-    console.log('[HomePage] Audio ended, restarting for infinite playback');
-    const audio = audioRef.current;
-    if (!audio) return;
-
-    isAudioEndedRef.current = true;
-    loopCountRef.current++;
-    setAudioRestartCount(prev => prev + 1);
-
-    setCurrentTime(0);
-    setScrollTime(loopCountRef.current * duration);
-
-    if (isMobile) {
-      if (audioRestartCount > 0 && audioRestartCount % 10 === 0) {
-        audio.load();
-        setTimeout(() => {
-          audio.play().catch(err => console.error('[Audio] Mobile reload and play failed:', err));
-        }, 200);
-      } else {
-        audio.currentTime = 0;
-        audio.play()
-          .then(() => {
-            console.log('[HomePage] Mobile audio restarted successfully');
-          })
-          .catch(e => {
-            console.error('[Audio] Mobile audio restart failed:', e);
-            audio.load();
-            setTimeout(() => {
-              audio.play().catch(err => console.error('[Audio] Mobile fallback play failed:', err));
-            }, 100);
-          });
-      }
-    } else {
-      audio.currentTime = 0;
-      audio.play()
-        .then(() => {
-          console.log('[HomePage] Desktop audio restarted successfully');
-        })
-        .catch(e => {
-          console.error('[Audio] Desktop audio restart failed:', e);
-        });
+  const handleTimeSync = useCallback((expectedTime: number, actualTime: number) => {
+    if (!isVisibilityChangeRef.current && Math.abs(expectedTime - actualTime) > 0.5) {
+      setCurrentTime(expectedTime);
+      addDebugLog(`Time synced: ${actualTime.toFixed(2)} -> ${expectedTime.toFixed(2)}`);
     }
-  }, [isMobile, audioRestartCount, duration]);
+    isVisibilityChangeRef.current = false;
+  }, [addDebugLog]);
 
-  // 移动端页面可见性处理
+  // 设置音频源时重置状态
   useEffect(() => {
-    if (!isMobile) return;
-
-    const handleVisibilityChange = () => {
-      const audio = audioRef.current;
-      if (!audio) return;
-
-      if (document.hidden) {
-        audio.pause();
-      } else {
-        if (audioRef.current) {
-          const expectedTime = currentTime;
-          const actualTime = audioRef.current.currentTime;
-          if (Math.abs(expectedTime - actualTime) > 0.5) {
-            audioRef.current.currentTime = expectedTime;
-          }
-        }
-
-        if (isPlaying) {
-          audio.play().catch(e => {
-            console.error('[Audio] Mobile resume failed:', e);
-            setHasUserInteracted(false);
-          });
-        }
-      }
-    };
-
-    document.addEventListener('visibilitychange', handleVisibilityChange);
-    return () => {
-      document.removeEventListener('visibilitychange', handleVisibilityChange);
-    };
-  }, [isMobile, isPlaying, currentTime]);
+    setScrollTime(0);
+    setCurrentTime(0);
+    setLoopCount(0);
+    setIsPlaying(false);
+    setIsReady(false);
+  }, [audioSrc]);
 
   // 计算当前歌词行和锚字
   const currentLineIndex = findCurrentLineIndex(lyrics, currentTime, duration);
@@ -581,31 +427,52 @@ export default function HomePage() {
           image-rendering: crisp-edges;
         }
       `}</style>
-      {/* 主音频 */}
-      <audio
-        key={audioSrc} 
-        ref={audioRef} 
-        src={audioSrc || undefined}
-        onPlay={() => setIsPlaying(true)} 
-        onPause={() => setIsPlaying(false)}
-        onEnded={handleAudioEnded} 
-        onTimeUpdate={handleTimeUpdate}
-        onLoadedMetadata={handleLoadedMetadata} 
-        onCanPlay={handleCanPlay} 
-        onError={handleAudioError}
-        preload="auto"
-        playsInline
-        webkit-playsinline="true"
-        controls={false}
-      />
+
+      {/* Page Visibility Manager */}
+      <PageVisibilityManager
+        isPlaying={isPlaying}
+        currentTime={currentTime}
+        onVisibilityChange={handleVisibilityChange}
+        onTimeSync={handleTimeSync}
+      >
+
+        {/* Audio Engine */}
+        <AudioEngine
+          audioSrc={audioSrc}
+          isPlaying={hasUserInteracted && (isPlaying || isIntroPlaying)}
+          isReady={isReady}
+          currentTime={currentTime}
+          duration={duration}
+          onTimeUpdate={handleAudioTimeUpdate}
+          onDurationChange={handleAudioDurationChange}
+          onReady={handleAudioReady}
+          onPlayStateChange={handleAudioPlayStateChange}
+          onLoopComplete={handleAudioLoopComplete}
+          enableWebAudio={true}
+          initialTime={0}
+        />
+
+        {/* Smooth Loop Manager */}
+        {typeof window !== 'undefined' && (window as any).__audioElement && (
+          <SmoothLoopManager
+            audioElement={(window as any).__audioElement}
+            isPlaying={isPlaying}
+            duration={duration}
+            currentTime={currentTime}
+            onLoopComplete={handleAudioLoopComplete}
+            onTimeUpdate={(time) => setCurrentTime(time)}
+            enableGaplessLoop={true}
+            loopOverlapTime={0.5}
+          />
+        )}
       
-      {/* 自动播放引导 */}
-      <AutoPlayGuard 
+                    {/* 自动播放引导 */}
+      <AutoPlayGuard
         onUserInteraction={handleUserInteraction}
         isReady={isReady}
         isPlaying={isPlaying || isIntroPlaying}
       />
-      
+
       {/* 布局渲染区域 */}
       {lyricsLayout === 'front-back-back' ? (
         <>
@@ -712,15 +579,19 @@ export default function HomePage() {
         </div>
       )}
 
+      </PageVisibilityManager>
+
       {/* 音频播放器 */}
       <footer className="w-full flex justify-center py-8 z-20">
-        <AudioPlayer
-          isPlaying={isPlaying} 
+        <EnhancedAudioPlayer
+          isPlaying={isPlaying}
           isReady={isReady}
-          duration={duration} 
+          duration={duration}
           currentTime={currentTime}
-          onPlayPause={handlePlayPause} 
-          onSeek={(time) => handleSeek(loopCountRef.current * duration + time)}
+          isBuffering={isBuffering}
+          onPlayPause={handlePlayPause}
+          onSeek={(time) => handleSeek(loopCount * duration + time)}
+          showDebugInfo={process.env.NODE_ENV === 'development'}
         />
       </footer>
 
