@@ -32,7 +32,7 @@ interface Lyrics3DRendererComponentProps extends Lyrics3DProps {
  * 字体配置
  */
 const defaultFontConfig: FontConfig = {
-  fontPath: '', // 使用默认字体，避免加载错误
+  fontPath: '', // 使用系统默认字体，支持微软雅黑/苹方等现代字体
   fallbackFont: 'Arial',
   fontSize: 0.5,
   fontWeight: 'normal',

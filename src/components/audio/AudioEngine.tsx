@@ -5,6 +5,7 @@ interface AudioEngineProps {
   isPlaying: boolean;
   isReady: boolean;
   currentTime: number;
+  loopCount: number; // 添加：外部传入的轮次
   duration: number;
   onTimeUpdate: (currentTime: number, absoluteTime: number) => void;
   onDurationChange: (duration: number) => void;
@@ -13,6 +14,7 @@ interface AudioEngineProps {
   onLoopComplete: (loopCount: number) => void;
   enableWebAudio?: boolean;
   initialTime?: number;
+  seekSignal?: number;
 }
 
 interface AudioState {
@@ -29,6 +31,7 @@ export const AudioEngine: React.FC<AudioEngineProps> = ({
   isPlaying: desiredPlayingState,
   isReady,
   currentTime: desiredTime,
+  loopCount: desiredLoopCount,
   duration,
   onTimeUpdate,
   onDurationChange,
@@ -36,13 +39,16 @@ export const AudioEngine: React.FC<AudioEngineProps> = ({
   onPlayStateChange,
   onLoopComplete,
   enableWebAudio = true,
-  initialTime = 0
+  initialTime = 0,
+  seekSignal = 0
 }) => {
   // Refs
   const audioRef = useRef<HTMLAudioElement>(null);
   const audioContextRef = useRef<AudioContext | null>(null);
   const sourceNodeRef = useRef<MediaElementAudioSourceNode | null>(null);
   const gainNodeRef = useRef<GainNode | null>(null);
+  const animationFrameRef = useRef<number | null>(null);
+  const lastPlaybackTimeRef = useRef(0);
 
   // Expose audio element to parent
   useEffect(() => {
@@ -66,6 +72,7 @@ export const AudioEngine: React.FC<AudioEngineProps> = ({
   const pendingSeekRef = useRef<number | null>(null);
   const lastSeekTimeRef = useRef(0);
   const seekThrottleTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const lastForcedSeekRef = useRef<number>(0);
 
   // Audio context management
   const initAudioContext = useCallback(() => {
@@ -125,16 +132,27 @@ export const AudioEngine: React.FC<AudioEngineProps> = ({
 
     isSeekingRef.current = true;
     lastSeekTimeRef.current = now;
+    lastForcedSeekRef.current = now;
 
-    // Calculate display time (within current loop)
-    const displayTime = time % Math.max(1, duration || audio.duration || 1);
+    // Calculate displayTime (不再修改 loopCount，使用外部同步的值)
+    const base = Math.max(1, duration || audio.duration || 1);
+    const displayTime = ((time % base) + base) % base;
+
+    console.log('[AudioEngine] performSeek', {
+      time,
+      displayTime,
+      currentLoopCount: stateRef.current.loopCount
+    });
 
     try {
       audio.currentTime = displayTime;
       stateRef.current.currentTime = displayTime;
+      // 不再修改 loopCount，保持外部同步的值
+      // stateRef.current.loopCount = Math.max(0, loopIndex);  // 删除这行
+      lastPlaybackTimeRef.current = displayTime;
 
-      // Notify parent of time change
-      const absoluteTime = stateRef.current.loopCount * Math.max(1, duration || audio.duration || 1) + displayTime;
+      // Notify parent of time change (使用当前的 loopCount)
+      const absoluteTime = stateRef.current.loopCount * base + displayTime;
       onTimeUpdate(displayTime, absoluteTime);
 
       // Clear seeking state after a short delay
@@ -147,29 +165,72 @@ export const AudioEngine: React.FC<AudioEngineProps> = ({
     }
   }, [duration, onTimeUpdate]);
 
+  const cancelAnimationLoop = useCallback(() => {
+    if (!enableWebAudio) {
+      animationFrameRef.current = null;
+      return;
+    }
+
+    if (animationFrameRef.current !== null) {
+      cancelAnimationFrame(animationFrameRef.current);
+      animationFrameRef.current = null;
+    }
+  }, [enableWebAudio]);
+
+  const animationStep = useCallback(() => {
+    const audio = audioRef.current;
+    if (!audio || !stateRef.current.isPlaying) {
+      animationFrameRef.current = null;
+      return;
+    }
+
+    const newTime = audio.currentTime;
+    const base = Math.max(1, duration || audio.duration || 1);
+    const absoluteTime = stateRef.current.loopCount * base + newTime;
+    onTimeUpdate(newTime, absoluteTime);
+
+    animationFrameRef.current = requestAnimationFrame(animationStep);
+  }, [duration, onTimeUpdate]);
+
+  const startAnimationLoop = useCallback(() => {
+    if (!enableWebAudio) {
+      return;
+    }
+    if (animationFrameRef.current !== null) return;
+    animationFrameRef.current = requestAnimationFrame(animationStep);
+  }, [animationStep, enableWebAudio]);
+
   // Handle time updates with buffering detection
   const handleTimeUpdate = useCallback((event: React.SyntheticEvent<HTMLAudioElement>) => {
     const audio = event.currentTarget;
     if (!audio || isSeekingRef.current) return;
 
     const newTime = audio.currentTime;
+    const previousTime = lastPlaybackTimeRef.current;
+
+    if (previousTime - newTime > 0.5) {
+      stateRef.current.loopCount += 1;
+      onLoopComplete(stateRef.current.loopCount);
+    }
+    lastPlaybackTimeRef.current = newTime;
+
     const buffered = audio.buffered;
 
-    // Check if we're buffering
     let isBuffering = false;
     if (buffered.length > 0) {
       const currentBufferEnd = buffered.end(buffered.length - 1);
-      const bufferThreshold = 2; // 2 seconds ahead
+      const bufferThreshold = 2;
       isBuffering = currentBufferEnd - newTime < bufferThreshold;
     }
 
     stateRef.current.currentTime = newTime;
     stateRef.current.isBuffering = isBuffering;
 
-    // Calculate absolute time (including loops)
-    const absoluteTime = stateRef.current.loopCount * Math.max(1, duration || audio.duration || 1) + newTime;
-    onTimeUpdate(newTime, absoluteTime);
-  }, [duration, onTimeUpdate]);
+    if (animationFrameRef.current === null) {
+      const absoluteTime = stateRef.current.loopCount * Math.max(1, duration || audio.duration || 1) + newTime;
+      onTimeUpdate(newTime, absoluteTime);
+    }
+  }, [duration, onLoopComplete, onTimeUpdate]);
 
   // Handle audio metadata loaded
   const handleLoadedMetadata = useCallback(() => {
@@ -179,6 +240,7 @@ export const AudioEngine: React.FC<AudioEngineProps> = ({
     const realDuration = Math.max(1, audio.duration);
     stateRef.current.duration = realDuration;
     onDurationChange(realDuration);
+    lastPlaybackTimeRef.current = audio.currentTime || 0;
 
     // Apply initial seek if specified
     if (initialTime > 0) {
@@ -192,42 +254,27 @@ export const AudioEngine: React.FC<AudioEngineProps> = ({
       stateRef.current.isReady = true;
       onReady();
     }
-  }, [onReady]);
 
-  // Handle audio ended (for smooth looping)
-  const handleAudioEnded = useCallback(() => {
-    const audio = audioRef.current;
-    if (!audio) return;
-
-    // Increment loop count
-    stateRef.current.loopCount++;
-    onLoopComplete(stateRef.current.loopCount);
-
-    // Smooth loop without interruption
-    try {
-      // For smooth looping, seek to beginning and play immediately
-      audio.currentTime = 0;
-      stateRef.current.currentTime = 0;
-
-      // Only play if we're supposed to be playing
       if (desiredPlayingState) {
-        const playPromise = audio.play();
+        const audio = audioRef.current;
+        if (!audio) return;
 
+        initAudioContext();
+        resumeAudioContext();
+
+        const playPromise = audio.play();
         if (playPromise !== undefined) {
-          playPromise.catch(error => {
-            console.error('[AudioEngine] Loop playback failed:', error);
-            // Fallback: try to reload and play
-            audio.load();
-            audio.play().catch(e => {
-              console.error('[AudioEngine] Loop fallback playback failed:', e);
+          playPromise
+            .then(() => {
+              stateRef.current.isPlaying = true;
+              onPlayStateChange(true);
+            })
+            .catch(error => {
+              console.error('[AudioEngine] Play on ready failed:', error);
             });
-          });
         }
       }
-    } catch (error) {
-      console.error('[AudioEngine] Loop handling failed:', error);
-    }
-  }, [desiredPlayingState, onLoopComplete]);
+  }, [desiredPlayingState, initAudioContext, resumeAudioContext, onPlayStateChange, onReady]);
 
   // Sync with desired playing state
   useEffect(() => {
@@ -235,15 +282,14 @@ export const AudioEngine: React.FC<AudioEngineProps> = ({
     if (!audio || !stateRef.current.isReady) return;
 
     // Initialize audio context on first play
-    if (desiredPlayingState && !stateRef.current.isPlaying) {
-      initAudioContext();
-      resumeAudioContext();
-    }
+      if (desiredPlayingState && !stateRef.current.isPlaying) {
+        initAudioContext();
+        resumeAudioContext();
+      }
 
     const currentState = stateRef.current.isPlaying;
 
     if (desiredPlayingState && !currentState) {
-      // Start playing
       const playPromise = audio.play();
 
       if (playPromise !== undefined) {
@@ -266,6 +312,17 @@ export const AudioEngine: React.FC<AudioEngineProps> = ({
     }
   }, [desiredPlayingState, initAudioContext, resumeAudioContext, onPlayStateChange]);
 
+  // Sync external loopCount to internal state
+  useEffect(() => {
+    if (stateRef.current.loopCount !== desiredLoopCount) {
+      console.log('[AudioEngine] 外部同步 loopCount', {
+        old: stateRef.current.loopCount,
+        new: desiredLoopCount
+      });
+      stateRef.current.loopCount = desiredLoopCount;
+    }
+  }, [desiredLoopCount]);
+
   // Sync with desired time position
   useEffect(() => {
     if (!stateRef.current.isReady || isSeekingRef.current) return;
@@ -274,10 +331,21 @@ export const AudioEngine: React.FC<AudioEngineProps> = ({
     const timeDiff = Math.abs(desiredTime - currentTime);
 
     // Only seek if the difference is significant (more than 100ms)
-    if (timeDiff > 0.1) {
-      performSeek(desiredTime);
+    const diff = desiredTime - currentTime;
+    if (Math.abs(diff) > 0.1) {
+      const now = Date.now();
+      const recentlyForced = now - lastForcedSeekRef.current < 500;
+      const shouldSeek = diff > 0 || recentlyForced;
+      if (shouldSeek) {
+        performSeek(desiredTime);
+      }
     }
   }, [desiredTime, performSeek]);
+
+  useEffect(() => {
+    if (seekSignal === undefined) return;
+    lastForcedSeekRef.current = Date.now();
+  }, [seekSignal]);
 
   // Cleanup
   useEffect(() => {
@@ -289,8 +357,10 @@ export const AudioEngine: React.FC<AudioEngineProps> = ({
       if (audioContextRef.current) {
         audioContextRef.current.close();
       }
+
+      cancelAnimationLoop();
     };
-  }, []);
+  }, [cancelAnimationLoop]);
 
   return (
     <audio
@@ -299,14 +369,15 @@ export const AudioEngine: React.FC<AudioEngineProps> = ({
       onTimeUpdate={handleTimeUpdate}
       onLoadedMetadata={handleLoadedMetadata}
       onCanPlay={handleCanPlay}
-      onEnded={handleAudioEnded}
       onPlay={() => {
         stateRef.current.isPlaying = true;
-        onPlayStateChange(true);
+      onPlayStateChange(true);
+      startAnimationLoop();
       }}
       onPause={() => {
         stateRef.current.isPlaying = false;
         onPlayStateChange(false);
+        cancelAnimationLoop();
       }}
       onError={(e) => {
         console.error('[AudioEngine] Audio error:', e.currentTarget.error);
@@ -316,6 +387,7 @@ export const AudioEngine: React.FC<AudioEngineProps> = ({
       webkit-playsinline="true"
       controls={false}
       crossOrigin="anonymous"
+      loop
     />
   );
 };

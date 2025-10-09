@@ -3,6 +3,7 @@
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import * as THREE from "three";
 import { Suspense, useEffect, useMemo, useRef, useState } from "react";
+import timelineStore from "@/stores/timelineStore";
 import { RGBELoader } from "three/examples/jsm/loaders/RGBELoader.js";
 import { OBJLoader } from "three/examples/jsm/loaders/OBJLoader.js";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
@@ -464,10 +465,20 @@ function ScrollRotator({
   const targetSpeedRef = useRef(baseSpeed);
   const currentSpeedRef = useRef(baseSpeed);
   const externalVelocityRef = useRef(externalVelocity);
+  const storeVelocityRef = useRef(0);
 
   useEffect(() => {
     externalVelocityRef.current = externalVelocity;
   }, [externalVelocity]);
+
+  // Pull velocity from timeline store each frame to decouple from React props
+  useEffect(() => {
+    const unsub = timelineStore.subscribe(() => {
+      // only update local ref; actual application happens in useFrame
+      storeVelocityRef.current = timelineStore.scrollVelocity;
+    });
+    return unsub;
+  }, []);
 
   useEffect(() => {
     targetSpeedRef.current = baseSpeed + externalVelocityRef.current;
@@ -531,7 +542,8 @@ function ScrollRotator({
   useFrame((_, delta) => {
     if (!enabled) return;
     // 自然回落到基础速度
-    const baseWithExternal = baseSpeed + externalVelocityRef.current;
+    const mixedVelocity = externalVelocityRef.current + storeVelocityRef.current;
+    const baseWithExternal = baseSpeed + mixedVelocity;
     targetSpeedRef.current += (baseWithExternal - targetSpeedRef.current) * 0.02;
     // 平滑插值到目标速度
     currentSpeedRef.current += (targetSpeedRef.current - currentSpeedRef.current) * Math.min(1, delta * 10);
@@ -883,7 +895,9 @@ function JadeV6Content({
         } else {
           scene.background = new THREE.Color(background);
         }
-        console.log('[JadeV6] 纯色背景设置成功:', background);
+        if (process.env.NODE_ENV === 'development') {
+          console.log('[JadeV6] 纯色背景设置成功:', background);
+        }
       }
     } catch (err) {
       console.error('[JadeV6] 背景设置失败:', err);
@@ -899,12 +913,14 @@ function JadeV6Content({
   }
 
   // 调试信息：显示环境贴图状态
-  console.log('[JadeV6] 双层渲染状态:', {
-    hasEnvMap: !!envMap,
-    hasSceneEnvironment: !!scene.environment,
-    innerMaterialEnvMap: !!innerMaterial.envMap,
-    outerMaterialEnvMap: !!outerMaterial.envMap
-  });
+  if (process.env.NODE_ENV === 'development') {
+    console.log('[JadeV6] 双层渲染状态:', {
+      hasEnvMap: !!envMap,
+      hasSceneEnvironment: !!scene.environment,
+      innerMaterialEnvMap: !!innerMaterial.envMap,
+      outerMaterialEnvMap: !!outerMaterial.envMap
+    });
+  }
 
   return (
     <RotationController 

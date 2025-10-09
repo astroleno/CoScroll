@@ -25,16 +25,15 @@ export const SmoothLoopManager: React.FC<SmoothLoopManagerProps> = ({
   enableGaplessLoop = true,
   loopOverlapTime = 0.5 // Start crossfade 0.5s before end
 }) => {
+  if (!enableGaplessLoop) {
+    return null;
+  }
+
   // Refs for tracking loop state
   const loopCountRef = useRef<number>(0);
   const isLoopingRef = useRef<boolean>(false);
   const hasScheduledNextLoopRef = useRef<boolean>(false);
   const loopTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-
-  // Check if we're approaching the end of the audio
-  const isNearEnd = useCallback((time: number, dur: number) => {
-    return dur > 0 && (time >= dur - loopOverlapTime);
-  }, [loopOverlapTime]);
 
   // Handle seamless loop transition
   const handleLoopTransition = useCallback(() => {
@@ -42,8 +41,6 @@ export const SmoothLoopManager: React.FC<SmoothLoopManagerProps> = ({
 
     isLoopingRef.current = true;
     hasScheduledNextLoopRef.current = false;
-
-    console.log('[SmoothLoop] Initiating loop transition');
 
     // Increment loop count
     loopCountRef.current++;
@@ -65,7 +62,6 @@ export const SmoothLoopManager: React.FC<SmoothLoopManagerProps> = ({
           if (playPromise !== undefined) {
             playPromise
               .then(() => {
-                console.log('[SmoothLoop] Instant restart successful');
                 setTimeout(() => {
                   isLoopingRef.current = false;
                 }, 100);
@@ -102,7 +98,6 @@ export const SmoothLoopManager: React.FC<SmoothLoopManagerProps> = ({
           if (wasPlaying) {
             audioElement.play()
               .then(() => {
-                console.log('[SmoothLoop] Fallback reload successful');
                 setTimeout(() => {
                   isLoopingRef.current = false;
                 }, 100);
@@ -140,14 +135,14 @@ export const SmoothLoopManager: React.FC<SmoothLoopManagerProps> = ({
     if (!audioElement || duration <= 0) return;
 
     // Check if we've naturally reached the end
-    const hasReachedEnd = currentTime >= duration - 0.1;
+    const overlapThreshold = Math.max(0.05, loopOverlapTime);
+    const hasReachedEnd = currentTime >= Math.max(0, duration - overlapThreshold);
 
     // Check for time reset (indicates loop occurred)
     const hasReset = currentTime < 0.5 && loopCountRef.current > 0;
 
     if (hasReachedEnd && !isLoopingRef.current && !hasScheduledNextLoopRef.current) {
       // Schedule the loop
-      console.log('[SmoothLoop] Approaching end, scheduling loop');
       hasScheduledNextLoopRef.current = true;
 
       // Use a timeout to handle the loop
@@ -160,19 +155,17 @@ export const SmoothLoopManager: React.FC<SmoothLoopManagerProps> = ({
       }, 100);
     } else if (hasReset && isLoopingRef.current) {
       // Loop has completed successfully
-      console.log('[SmoothLoop] Loop completed');
       onTimeUpdate(0);
       isLoopingRef.current = false;
       hasScheduledNextLoopRef.current = false;
     }
-  }, [audioElement, currentTime, duration, handleLoopTransition, onTimeUpdate]);
+  }, [audioElement, currentTime, duration, handleLoopTransition, onTimeUpdate, loopOverlapTime]);
 
   // Listen for the native ended event as backup
   useEffect(() => {
     if (!audioElement) return;
 
     const handleEnded = () => {
-      console.log('[SmoothLoop] Native ended event triggered');
       if (!isLoopingRef.current && isPlaying) {
         handleLoopTransition();
       }

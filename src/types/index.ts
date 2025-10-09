@@ -21,6 +21,9 @@ export interface LyricsControllerProps {
   isPlaying: boolean;
   onScrollVelocityChange?: (velocity: number) => void;
   onActiveLineChange?: (line: LyricLine | null, index: number) => void;
+  onPreviewStart?: () => void;
+  onPreviewTime?: (time: number) => void;
+  onPreviewEnd?: () => void;
 }
 
 export interface AutoPlayGuardProps {

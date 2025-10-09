@@ -2,6 +2,7 @@ import * as THREE from "three";
 import { OBJLoader } from "three/examples/jsm/loaders/OBJLoader.js";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 import { mergeVertices } from "three/examples/jsm/utils/BufferGeometryUtils.js";
+import { TessellateModifier, toCreasedNormals } from 'three-stdlib';
 
 /**
  * 模型预加载管理器
@@ -23,6 +24,8 @@ class ModelPreloader {
   private loadingStatus = new Map<string, 'pending' | 'loading' | 'loaded' | 'error'>();
   private maxConcurrentLoads = 3; // 最大并发加载数
   private currentLoads = 0;
+  private offsetGeometryCache = new Map<string, Map<string, THREE.BufferGeometry>>();
+  private static DEBUG = false; // 如需调试，设为 true
 
   private constructor() {}
 
@@ -39,15 +42,17 @@ class ModelPreloader {
    */
   async preloadAllModels(modelPaths: string[], priorityPaths: string[] = []): Promise<void> {
     if (this.isPreloading) {
-      console.log('[ModelPreloader] 预加载已在进行中');
+      if (ModelPreloader.DEBUG) console.log('[ModelPreloader] 预加载已在进行中');
       return;
     }
 
     this.isPreloading = true;
-    console.log('[ModelPreloader] 开始智能预加载:', { 
-      total: modelPaths.length, 
-      priority: priorityPaths.length 
-    });
+    if (ModelPreloader.DEBUG) {
+      console.log('[ModelPreloader] 开始智能预加载:', { 
+        total: modelPaths.length, 
+        priority: priorityPaths.length 
+      });
+    }
 
     try {
       // 设置优先级模型
@@ -63,9 +68,9 @@ class ModelPreloader {
       // 启动渐进式加载
       await this.startProgressiveLoading(modelPaths);
       
-      console.log('[ModelPreloader] ✅ 智能预加载完成');
+      if (ModelPreloader.DEBUG) console.log('[ModelPreloader] ✅ 智能预加载完成');
     } catch (error) {
-      console.error('[ModelPreloader] ❌ 预加载失败:', error);
+      if (ModelPreloader.DEBUG) console.error('[ModelPreloader] ❌ 预加载失败:', error);
     } finally {
       this.isPreloading = false;
     }
@@ -79,13 +84,13 @@ class ModelPreloader {
     const priorityPaths = modelPaths.filter(path => this.priorityModels.has(path));
     const normalPaths = modelPaths.filter(path => !this.priorityModels.has(path));
 
-    console.log('[ModelPreloader] 阶段1: 加载优先级模型', priorityPaths);
+    if (ModelPreloader.DEBUG) console.log('[ModelPreloader] 阶段1: 加载优先级模型', priorityPaths);
     if (priorityPaths.length > 0) {
       await this.loadModelsWithConcurrency(priorityPaths);
     }
 
     // 2. 然后加载其他模型
-    console.log('[ModelPreloader] 阶段2: 加载其他模型', normalPaths);
+    if (ModelPreloader.DEBUG) console.log('[ModelPreloader] 阶段2: 加载其他模型', normalPaths);
     if (normalPaths.length > 0) {
       await this.loadModelsWithConcurrency(normalPaths);
     }
@@ -124,10 +129,10 @@ class ModelPreloader {
     try {
       await this.loadModel(modelPath);
       this.loadingStatus.set(modelPath, 'loaded');
-      console.log('[ModelPreloader] 模型加载完成:', modelPath);
+      if (ModelPreloader.DEBUG) console.log('[ModelPreloader] 模型加载完成:', modelPath);
     } catch (error) {
       this.loadingStatus.set(modelPath, 'error');
-      console.error('[ModelPreloader] 模型加载失败:', modelPath, error);
+      if (ModelPreloader.DEBUG) console.error('[ModelPreloader] 模型加载失败:', modelPath, error);
     } finally {
       this.currentLoads--;
     }
@@ -139,13 +144,13 @@ class ModelPreloader {
   private async loadModel(modelPath: string): Promise<THREE.BufferGeometry> {
     // 如果已经缓存，直接返回
     if (this.cache.has(modelPath)) {
-      console.log('[ModelPreloader] 使用缓存模型:', modelPath);
+      if (ModelPreloader.DEBUG) console.log('[ModelPreloader] 使用缓存模型:', modelPath);
       return this.cache.get(modelPath)!;
     }
 
     // 如果正在加载，等待加载完成
     if (this.loadingPromises.has(modelPath)) {
-      console.log('[ModelPreloader] 等待模型加载完成:', modelPath);
+      if (ModelPreloader.DEBUG) console.log('[ModelPreloader] 等待模型加载完成:', modelPath);
       return this.loadingPromises.get(modelPath)!;
     }
 
@@ -157,7 +162,7 @@ class ModelPreloader {
       const geometry = await loadPromise;
       this.cache.set(modelPath, geometry);
       this.loadingPromises.delete(modelPath);
-      console.log('[ModelPreloader] 模型加载完成:', modelPath);
+      if (ModelPreloader.DEBUG) console.log('[ModelPreloader] 模型加载完成:', modelPath);
       return geometry;
     } catch (error) {
       this.loadingPromises.delete(modelPath);
@@ -206,6 +211,135 @@ class ModelPreloader {
     loadedGeometry.computeVertexNormals();
 
     return loadedGeometry;
+  }
+
+  private getOffsetCache(modelPath: string) {
+    if (!this.offsetGeometryCache.has(modelPath)) {
+      this.offsetGeometryCache.set(modelPath, new Map());
+    }
+    return this.offsetGeometryCache.get(modelPath)!;
+  }
+
+  private createOffsetGeometry(
+    geometry: THREE.BufferGeometry,
+    offsetDistance: number,
+    options: { maxEdge?: number; subdivisions?: number; creaseAngle?: number; smoothShading?: boolean }
+  ): THREE.BufferGeometry {
+    const { maxEdge = 0.15, subdivisions = 0, creaseAngle = 30, smoothShading = true } = options;
+
+    let workingGeometry = geometry.clone();
+
+    try {
+      workingGeometry = mergeVertices(workingGeometry);
+      workingGeometry = workingGeometry.toNonIndexed();
+
+      if (maxEdge > 0 && maxEdge <= 0.15) {
+        const tess = new TessellateModifier(maxEdge);
+        workingGeometry = tess.modify(workingGeometry);
+      }
+
+      if (subdivisions > 0) {
+        const iterations = Math.min(subdivisions, 1);
+        workingGeometry = this.loopSubdivide(workingGeometry, iterations);
+      }
+
+      workingGeometry.computeVertexNormals();
+
+      if (creaseAngle < 90) {
+        const creaseRad = THREE.MathUtils.degToRad(creaseAngle);
+        workingGeometry = toCreasedNormals(workingGeometry, creaseRad);
+      }
+
+      if (smoothShading) {
+        workingGeometry = mergeVertices(workingGeometry);
+        workingGeometry.computeVertexNormals();
+      }
+    } catch (error) {
+      console.warn('[ModelPreloader] Offset 几何体优化失败，使用原始几何:', error);
+      workingGeometry = geometry.clone();
+      workingGeometry.computeVertexNormals();
+    }
+
+    const positionAttribute = workingGeometry.getAttribute('position');
+    const normalAttribute = workingGeometry.getAttribute('normal');
+    const newPositions = new Float32Array(positionAttribute.count * 3);
+
+    for (let i = 0; i < positionAttribute.count; i++) {
+      const x = positionAttribute.getX(i);
+      const y = positionAttribute.getY(i);
+      const z = positionAttribute.getZ(i);
+
+      const nx = normalAttribute.getX(i);
+      const ny = normalAttribute.getY(i);
+      const nz = normalAttribute.getZ(i);
+
+      newPositions[i * 3] = x + nx * offsetDistance;
+      newPositions[i * 3 + 1] = y + ny * offsetDistance;
+      newPositions[i * 3 + 2] = z + nz * offsetDistance;
+    }
+
+    workingGeometry.setAttribute('position', new THREE.BufferAttribute(newPositions, 3));
+    workingGeometry.computeVertexNormals();
+
+    return workingGeometry;
+  }
+
+  private loopSubdivide(geometry: THREE.BufferGeometry, iterations: number): THREE.BufferGeometry {
+    let geo = geometry;
+
+    for (let i = 0; i < iterations; i++) {
+      const positions = geo.attributes.position.array as Float32Array;
+      const newPositions: number[] = [];
+
+      for (let j = 0; j < positions.length; j += 9) {
+        const v1 = [positions[j], positions[j + 1], positions[j + 2]];
+        const v2 = [positions[j + 3], positions[j + 4], positions[j + 5]];
+        const v3 = [positions[j + 6], positions[j + 7], positions[j + 8]];
+
+        const m1 = [(v1[0] + v2[0]) / 2, (v1[1] + v2[1]) / 2, (v1[2] + v2[2]) / 2];
+        const m2 = [(v2[0] + v3[0]) / 2, (v2[1] + v3[1]) / 2, (v2[2] + v3[2]) / 2];
+        const m3 = [(v3[0] + v1[0]) / 2, (v3[1] + v1[1]) / 2, (v3[2] + v1[2]) / 2];
+
+        newPositions.push(...v1, ...m1, ...m3);
+        newPositions.push(...m1, ...v2, ...m2);
+        newPositions.push(...m2, ...v3, ...m3);
+        newPositions.push(...m1, ...m2, ...m3);
+      }
+
+      const newGeo = new THREE.BufferGeometry();
+      newGeo.setAttribute('position', new THREE.BufferAttribute(new Float32Array(newPositions), 3));
+      geo = newGeo;
+    }
+
+    return geo;
+  }
+
+  getOffsetGeometry(
+    modelPath: string,
+    options: { outerOffset: number; maxEdge?: number; subdivisions?: number; creaseAngle?: number; smoothShading?: boolean }
+  ): THREE.BufferGeometry | null {
+    const baseGeometry = this.cache.get(modelPath);
+    if (!baseGeometry) {
+      return null;
+    }
+
+    const { outerOffset, ...rest } = options;
+    const cache = this.getOffsetCache(modelPath);
+    const key = JSON.stringify({ outerOffset, ...rest });
+
+    if (cache.has(key)) {
+      return cache.get(key)!;
+    }
+
+    try {
+      const offsetGeometry = this.createOffsetGeometry(baseGeometry, outerOffset, options);
+      cache.set(key, offsetGeometry);
+      return offsetGeometry;
+    } catch (error) {
+      console.warn('[ModelPreloader] Offset 几何体生成失败，使用基础几何:', error);
+      cache.set(key, baseGeometry);
+      return baseGeometry;
+    }
   }
 
   /**
@@ -273,7 +407,7 @@ class ModelPreloader {
   setModelPriority(modelPath: string, isPriority: boolean = true): void {
     if (isPriority) {
       this.priorityModels.add(modelPath);
-      console.log('[ModelPreloader] 设置模型优先级:', modelPath);
+      if (ModelPreloader.DEBUG) console.log('[ModelPreloader] 设置模型优先级:', modelPath);
     } else {
       this.priorityModels.delete(modelPath);
     }
@@ -297,12 +431,12 @@ class ModelPreloader {
   async preloadNextModel(currentTime: number, anchorTimeline: Array<{time: number, anchor: string}>, modelMapping: {[key: string]: string}): Promise<void> {
     const nextModelPath = this.predictNextModel(currentTime, anchorTimeline, modelMapping);
     if (nextModelPath && !this.cache.has(nextModelPath) && !this.loadingPromises.has(nextModelPath)) {
-      console.log('[ModelPreloader] 智能预加载下一个模型:', nextModelPath);
+      if (ModelPreloader.DEBUG) console.log('[ModelPreloader] 智能预加载下一个模型:', nextModelPath);
       this.setModelPriority(nextModelPath, true);
       try {
         await this.loadModel(nextModelPath);
       } catch (error) {
-        console.error('[ModelPreloader] 智能预加载失败:', error);
+        if (ModelPreloader.DEBUG) console.error('[ModelPreloader] 智能预加载失败:', error);
       }
     }
   }
@@ -313,7 +447,7 @@ class ModelPreloader {
   addToCache(modelPath: string, geometry: THREE.BufferGeometry): void {
     this.cache.set(modelPath, geometry);
     this.loadingStatus.set(modelPath, 'loaded');
-    console.log('[ModelPreloader] 模型已添加到缓存:', modelPath);
+    if (ModelPreloader.DEBUG) console.log('[ModelPreloader] 模型已添加到缓存:', modelPath);
   }
 
   /**
@@ -324,7 +458,8 @@ class ModelPreloader {
     this.loadingPromises.clear();
     this.loadingStatus.clear();
     this.priorityModels.clear();
-    console.log('[ModelPreloader] 缓存已清理');
+    this.offsetGeometryCache.clear();
+    if (ModelPreloader.DEBUG) console.log('[ModelPreloader] 缓存已清理');
   }
 }
 

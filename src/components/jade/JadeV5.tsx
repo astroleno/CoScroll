@@ -237,6 +237,7 @@ export default function JadeV5({
         <Text
           position={[0, -0.9, 0.9]}
           fontSize={0.32}
+          font="/fonts/YanShiYouRanXiaoKai-2.ttf"
           maxWidth={3.2}
           lineHeight={1.3}
           anchorX="center"

@@ -8,9 +8,9 @@ import { RGBELoader } from "three/examples/jsm/loaders/RGBELoader.js";
 import { OBJLoader } from "three/examples/jsm/loaders/OBJLoader.js";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 import { mergeVertices } from "three/examples/jsm/utils/BufferGeometryUtils.js";
-import { TessellateModifier } from 'three-stdlib';
-import { toCreasedNormals } from 'three-stdlib';
 import ModelPreloader from "./ModelPreloader";
+
+const IS_DEV = process.env.NODE_ENV === 'development';
 
 /**
  * JadeModelLoader - 独立的3D模型加载器组件
@@ -35,6 +35,12 @@ interface JadeModelLoaderProps {
   dampingFactor?: number;
   velocitySmoothing?: number;
   maxRotationPerFrame?: number;
+  
+  // 环境配置
+  environmentHdrPath?: string;
+  environmentIntensity?: number;
+  background?: string | number;
+  showHdrBackground?: boolean;
   
   // 内层材质参数
   innerColor?: string | number;
@@ -63,6 +69,11 @@ interface JadeModelLoaderProps {
   outerClearcoatRoughness?: number;
   outerEnvMapIntensity?: number;
   
+  // 法线贴图
+  normalMapPath?: string;
+  normalScale?: number;
+  normalRepeat?: number;
+
   // 几何体优化
   maxEdge?: number;
   subdivisions?: number;
@@ -72,129 +83,6 @@ interface JadeModelLoaderProps {
   smoothShading?: boolean;
   innerSmoothShading?: boolean;
   outerSmoothShading?: boolean;
-}
-
-/**
- * 应用平滑着色
- */
-function applySmoothShading(geometry: THREE.BufferGeometry): THREE.BufferGeometry {
-  let geo = geometry.clone();
-  
-  try {
-    geo = mergeVertices(geo);
-    geo.computeVertexNormals();
-    console.log('[JadeModelLoader] 平滑着色已应用');
-  } catch (e) {
-    console.warn('[JadeModelLoader] 平滑着色应用失败:', e);
-  }
-  
-  return geo;
-}
-
-/**
- * 几何体优化流程
- */
-function optimizeGeometry(
-  geometry: THREE.BufferGeometry,
-  options: { maxEdge?: number; subdivisions?: number; creaseAngle?: number; smoothShading?: boolean } = {}
-): THREE.BufferGeometry {
-  const {
-    maxEdge: optMaxEdge = 0.06,
-    subdivisions: optSub = 1,
-    creaseAngle: optCrease = 50,
-    smoothShading: optSmooth = true,
-  } = options;
-
-  let geo = geometry;
-  try {
-    geo = mergeVertices(geo);
-    geo = geo.toNonIndexed();
-    if (optMaxEdge > 0 && optMaxEdge <= 0.15) {
-      const tess = new TessellateModifier(optMaxEdge);
-      geo = tess.modify(geo);
-    }
-    if (optSub > 0) {
-      const iterations = Math.min(optSub, 1);
-      geo = loopSubdivide(geo, iterations);
-    }
-    geo.computeVertexNormals();
-    if (optCrease < 90) {
-      const creaseRad = THREE.MathUtils.degToRad(optCrease);
-      geo = toCreasedNormals(geo, creaseRad);
-    }
-    
-    if (optSmooth) {
-      geo = applySmoothShading(geo);
-    }
-  } catch (e) {
-    console.warn('[JadeModelLoader] 几何优化失败，使用原始几何:', e);
-  }
-  return geo;
-}
-
-/**
- * 简化版 Loop 细分
- */
-function loopSubdivide(geometry: THREE.BufferGeometry, iterations: number): THREE.BufferGeometry {
-  let geo = geometry;
-  for (let i = 0; i < iterations; i++) {
-    const positions = geo.attributes.position.array;
-    const newPositions: number[] = [];
-    
-    for (let j = 0; j < positions.length; j += 9) {
-      const v1 = [positions[j], positions[j + 1], positions[j + 2]];
-      const v2 = [positions[j + 3], positions[j + 4], positions[j + 5]];
-      const v3 = [positions[j + 6], positions[j + 7], positions[j + 8]];
-      
-      const m1 = [(v1[0] + v2[0]) / 2, (v1[1] + v2[1]) / 2, (v1[2] + v2[2]) / 2];
-      const m2 = [(v2[0] + v3[0]) / 2, (v2[1] + v3[1]) / 2, (v2[2] + v3[2]) / 2];
-      const m3 = [(v3[0] + v1[0]) / 2, (v3[1] + v1[1]) / 2, (v3[2] + v1[2]) / 2];
-      
-      newPositions.push(...v1, ...m1, ...m3);
-      newPositions.push(...m1, ...v2, ...m2);
-      newPositions.push(...m2, ...v3, ...m3);
-      newPositions.push(...m1, ...m2, ...m3);
-    }
-    
-    const newGeo = new THREE.BufferGeometry();
-    newGeo.setAttribute('position', new THREE.BufferAttribute(new Float32Array(newPositions), 3));
-    geo = newGeo;
-  }
-  return geo;
-}
-
-function createOffsetGeometry(originalGeometry: THREE.BufferGeometry, offsetDistance: number, optimizeOptions?: { maxEdge?: number; subdivisions?: number; creaseAngle?: number; smoothShading?: boolean }): THREE.BufferGeometry {
-  let offsetGeometry = originalGeometry.clone();
-  
-  if (optimizeOptions) {
-    offsetGeometry = optimizeGeometry(offsetGeometry, optimizeOptions);
-  }
-  
-  offsetGeometry.computeVertexNormals();
-  
-  const positionAttribute = offsetGeometry.getAttribute('position');
-  const normalAttribute = offsetGeometry.getAttribute('normal');
-  
-  const newPositions = new Float32Array(positionAttribute.count * 3);
-  
-  for (let i = 0; i < positionAttribute.count; i++) {
-    const x = positionAttribute.getX(i);
-    const y = positionAttribute.getY(i);
-    const z = positionAttribute.getZ(i);
-    
-    const nx = normalAttribute.getX(i);
-    const ny = normalAttribute.getY(i);
-    const nz = normalAttribute.getZ(i);
-    
-    newPositions[i * 3] = x + nx * offsetDistance;
-    newPositions[i * 3 + 1] = y + ny * offsetDistance;
-    newPositions[i * 3 + 2] = z + nz * offsetDistance;
-  }
-  
-  offsetGeometry.setAttribute('position', new THREE.BufferAttribute(newPositions, 3));
-  offsetGeometry.computeVertexNormals();
-  
-  return offsetGeometry;
 }
 
 function ScrollRotator({
@@ -379,7 +267,9 @@ function ScrollRotator({
     let effectiveSpeed = currentSpeedRef.current;
     if (transitionControl.isTransitioning()) {
       effectiveSpeed = transitionVelocity;
-      console.log('[ScrollRotator] Using transition velocity:', transitionVelocity);
+      if (IS_DEV) {
+        console.log('[ScrollRotator] Using transition velocity:', transitionVelocity);
+      }
     } else {
       // Smooth current speed transition
       currentSpeedRef.current += (targetSpeedRef.current - currentSpeedRef.current) * Math.min(1, deltaTime * 10);
@@ -511,12 +401,16 @@ function DualLayerModelLoader({
 
     const loadModel = async () => {
       try {
-        console.log('[JadeModelLoader] 开始加载模型:', modelPath);
-        
+        if (IS_DEV) {
+          console.log('[JadeModelLoader] 开始加载模型:', modelPath);
+        }
+
         let loadedGeometry = preloader.getModel(modelPath);
-        
+
         if (loadedGeometry) {
-          console.log('[JadeModelLoader] 使用预加载模型:', modelPath);
+          if (IS_DEV) {
+            console.log('[JadeModelLoader] 使用预加载模型:', modelPath);
+          }
           if (disposed) return;
           setGeometry(loadedGeometry);
           setLoading(false);
@@ -524,7 +418,9 @@ function DualLayerModelLoader({
         }
 
         if (preloader.isModelLoading(modelPath)) {
-          console.log('[JadeModelLoader] 等待预加载完成:', modelPath);
+          if (IS_DEV) {
+            console.log('[JadeModelLoader] 等待预加载完成:', modelPath);
+          }
           while (preloader.isModelLoading(modelPath)) {
             await new Promise(resolve => setTimeout(resolve, 50));
             if (disposed) return;
@@ -532,7 +428,9 @@ function DualLayerModelLoader({
           
           loadedGeometry = preloader.getModel(modelPath);
           if (loadedGeometry) {
-            console.log('[JadeModelLoader] 预加载完成，使用模型:', modelPath);
+            if (IS_DEV) {
+              console.log('[JadeModelLoader] 预加载完成，使用模型:', modelPath);
+            }
             if (disposed) return;
             setGeometry(loadedGeometry);
             setLoading(false);
@@ -540,7 +438,9 @@ function DualLayerModelLoader({
           }
         }
 
-        console.log('[JadeModelLoader] 直接加载模型:', modelPath);
+        if (IS_DEV) {
+          console.log('[JadeModelLoader] 直接加载模型:', modelPath);
+        }
         if (modelPath.endsWith('.obj')) {
           const loader = new OBJLoader();
           const obj = await new Promise<THREE.Group>((resolve, reject) => {
@@ -577,11 +477,14 @@ function DualLayerModelLoader({
 
         loadedGeometry = mergeVertices(loadedGeometry);
         loadedGeometry.computeVertexNormals();
-        
+
         setGeometry(loadedGeometry);
+        preloader.addToCache(modelPath, loadedGeometry);
         setLoading(false);
-        
-        console.log('[JadeModelLoader] 模型加载成功:', modelPath);
+
+        if (IS_DEV) {
+          console.log('[JadeModelLoader] 模型加载成功:', modelPath);
+        }
       } catch (err) {
         console.error('[JadeModelLoader] 模型加载失败:', err);
         setError(err instanceof Error ? err.message : '未知错误');
@@ -598,12 +501,60 @@ function DualLayerModelLoader({
 
   useEffect(() => {
     if (!geometry) return;
-    
-    const offset = createOffsetGeometry(geometry, outerOffset, { maxEdge, subdivisions, creaseAngle, smoothShading: outerSmoothShading });
-    setOffsetGeometry(offset);
-    
-    console.log('[JadeModelLoader] Offset 几何体重新创建，偏移距离:', outerOffset);
-  }, [geometry, outerOffset, maxEdge, subdivisions, creaseAngle, outerSmoothShading]);
+
+    const offsetGeometryFromCache = preloader.getOffsetGeometry(modelPath, {
+      outerOffset,
+      maxEdge,
+      subdivisions,
+      creaseAngle,
+      smoothShading: outerSmoothShading,
+    });
+
+    if (offsetGeometryFromCache) {
+      setOffsetGeometry(offsetGeometryFromCache);
+      if (IS_DEV) {
+        console.log('[JadeModelLoader] 使用缓存 Offset 几何体:', {
+          modelPath,
+          outerOffset,
+          maxEdge,
+          subdivisions,
+          creaseAngle,
+          smoothShading: outerSmoothShading,
+        });
+      }
+      return;
+    }
+
+    try {
+      const generated = preloader.getOffsetGeometry(modelPath, {
+        outerOffset,
+        maxEdge,
+        subdivisions,
+        creaseAngle,
+        smoothShading: outerSmoothShading,
+      });
+
+      if (generated) {
+        setOffsetGeometry(generated);
+        if (IS_DEV) {
+          console.log('[JadeModelLoader] 生成并缓存 Offset 几何体:', {
+            modelPath,
+            outerOffset,
+          });
+        }
+        return;
+      }
+    } catch (error) {
+      console.error('[JadeModelLoader] Offset 几何体生成失败:', error);
+    }
+
+    const fallback = geometry.clone();
+    fallback.computeVertexNormals();
+    setOffsetGeometry(fallback);
+    if (IS_DEV) {
+      console.warn('[JadeModelLoader] Offset 几何体缓存未命中，使用回退几何:', modelPath);
+    }
+  }, [geometry, modelPath, outerOffset, maxEdge, subdivisions, creaseAngle, outerSmoothShading, preloader]);
 
   useEffect(() => {
     if (!geometry || !offsetGeometry || !fitToView || !meshRef.current) return;
@@ -619,11 +570,13 @@ function DualLayerModelLoader({
       camera.position.set(0, 0, distance);
       camera.lookAt(center);
       
-      console.log('[JadeModelLoader] 视图适配完成:', {
-        size: size.toArray(),
-        center: center.toArray(),
-        distance,
-      });
+      if (IS_DEV) {
+        console.log('[JadeModelLoader] 视图适配完成:', {
+          size: size.toArray(),
+          center: center.toArray(),
+          distance,
+        });
+      }
     } catch (err) {
       console.warn('[JadeModelLoader] 视图适配失败:', err);
     }
@@ -675,6 +628,11 @@ export default function JadeModelLoader({
   velocitySmoothing = 0.1,
   maxRotationPerFrame = 0.1,
   
+  environmentHdrPath = "/textures/qwantani_moon_noon_puresky_1k.hdr",
+  environmentIntensity = 1.0,
+  background = "#1f1e1c",
+  showHdrBackground = false,
+  
   innerColor = 0x2d6d8b,
   innerMetalness = 1.0,
   innerRoughness = 1.0,
@@ -698,17 +656,21 @@ export default function JadeModelLoader({
   outerClearcoat = 0.0,
   outerClearcoatRoughness = 1.0,
   outerEnvMapIntensity = 5.0,
+  normalMapPath = "/textures/normal.jpg",
+  normalScale = 0.3,
+  normalRepeat = 3,
   
   maxEdge = 0.15,
   subdivisions = 0,
   creaseAngle = 30,
-  
+
   smoothShading = true,
   innerSmoothShading = true,
   outerSmoothShading = true,
 }: JadeModelLoaderProps) {
-  const { scene } = useThree();
+  const { scene, gl } = useThree();
   const [envMap, setEnvMap] = useState<THREE.Texture | null>(null);
+  const [normalMap, setNormalMap] = useState<THREE.Texture | null>(null);
 
   const innerMaterial = useMemo(() => {
     const mat = new THREE.MeshPhysicalMaterial({
@@ -722,10 +684,18 @@ export default function JadeModelLoader({
       flatShading: !innerSmoothShading,
     });
 
+    if (normalMap) {
+      mat.normalMap = normalMap;
+      mat.normalScale = new THREE.Vector2(normalScale, normalScale);
+      mat.normalMap.wrapS = THREE.RepeatWrapping;
+      mat.normalMap.wrapT = THREE.RepeatWrapping;
+      mat.normalMap.repeat.set(normalRepeat, normalRepeat);
+    }
+
     return mat;
   }, [
     innerColor, innerMetalness, innerRoughness, innerTransmission, innerEmissiveColor, innerEmissiveIntensity, 
-    enableEmissive, innerEnvMapIntensity, innerSmoothShading
+    enableEmissive, innerEnvMapIntensity, innerSmoothShading, normalMap, normalScale, normalRepeat
   ]);
 
   const outerMaterial = useMemo(() => {
@@ -745,65 +715,216 @@ export default function JadeModelLoader({
       flatShading: !outerSmoothShading,
     });
 
+    if (normalMap) {
+      mat.normalMap = normalMap;
+      mat.normalScale = new THREE.Vector2(normalScale, normalScale);
+      mat.normalMap.wrapS = THREE.RepeatWrapping;
+      mat.normalMap.wrapT = THREE.RepeatWrapping;
+      mat.normalMap.repeat.set(normalRepeat, normalRepeat);
+    }
+
     return mat;
   }, [
     outerColor, outerMetalness, outerRoughness, outerTransmission, outerIor, outerReflectivity, 
     outerThickness, outerClearcoat, outerClearcoatRoughness, outerEnvMapIntensity, 
-    outerSmoothShading
+    outerSmoothShading, normalMap, normalScale, normalRepeat
   ]);
 
   useEffect(() => {
     let disposed = false;
 
-    const rgbe = new RGBELoader();
-    
-    try {
-      rgbe.load(
-        "/textures/qwantani_moon_noon_puresky_1k.hdr",
-        (texture) => {
-          if (disposed) return;
-          
-          try {
-            texture.mapping = THREE.EquirectangularReflectionMapping;
-            texture.colorSpace = THREE.SRGBColorSpace;
-            
-            setEnvMap(texture);
-            scene.environment = texture;
-            
-            console.log('[JadeModelLoader] HDR 环境贴图加载成功');
-          } catch (err) {
+    if (!environmentHdrPath) {
+      setEnvMap(null);
+      scene.environment = null;
+      return () => {
+        disposed = true;
+      };
+    }
+
+    if (IS_DEV) {
+      console.log('[JadeModelLoader] 开始加载 HDR 环境贴图:', environmentHdrPath);
+    }
+
+    const loader = new RGBELoader();
+    const pmremGenerator = new THREE.PMREMGenerator(gl);
+    pmremGenerator.compileEquirectangularShader();
+
+    loader.load(
+      environmentHdrPath,
+      (texture) => {
+        if (disposed) {
+          texture.dispose();
+          return;
+        }
+
+        try {
+          texture.mapping = THREE.EquirectangularReflectionMapping;
+          texture.colorSpace = THREE.SRGBColorSpace;
+
+          const envTexture = pmremGenerator.fromEquirectangular(texture).texture;
+          pmremGenerator.dispose();
+          texture.dispose();
+
+          scene.environment = envTexture;
+          (scene as any).environmentIntensity = environmentIntensity;
+          setEnvMap(envTexture);
+
+          if (IS_DEV) {
+            console.log('[JadeModelLoader] HDR 环境贴图加载成功:', environmentHdrPath);
+          }
+        } catch (err) {
+          if (IS_DEV) {
             console.error('[JadeModelLoader] HDR 环境贴图处理失败:', err);
           }
-        },
-        undefined,
-        (err) => {
+          pmremGenerator.dispose();
+        }
+      },
+      undefined,
+      (err) => {
+        if (IS_DEV) {
           console.error('[JadeModelLoader] HDR 环境贴图加载失败:', err);
         }
-      );
-    } catch (err) {
-      console.error('[JadeModelLoader] RGBELoader 异常:', err);
+        pmremGenerator.dispose();
+        if (!disposed) {
+          setEnvMap(null);
+        }
+      }
+    );
+
+    return () => {
+      disposed = true;
+      pmremGenerator.dispose();
+    };
+  }, [environmentHdrPath, environmentIntensity, gl, scene]);
+
+  useEffect(() => {
+    if (!envMap) {
+      scene.environment = null;
+      if (!showHdrBackground) {
+        try {
+          scene.background = new THREE.Color(background as any);
+        } catch (err) {
+          if (IS_DEV) {
+            console.error('[JadeModelLoader] 背景恢复失败:', err);
+          }
+        }
+      }
+      return;
     }
+
+    if (innerEnvMapIntensity > 0) {
+      innerMaterial.envMap = envMap;
+      innerMaterial.envMapIntensity = innerEnvMapIntensity * environmentIntensity;
+    } else {
+      innerMaterial.envMap = null;
+      innerMaterial.envMapIntensity = 0;
+    }
+    innerMaterial.needsUpdate = true;
+
+    outerMaterial.envMap = envMap;
+    outerMaterial.envMapIntensity = outerEnvMapIntensity * environmentIntensity;
+    outerMaterial.needsUpdate = true;
+
+    scene.environment = envMap;
+    (scene as any).environmentIntensity = environmentIntensity;
+
+    if (IS_DEV) {
+      console.log('[JadeModelLoader] 材质环境贴图设置完成');
+    }
+  }, [
+    envMap,
+    innerEnvMapIntensity,
+    outerEnvMapIntensity,
+    innerMaterial,
+    outerMaterial,
+    environmentIntensity,
+    scene,
+    showHdrBackground,
+    background
+  ]);
+
+  useEffect(() => {
+    try {
+      if (showHdrBackground && envMap) {
+        scene.background = envMap;
+      } else if (!showHdrBackground) {
+        if (background === null || background === undefined || background === 'transparent') {
+          scene.background = null;
+        } else {
+          scene.background = new THREE.Color(background as any);
+        }
+      }
+    } catch (err) {
+      if (IS_DEV) {
+        console.error('[JadeModelLoader] 背景设置失败:', err);
+      }
+    }
+  }, [background, showHdrBackground, envMap, scene]);
+
+  useEffect(() => {
+    if (!normalMapPath) {
+      setNormalMap((prev) => {
+        if (prev) {
+          prev.dispose();
+        }
+        return null;
+      });
+      return;
+    }
+
+    let disposed = false;
+    const loader = new THREE.TextureLoader();
+
+    loader.load(
+      normalMapPath,
+      (texture) => {
+        if (disposed) {
+          texture.dispose();
+          return;
+        }
+
+        texture.wrapS = THREE.RepeatWrapping;
+        texture.wrapT = THREE.RepeatWrapping;
+
+        setNormalMap((prev) => {
+          if (prev && prev !== texture) {
+            prev.dispose();
+          }
+          return texture;
+        });
+
+        if (IS_DEV) {
+          console.log('[JadeModelLoader] 法线贴图加载成功:', normalMapPath);
+        }
+      },
+      undefined,
+      (err) => {
+        if (IS_DEV) {
+          console.error('[JadeModelLoader] 法线贴图加载失败:', err);
+        }
+      }
+    );
 
     return () => {
       disposed = true;
     };
-  }, [scene]);
+  }, [normalMapPath]);
 
   useEffect(() => {
-    if (envMap) {
-      if (innerEnvMapIntensity > 0) {
-        innerMaterial.envMap = envMap;
-      } else {
-        innerMaterial.envMap = null;
+    return () => {
+      if (normalMap) {
+        normalMap.dispose();
       }
-      innerMaterial.needsUpdate = true;
-      
-      outerMaterial.envMap = envMap;
-      outerMaterial.needsUpdate = true;
-      
-      console.log('[JadeModelLoader] 材质环境贴图设置完成');
-    }
-  }, [envMap, innerEnvMapIntensity, innerMaterial, outerMaterial]);
+    };
+  }, [normalMap]);
+
+  useEffect(() => {
+    return () => {
+      if (envMap) {
+        envMap.dispose();
+      }
+    };
+  }, [envMap]);
 
   return (
     <RotationController

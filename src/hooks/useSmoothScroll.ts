@@ -3,6 +3,8 @@ import { useRef, useCallback, useState } from 'react';
 export interface SmoothScrollOptions {
   duration?: number;
   easing?: (t: number) => number;
+  onStart?: () => void;
+  onComplete?: () => void;
 }
 
 export function useSmoothScroll() {
@@ -22,7 +24,9 @@ export function useSmoothScroll() {
   ) => {
     const {
       duration = 300,
-      easing = defaultEasing
+      easing = defaultEasing,
+      onStart,
+      onComplete
     } = options;
 
     // Cancel any ongoing animation
@@ -35,6 +39,7 @@ export function useSmoothScroll() {
     let startTime: number | null = null;
 
     setIsScrolling(true);
+    onStart?.();
 
     const animateScroll = (currentTime: number) => {
       if (startTime === null) {
@@ -51,6 +56,7 @@ export function useSmoothScroll() {
         animationFrameRef.current = requestAnimationFrame(animateScroll);
       } else {
         setIsScrolling(false);
+        onComplete?.();
         animationFrameRef.current = null;
       }
     };

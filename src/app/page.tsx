@@ -1,12 +1,13 @@
 'use client';
 
-import React, { useState, useCallback, useRef, useEffect } from 'react';
+import React, { useState, useCallback, useRef, useEffect, useMemo } from 'react';
+import timelineStore from '@/stores/timelineStore';
 import dynamic from 'next/dynamic';
+import { useSearchParams } from 'next/navigation';
 import { LRC_LYRICS } from './constants';
 import useLyrics from '@/components/hooks/useLyrics';
 import { useScrollVelocity } from '@/components/hooks/useScrollVelocity';
 import LyricsController from '@/components/LyricsController';
-import AudioPlayer from '@/components/AudioPlayer';
 import EnhancedAudioPlayer from '@/components/audio/EnhancedAudioPlayer';
 import AudioEngine from '@/components/audio/AudioEngine';
 import PageVisibilityManager from '@/components/audio/PageVisibilityManager';
@@ -14,7 +15,10 @@ import SmoothLoopManager from '@/components/audio/SmoothLoopManager';
 import AutoPlayGuard from '@/components/AutoPlayGuard';
 import ModelPreloader from '@/components/jade/ModelPreloader';
 import type { LyricLine } from '@/types';
-import { StackedLyricsAndModel, type LyricsLayout } from '@/components/layouts';
+import { StackedLyricsAndModel } from '@/components/layouts';
+
+// 调试输出开关（仅开发环境生效）
+const DEBUG_DEV = process.env.NODE_ENV === 'development';
 
 // 动态导入 JadeV6 避免 SSR 问题
 const JadeV6 = dynamic(() => import('@/components/jade/JadeV6'), { 
@@ -92,11 +96,13 @@ const getModelPath = (anchorChar: string): string => {
 };
 
 export default function HomePage() {
-  // 音频相关状态
+  const searchParams = useSearchParams();
+
+  // 音频相关状态 - 重构为单一时间源
   const [isPlaying, setIsPlaying] = useState(false);
   const [isReady, setIsReady] = useState(false);
-  const [currentTime, setCurrentTime] = useState(0); // Start from beginning
-  const [scrollTime, setScrollTime] = useState(0); // Start from beginning
+  const [audioTime, setAudioTime] = useState(0); // 唯一真相源：音频时间
+  const [previewTime, setPreviewTime] = useState<number | null>(null); // 手动滚动预览
   const [duration, setDuration] = useState(MOCK_DURATION);
   const [audioSrc, setAudioSrc] = useState('');
   const [isIntroPlaying, setIsIntroPlaying] = useState(false);
@@ -105,9 +111,15 @@ export default function HomePage() {
   const [loopCount, setLoopCount] = useState(0);
   const [isBuffering, setIsBuffering] = useState(false);
   const [debugLogs, setDebugLogs] = useState<string[]>([]);
+  const [seekSignal, setSeekSignal] = useState(0);
 
-  // 布局开关状态
-  const [lyricsLayout, setLyricsLayout] = useState<LyricsLayout>('front-back-back');
+  // 计算值（不用state）
+  const isPreviewMode = previewTime !== null;
+  const displayTime = isPreviewMode ? (previewTime % duration) : audioTime;
+  // 修复：预览模式时直接使用 previewTime 作为绝对时间，避免 loopCount 不同步
+  const absoluteTime = isPreviewMode ? previewTime : (loopCount * duration + displayTime);
+
+  const isNormalLayout = searchParams?.has('normal');
 
   // 3D模型相关状态
   const { scrollVelocity, handleScrollVelocityChange } = useScrollVelocity();
@@ -124,16 +136,97 @@ export default function HomePage() {
   const audioRef = useRef<HTMLAudioElement>(null);
   const lastUserInteractionRef = useRef<number>(0);
   const isVisibilityChangeRef = useRef<boolean>(false);
+  const audioTimeRef = useRef(0);
+  const lastCommittedTimeRef = useRef({ stamp: 0, display: 0 });
+  const lastSeekTimeRef = useRef<number>(0);
+  const seekProtectionUntilRef = useRef<number>(0);
 
   const lyrics = useLyrics(LRC_LYRICS);
+
+  const commitTimeUpdate = useCallback(
+    (displayTime: number, absoluteTime: number, force: boolean = false) => {
+      audioTimeRef.current = displayTime;
+      const newLoopCount = Math.floor(absoluteTime / duration);
+
+      const now = typeof performance !== 'undefined' ? performance.now() : Date.now();
+
+      // Seek 保护期：在 seek 后的短时间内，忽略非强制的更新
+      if (!force && now < seekProtectionUntilRef.current) {
+        return;
+      }
+
+      // 写入全局时间 store
+      timelineStore.setAudioTime(displayTime, absoluteTime);
+
+      const last = lastCommittedTimeRef.current;
+      if (!force) {
+        const elapsed = now - last.stamp;
+        const delta = Math.abs(displayTime - last.display);
+        // 降低节流，提高响应速度
+        if (elapsed < 8 && delta < 0.005) {
+          return;
+        }
+      }
+
+      if (force) {
+        setSeekSignal((prev) => (prev + 1) % Number.MAX_SAFE_INTEGER);
+        // Seek 保护期 500ms
+        seekProtectionUntilRef.current = now + 500;
+        lastSeekTimeRef.current = now;
+      }
+
+      lastCommittedTimeRef.current = { stamp: now, display: displayTime };
+      setAudioTime(displayTime);
+      setLoopCount(newLoopCount);
+      timelineStore.setVisualTime(displayTime, absoluteTime);
+    },
+    [duration]
+  );
 
   // 添加调试日志
   const addDebugLog = useCallback((message: string) => {
     const timestamp = new Date().toLocaleTimeString();
     const logMessage = `[${timestamp}] ${message}`;
-    console.log(logMessage);
+    if (DEBUG_DEV) console.log(logMessage);
     setDebugLogs(prev => [...prev.slice(-4), logMessage]);
   }, []);
+
+  const refreshPreloadStatus = useCallback(() => {
+    const preloader = ModelPreloader.getInstance();
+    const status = preloader.getCacheStatus();
+    const currentModelPath = getModelPath(currentAnchor);
+    const nextModelPath = preloader.predictNextModel(audioTimeRef.current, ANCHOR_TIMELINE, ANCHOR_MODEL_MAPPING) || '';
+
+    if (DEBUG_DEV) {
+      console.log('[HomePage] 模型预加载状态:', {
+        anchor: currentAnchor,
+        ...status,
+        currentModel: currentModelPath,
+        nextModel: nextModelPath,
+        isCurrentModelCached: preloader.isModelLoaded(currentModelPath),
+        isCurrentModelLoading: preloader.isModelLoading(currentModelPath)
+      });
+    }
+
+    setModelPreloadStatus(prev => {
+      if (
+        prev.loaded === status.loaded &&
+        prev.total === status.total &&
+        prev.currentModel === currentModelPath &&
+        prev.nextModel === nextModelPath
+      ) {
+        return prev;
+      }
+
+      return {
+        ...prev,
+        loaded: status.loaded,
+        total: status.total,
+        currentModel: currentModelPath,
+        nextModel: nextModelPath
+      };
+    });
+  }, [currentAnchor]);
 
   // 页面初始化预加载逻辑
   useEffect(() => {
@@ -185,7 +278,7 @@ export default function HomePage() {
       const isSmallScreen = window.innerWidth <= 768;
       
       const mobile = isMobileDevice || (isTouchDevice && isSmallScreen);
-      console.log('[HomePage] Mobile detection:', { 
+      DEBUG_DEV && console.log('[HomePage] Mobile detection:', { 
         userAgent: userAgent.substring(0, 50), 
         isMobileDevice, 
         isTouchDevice, 
@@ -203,11 +296,12 @@ export default function HomePage() {
   useEffect(() => {
     try {
       const audioPath = '/audio/心经_2.mp3';
-      console.log('[HomePage] Setting audio source:', audioPath);
+      DEBUG_DEV && console.log('[HomePage] Setting audio source:', audioPath);
       setAudioSrc(audioPath);
       
-      setScrollTime(0);
-      setCurrentTime(0);
+      setAudioTime(0);
+      setLoopCount(0);
+      setPreviewTime(null);
       if (audioRef.current) audioRef.current.currentTime = 0;
     } catch (error) {
       console.error('[Audio] Failed to set audio source:', error);
@@ -223,10 +317,12 @@ export default function HomePage() {
 
     // Start from the beginning for better user experience
     const initialTime = 0;
-    setCurrentTime(initialTime);
-    setScrollTime(initialTime);
+    const base = Math.max(1, duration);
+    // 统一从第一轮开始，避免初始相位差
+    const initialAbsolute = 0 * base + initialTime;
     setLoopCount(0);
-  }, [isMobile, addDebugLog]);
+    commitTimeUpdate(initialTime, initialAbsolute, true);
+  }, [isMobile, addDebugLog, commitTimeUpdate]);
 
   // 播放/暂停控制
   const handlePlayPause = useCallback(() => {
@@ -240,36 +336,63 @@ export default function HomePage() {
   const handleSeek = useCallback((absoluteTime: number) => {
     const safeDuration = Math.max(1, duration);
     const displayTime = absoluteTime % safeDuration;
-    const newLoopCount = Math.floor(absoluteTime / safeDuration);
 
-    setCurrentTime(displayTime);
-    setScrollTime(absoluteTime);
-    setLoopCount(newLoopCount);
-  }, [duration]);
+    // 只调用 commitTimeUpdate，它会内部更新 loopCount
+    // 不要重复调用 setLoopCount，避免状态冲突
+    commitTimeUpdate(displayTime, absoluteTime, true);
+  }, [duration, commitTimeUpdate]);
 
   // AudioEngine event handlers
   const handleAudioTimeUpdate = useCallback((displayTime: number, absoluteTime: number) => {
-    setCurrentTime(displayTime);
-    setScrollTime(absoluteTime);
-  }, []);
+    commitTimeUpdate(displayTime, absoluteTime);
+  }, [commitTimeUpdate]);
 
   const handleAudioDurationChange = useCallback((newDuration: number) => {
     setDuration(newDuration);
   }, []);
 
   const handleAudioReady = useCallback(() => {
-    setIsReady(true);
+      setIsReady(true);
     addDebugLog('Audio engine ready');
   }, [addDebugLog]);
 
   const handleAudioPlayStateChange = useCallback((playing: boolean) => {
     setIsPlaying(playing);
+    if (playing) {
+      setIsIntroPlaying(false);
+    }
   }, []);
 
   const handleAudioLoopComplete = useCallback((newLoopCount: number) => {
     setLoopCount(newLoopCount);
     addDebugLog(`Loop completed: ${newLoopCount}`);
   }, [addDebugLog]);
+
+  const handleLyricPreviewStart = useCallback(() => {
+    // 预览模式开始（暂时不做特殊处理）
+  }, []);
+
+  const handleLyricPreviewTime = useCallback((time: number) => {
+    // 设置预览时间，不 seek
+    console.log('[handleLyricPreviewTime]', { time, isPlaying });
+    setPreviewTime(time);
+    const safeDuration = Math.max(1, duration);
+    const displayTime = ((time % safeDuration) + safeDuration) % safeDuration;
+    timelineStore.setVisualTime(displayTime, time);
+  }, [duration, isPlaying]);
+
+  const handleLyricPreviewEnd = useCallback(() => {
+    // 预览结束，清除预览状态
+    console.log('[handleLyricPreviewEnd] 清除预览状态');
+    setPreviewTime(null);
+  }, []);
+
+  const handleSmoothLoopTimeUpdate = useCallback((time: number) => {
+    // If user is actively preview-scrolling, don't override UI time with loop-driven updates
+    if (isPreviewMode) return;
+    const absolute = loopCount * duration + time;
+    commitTimeUpdate(time, absolute, true);
+  }, [commitTimeUpdate, isPreviewMode, loopCount, duration]);
 
   const handleVisibilityChange = useCallback((isVisible: boolean, wasHidden: boolean) => {
     isVisibilityChangeRef.current = true;
@@ -280,23 +403,31 @@ export default function HomePage() {
 
   const handleTimeSync = useCallback((expectedTime: number, actualTime: number) => {
     if (!isVisibilityChangeRef.current && Math.abs(expectedTime - actualTime) > 0.5) {
-      setCurrentTime(expectedTime);
+      const absolute = loopCount * duration + expectedTime;
+      commitTimeUpdate(expectedTime, absolute, true);
       addDebugLog(`Time synced: ${actualTime.toFixed(2)} -> ${expectedTime.toFixed(2)}`);
     }
     isVisibilityChangeRef.current = false;
-  }, [addDebugLog]);
+  }, [addDebugLog, commitTimeUpdate, loopCount, duration]);
 
   // 设置音频源时重置状态
   useEffect(() => {
-    setScrollTime(0);
-    setCurrentTime(0);
+    setAudioTime(0);
     setLoopCount(0);
+    setPreviewTime(null);
     setIsPlaying(false);
     setIsReady(false);
+    audioTimeRef.current = 0;
+    lastCommittedTimeRef.current = { stamp: 0, display: 0 };
   }, [audioSrc]);
 
-  // 计算当前歌词行和锚字
-  const currentLineIndex = findCurrentLineIndex(lyrics, currentTime, duration);
+  // 不再需要平滑渲染 useEffect，使用 displayTime 直接计算
+
+  // 计算当前歌词行和锚字（使用 displayTime）
+  const currentLineIndex = useMemo(
+    () => findCurrentLineIndex(lyrics, displayTime, duration),
+    [lyrics, displayTime, duration]
+  );
 
   // 使用精确时间轴查找锚字
   const findAnchorCharByTime = (currentTime: number): string => {
@@ -305,7 +436,6 @@ export default function HomePage() {
     // 从时间轴中找到当前时间对应的锚字
     for (let i = ANCHOR_TIMELINE.length - 1; i >= 0; i--) {
       if (loopTime >= ANCHOR_TIMELINE[i].time) {
-        console.log(`[锚字切换] 时间: ${loopTime.toFixed(2)}s -> 锚字: ${ANCHOR_TIMELINE[i].anchor} (${ANCHOR_TIMELINE[i].text})`);
         return ANCHOR_TIMELINE[i].anchor;
       }
     }
@@ -328,66 +458,47 @@ export default function HomePage() {
     return '心';
   };
 
-  // 使用精确时间轴查找锚字
-  const anchorChar = findAnchorCharByTime(currentTime);
+  // 使用精确时间轴查找锚字（使用 displayTime）
+  const anchorChar = useMemo(
+    () => findAnchorCharByTime(displayTime),
+    [displayTime, duration]
+  );
 
-  // 更新锚字状态和智能预加载
+  // 更新锚字状态和智能预加载（仅在锚字变更时触发）
   useEffect(() => {
-    if (anchorChar !== currentAnchor) {
+    if (anchorChar === currentAnchor) return;
+
+    if (DEBUG_DEV) {
       console.log(`[锚字更新] ${currentAnchor} -> ${anchorChar}`);
-      setCurrentAnchor(anchorChar);
-      
-      // 智能预加载下一个模型
-      const preloader = ModelPreloader.getInstance();
-      preloader.preloadNextModel(currentTime, ANCHOR_TIMELINE, ANCHOR_MODEL_MAPPING)
-        .then(() => {
-          // 更新预加载状态
-          const status = preloader.getCacheStatus();
-          setModelPreloadStatus(prev => ({
-            ...prev,
-            loaded: status.loaded,
-            currentModel: getModelPath(anchorChar),
-            nextModel: preloader.predictNextModel(currentTime, ANCHOR_TIMELINE, ANCHOR_MODEL_MAPPING) || ''
-          }));
-        })
-        .catch(error => {
-          console.error('[HomePage] 智能预加载失败:', error);
-        });
     }
-  }, [anchorChar, currentAnchor, currentTime]);
+
+    setCurrentAnchor(anchorChar);
+
+    const preloader = ModelPreloader.getInstance();
+    preloader
+      .preloadNextModel(audioTimeRef.current, ANCHOR_TIMELINE, ANCHOR_MODEL_MAPPING)
+      .catch((error) => {
+        console.error('[HomePage] 智能预加载失败:', error);
+      })
+      .finally(() => {
+        refreshPreloadStatus();
+      });
+  }, [anchorChar, currentAnchor, refreshPreloadStatus]);
 
   // 调试信息：显示当前锚字状态
   useEffect(() => {
+    if (!DEBUG_DEV) return;
+
     const currentAnchorInfo = ANCHOR_TIMELINE.find(item => item.anchor === anchorChar);
     if (currentAnchorInfo) {
       console.log(`[当前锚字] ${anchorChar} - ${currentAnchorInfo.text} (${currentAnchorInfo.meaning})`);
     }
   }, [anchorChar]);
 
-  // 模型预加载状态监控
+  // 模型预加载状态监控（仅在状态发生变化时更新）
   useEffect(() => {
-    const preloader = ModelPreloader.getInstance();
-    const status = preloader.getCacheStatus();
-    
-    console.log('[HomePage] 模型预加载状态:', {
-      ...status,
-      currentModel: getModelPath(currentAnchor),
-      nextModel: preloader.predictNextModel(currentTime, ANCHOR_TIMELINE, ANCHOR_MODEL_MAPPING),
-      isCurrentModelCached: preloader.isModelLoaded(getModelPath(currentAnchor)),
-      isCurrentModelLoading: preloader.isModelLoading(getModelPath(currentAnchor))
-    });
-    
-    // 更新状态
-    setModelPreloadStatus(prev => ({
-      ...prev,
-      loaded: status.loaded,
-      total: status.total,
-      currentModel: getModelPath(currentAnchor),
-      nextModel: preloader.predictNextModel(currentTime, ANCHOR_TIMELINE, ANCHOR_MODEL_MAPPING) || ''
-    }));
-  }, [currentAnchor, currentTime]);
-
-  console.log('[HomePage] Render state:', { hasUserInteracted, isReady, isPlaying, isIntroPlaying });
+    refreshPreloadStatus();
+  }, [refreshPreloadStatus]);
 
   return (
     <div className="flex flex-col h-screen bg-transparent font-sans overflow-hidden opacity-100 transition-opacity duration-300">
@@ -431,7 +542,7 @@ export default function HomePage() {
       {/* Page Visibility Manager */}
       <PageVisibilityManager
         isPlaying={isPlaying}
-        currentTime={currentTime}
+        currentTime={audioTime}
         onVisibilityChange={handleVisibilityChange}
         onTimeSync={handleTimeSync}
       >
@@ -441,15 +552,17 @@ export default function HomePage() {
           audioSrc={audioSrc}
           isPlaying={hasUserInteracted && (isPlaying || isIntroPlaying)}
           isReady={isReady}
-          currentTime={currentTime}
+          currentTime={audioTime}
+          loopCount={loopCount}
           duration={duration}
           onTimeUpdate={handleAudioTimeUpdate}
           onDurationChange={handleAudioDurationChange}
           onReady={handleAudioReady}
           onPlayStateChange={handleAudioPlayStateChange}
           onLoopComplete={handleAudioLoopComplete}
-          enableWebAudio={true}
+          enableWebAudio={false}
           initialTime={0}
+          seekSignal={seekSignal}
         />
 
         {/* Smooth Loop Manager */}
@@ -458,23 +571,23 @@ export default function HomePage() {
             audioElement={(window as any).__audioElement}
             isPlaying={isPlaying}
             duration={duration}
-            currentTime={currentTime}
+            currentTime={audioTime}
             onLoopComplete={handleAudioLoopComplete}
-            onTimeUpdate={(time) => setCurrentTime(time)}
-            enableGaplessLoop={true}
+            onTimeUpdate={handleSmoothLoopTimeUpdate}
+            enableGaplessLoop={false}
             loopOverlapTime={0.5}
           />
         )}
       
-                    {/* 自动播放引导 */}
-      <AutoPlayGuard
+      {/* 自动播放引导 */}
+      <AutoPlayGuard 
         onUserInteraction={handleUserInteraction}
         isReady={isReady}
         isPlaying={isPlaying || isIntroPlaying}
       />
-
+      
       {/* 布局渲染区域 */}
-      {lyricsLayout === 'front-back-back' ? (
+      {isNormalLayout ? (
         <>
           {/* 传统布局：3D模型背景 + 歌词控制器 */}
           <div className="fixed inset-0 pointer-events-none z-10" style={{ width: '100%', height: '100%' }}>
@@ -505,23 +618,26 @@ export default function HomePage() {
             <div className="relative w-full max-w-4xl h-full pointer-events-auto">
               <LyricsController
                 lyrics={lyrics}
-                currentTime={currentTime}
+                currentTime={displayTime}
                 duration={duration}
-                scrollTime={scrollTime}
+                scrollTime={absoluteTime}
                 onSeek={handleSeek}
                 isPlaying={isPlaying}
+                isPreviewMode={isPreviewMode}
                 onScrollVelocityChange={handleScrollVelocityChange}
+                onPreviewStart={handleLyricPreviewStart}
+                onPreviewTime={handleLyricPreviewTime}
+                onPreviewEnd={handleLyricPreviewEnd}
               />
             </div>
           </main>
         </>
       ) : (
-        <>
-          {/* 新布局：三层Canvas叠加 */}
-          <div className="fixed inset-0 z-5" style={{ width: '100%', height: '100%' }}>
+        <main className="relative flex-grow w-full overflow-hidden flex items-center justify-center">
+          <div className="absolute inset-0 flex items-center justify-center">
             <StackedLyricsAndModel
-              currentTime={currentTime}
-              scrollTime={scrollTime}
+              currentTime={displayTime}
+              scrollTime={absoluteTime}
               duration={duration}
               isPlaying={isPlaying}
               currentAnchor={currentAnchor}
@@ -534,49 +650,22 @@ export default function HomePage() {
           </div>
 
           {/* 隐藏的原始LyricsController用于滚动控制 */}
-          <div className="fixed inset-0 z-0 opacity-0 pointer-events-auto" style={{ width: '100%', height: '100%' }}>
-            <div className="relative w-full h-full">
-              <LyricsController
-                lyrics={lyrics}
-                currentTime={currentTime}
-                duration={duration}
-                scrollTime={scrollTime}
-                onSeek={handleSeek}
-                isPlaying={isPlaying}
-                onScrollVelocityChange={handleScrollVelocityChange}
-              />
-            </div>
+          <div className="absolute inset-0 z-10 opacity-0 pointer-events-auto">
+            <LyricsController
+              lyrics={lyrics}
+              currentTime={displayTime}
+              duration={duration}
+              scrollTime={absoluteTime}
+              onSeek={handleSeek}
+              isPlaying={isPlaying}
+              isPreviewMode={isPreviewMode}
+              onScrollVelocityChange={handleScrollVelocityChange}
+              onPreviewStart={handleLyricPreviewStart}
+              onPreviewTime={handleLyricPreviewTime}
+              onPreviewEnd={handleLyricPreviewEnd}
+            />
           </div>
-        </>
-      )}
-
-      {/* 布局切换控制（开发环境） */}
-      {process.env.NODE_ENV === 'development' && (
-        <div className="fixed right-4 top-4 z-50 bg-black/80 p-4 rounded-lg space-y-4 text-white">
-          <h3 className="text-sm font-semibold">布局切换</h3>
-          <div className="space-y-2">
-            <label className="flex items-center gap-2 text-sm">
-              <input
-                type="radio"
-                name="layout"
-                value="front-back-back"
-                checked={lyricsLayout === 'front-back-back'}
-                onChange={() => setLyricsLayout('front-back-back')}
-              />
-              传统布局
-            </label>
-            <label className="flex items-center gap-2 text-sm">
-              <input
-                type="radio"
-                name="layout"
-                value="stacked-3canvas"
-                checked={lyricsLayout === 'stacked-3canvas'}
-                onChange={() => setLyricsLayout('stacked-3canvas')}
-              />
-              三层叠加
-            </label>
-          </div>
-        </div>
+        </main>
       )}
 
       </PageVisibilityManager>
@@ -587,11 +676,13 @@ export default function HomePage() {
           isPlaying={isPlaying}
           isReady={isReady}
           duration={duration}
-          currentTime={currentTime}
+          currentTime={displayTime}
           isBuffering={isBuffering}
           onPlayPause={handlePlayPause}
-          onSeek={(time) => handleSeek(loopCount * duration + time)}
-          showDebugInfo={process.env.NODE_ENV === 'development'}
+          onSeek={(time) => {
+            // 使用 loopCount 计算绝对时间
+            handleSeek(loopCount * duration + time);
+          }}
         />
       </footer>
 

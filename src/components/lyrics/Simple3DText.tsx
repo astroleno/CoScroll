@@ -65,6 +65,7 @@ const Simple3DText: React.FC<Simple3DTextProps> = ({
       anchorX={isLeft ? "left" : "right"}
       anchorY="middle"
       renderOrder={isFront ? 1 : 0}
+      font="/fonts/YanShiYouRanXiaoKai-2.ttf"
       material-transparent={false}
       material-opacity={1}
       material-alphaTest={0.5}
