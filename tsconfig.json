@@ -30,7 +30,7 @@
     ".next/types/**/*.ts",
     "**/*.ts",
     "**/*.tsx"
-, "src/components/LyricSync.tsx.bak"  ],
+, "src/components/LyricSync.tsx.bak", "src/app/page.tsx.backup"  ],
   "exclude": [
     "node_modules"
   ]

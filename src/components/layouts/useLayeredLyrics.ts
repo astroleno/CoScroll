@@ -17,6 +17,8 @@ export interface LayeredLyricItem {
   opacity: number;
   scale: number;
   renderOrder: number;
+  verticalAlign: 'top' | 'bottom';
+  edgeFeather: number;
 }
 
 export interface UseLayeredLyricsOptions {
@@ -26,6 +28,14 @@ export interface UseLayeredLyricsOptions {
   frontDepth?: number;
   backNearDepth?: number;
   backFarDepth?: number;
+  movementAxis?: 'vertical' | 'horizontal';
+  travelSpacing?: number;
+  laneSeparation?: number;
+  topLaneY?: number;
+  bottomLaneY?: number;
+  edgeFeatherStart?: number;
+  edgeFadeStart?: number;
+  edgeFeatherExponent?: number;
 }
 
 interface UseLayeredLyricsParams {
@@ -48,6 +58,12 @@ const DEFAULT_FRONT_DEPTH = 0;
 const DEFAULT_BACK_NEAR_DEPTH = 0.1;
 const DEFAULT_BACK_FAR_DEPTH = 0.2;
 const SCROLL_AHEAD_MARGIN = 0;
+const DEFAULT_MOVEMENT_AXIS: 'vertical' | 'horizontal' = 'vertical';
+const DEFAULT_TOP_LANE_Y = 2.6;
+const DEFAULT_BOTTOM_LANE_Y = -2.6;
+const DEFAULT_EDGE_FEATHER_START = 0.28;
+const DEFAULT_EDGE_FADE_START = 0.48;
+const DEFAULT_EDGE_FEATHER_EXPONENT = 0.85;
 
 export function useLayeredLyrics({
   lyrics,
@@ -61,7 +77,14 @@ export function useLayeredLyrics({
     verticalSpacing = DEFAULT_VERTICAL_SPACING,
     frontDepth = DEFAULT_FRONT_DEPTH,
     backNearDepth = DEFAULT_BACK_NEAR_DEPTH,
-    backFarDepth = DEFAULT_BACK_FAR_DEPTH
+    backFarDepth = DEFAULT_BACK_FAR_DEPTH,
+    movementAxis = DEFAULT_MOVEMENT_AXIS,
+    travelSpacing,
+    topLaneY = DEFAULT_TOP_LANE_Y,
+    bottomLaneY = DEFAULT_BOTTOM_LANE_Y,
+    edgeFeatherStart = DEFAULT_EDGE_FEATHER_START,
+    edgeFadeStart = DEFAULT_EDGE_FADE_START,
+    edgeFeatherExponent = DEFAULT_EDGE_FEATHER_EXPONENT,
   } = options || {};
 
   return useMemo(() => {
@@ -118,6 +141,9 @@ export function useLayeredLyrics({
     const progressWithLead = Math.min(Math.max(progressToNext + SCROLL_AHEAD_MARGIN, 0), 0.999);
     const currentIndexContinuous = absoluteCurrentIndex + progressWithLead;
 
+    const movement = movementAxis === 'horizontal' ? 'horizontal' : 'vertical';
+    const travelStep = Math.max(0.01, travelSpacing ?? verticalSpacing * 0.85);
+
     const items: LayeredLyricItem[] = [];
 
     for (let offset = -range; offset <= range; offset++) {
@@ -130,32 +156,90 @@ export function useLayeredLyrics({
       const trimmedText = rawText.trim();
       const displayText = trimmedText === '' ? '　' : trimmedText;
       const relativeOffset = targetAbsoluteIndex - currentIndexContinuous;
-      const isCurrent = Math.abs(relativeOffset) < 0.35;
       const loopParity = Math.floor(targetAbsoluteIndex / totalLines) % 2;
-      const isLeft = ((wrappedIndex + loopParity) % 2) === 0;
-      const sideOffset = isLeft ? -horizontalOffset : horizontalOffset;
-      const verticalOffset = -relativeOffset * verticalSpacing;
+      const isTopLane = ((wrappedIndex + loopParity) % 2) === 0;
+      const isLeft = isTopLane; // 竖排下用于 renderOrder 的占位变量
+      let x: number;
+      let y: number;
+      let verticalAlign: 'top' | 'bottom';
+      const isCurrent = targetAbsoluteIndex === absoluteCurrentIndex;
+      let distanceRatio = 0;
 
-      const layerCycle = wrappedIndex % 3;
+      if (movement === 'horizontal') {
+        const clampedOffset = Math.max(-range, Math.min(range, relativeOffset));
+        const travelLimit = range * travelStep;
+        const travelOffset = Math.max(-travelLimit, Math.min(travelLimit, clampedOffset * travelStep));
+        x = travelOffset;
+        y = isTopLane ? topLaneY : bottomLaneY;
+        verticalAlign = isTopLane ? 'top' : 'bottom';
+        distanceRatio = travelLimit > 0 ? Math.abs(x) / travelLimit : 0;
+      } else {
+        const sideOffset = isLeft ? -horizontalOffset : horizontalOffset;
+        const verticalOffset = -relativeOffset * verticalSpacing;
+        x = sideOffset;
+        y = verticalOffset;
+        verticalAlign = verticalOffset >= 0 ? 'top' : 'bottom';
+      }
+
+      // 固定前后层：靠近当前的歌词位于前景，超出的歌词放置在后景
       let layer: LayerType;
       let depth: number;
-      if (layerCycle === 0) {
-        layer = 'front';
-        depth = frontDepth;
-      } else if (layerCycle === 1) {
-        layer = 'back-near';
-        depth = backNearDepth;
+      if (movement === 'horizontal') {
+        const absOffset = Math.abs(relativeOffset);
+        if (absOffset <= 0.75) {
+          layer = 'front';
+          depth = frontDepth;
+        } else if (relativeOffset < 0) {
+          layer = 'front';
+          depth = frontDepth - 0.6;
+        } else {
+          layer = 'back-far';
+          depth = backFarDepth;
+        }
       } else {
-        layer = 'back-far';
-        depth = backFarDepth;
+        const absOffset = Math.abs(relativeOffset);
+        if (absOffset <= 0.55) {
+          layer = 'front';
+          depth = frontDepth;
+        } else if (relativeOffset < 0) {
+          layer = 'back-near';
+          depth = backNearDepth;
+        } else {
+          layer = 'back-far';
+          depth = backFarDepth;
+        }
       }
 
       const isBlank = trimmedText === '';
-      const opacity = isBlank ? 0 : 1;
+      let opacity = isBlank ? 0 : 1;
+      let edgeFeather = 0;
+      if (!isBlank && movement === 'horizontal') {
+        const effectiveFeatherStart = Math.min(Math.max(edgeFeatherStart, 0), 0.95);
+        const effectiveFadeStart = Math.min(Math.max(edgeFadeStart, effectiveFeatherStart + 0.02), 0.98);
+
+        if (distanceRatio >= effectiveFeatherStart) {
+          const denom = Math.max(1 - effectiveFeatherStart, 1e-3);
+          const featherNorm = Math.min(1, (distanceRatio - effectiveFeatherStart) / denom);
+          edgeFeather = Math.pow(featherNorm, Math.max(0.1, edgeFeatherExponent));
+        }
+
+        if (distanceRatio >= effectiveFadeStart) {
+          const denom = Math.max(1 - effectiveFadeStart, 1e-3);
+          const fadeNorm = Math.min(1, (distanceRatio - effectiveFadeStart) / denom);
+          const eased = fadeNorm * fadeNorm * (3 - 2 * fadeNorm);
+          opacity = Math.max(0, 1 - eased);
+        }
+      }
       const scale = 1;
-      const renderOrder = layer === 'front'
-        ? 2000 + targetAbsoluteIndex
-        : 1000 + targetAbsoluteIndex;
+      let renderOrder: number;
+      if (layer === 'front') {
+        const laneOffset = movement === 'horizontal' ? (isTopLane ? 220 : 200) : 180;
+        renderOrder = 3000 + laneOffset + targetAbsoluteIndex;
+      } else if (layer === 'back-near') {
+        renderOrder = 2000 + targetAbsoluteIndex;
+      } else {
+        renderOrder = 1000 + targetAbsoluteIndex;
+      }
 
       items.push({
         key: `${targetAbsoluteIndex}`,
@@ -165,12 +249,14 @@ export function useLayeredLyrics({
         isCurrent,
         isLeft,
         layer,
-        x: sideOffset,
-        y: verticalOffset,
+        x,
+        y,
         z: depth,
         opacity,
         scale,
-        renderOrder
+        renderOrder,
+        verticalAlign,
+        edgeFeather
       });
     }
 
@@ -192,6 +278,13 @@ export function useLayeredLyrics({
     verticalSpacing,
     frontDepth,
     backNearDepth,
-    backFarDepth
+    backFarDepth,
+    movementAxis,
+    travelSpacing,
+    topLaneY,
+    bottomLaneY,
+    edgeFeatherStart,
+    edgeFadeStart,
+    edgeFeatherExponent
   ]);
 }

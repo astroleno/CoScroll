@@ -1,14 +1,4 @@
-/**
- * 布局类型定义
- */
-
-export type LyricsLayout = 'front-back-back' | 'stacked-3canvas';
-
-export interface LayoutProps {
-  layout: LyricsLayout;
-}
-
-export interface StackedLayoutProps {
+export interface UnifiedLayoutProps {
   // 音频相关状态
   currentTime: number;
   scrollTime: number;

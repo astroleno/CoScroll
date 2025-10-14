@@ -1,5 +1,5 @@
 import React, { useRef, useEffect, useCallback, useMemo, useState } from 'react';
-import type { LyricsControllerProps } from '@/types';
+import type { LyricsControllerProps, LyricLine } from '@/types';
 
 const findCurrentLineIndex = (lyricLines: any[], time: number, durationParam: number): number => {
   if (!lyricLines || lyricLines.length === 0) return -1;
@@ -23,19 +23,24 @@ const findCurrentLineIndex = (lyricLines: any[], time: number, durationParam: nu
   return ans;
 };
 
-const LyricsController: React.FC<LyricsControllerProps> = ({
+type LayerType = 'top' | 'bottom' | undefined;
+
+const LyricsController: React.FC<LyricsControllerProps & { layer?: LayerType; verticalPercent?: number }> = ({
   lyrics,
   currentTime,
   duration,
   scrollTime,
   onSeek,
   isPlaying,
-  isPreviewMode = false,
   onScrollVelocityChange,
   onActiveLineChange,
   onPreviewStart,
   onPreviewTime,
   onPreviewEnd,
+  layer,
+  verticalPercent,
+  fontFamily,
+  fontSize = 1.0,
 }) => {
   const scrollerRef = useRef<HTMLDivElement>(null);
   const lineRefs = useRef<(HTMLParagraphElement | null)[]>([]);
@@ -68,6 +73,12 @@ const LyricsController: React.FC<LyricsControllerProps> = ({
   }, []);
 
   const [isInitialized, setIsInitialized] = useState(false);
+  // 竖排模式（布局优先阶段）
+  const VERTICAL_MODE = true;
+  
+  // 虚拟化参数
+  const WINDOW_SIZE_SEC = 30; // 渲染窗口：当前时间前后各30秒
+  const PREFETCH_SEC = 10; // 预取缓冲：额外10秒
 
   // 高亮计算：必须使用 scrollTime，保证和显示的轮次一致
   const currentLineIndex = useMemo(() => {
@@ -86,8 +97,43 @@ const LyricsController: React.FC<LyricsControllerProps> = ({
     scrollTimeRef.current = scrollTime;
   }, [scrollTime]);
 
-  // 增大重复缓冲，支持更长的无尽滚动
-  const repeatedLyrics = useMemo(() => Array(21).fill(null).flatMap(() => lyrics), [lyrics]);
+  // 跨轮次歌词显示：支持显示前一轮结尾
+  const visibleLyrics = useMemo(() => {
+    if (!lyrics || lyrics.length === 0) return [];
+    
+    // 计算当前轮次和需要显示的歌词范围
+    const safeDuration = Math.max(1, duration);
+    const currentLoop = Math.floor(scrollTime / safeDuration);
+    const timeWithin = ((scrollTime % safeDuration) + safeDuration) % safeDuration;
+    
+    // 扩展显示范围：前一轮结尾 + 当前轮次 + 下一轮开头
+    const extendedLyrics = [];
+
+    // 添加前一轮的结尾歌词（如果当前轮次 > 0）
+    if (currentLoop > 0) {
+      const prevLoopLyrics = lyrics.map(line => ({
+        ...line,
+        time: line.time + (currentLoop - 1) * safeDuration
+      }));
+      extendedLyrics.push(...prevLoopLyrics);
+    }
+
+    // 添加当前轮次的歌词
+    const currentLoopLyrics = lyrics.map(line => ({
+      ...line,
+      time: line.time + currentLoop * safeDuration
+    }));
+    extendedLyrics.push(...currentLoopLyrics);
+
+    // 添加下一轮的开头歌词，保证 seek 能跨轮定位
+    const nextLoopLyrics = lyrics.map(line => ({
+      ...line,
+      time: line.time + (currentLoop + 1) * safeDuration
+    }));
+    extendedLyrics.push(...nextLoopLyrics);
+
+    return extendedLyrics;
+  }, [lyrics, scrollTime, duration]);
 
   const indexToTime = useCallback((absoluteIndex: number) => {
     if (lyrics.length === 0) return 0;
@@ -105,15 +151,18 @@ const LyricsController: React.FC<LyricsControllerProps> = ({
     if (!scroller || lyrics.length === 0 || duration <= 0) {
       return null;
     }
-
-    const centerViewport = scroller.scrollTop + scroller.clientHeight / 2;
+    const centerViewport = VERTICAL_MODE
+      ? (scroller.scrollLeft + scroller.clientWidth / 2)
+      : (scroller.scrollTop + scroller.clientHeight / 2);
     const samples: Array<{ index: number; center: number }> = [];
 
-    for (let i = 0; i < repeatedLyrics.length; i++) {
+    for (let i = 0; i < visibleLyrics.length; i++) {
       const lineEl = lineRefs.current[i];
-      const lyricLine = repeatedLyrics[i];
+      const lyricLine = visibleLyrics[i];
       if (!lineEl || !lyricLine?.text.trim()) continue;
-      const lineCenter = lineEl.offsetTop + lineEl.offsetHeight / 2;
+      const lineCenter = VERTICAL_MODE
+        ? (lineEl.offsetLeft + lineEl.offsetWidth / 2)
+        : (lineEl.offsetTop + lineEl.offsetHeight / 2);
       samples.push({ index: i, center: lineCenter });
     }
 
@@ -175,7 +224,7 @@ const LyricsController: React.FC<LyricsControllerProps> = ({
       time: targetTime,
       indexContinuous: continuousIndex
     };
-  }, [duration, indexToTime, lyrics, repeatedLyrics]);
+  }, [duration, indexToTime, lyrics, visibleLyrics]);
 
   // 移动端检测
   const isIOS = typeof navigator !== 'undefined' ? /iPad|iPhone|iPod/.test(navigator.userAgent) : false;
@@ -301,16 +350,16 @@ const LyricsController: React.FC<LyricsControllerProps> = ({
     lastAutoScrollIndexRef.current = target.selectedIndex;
     lastLoopFromScrollRef.current = targetLoop;
 
-    // 将索引映射到 repeatedLyrics 的范围内
-    const repeatedLength = repeatedLyrics.length;
-    const normalizedIndex = ((target.selectedIndex % repeatedLength) + repeatedLength) % repeatedLength;
+    // 将索引映射到 visibleLyrics 的范围内
+    const visibleLength = visibleLyrics.length;
+    const normalizedIndex = ((target.selectedIndex % visibleLength) + visibleLength) % visibleLength;
     scrollToLine(normalizedIndex, { immediate: true });
 
     onSeek(target.newTime);
     // seek 后禁止自动滚动覆盖：播放时 500ms，暂停时 1000ms
     const protectionDuration = isPlayingRef.current ? 500 : 1000;
     antiAutoScrollUntilRef.current = Date.now() + protectionDuration;
-  }, [duration, repeatedLyrics, onSeek, onPreviewEnd, resolveScrollTarget, scrollToLine]);
+  }, [duration, visibleLyrics, onSeek, onPreviewEnd, resolveScrollTarget, scrollToLine]);
 
   // 统一的交互开始处理
   const handleInteractionStart = useCallback(() => {
@@ -337,7 +386,7 @@ const LyricsController: React.FC<LyricsControllerProps> = ({
 
   const handleScroll = useCallback((event: React.UIEvent<HTMLDivElement>) => {
     const scroller = event.currentTarget;
-    const currentTop = scroller.scrollTop;
+    const currentTop = VERTICAL_MODE ? scroller.scrollLeft : scroller.scrollTop;
 
     if (programmaticScrollRef.current && !pointerInteractionRef.current) {
       lastScrollTopRef.current = currentTop;
@@ -429,57 +478,26 @@ const LyricsController: React.FC<LyricsControllerProps> = ({
     }
   }, [isInitialized]);
 
-  // 自动滚动：只在行变化时触发；预览态/用户交互/保护期内跳过
+  // 自动滚动：保留功能，但避免高亮时的位置跳动
   useEffect(() => {
     if (!isInitialized || lyrics.length === 0) return;
-
-    // 用户正在手动交互时，禁用自动滚动，让用户自由控制
-    if (isUserInteractingRef.current) return;
-
-    // 预览态时（由外部控制时间显示），不进行自动滚动
-    if (isPreviewMode) return;
-
-    // 检查保护期：如果在保护期内，也禁用自动滚动
-    const now = Date.now();
-    if (now < antiAutoScrollUntilRef.current) {
-      console.log('[自动滚动] 保护期内，跳过', {
-        remaining: (antiAutoScrollUntilRef.current - now).toFixed(0)
-      });
-      return;
-    }
-
-    if (currentLineIndex < 0) return;
-
+    
     // 通知行变化
     if (onActiveLineChange && currentLineIndex !== currentLineIndexRef.current) {
       onActiveLineChange(lyrics[currentLineIndex] || null, currentLineIndex);
     }
-
-    // 只在行索引变化时滚动
-    if (currentLineIndex === currentLineIndexRef.current) return;
-
-    // 计算绝对索引 - 从 ref 读取 scrollTime，避免加入依赖
-    const safeDuration = Math.max(1, duration);
-    const currentScrollTime = scrollTimeRef.current;
-    const loopFromScroll = Math.floor(currentScrollTime / safeDuration);
-    const targetIndex = loopFromScroll * lyrics.length + currentLineIndex;
-
-    // 映射到 repeatedLyrics 范围
-    const repeatedLength = repeatedLyrics.length;
-    const normalizedIndex = ((targetIndex % repeatedLength) + repeatedLength) % repeatedLength;
-
-    // 检测是否是大跳跃
-    const previousIndex = lastAutoScrollIndexRef.current;
-    const isLargeJump = previousIndex >= 0 && Math.abs(targetIndex - previousIndex) > 3;
-
-    lastAutoScrollIndexRef.current = targetIndex;
-    lastLoopFromScrollRef.current = loopFromScroll;
-
-    scrollToLine(normalizedIndex, { immediate: isLargeJump });
-
-    // 在完成滚动后再更新当前行引用，避免竞态
     currentLineIndexRef.current = currentLineIndex;
-  }, [currentLineIndex, isPreviewMode, isInitialized, lyrics, duration, repeatedLyrics, scrollToLine, onActiveLineChange]);
+    
+    // 自动滚动：仅在用户未交互时且不在预览模式时执行
+    if (!isUserInteractingRef.current && !previewActiveRef.current && currentLineIndex >= 0) {
+      const now = Date.now();
+      // 避免在 seek 后立即自动滚动
+      if (now > antiAutoScrollUntilRef.current) {
+        const normalizedIndex = ((currentLineIndex % visibleLyrics.length) + visibleLyrics.length) % visibleLyrics.length;
+        scrollToLine(normalizedIndex, { immediate: false });
+      }
+    }
+  }, [currentLineIndex, isInitialized, lyrics, duration, visibleLyrics, scrollToLine, onActiveLineChange]);
 
   // 初始化时通知当前行（移除，已在自动滚动 useEffect 中处理）
 
@@ -507,67 +525,182 @@ const LyricsController: React.FC<LyricsControllerProps> = ({
   // 计算当前循环和索引
   const safeDuration = Math.max(1, duration);
   const loopCount = Math.floor(scrollTime / safeDuration);
-  const repeatedLength = repeatedLyrics.length;
+  // 用于高光插值的当前时间（落在 [0, safeDuration)）
+  const timeWithin = ((scrollTime % safeDuration) + safeDuration) % safeDuration;
+  const visibleLength = visibleLyrics.length;
   const absoluteCurrentIndex = currentLineIndex >= 0 ? loopCount * lyrics.length + currentLineIndex : -1;
   // 以精确映射的归一化索引作为唯一高亮依据，去掉“接近阈值”判断
   const normalizedCurrentIndex = absoluteCurrentIndex >= 0
-    ? ((absoluteCurrentIndex % repeatedLength) + repeatedLength) % repeatedLength
+    ? ((absoluteCurrentIndex % visibleLength) + visibleLength) % visibleLength
     : -1;
+
+  // 统一时间→像素映射，使用viewport中心点
+  const viewportCenter = typeof window !== 'undefined' ? window.innerWidth * 0.5 : 0;
+  const LINE_SPACING_PX = 180;
+  const MIN_TIME_DELTA = 0.25;
+  const loopSpanPx = LINE_SPACING_PX * Math.max(lyrics.length, 1);
+
+  // 基础循环内的位置映射：每行使用固定间距，按真实时间调整速度
+  const basePositionMap = useMemo(() => {
+    if (!lyrics || lyrics.length === 0) return [];
+
+    const safeDuration = Math.max(1, duration);
+    return lyrics.map((line, index) => {
+      const nextIndex = (index + 1) % lyrics.length;
+      const nextLine = lyrics[nextIndex];
+
+      let timeDelta: number;
+      if (index === lyrics.length - 1) {
+        const wrapOffset = nextLine ? nextLine.time : 0;
+        timeDelta = safeDuration - line.time + wrapOffset;
+      } else {
+        timeDelta = nextLine.time - line.time;
+      }
+
+      const clampedDelta = Math.max(timeDelta, MIN_TIME_DELTA);
+
+      return {
+        time: line.time,
+        position: index * LINE_SPACING_PX,
+        speed: LINE_SPACING_PX / clampedDelta,
+        duration: clampedDelta
+      };
+    });
+  }, [lyrics, duration]);
+
+  // 计算循环内指定时间对应的位置
+  const calculateLoopPosition = useCallback((timeValue: number): number => {
+    if (basePositionMap.length === 0) return 0;
+
+    const safeDuration = Math.max(1, duration);
+    const normalizedTime = ((timeValue % safeDuration) + safeDuration) % safeDuration;
+
+    let segmentIndex = basePositionMap.length - 1;
+    for (let i = 0; i < basePositionMap.length; i++) {
+      if (normalizedTime < basePositionMap[i].time) {
+        segmentIndex = i - 1;
+        break;
+      }
+    }
+
+    if (segmentIndex < 0) {
+      segmentIndex = basePositionMap.length - 1;
+    }
+
+    const segment = basePositionMap[segmentIndex];
+    const elapsedRaw = normalizedTime - segment.time;
+    const elapsed = elapsedRaw >= 0 ? elapsedRaw : elapsedRaw + safeDuration;
+    const cappedElapsed = Math.min(Math.max(elapsed, 0), segment.duration);
+
+    return segment.position + cappedElapsed * segment.speed;
+  }, [basePositionMap, duration]);
+
+  // 获取绝对时间对应的位置（包含循环偏移）
+  const getAbsolutePositionForTime = useCallback((timeValue: number): number => {
+    if (basePositionMap.length === 0) return 0;
+    const safeDuration = Math.max(1, duration);
+    const loopIndex = safeDuration > 0 ? Math.floor(timeValue / safeDuration) : 0;
+    return loopIndex * loopSpanPx + calculateLoopPosition(timeValue);
+  }, [basePositionMap, duration, loopSpanPx, calculateLoopPosition]);
 
   return (
     <div
       ref={scrollerRef}
-      className={`w-full h-full overflow-y-scroll no-scrollbar ${isMobile ? 'touch-pan-y' : ''}`}
+      className={`w-full h-full ${VERTICAL_MODE ? '' : 'no-scrollbar'} ${isMobile ? (VERTICAL_MODE ? 'touch-pan-x' : 'touch-pan-y') : ''}`}
       style={{
-        WebkitOverflowScrolling: 'touch',
+        WebkitOverflowScrolling: 'auto',
         WebkitTransform: 'translateZ(0)',
         transform: 'translateZ(0)',
-        overscrollBehavior: 'contain'
+        overscrollBehavior: 'contain',
+        whiteSpace: VERTICAL_MODE ? 'nowrap' : undefined,
+        display: VERTICAL_MODE ? 'flex' : undefined,
+        flexDirection: VERTICAL_MODE ? 'row' : undefined,
+        alignItems: VERTICAL_MODE ? 'center' : undefined,
+        width: VERTICAL_MODE ? '100%' : undefined,
+        height: VERTICAL_MODE ? '100%' : undefined,
+        overflow: 'hidden', // 作为固定视口
+        pointerEvents: 'none' // 交互交给父容器
       }}
-      onScroll={handleScroll}
-      onWheel={handlePointerInitiatedInteraction}
-      onTouchStart={handlePointerInitiatedInteraction}
-      onMouseDown={handlePointerInitiatedInteraction}
+      // 去掉 onScroll，固定视口
     >
-      <div className="w-full py-[50vh]">
-        {repeatedLyrics.map((line, index) => {
-          const isCurrent = normalizedCurrentIndex >= 0 && index === normalizedCurrentIndex;
-          const total = Math.max(lyrics.length, 1);
-          const lyricIndex = ((index % total) + total) % total;
-          // 以 scrollTime 为基准计算当前渲染行的“绝对索引”，与 3D 逻辑一致
-          const safeDuration = Math.max(1, duration);
-          const loopFromScroll = Math.floor(scrollTime / safeDuration);
-          // 估算该渲染项所处的相对轮偏移：与 normalizedCurrentIndex 同侧的偏移
-          const relativeFromCurrent = normalizedCurrentIndex >= 0 ? (index - normalizedCurrentIndex) : 0;
-          const absoluteIndex = loopFromScroll * total + currentLineIndex + Math.round(relativeFromCurrent);
-          const loopParity = Math.floor(absoluteIndex / total) % 2; // 奇偶轮左右相反（基于绝对索引）
-          const isLeft = ((lyricIndex + loopParity) % 2) === 0;
+      <div 
+        className={`${VERTICAL_MODE ? 'h-full' : 'w-full'}`} 
+        style={{ 
+          position: 'relative',
+          height: '100%',
+          width: '100%'
+        }}
+      >
+        {visibleLyrics.map((line, index) => {
+          const isCurrent = index === currentLineIndex;
           const isBlank = !line.text.trim();
+          // 使用新的位置计算方法：每行固定间距，时间驱动偏移
+          const currentPosition = getAbsolutePositionForTime(scrollTime);
+          const linePosition = getAbsolutePositionForTime(line.time || 0);
+          const delta = linePosition - currentPosition;
+          const leftPx = viewportCenter + delta;
+
+          // 仅渲染对应层的行：按绝对行号奇偶决定上下
+          // 计算在扩展歌词列表中的绝对行号
+          const safeDuration = Math.max(1, duration);
+          const currentLoop = Math.floor(scrollTime / safeDuration);
+          const isPrevLoop = index < lyrics.length; // 前一轮歌词
+
+          let absLineNumber: number;
+          if (isPrevLoop) {
+            // 前一轮歌词：使用前一轮的行号
+            absLineNumber = (currentLoop - 1) * lyrics.length + index;
+          } else {
+            // 当前轮歌词：使用当前轮的行号
+            const currentIndex = index - lyrics.length;
+            absLineNumber = currentLoop * lyrics.length + currentIndex;
+          }
+          
+          const shouldBeTop = (absLineNumber % 2 + 2) % 2 === 0;
+          // 判断是否应该在该层显示内容
+          const shouldShowContent = (layer === 'top' && shouldBeTop) || (layer === 'bottom' && !shouldBeTop);
+
+          const verticalStyle: React.CSSProperties = layer === 'top'
+            ? { top: `${verticalPercent ?? 28}%` }
+            : layer === 'bottom'
+              ? { bottom: `${100 - (verticalPercent ?? 65)}%` }
+              : { top: '50%', transform: 'translateY(-50%)' };
 
           return (
             <p
-              key={`${line.time}-${index}`}
+              key={`${line.time}-${index}-${layer ?? 'single'}`}
               ref={(el) => { lineRefs.current[index] = el; }}
-              className={`text-3xl font-semibold w-full px-16 ${
-                isLeft ? 'text-left' : 'text-right'
-              }`}
+              className={`text-3xl font-semibold`}
               style={{
-                opacity: isBlank ? 0 : (isCurrent ? 1 : 0.5),
-                color: isCurrent ? '#E2E8F0' : '#94A3B8',
-                pointerEvents: isBlank ? 'none' : 'auto',
-                userSelect: isBlank ? 'none' : 'auto',
-                height: isBlank ? '5rem' : 'auto',
-                paddingTop: isBlank ? '0' : '3rem',
-                paddingBottom: isBlank ? '0' : '3rem',
+                position: 'absolute',
+                left: `${leftPx}px`,
+                ...verticalStyle,
+                // 不属于该层时完全透明作为占位，属于该层时根据是否空白决定透明度
+                opacity: shouldShowContent ? (isBlank ? 0 : 1) : 0,
+                color: isCurrent ? '#FFFFFF' : '#94A3B8',
+                // 占位元素不响应交互
+                pointerEvents: shouldShowContent ? 'none' : 'none',
+                userSelect: (shouldShowContent && !isBlank) ? 'auto' : 'none',
+                display: 'flex',
+                alignItems: layer === 'top' ? 'flex-start' : (layer === 'bottom' ? 'flex-end' : 'center'),
+                justifyContent: 'center',
+                height: 'auto',
+                minWidth: '6rem',
+                maxWidth: '8rem',
+                marginLeft: 0,
+                marginRight: 0,
                 lineHeight: isBlank ? '1' : '1.6',
-                fontSize: isMobile ? (window.innerHeight < 667 ? '1.5rem' : '1.8rem') : '2rem',
-                fontFamily: '"PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Noto Sans SC", sans-serif',
-                transition: 'none',
+                fontSize: `${(isMobile ? (window.innerHeight < 667 ? 1.5 : 1.8) : 2) * fontSize}rem`,
+                fontFamily: fontFamily || '"PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Noto Sans SC", sans-serif',
                 backfaceVisibility: 'hidden' as const,
-                touchAction: 'pan-y'
+                writingMode: 'vertical-rl' as const,
+                textOrientation: 'mixed' as const,
+                textAlign: 'center',
+                whiteSpace: 'nowrap',
+                fontWeight: isCurrent ? 800 : 600,
               }}
             >
-              {line.text || '\u00A0'}
+              {shouldShowContent ? (line.text || '\u00A0') : '\u00A0'}
             </p>
           );
         })}

@@ -548,7 +548,7 @@ function ScrollRotator({
     // 平滑插值到目标速度
     currentSpeedRef.current += (targetSpeedRef.current - currentSpeedRef.current) * Math.min(1, delta * 10);
     if (groupRef.current) {
-      groupRef.current.rotation.y += currentSpeedRef.current * delta;
+      groupRef.current.rotation.y -= currentSpeedRef.current * delta; // 改为 -= 实现右→左旋转
     }
   });
 
@@ -583,9 +583,9 @@ function RotationController({
     // 如果启用滚动控制，由 ScrollRotator 处理旋转
     if (enableScrollControl) return;
     
-    // 否则使用固定速度旋转
+    // 否则使用固定速度旋转（RTL 模式：右→左）
     const speed = (2 * Math.PI) / durationSec * direction;
-    groupRef.current.rotation.y += speed * delta;
+    groupRef.current.rotation.y -= speed * delta; // 改为 -= 实现右→左旋转
   });
 
   return (

@@ -3,7 +3,6 @@
 import React, { useState, useCallback, useRef, useEffect, useMemo } from 'react';
 import timelineStore from '@/stores/timelineStore';
 import dynamic from 'next/dynamic';
-import { useSearchParams } from 'next/navigation';
 import { LRC_LYRICS } from './constants';
 import useLyrics from '@/components/hooks/useLyrics';
 import { useScrollVelocity } from '@/components/hooks/useScrollVelocity';
@@ -15,20 +14,11 @@ import SmoothLoopManager from '@/components/audio/SmoothLoopManager';
 import AutoPlayGuard from '@/components/AutoPlayGuard';
 import ModelPreloader from '@/components/jade/ModelPreloader';
 import type { LyricLine } from '@/types';
-import { StackedLyricsAndModel } from '@/components/layouts';
+import UnifiedLyricsAndModel from '@/components/layouts/UnifiedLyricsAndModel';
+const SilkR3FBackground = dynamic(() => import('@/components/backgrounds/SilkR3F'), { ssr: false });
 
 // 调试输出开关（仅开发环境生效）
 const DEBUG_DEV = process.env.NODE_ENV === 'development';
-
-// 动态导入 JadeV6 避免 SSR 问题
-const JadeV6 = dynamic(() => import('@/components/jade/JadeV6'), { 
-  ssr: false,
-  loading: () => (
-    <div className="fixed inset-0 flex items-center justify-center bg-[#202734]">
-      <div className="text-white text-xl">加载3D模型中...</div>
-    </div>
-  )
-});
 
 // 默认时长，待真实音频元数据加载后更新
 const MOCK_DURATION = 364; // ~6 分 4 秒
@@ -96,7 +86,6 @@ const getModelPath = (anchorChar: string): string => {
 };
 
 export default function HomePage() {
-  const searchParams = useSearchParams();
 
   // 音频相关状态 - 重构为单一时间源
   const [isPlaying, setIsPlaying] = useState(false);
@@ -112,14 +101,24 @@ export default function HomePage() {
   const [isBuffering, setIsBuffering] = useState(false);
   const [debugLogs, setDebugLogs] = useState<string[]>([]);
   const [seekSignal, setSeekSignal] = useState(0);
+  // 字体选择（应用于 DOM 歌词层）
+  const [selectedFont, setSelectedFont] = useState<string>('RunZhiJiaKangXiZidian');
+  const [isFontMenuOpen, setIsFontMenuOpen] = useState<boolean>(false);
+  // 字体大小调整
+  const [fontSize, setFontSize] = useState<number>(1.8); // 倍数，默认 1.8x
+
+  // 时间-像素映射与方向（Phase 1）
+  // 说明：pixelsPerSecond 控制拖拽/滚轮的灵敏度；direction=-1 表示右→左（RTL）
+  const PIXELS_PER_SECOND = 12; // 再次降低速度
+  const DIRECTION = 1; // 改为 LTR，因为歌词现在是竖排的，需要从左到右滚动
+  const DRAG_THRESHOLD_PX = 6; // 超过阈值才进入预览拖拽，避免点击被拦截
+  const RECENTER_THRESHOLD_SEC = 30; // 超过该时间位移则重置原点，避免超大 transform
 
   // 计算值（不用state）
   const isPreviewMode = previewTime !== null;
   const displayTime = isPreviewMode ? (previewTime % duration) : audioTime;
   // 修复：预览模式时直接使用 previewTime 作为绝对时间，避免 loopCount 不同步
   const absoluteTime = isPreviewMode ? previewTime : (loopCount * duration + displayTime);
-
-  const isNormalLayout = searchParams?.has('normal');
 
   // 3D模型相关状态
   const { scrollVelocity, handleScrollVelocityChange } = useScrollVelocity();
@@ -140,6 +139,14 @@ export default function HomePage() {
   const lastCommittedTimeRef = useRef({ stamp: 0, display: 0 });
   const lastSeekTimeRef = useRef<number>(0);
   const seekProtectionUntilRef = useRef<number>(0);
+  // RAF 渲染与相对原点（Phase 2）
+  const visualAbsoluteTimeRef = useRef<number>(0);
+  const visualAnchorRef = useRef<{ engineAbs: number; stamp: number }>({ engineAbs: 0, stamp: 0 });
+  const rafIdRef = useRef<number | null>(null);
+  const [visualAbsoluteTime, setVisualAbsoluteTime] = useState(0);
+  const [originTime, setOriginTime] = useState(0);
+  const lyricTrackRef = useRef<HTMLDivElement>(null);
+  const lastOverlayUpdateRef = useRef<number>(0);
 
   const lyrics = useLyrics(LRC_LYRICS);
 
@@ -189,6 +196,37 @@ export default function HomePage() {
     const logMessage = `[${timestamp}] ${message}`;
     if (DEBUG_DEV) console.log(logMessage);
     setDebugLogs(prev => [...prev.slice(-4), logMessage]);
+  }, []);
+
+  // 当前用于映射位移的绝对时间（预览优先，播放态用视觉时间）
+  const mappedAbsoluteTime = useMemo(() => {
+    if (isPreviewMode && previewTime != null) return previewTime as number;
+    return visualAbsoluteTime;
+  }, [isPreviewMode, previewTime, visualAbsoluteTime]);
+
+  // 歌词轨道 transform（改为命令式更新以减少 setState 频率）
+  const updateLyricTrackTransform = useCallback((absTime: number) => {
+    const node = lyricTrackRef.current;
+    if (!node) return;
+    const relative = (absTime - originTime);
+    const x = DIRECTION * -(relative * PIXELS_PER_SECOND);
+    node.style.transform = `translate3d(${x}px, 0, 0)`;
+  }, [originTime]);
+
+  // 预览拖拽状态（Phase 1）
+  const isPointerPreviewingRef = useRef(false);
+  const isDraggingRef = useRef(false);
+  const previewStartClientXRef = useRef(0);
+  const previewStartTimeRef = useRef<number | null>(null);
+  const wheelPreviewTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // 统一 wheel 归一化（简化版，后续可抽到 hooks）
+  const normalizeWheelDeltaX = useCallback((event: WheelEvent) => {
+    const mode = (event as any).deltaMode === 1 ? 16 : 1; // 1: line, 0: pixel
+    const raw = (event as any).deltaX * mode;
+    // 统一方向：左滑 => 快进；右滑 => 后退
+    // 在多数触控板上，左滑 deltaX 为正；为了与指针拖拽保持一致，这里取反
+    return -raw;
   }, []);
 
   const refreshPreloadStatus = useCallback(() => {
@@ -340,11 +378,18 @@ export default function HomePage() {
     // 只调用 commitTimeUpdate，它会内部更新 loopCount
     // 不要重复调用 setLoopCount，避免状态冲突
     commitTimeUpdate(displayTime, absoluteTime, true);
+    // 立即同步视觉时间与位移，保证进度条/歌词/模型同跳
+    visualAbsoluteTimeRef.current = absoluteTime;
+    setVisualAbsoluteTime(absoluteTime);
+    updateLyricTrackTransform(absoluteTime);
   }, [duration, commitTimeUpdate]);
 
   // AudioEngine event handlers
   const handleAudioTimeUpdate = useCallback((displayTime: number, absoluteTime: number) => {
     commitTimeUpdate(displayTime, absoluteTime);
+    // 记录引擎时间作为 RAF 外推锚点
+    const now = typeof performance !== 'undefined' ? performance.now() : Date.now();
+    visualAnchorRef.current = { engineAbs: absoluteTime, stamp: now };
   }, [commitTimeUpdate]);
 
   const handleAudioDurationChange = useCallback((newDuration: number) => {
@@ -368,9 +413,19 @@ export default function HomePage() {
     addDebugLog(`Loop completed: ${newLoopCount}`);
   }, [addDebugLog]);
 
-  const handleLyricPreviewStart = useCallback(() => {
-    // 预览模式开始（暂时不做特殊处理）
+  const clearWheelPreviewTimeout = useCallback(() => {
+    if (wheelPreviewTimeoutRef.current) {
+      clearTimeout(wheelPreviewTimeoutRef.current);
+      wheelPreviewTimeoutRef.current = null;
+    }
   }, []);
+
+  const handleLyricPreviewStart = useCallback(() => {
+    clearWheelPreviewTimeout();
+    // 预览模式开始
+    // 记录起点时间
+    previewStartTimeRef.current = isPreviewMode ? (previewTime as number) : absoluteTime;
+  }, [clearWheelPreviewTimeout, isPreviewMode, previewTime, absoluteTime]);
 
   const handleLyricPreviewTime = useCallback((time: number) => {
     // 设置预览时间，不 seek
@@ -382,10 +437,86 @@ export default function HomePage() {
   }, [duration, isPlaying]);
 
   const handleLyricPreviewEnd = useCallback(() => {
-    // 预览结束，清除预览状态
-    console.log('[handleLyricPreviewEnd] 清除预览状态');
+    clearWheelPreviewTimeout();
+    // 预览结束：执行一次性 seek 到预览终点
+    console.log('[handleLyricPreviewEnd] 预览结束并执行一次性 seek');
+    const targetAbs = isPreviewMode && previewTime != null ? previewTime : absoluteTime;
     setPreviewTime(null);
+    // 统一入口：以绝对时间 seek
+    if (typeof targetAbs === 'number' && !Number.isNaN(targetAbs)) {
+      handleSeek(targetAbs);
+    }
+  }, [clearWheelPreviewTimeout, isPreviewMode, previewTime, absoluteTime, handleSeek]);
+
+  // Pointer 预览交互（Phase 1）
+  const handlePointerDown = useCallback((e: React.PointerEvent<HTMLDivElement>) => {
+    // 仅主键/触控
+    if (e.button !== 0 && e.pointerType === 'mouse') return;
+    clearWheelPreviewTimeout();
+    isPointerPreviewingRef.current = true;
+    isDraggingRef.current = false;
+    previewStartClientXRef.current = e.clientX;
+    // 不立刻进入预览，等待超过阈值
   }, []);
+
+  const handlePointerMove = useCallback((event: React.PointerEvent<HTMLDivElement>) => {
+    if (!isPointerPreviewingRef.current) return;
+    clearWheelPreviewTimeout();
+    const deltaX = event.clientX - previewStartClientXRef.current;
+    if (!isDraggingRef.current) {
+      if (Math.abs(deltaX) < DRAG_THRESHOLD_PX) return;
+      // 超过阈值，开始预览并捕获指针
+      isDraggingRef.current = true;
+      try {
+        event.currentTarget.setPointerCapture(event.pointerId);
+      } catch {}
+      event.preventDefault();
+      handleLyricPreviewStart();
+    } else {
+      event.preventDefault();
+    }
+    const deltaTime = -(deltaX * DIRECTION) / Math.max(1, PIXELS_PER_SECOND);
+    const base = previewStartTimeRef.current ?? absoluteTime;
+    const nextTime = base + deltaTime;
+    handleLyricPreviewTime(nextTime);
+  }, [absoluteTime, handleLyricPreviewTime]);
+
+  const handlePointerUpOrCancel = useCallback((e: React.PointerEvent<HTMLDivElement>) => {
+    if (!isPointerPreviewingRef.current) return;
+    clearWheelPreviewTimeout();
+    if (isDraggingRef.current) {
+      try {
+        e.currentTarget.releasePointerCapture(e.pointerId);
+      } catch {}
+      e.preventDefault();
+      handleLyricPreviewEnd();
+    }
+    isPointerPreviewingRef.current = false;
+    isDraggingRef.current = false;
+  }, [handleLyricPreviewEnd]);
+
+  // Wheel 预览交互（Phase 1）
+  const handleWheel = useCallback((e: React.WheelEvent<HTMLDivElement>) => {
+    // 使用 deltaX 为主；若未提供则可退化到 deltaY（触控板垂直）
+    const nativeEvent = e.nativeEvent as unknown as WheelEvent;
+    const rawDelta = normalizeWheelDeltaX(nativeEvent);
+    const dx = rawDelta !== 0 ? rawDelta : nativeEvent.deltaY;
+    if (!dx) return;
+    e.preventDefault();
+    // 进入临时预览态
+    if (!isPreviewMode) {
+      handleLyricPreviewStart();
+    }
+    const base = isPreviewMode && previewTime != null ? previewTime : absoluteTime;
+    const deltaTime = -(dx * DIRECTION) / Math.max(1, PIXELS_PER_SECOND);
+    const nextTime = base + deltaTime;
+    handleLyricPreviewTime(nextTime);
+    clearWheelPreviewTimeout();
+    wheelPreviewTimeoutRef.current = setTimeout(() => {
+      handleLyricPreviewEnd();
+    }, 240);
+    // 惯性与持续滚轮在此不自动结束；由用户停止滚轮后短暂停顿再松手也可
+  }, [absoluteTime, isPreviewMode, previewTime, handleLyricPreviewStart, handleLyricPreviewTime, handleLyricPreviewEnd, clearWheelPreviewTimeout]);
 
   const handleSmoothLoopTimeUpdate = useCallback((time: number) => {
     // If user is actively preview-scrolling, don't override UI time with loop-driven updates
@@ -419,7 +550,32 @@ export default function HomePage() {
     setIsReady(false);
     audioTimeRef.current = 0;
     lastCommittedTimeRef.current = { stamp: 0, display: 0 };
+    visualAbsoluteTimeRef.current = 0;
+    setVisualAbsoluteTime(0);
+    setOriginTime(0);
   }, [audioSrc]);
+
+  // 字体加载检查
+  useEffect(() => {
+    if (selectedFont) {
+      console.log('[Font] 检查字体加载状态:', selectedFont);
+      // 检查字体是否可用
+      if (typeof document !== 'undefined') {
+        const testEl = document.createElement('span');
+        testEl.style.fontFamily = selectedFont;
+        testEl.style.visibility = 'hidden';
+        testEl.style.position = 'absolute';
+        testEl.textContent = '测试';
+        document.body.appendChild(testEl);
+        
+        const computedStyle = window.getComputedStyle(testEl);
+        const actualFont = computedStyle.fontFamily;
+        console.log('[Font] 期望字体:', selectedFont, '实际字体:', actualFont);
+        
+        document.body.removeChild(testEl);
+      }
+    }
+  }, [selectedFont]);
 
   // 不再需要平滑渲染 useEffect，使用 displayTime 直接计算
 
@@ -500,6 +656,62 @@ export default function HomePage() {
     refreshPreloadStatus();
   }, [refreshPreloadStatus]);
 
+  // RAF 驱动视觉时间（播放态）；预览态直接用 previewTime
+  useEffect(() => {
+    if (rafIdRef.current != null) {
+      cancelAnimationFrame(rafIdRef.current);
+      rafIdRef.current = null;
+    }
+    if (!isPlaying || isPreviewMode) {
+      const abs = (isPreviewMode && previewTime != null) ? (previewTime as number) : (absoluteTime as number);
+      visualAbsoluteTimeRef.current = abs;
+      setVisualAbsoluteTime((prev) => {
+        // 降低 overlay 刷新频率
+        const now = typeof performance !== 'undefined' ? performance.now() : Date.now();
+        if (now - lastOverlayUpdateRef.current > 120) {
+          lastOverlayUpdateRef.current = now;
+          return abs;
+        }
+        return prev;
+      });
+      updateLyricTrackTransform(abs);
+      return;
+    }
+    const tick = () => {
+      const now = typeof performance !== 'undefined' ? performance.now() : Date.now();
+      const { engineAbs, stamp } = visualAnchorRef.current;
+      const dtSec = Math.max(0, (now - stamp) / 1000);
+      const expected = engineAbs + dtSec;
+      visualAbsoluteTimeRef.current = expected;
+      // 轨道命令式更新
+      updateLyricTrackTransform(expected);
+      // 调试叠层节流更新
+      setVisualAbsoluteTime((prev) => {
+        if (now - lastOverlayUpdateRef.current > 120) {
+          lastOverlayUpdateRef.current = now;
+          return expected;
+        }
+        return prev;
+      });
+      rafIdRef.current = requestAnimationFrame(tick);
+    };
+    rafIdRef.current = requestAnimationFrame(tick);
+    return () => {
+      if (rafIdRef.current != null) cancelAnimationFrame(rafIdRef.current);
+      rafIdRef.current = null;
+    };
+  }, [isPlaying, isPreviewMode, previewTime, absoluteTime, updateLyricTrackTransform]);
+
+  // 原点重置，避免超大位移
+  useEffect(() => {
+    const current = isPreviewMode && previewTime != null ? (previewTime as number) : visualAbsoluteTimeRef.current;
+    if (Math.abs(current - originTime) > RECENTER_THRESHOLD_SEC) {
+      setOriginTime(current);
+      // 重定位轨道，避免跳动
+      updateLyricTrackTransform(current);
+    }
+  }, [isPreviewMode, previewTime, originTime, updateLyricTrackTransform]);
+
   return (
     <div className="flex flex-col h-screen bg-transparent font-sans overflow-hidden opacity-100 transition-opacity duration-300">
       <style jsx global>{`
@@ -525,6 +737,9 @@ export default function HomePage() {
           -ms-overflow-style: none;  /* IE and Edge */
           scrollbar-width: none;  /* Firefox */
         }
+        /* 固定画布：禁止整个页面滚动 */
+        html, body, #__next { height: 100%; overflow: hidden; }
+
         /* 噪点覆盖层样式 */
         .noise-overlay {
           mix-blend-mode: normal;
@@ -536,6 +751,38 @@ export default function HomePage() {
           image-rendering: pixelated;
           image-rendering: -moz-crisp-edges;
           image-rendering: crisp-edges;
+        }
+
+        /* 注册自定义字体（来自 public/fonts） */
+        @font-face {
+          font-family: 'YanShiYouRanXiaoKai2';
+          src: url('/fonts/YanShiYouRanXiaoKai-2.ttf') format('truetype');
+          font-display: swap;
+        }
+        @font-face {
+          font-family: 'SlidefuRegular2';
+          src: url('/fonts/Slidefu-Regular-2.ttf') format('truetype');
+          font-display: swap;
+        }
+        @font-face {
+          font-family: 'NanXiXinYueSong2025';
+          src: url('/fonts/2025南西新月宋-标准简体.ttf') format('truetype');
+          font-display: swap;
+        }
+        @font-face {
+          font-family: 'NanXiYuQingSong';
+          src: url('/fonts/南西玉清宋.ttf') format('truetype');
+          font-display: swap;
+        }
+        @font-face {
+          font-family: 'RunZhiJiaKangXiZidian';
+          src: url('/fonts/润植家康熙字典美化体.ttf') format('truetype');
+          font-display: swap;
+        }
+        @font-face {
+          font-family: 'HuiWenZhuDiDiWuHaoMingChao';
+          src: url('/fonts/汇文筑地五号明朝体.otf') format('opentype');
+          font-display: swap;
         }
       `}</style>
 
@@ -585,90 +832,142 @@ export default function HomePage() {
         isReady={isReady}
         isPlaying={isPlaying || isIntroPlaying}
       />
-      
-      {/* 布局渲染区域 */}
-      {isNormalLayout ? (
-        <>
-          {/* 传统布局：3D模型背景 + 歌词控制器 */}
-          <div className="fixed inset-0 pointer-events-none z-10" style={{ width: '100%', height: '100%' }}>
-            <JadeV6
-              modelPath={getModelPath(currentAnchor)}
-              rotationDurationSec={8}
-              direction={1}
-              fitToView
-              background="#202734"
-              environmentHdrPath="/textures/qwantani_moon_noon_puresky_1k.hdr"
-              environmentIntensity={1.0}
-              // 滚动控制参数（新增）
-              enableScrollControl={true}
-              baseSpeed={0.3}
-              speedMultiplier={8.0}
-              externalVelocity={scrollVelocity}
-              // 预加载设置（优化版）
-              enablePreloading={true}
-              preloadAllModels={false} // 改为false，因为已经在页面初始化时预加载了
-              modelPaths={ALL_MODEL_PATHS}
-              // 预加载状态传递
-              preloadStatus={modelPreloadStatus}
-            />
-          </div>
-
-          {/* 歌词控制器 */}
-          <main className="relative w-full flex-grow flex justify-center items-center z-20 py-4 overflow-hidden">
-            <div className="relative w-full max-w-4xl h-full pointer-events-auto">
-              <LyricsController
-                lyrics={lyrics}
-                currentTime={displayTime}
-                duration={duration}
-                scrollTime={absoluteTime}
-                onSeek={handleSeek}
-                isPlaying={isPlaying}
-                isPreviewMode={isPreviewMode}
-                onScrollVelocityChange={handleScrollVelocityChange}
-                onPreviewStart={handleLyricPreviewStart}
-                onPreviewTime={handleLyricPreviewTime}
-                onPreviewEnd={handleLyricPreviewEnd}
-              />
-            </div>
-          </main>
-        </>
-      ) : (
-        <main className="relative flex-grow w-full overflow-hidden flex items-center justify-center">
-          <div className="absolute inset-0 flex items-center justify-center">
-            <StackedLyricsAndModel
-              currentTime={displayTime}
-              scrollTime={absoluteTime}
-              duration={duration}
-              isPlaying={isPlaying}
-              currentAnchor={currentAnchor}
-              lyrics={lyrics}
-              onSeek={handleSeek}
-              onScrollVelocityChange={handleScrollVelocityChange}
-              modelPreloadStatus={modelPreloadStatus}
-              scrollVelocity={scrollVelocity}
-            />
-          </div>
-
-          {/* 隐藏的原始LyricsController用于滚动控制 */}
-          <div className="absolute inset-0 z-10 opacity-0 pointer-events-auto">
-            <LyricsController
-              lyrics={lyrics}
-              currentTime={displayTime}
-              duration={duration}
-              scrollTime={absoluteTime}
-              onSeek={handleSeek}
-              isPlaying={isPlaying}
-              isPreviewMode={isPreviewMode}
-              onScrollVelocityChange={handleScrollVelocityChange}
-              onPreviewStart={handleLyricPreviewStart}
-              onPreviewTime={handleLyricPreviewTime}
-              onPreviewEnd={handleLyricPreviewEnd}
-            />
-          </div>
-        </main>
+      {/* 调试叠层（开发环境） */}
+      {DEBUG_DEV && (
+        <div className="fixed left-2 bottom-2 z-40 px-2 py-1 text-xs bg-black/50 text-white rounded">
+          <div>mode: {isPreviewMode ? 'preview' : 'play'}</div>
+          <div>display: {displayTime.toFixed(2)}s</div>
+          <div>absolute: {(isPreviewMode ? (previewTime as number) : absoluteTime).toFixed(2)}s</div>
+          <div>x: {(DIRECTION * -((isPreviewMode && previewTime != null ? previewTime : absoluteTime) as number) * PIXELS_PER_SECOND).toFixed(1)}px</div>
+        </div>
       )}
+      
+      <main className="relative flex-grow w-full overflow-hidden flex items-center justify-center">
+        {DEBUG_DEV && (
+          <div className="absolute top-4 right-4 bg-red-500 bg-opacity-90 p-2 rounded text-white text-sm z-40 pointer-events-none">
+            架构: 单Canvas
+          </div>
+        )}
+
+        <SilkR3FBackground
+          speed={4.9}
+          scale={1}
+          noiseIntensity={1.3}
+          rotation={2.42}
+          color="1f2e38"
+          style={{ zIndex: 0 }}
+        />
+
+        <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-10">
+          <UnifiedLyricsAndModel
+            currentTime={displayTime}
+            scrollTime={absoluteTime}
+            duration={duration}
+            isPlaying={isPlaying}
+            currentAnchor={currentAnchor}
+            lyrics={lyrics}
+            onSeek={handleSeek}
+            onScrollVelocityChange={handleScrollVelocityChange}
+            modelPreloadStatus={modelPreloadStatus}
+            scrollVelocity={scrollVelocity}
+            fontFamily={selectedFont || undefined}
+            fontSize={fontSize}
+          />
+        </div>
+
+        <div
+          className="absolute inset-0 z-50 pointer-events-auto"
+          onPointerDown={handlePointerDown}
+          onPointerMove={handlePointerMove}
+          onPointerUp={handlePointerUpOrCancel}
+          onPointerCancel={handlePointerUpOrCancel}
+          onPointerLeave={handlePointerUpOrCancel}
+          onWheel={handleWheel}
+        >
+          <div className="w-full h-full" />
+        </div>
+      </main>
 
       </PageVisibilityManager>
+
+      {/* 字体选择 UI（移到最外层，避免被其他组件影响） */}
+      <div
+        className="fixed top-2 left-2 pointer-events-auto flex gap-2"
+        style={{ zIndex: 9999 }}
+        onPointerDown={(e) => { try { e.stopPropagation(); } catch {} }}
+        onClick={(e) => { try { e.stopPropagation(); } catch {} }}
+      >
+        <button
+          className="text-xs bg-black/80 text-white px-3 py-2 rounded border border-white/30 hover:bg-black/90 active:bg-black/95 shadow-lg"
+          onClick={() => {
+            try {
+              setIsFontMenuOpen((v) => !v);
+            } catch {}
+          }}
+        >
+          字体：{selectedFont || '系统默认'}
+        </button>
+        
+        {/* 字体大小调整 */}
+        <div className="flex items-center gap-2 bg-black/80 px-3 py-2 rounded border border-white/30 shadow-lg">
+          <span className="text-xs text-white/80">大小:</span>
+          <input
+            type="range"
+            min="0.5"
+            max="2.0"
+            step="0.1"
+            value={fontSize}
+            onChange={(e) => {
+              try {
+                setFontSize(parseFloat(e.target.value));
+                console.log('[Font] 字体大小调整为:', parseFloat(e.target.value));
+              } catch {}
+            }}
+            className="w-16 h-2 bg-white/20 rounded-lg appearance-none cursor-pointer"
+            style={{
+              background: `linear-gradient(to right, #4A90E2 0%, #4A90E2 ${(fontSize - 0.5) / 1.5 * 100}%, #333 ${(fontSize - 0.5) / 1.5 * 100}%, #333 100%)`
+            }}
+          />
+          <span className="text-xs text-white/80 w-8">{fontSize.toFixed(1)}x</span>
+        </div>
+        {isFontMenuOpen && (
+          <div
+            className="absolute mt-1 bg-black/90 text-white rounded border border-white/30 shadow-xl"
+            style={{ top: 40, left: 0, zIndex: 10000 }}
+            onClick={(e) => { try { e.stopPropagation(); } catch {} }}
+          >
+            {[
+              { label: '系统默认', value: '' },
+              { label: '2025南西新月宋', value: 'NanXiXinYueSong2025' },
+              { label: '南西玉清宋', value: 'NanXiYuQingSong' },
+              { label: '演示悠然小楷', value: 'YanShiYouRanXiaoKai2' },
+              { label: 'Slidefu Regular', value: 'SlidefuRegular2' },
+              { label: '润植家康熙字典美化体', value: 'RunZhiJiaKangXiZidian' },
+              { label: '汇文筑地五号明朝体', value: 'HuiWenZhuDiDiWuHaoMingChao' },
+            ].map((opt) => (
+              <div
+                key={opt.value || 'default'}
+                className="px-3 py-2 text-xs cursor-pointer hover:bg-white/20 whitespace-nowrap border-b border-white/10 last:border-b-0"
+                onClick={() => {
+                  try {
+                    setSelectedFont(opt.value);
+                    setIsFontMenuOpen(false);
+                    console.log('[Font] 切换字体为: ', opt.value || '系统默认');
+                    // 强制触发重新渲染
+                    setTimeout(() => {
+                      console.log('[Font] 当前选中字体:', selectedFont);
+                    }, 100);
+                  } catch (err) {
+                    console.error('[Font] 切换失败', err);
+                  }
+                }}
+              >
+                {opt.label}
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
 
       {/* 音频播放器 */}
       <footer className="w-full flex justify-center py-8 z-20">
@@ -680,8 +979,10 @@ export default function HomePage() {
           isBuffering={isBuffering}
           onPlayPause={handlePlayPause}
           onSeek={(time) => {
-            // 使用 loopCount 计算绝对时间
-            handleSeek(loopCount * duration + time);
+            // 支持快退与快进：显示层loopCount随目标时间重算
+            const safe = Math.max(1, duration);
+            const targetAbs = Math.floor((visualAbsoluteTimeRef.current - (visualAbsoluteTimeRef.current % safe)) / safe) * safe + time;
+            handleSeek(targetAbs);
           }}
         />
       </footer>
