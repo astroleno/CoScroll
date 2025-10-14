@@ -19,6 +19,8 @@ const SilkR3FBackground = dynamic(() => import('@/components/backgrounds/SilkR3F
 
 // 调试输出开关（仅开发环境生效）
 const DEBUG_DEV = process.env.NODE_ENV === 'development';
+const DEFAULT_FONT_FAMILY = 'RunZhiJiaKangXiZidian';
+const DEFAULT_FONT_SCALE = 1.6;
 
 // 默认时长，待真实音频元数据加载后更新
 const MOCK_DURATION = 364; // ~6 分 4 秒
@@ -102,10 +104,8 @@ export default function HomePage() {
   const [debugLogs, setDebugLogs] = useState<string[]>([]);
   const [seekSignal, setSeekSignal] = useState(0);
   // 字体选择（应用于 DOM 歌词层）
-  const [selectedFont, setSelectedFont] = useState<string>('RunZhiJiaKangXiZidian');
-  const [isFontMenuOpen, setIsFontMenuOpen] = useState<boolean>(false);
-  // 字体大小调整
-  const [fontSize, setFontSize] = useState<number>(1.8); // 倍数，默认 1.8x
+  const selectedFont = DEFAULT_FONT_FAMILY;
+  const fontSize = DEFAULT_FONT_SCALE;
 
   // 时间-像素映射与方向（Phase 1）
   // 说明：pixelsPerSecond 控制拖拽/滚轮的灵敏度；direction=-1 表示右→左（RTL）
@@ -555,28 +555,6 @@ export default function HomePage() {
     setOriginTime(0);
   }, [audioSrc]);
 
-  // 字体加载检查
-  useEffect(() => {
-    if (selectedFont) {
-      console.log('[Font] 检查字体加载状态:', selectedFont);
-      // 检查字体是否可用
-      if (typeof document !== 'undefined') {
-        const testEl = document.createElement('span');
-        testEl.style.fontFamily = selectedFont;
-        testEl.style.visibility = 'hidden';
-        testEl.style.position = 'absolute';
-        testEl.textContent = '测试';
-        document.body.appendChild(testEl);
-        
-        const computedStyle = window.getComputedStyle(testEl);
-        const actualFont = computedStyle.fontFamily;
-        console.log('[Font] 期望字体:', selectedFont, '实际字体:', actualFont);
-        
-        document.body.removeChild(testEl);
-      }
-    }
-  }, [selectedFont]);
-
   // 不再需要平滑渲染 useEffect，使用 displayTime 直接计算
 
   // 计算当前歌词行和锚字（使用 displayTime）
@@ -833,22 +811,7 @@ export default function HomePage() {
         isPlaying={isPlaying || isIntroPlaying}
       />
       {/* 调试叠层（开发环境） */}
-      {DEBUG_DEV && (
-        <div className="fixed left-2 bottom-2 z-40 px-2 py-1 text-xs bg-black/50 text-white rounded">
-          <div>mode: {isPreviewMode ? 'preview' : 'play'}</div>
-          <div>display: {displayTime.toFixed(2)}s</div>
-          <div>absolute: {(isPreviewMode ? (previewTime as number) : absoluteTime).toFixed(2)}s</div>
-          <div>x: {(DIRECTION * -((isPreviewMode && previewTime != null ? previewTime : absoluteTime) as number) * PIXELS_PER_SECOND).toFixed(1)}px</div>
-        </div>
-      )}
-      
       <main className="relative flex-grow w-full overflow-hidden flex items-center justify-center">
-        {DEBUG_DEV && (
-          <div className="absolute top-4 right-4 bg-red-500 bg-opacity-90 p-2 rounded text-white text-sm z-40 pointer-events-none">
-            架构: 单Canvas
-          </div>
-        )}
-
         <SilkR3FBackground
           speed={4.9}
           scale={1}
@@ -889,85 +852,6 @@ export default function HomePage() {
       </main>
 
       </PageVisibilityManager>
-
-      {/* 字体选择 UI（移到最外层，避免被其他组件影响） */}
-      <div
-        className="fixed top-2 left-2 pointer-events-auto flex gap-2"
-        style={{ zIndex: 9999 }}
-        onPointerDown={(e) => { try { e.stopPropagation(); } catch {} }}
-        onClick={(e) => { try { e.stopPropagation(); } catch {} }}
-      >
-        <button
-          className="text-xs bg-black/80 text-white px-3 py-2 rounded border border-white/30 hover:bg-black/90 active:bg-black/95 shadow-lg"
-          onClick={() => {
-            try {
-              setIsFontMenuOpen((v) => !v);
-            } catch {}
-          }}
-        >
-          字体：{selectedFont || '系统默认'}
-        </button>
-        
-        {/* 字体大小调整 */}
-        <div className="flex items-center gap-2 bg-black/80 px-3 py-2 rounded border border-white/30 shadow-lg">
-          <span className="text-xs text-white/80">大小:</span>
-          <input
-            type="range"
-            min="0.5"
-            max="2.0"
-            step="0.1"
-            value={fontSize}
-            onChange={(e) => {
-              try {
-                setFontSize(parseFloat(e.target.value));
-                console.log('[Font] 字体大小调整为:', parseFloat(e.target.value));
-              } catch {}
-            }}
-            className="w-16 h-2 bg-white/20 rounded-lg appearance-none cursor-pointer"
-            style={{
-              background: `linear-gradient(to right, #4A90E2 0%, #4A90E2 ${(fontSize - 0.5) / 1.5 * 100}%, #333 ${(fontSize - 0.5) / 1.5 * 100}%, #333 100%)`
-            }}
-          />
-          <span className="text-xs text-white/80 w-8">{fontSize.toFixed(1)}x</span>
-        </div>
-        {isFontMenuOpen && (
-          <div
-            className="absolute mt-1 bg-black/90 text-white rounded border border-white/30 shadow-xl"
-            style={{ top: 40, left: 0, zIndex: 10000 }}
-            onClick={(e) => { try { e.stopPropagation(); } catch {} }}
-          >
-            {[
-              { label: '系统默认', value: '' },
-              { label: '2025南西新月宋', value: 'NanXiXinYueSong2025' },
-              { label: '南西玉清宋', value: 'NanXiYuQingSong' },
-              { label: '演示悠然小楷', value: 'YanShiYouRanXiaoKai2' },
-              { label: 'Slidefu Regular', value: 'SlidefuRegular2' },
-              { label: '润植家康熙字典美化体', value: 'RunZhiJiaKangXiZidian' },
-              { label: '汇文筑地五号明朝体', value: 'HuiWenZhuDiDiWuHaoMingChao' },
-            ].map((opt) => (
-              <div
-                key={opt.value || 'default'}
-                className="px-3 py-2 text-xs cursor-pointer hover:bg-white/20 whitespace-nowrap border-b border-white/10 last:border-b-0"
-                onClick={() => {
-                  try {
-                    setSelectedFont(opt.value);
-                    setIsFontMenuOpen(false);
-                    console.log('[Font] 切换字体为: ', opt.value || '系统默认');
-                    // 强制触发重新渲染
-                    setTimeout(() => {
-                      console.log('[Font] 当前选中字体:', selectedFont);
-                    }, 100);
-                  } catch (err) {
-                    console.error('[Font] 切换失败', err);
-                  }
-                }}
-              >
-                {opt.label}
-              </div>
-            ))}
-          </div>
-        )}
-      </div>
 
       {/* 音频播放器 */}
       <footer className="w-full flex justify-center py-8 z-20">

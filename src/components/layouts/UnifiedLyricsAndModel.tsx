@@ -42,7 +42,7 @@ export default function UnifiedLyricsAndModel(props: UnifiedLyricsAndModelProps)
     travelSpacing: isMobile ? 0.85 : 1.0,
     laneSeparation: isMobile ? 0.65 : 0.85,
     topLaneY: isMobile ? 2.1 : 2.8,
-    bottomLaneY: isMobile ? -2.3 : -3.0,
+    bottomLaneY: isMobile ? -2.05 : -2.7,
     // 正交相机中：Z 越大越靠近相机
     frontDepth: 6.0,
     backNearDepth: -2.2,
@@ -75,10 +75,28 @@ export default function UnifiedLyricsAndModel(props: UnifiedLyricsAndModelProps)
   const baseModelScale = isMobile ? 2.2 : 2.8;
   // 在现有基础上再放大 1.1 倍
   const modelScale = baseModelScale * 1.2 * 1.1;
-  const stageYOffset = isMobile ? (isCompactMobile ? -0.7 : -0.85) : -1.05;
+  const lyricsYOffset = isMobile ? (isCompactMobile ? -0.52 : -0.6) : -0.82;
+  const modelYOffset = lyricsYOffset * 0.5;
+  const edgeMask = useMemo(() => {
+    const edgePercent = isMobile ? 18 : 12;
+    const left = `${edgePercent}%`;
+    const right = `${100 - edgePercent}%`;
+    return `linear-gradient(to right, rgba(0,0,0,0) 0%, rgba(0,0,0,1) ${left}, rgba(0,0,0,1) ${right}, rgba(0,0,0,0) 100%)`;
+  }, [isMobile]);
 
   return (
     <div className="relative flex items-center justify-center w-full h-full" style={{ minHeight: '60vh' }}>
+      <div
+        className="w-full h-full"
+        style={{
+          WebkitMaskImage: edgeMask as any,
+          maskImage: edgeMask as any,
+          WebkitMaskRepeat: 'no-repeat',
+          maskRepeat: 'no-repeat',
+          WebkitMaskSize: '100% 100%',
+          maskSize: '100% 100%'
+        }}
+      >
       <Canvas
         orthographic
         camera={{ position: [0, 0, 12], zoom: isMobile ? 92 : 100, near: 0.1, far: 50 }}
@@ -103,7 +121,7 @@ export default function UnifiedLyricsAndModel(props: UnifiedLyricsAndModelProps)
               <LyricBillboard
                 key={line.key}
                 text={line.text}
-                position={[line.x, line.y + stageYOffset, line.z + idx * 0.01]}
+                position={[line.x, line.y + lyricsYOffset, line.z + idx * 0.01]}
                 fontSize={backFontSize}
                 color={line.isCurrent ? '#f8fafc' : '#cbd5f5'}
                 opacity={line.opacity}
@@ -115,14 +133,13 @@ export default function UnifiedLyricsAndModel(props: UnifiedLyricsAndModelProps)
                 orientation="vertical"
                 verticalAlign={line.verticalAlign}
                 fontFamily={fontFamily}
-                fontSizeMultiplier={fontSize}
                 edgeFeather={line.edgeFeather}
               />
             ))}
           </group>
 
           {/* 3D模型 - 中间层，Z轴在0，遮挡后层歌词 */}
-          <group renderOrder={2000} position={[0, stageYOffset, 0]} scale={[modelScale, modelScale, modelScale]}>
+          <group renderOrder={2000} position={[0, modelYOffset, 0]} scale={[modelScale, modelScale, modelScale]}>
             <JadeModelLoader
               modelPath={getModelPath(currentAnchor)}
               fitToView={false}
@@ -177,7 +194,7 @@ export default function UnifiedLyricsAndModel(props: UnifiedLyricsAndModelProps)
               <LyricBillboard
                 key={line.key}
                 text={line.text}
-                position={[line.x, line.y + stageYOffset, line.z]}
+                position={[line.x, line.y + lyricsYOffset, line.z]}
                 fontSize={frontFontSize}
                 color={line.isCurrent ? '#f8fafc' : '#cbd5f5'}
                 opacity={line.opacity}
@@ -189,13 +206,13 @@ export default function UnifiedLyricsAndModel(props: UnifiedLyricsAndModelProps)
                 orientation="vertical"
                 verticalAlign={line.verticalAlign}
                 fontFamily={fontFamily}
-                fontSizeMultiplier={fontSize}
                 edgeFeather={line.edgeFeather}
               />
             ))}
           </group>
         </Suspense>
       </Canvas>
+      </div>
     </div>
   );
 }
