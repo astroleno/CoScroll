@@ -4,6 +4,7 @@ export interface UnifiedLayoutProps {
   scrollTime: number;
   duration: number;
   isPlaying: boolean;
+  isPreviewMode?: boolean;
 
   // 锚字相关
   currentAnchor: string;

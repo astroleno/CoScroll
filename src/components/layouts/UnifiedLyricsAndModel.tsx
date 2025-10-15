@@ -1,12 +1,13 @@
 "use client";
 
-import React, { Suspense, useMemo } from 'react';
+import React, { Suspense, useEffect, useMemo, useRef, useState } from 'react';
 import { Canvas } from '@react-three/fiber';
 import { UnifiedLayoutProps } from './types';
 import { useLayeredLyrics } from './useLayeredLyrics';
 import LyricBillboard from './LyricBillboard';
 import JadeModelLoader from '@/components/jade/JadeModelLoader';
 import type { LyricLine } from '@/types';
+import getSpeedProfile, { SpeedProfileState } from './speedProfile';
 
 /**
  * 统一单Canvas布局 - 实现真实的3D遮挡关系
@@ -22,11 +23,172 @@ interface UnifiedLyricsAndModelProps extends UnifiedLayoutProps {
   fontFamily?: string;
   /** 可选：字体大小倍数 */
   fontSize?: number;
+  /** 字体加载完成后的修订号，用于刷新纹理 */
+  fontRevision?: number;
 }
 
 export default function UnifiedLyricsAndModel(props: UnifiedLyricsAndModelProps) {
-  const { scrollTime, duration, lyrics, currentAnchor, scrollVelocity, fontFamily, fontSize = 1.0 } = props;
+  const {
+    scrollTime,
+    duration,
+    lyrics,
+    currentAnchor,
+    scrollVelocity,
+    fontFamily,
+    fontSize = 1.0,
+    fontRevision = 0,
+    isPreviewMode = false,
+  } = props;
   const lyricData = (lyrics || []) as LyricLine[];
+
+  const DIFF_THRESHOLD = 0.0008;
+  const MAX_EMIT_INTERVAL_MS = 16;
+  const MANUAL_TRIGGER_VELOCITY = 0.016;
+  const MANUAL_RELEASE_MS = 520;
+
+  const initialTime = Number.isFinite(scrollTime) ? scrollTime : 0;
+  const [effectiveScrollTime, setEffectiveScrollTime] = useState(initialTime);
+  const effectiveTimeRef = useRef(initialTime);
+  const profileStateRef = useRef<SpeedProfileState | null>(null);
+  const lastEmitRef = useRef(0);
+  const baseTimeRef = useRef(scrollTime);
+  const durationRef = useRef(duration);
+  const velocityRef = useRef(scrollVelocity);
+  const manualHoldUntilRef = useRef(0);
+  const previewModeRef = useRef(isPreviewMode);
+
+  baseTimeRef.current = scrollTime;
+  durationRef.current = duration;
+  velocityRef.current = scrollVelocity;
+  previewModeRef.current = isPreviewMode;
+
+  useEffect(() => {
+    if (!isPreviewMode) {
+      return;
+    }
+
+    const now = typeof performance !== 'undefined' ? performance.now() : Date.now();
+    const time = Number.isFinite(scrollTime) ? scrollTime : 0;
+    const timestamp = now / 1000;
+    const state: SpeedProfileState = {
+      time,
+      baseTime: time,
+      timestamp,
+      baseSampleTimestamp: timestamp,
+      baseVelocity: 0,
+      manualOffset: 0,
+    };
+
+    profileStateRef.current = state;
+    effectiveTimeRef.current = time;
+    setEffectiveScrollTime(time);
+
+    // extend manual hold so that transition back to playback reuses latest preview position
+    manualHoldUntilRef.current = now + MANUAL_RELEASE_MS;
+  }, [isPreviewMode, scrollTime]);
+
+  useEffect(() => {
+    const now = typeof performance !== 'undefined' ? performance.now() : Date.now();
+    if (Math.abs(scrollVelocity) >= MANUAL_TRIGGER_VELOCITY) {
+      manualHoldUntilRef.current = now + MANUAL_RELEASE_MS;
+    }
+  }, [scrollVelocity]);
+
+  useEffect(() => {
+    const now = typeof performance !== 'undefined' ? performance.now() : Date.now();
+    const prevState = profileStateRef.current;
+    const hasState = Boolean(prevState);
+    const safeDuration = Math.max(1, durationRef.current || 1);
+
+    if (!hasState || Math.abs(scrollTime - (prevState?.baseTime ?? scrollTime)) > safeDuration * 0.5) {
+      const time = Number.isFinite(scrollTime) ? scrollTime : 0;
+      const timestamp = now / 1000;
+      profileStateRef.current = {
+        time,
+        baseTime: time,
+        timestamp,
+        baseSampleTimestamp: timestamp,
+        baseVelocity: 0,
+        manualOffset: 0,
+      };
+      effectiveTimeRef.current = time;
+      setEffectiveScrollTime(time);
+    }
+  }, [scrollTime]);
+
+  useEffect(() => {
+    if (typeof window === 'undefined') {
+      const time = Number.isFinite(scrollTime) ? scrollTime : 0;
+      const now = (typeof performance !== 'undefined' ? performance.now() : Date.now()) / 1000;
+      profileStateRef.current = {
+        time,
+        baseTime: time,
+        timestamp: now,
+        baseSampleTimestamp: now,
+        baseVelocity: 0,
+        manualOffset: 0,
+      };
+      effectiveTimeRef.current = time;
+      setEffectiveScrollTime(time);
+      return;
+    }
+
+    let frameId: number;
+    const step = () => {
+      const now = typeof performance !== 'undefined' ? performance.now() : Date.now();
+
+      if (previewModeRef.current) {
+        const time = Number.isFinite(baseTimeRef.current) ? baseTimeRef.current : 0;
+        const timestamp = now / 1000;
+        const diff = Math.abs(time - effectiveTimeRef.current);
+        if (diff > DIFF_THRESHOLD) {
+          effectiveTimeRef.current = time;
+          setEffectiveScrollTime(time);
+        }
+        profileStateRef.current = {
+          time,
+          baseTime: time,
+          timestamp,
+          baseSampleTimestamp: timestamp,
+          baseVelocity: 0,
+          manualOffset: 0,
+        };
+        frameId = window.requestAnimationFrame(step);
+        return;
+      }
+
+      const manualOffset = Math.abs(profileStateRef.current?.manualOffset ?? 0);
+      const manualBiasActive = manualOffset > 0.4;
+      const manualActive = now < manualHoldUntilRef.current || manualBiasActive;
+      const result = getSpeedProfile({
+        baseTime: baseTimeRef.current,
+        duration: durationRef.current,
+        velocity: velocityRef.current,
+        previous: profileStateRef.current,
+        now,
+        manualActive,
+        manualScale: manualActive ? 0.58 : 0.38,
+        correctionStrength: manualActive ? 0 : 0.16,
+      });
+
+      profileStateRef.current = result.state;
+
+      const diff = Math.abs(result.time - effectiveTimeRef.current);
+      const elapsed = now - lastEmitRef.current;
+      if (diff > DIFF_THRESHOLD || elapsed > MAX_EMIT_INTERVAL_MS) {
+        effectiveTimeRef.current = result.time;
+        lastEmitRef.current = now;
+        setEffectiveScrollTime(result.time);
+      }
+
+      frameId = window.requestAnimationFrame(step);
+    };
+
+    frameId = window.requestAnimationFrame(step);
+    return () => {
+      window.cancelAnimationFrame(frameId);
+    };
+  }, []);
 
   const isMobile = typeof navigator !== 'undefined'
     ? /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)
@@ -55,7 +217,7 @@ export default function UnifiedLyricsAndModel(props: UnifiedLyricsAndModelProps)
   // 获取分层歌词数据
   const { front, back } = useLayeredLyrics({
     lyrics: lyricData,
-    scrollTime,
+    scrollTime: effectiveScrollTime,
     duration,
     options: lyricsConfig
   });
@@ -70,8 +232,9 @@ export default function UnifiedLyricsAndModel(props: UnifiedLyricsAndModelProps)
   });
 
   // 字体大小配置
-  const frontFontSize = (isMobile ? (isCompactMobile ? 0.48 : 0.54) : 0.62) * fontSize;
-  const backFontSize = (isMobile ? (isCompactMobile ? 0.44 : 0.5) : 0.58) * fontSize;
+  const baseFontScale = isMobile ? (isCompactMobile ? 0.48 : 0.54) : 0.6;
+  const frontFontSize = baseFontScale * fontSize;
+  const backFontSize = baseFontScale * fontSize;
   const baseModelScale = isMobile ? 2.2 : 2.8;
   // 在现有基础上再放大 1.1 倍
   const modelScale = baseModelScale * 1.2 * 1.1;
@@ -134,6 +297,7 @@ export default function UnifiedLyricsAndModel(props: UnifiedLyricsAndModelProps)
                 verticalAlign={line.verticalAlign}
                 fontFamily={fontFamily}
                 edgeFeather={line.edgeFeather}
+                fontRevision={fontRevision}
               />
             ))}
           </group>
@@ -207,6 +371,7 @@ export default function UnifiedLyricsAndModel(props: UnifiedLyricsAndModelProps)
                 verticalAlign={line.verticalAlign}
                 fontFamily={fontFamily}
                 edgeFeather={line.edgeFeather}
+                fontRevision={fontRevision}
               />
             ))}
           </group>

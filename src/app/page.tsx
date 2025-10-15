@@ -106,6 +106,7 @@ export default function HomePage() {
   // 字体选择（应用于 DOM 歌词层）
   const selectedFont = DEFAULT_FONT_FAMILY;
   const fontSize = DEFAULT_FONT_SCALE;
+  const [fontRevision, setFontRevision] = useState(0);
 
   // 时间-像素映射与方向（Phase 1）
   // 说明：pixelsPerSecond 控制拖拽/滚轮的灵敏度；direction=-1 表示右→左（RTL）
@@ -149,6 +150,23 @@ export default function HomePage() {
   const lastOverlayUpdateRef = useRef<number>(0);
 
   const lyrics = useLyrics(LRC_LYRICS);
+
+  useEffect(() => {
+    let cancelled = false;
+    const bumpRevision = () => setFontRevision((rev) => rev + 1);
+
+    if (typeof document !== 'undefined' && document.fonts) {
+      document.fonts.load(`16px ${selectedFont}`).then(() => {
+        if (!cancelled) bumpRevision();
+      });
+    } else {
+      bumpRevision();
+    }
+
+    return () => {
+      cancelled = true;
+    };
+  }, [selectedFont]);
 
   const commitTimeUpdate = useCallback(
     (displayTime: number, absoluteTime: number, force: boolean = false) => {
@@ -218,6 +236,7 @@ export default function HomePage() {
   const isDraggingRef = useRef(false);
   const previewStartClientXRef = useRef(0);
   const previewStartTimeRef = useRef<number | null>(null);
+  const lastPreviewTimeRef = useRef<number | null>(null);
   const wheelPreviewTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // 统一 wheel 归一化（简化版，后续可抽到 hooks）
@@ -425,6 +444,7 @@ export default function HomePage() {
     // 预览模式开始
     // 记录起点时间
     previewStartTimeRef.current = isPreviewMode ? (previewTime as number) : absoluteTime;
+    lastPreviewTimeRef.current = previewStartTimeRef.current;
   }, [clearWheelPreviewTimeout, isPreviewMode, previewTime, absoluteTime]);
 
   const handleLyricPreviewTime = useCallback((time: number) => {
@@ -434,7 +454,17 @@ export default function HomePage() {
     const safeDuration = Math.max(1, duration);
     const displayTime = ((time % safeDuration) + safeDuration) % safeDuration;
     timelineStore.setVisualTime(displayTime, time);
-  }, [duration, isPlaying]);
+
+    const previous = lastPreviewTimeRef.current;
+    if (previous !== null && Number.isFinite(previous)) {
+      const deltaSeconds = time - previous;
+      if (Number.isFinite(deltaSeconds) && Math.abs(deltaSeconds) > 1e-6) {
+        const velocity = deltaSeconds * PIXELS_PER_SECOND * 0.1;
+        handleScrollVelocityChange(velocity);
+      }
+    }
+    lastPreviewTimeRef.current = time;
+  }, [duration, isPlaying, handleScrollVelocityChange]);
 
   const handleLyricPreviewEnd = useCallback(() => {
     clearWheelPreviewTimeout();
@@ -442,11 +472,13 @@ export default function HomePage() {
     console.log('[handleLyricPreviewEnd] 预览结束并执行一次性 seek');
     const targetAbs = isPreviewMode && previewTime != null ? previewTime : absoluteTime;
     setPreviewTime(null);
+    lastPreviewTimeRef.current = null;
+    handleScrollVelocityChange(0);
     // 统一入口：以绝对时间 seek
     if (typeof targetAbs === 'number' && !Number.isNaN(targetAbs)) {
       handleSeek(targetAbs);
     }
-  }, [clearWheelPreviewTimeout, isPreviewMode, previewTime, absoluteTime, handleSeek]);
+  }, [clearWheelPreviewTimeout, isPreviewMode, previewTime, absoluteTime, handleSeek, handleScrollVelocityChange]);
 
   // Pointer 预览交互（Phase 1）
   const handlePointerDown = useCallback((e: React.PointerEvent<HTMLDivElement>) => {
@@ -475,10 +507,12 @@ export default function HomePage() {
     } else {
       event.preventDefault();
     }
+
     const deltaTime = -(deltaX * DIRECTION) / Math.max(1, PIXELS_PER_SECOND);
     const base = previewStartTimeRef.current ?? absoluteTime;
     const nextTime = base + deltaTime;
     handleLyricPreviewTime(nextTime);
+
   }, [absoluteTime, handleLyricPreviewTime]);
 
   const handlePointerUpOrCancel = useCallback((e: React.PointerEvent<HTMLDivElement>) => {
@@ -516,7 +550,7 @@ export default function HomePage() {
       handleLyricPreviewEnd();
     }, 240);
     // 惯性与持续滚轮在此不自动结束；由用户停止滚轮后短暂停顿再松手也可
-  }, [absoluteTime, isPreviewMode, previewTime, handleLyricPreviewStart, handleLyricPreviewTime, handleLyricPreviewEnd, clearWheelPreviewTimeout]);
+  }, [absoluteTime, isPreviewMode, previewTime, handleLyricPreviewStart, handleLyricPreviewTime, handleLyricPreviewEnd, clearWheelPreviewTimeout, handleScrollVelocityChange]);
 
   const handleSmoothLoopTimeUpdate = useCallback((time: number) => {
     // If user is actively preview-scrolling, don't override UI time with loop-driven updates
@@ -824,9 +858,10 @@ export default function HomePage() {
         <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-10">
           <UnifiedLyricsAndModel
             currentTime={displayTime}
-            scrollTime={absoluteTime}
+            scrollTime={mappedAbsoluteTime}
             duration={duration}
             isPlaying={isPlaying}
+            isPreviewMode={isPreviewMode}
             currentAnchor={currentAnchor}
             lyrics={lyrics}
             onSeek={handleSeek}
@@ -835,6 +870,7 @@ export default function HomePage() {
             scrollVelocity={scrollVelocity}
             fontFamily={selectedFont || undefined}
             fontSize={fontSize}
+            fontRevision={fontRevision}
           />
         </div>
 

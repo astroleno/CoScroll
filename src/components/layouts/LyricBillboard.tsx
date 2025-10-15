@@ -22,6 +22,8 @@ interface LyricBillboardProps {
   fontSizeMultiplier?: number;
   /** 靠近边缘时的羽化强度（0-1） */
   edgeFeather?: number;
+  /** 字体刷新修订号 */
+  fontRevision?: number;
 }
 
 const DEFAULT_FONT_STACK = '-apple-system, BlinkMacSystemFont, "PingFang SC", "Heiti SC", "Microsoft YaHei", sans-serif';
@@ -180,6 +182,7 @@ const LyricBillboard: React.FC<LyricBillboardProps> = ({
   fontFamily,
   fontSizeMultiplier = 1.0,
   edgeFeather = 0,
+  fontRevision = 0,
 }) => {
   const billboard = useMemo(() => {
     if (typeof window === 'undefined' || opacity <= 0) return null;
@@ -193,7 +196,7 @@ const LyricBillboard: React.FC<LyricBillboardProps> = ({
       fontSizeMultiplier,
       edgeFeather,
     });
-  }, [align, color, opacity, orientation, text, verticalAlign, fontFamily, fontSizeMultiplier, edgeFeather]);
+  }, [align, color, opacity, orientation, text, verticalAlign, fontFamily, fontSizeMultiplier, edgeFeather, fontRevision]);
 
   useEffect(() => {
     return () => {

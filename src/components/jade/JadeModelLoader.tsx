@@ -2,7 +2,7 @@
 
 import { useFrame, useThree } from "@react-three/fiber";
 import * as THREE from "three";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useTransitionControl } from "@/hooks/useTransitionControl";
 import { RGBELoader } from "three/examples/jsm/loaders/RGBELoader.js";
 import { OBJLoader } from "three/examples/jsm/loaders/OBJLoader.js";
@@ -117,6 +117,21 @@ function ScrollRotator({
   const totalRotationRef = useRef(0);
   const lastFrameTimeRef = useRef(0);
   const lastExternalVelocityRef = useRef(externalVelocity);
+  const manualOverrideThreshold = 1e-3;
+
+  const clampSpeed = useCallback((value: number) => {
+    return Math.max(-maxAngularVelocity, Math.min(maxAngularVelocity, value));
+  }, [maxAngularVelocity]);
+
+  const computeManualSigma = useCallback(() => {
+    return smoothedVelocityRef.current;
+  }, []);
+
+  const updateManualTarget = useCallback(() => {
+    const manualSigma = computeManualSigma();
+    const combined = baseSpeed + externalVelocityRef.current + manualSigma * speedMultiplier;
+    targetSpeedRef.current = clampSpeed(combined);
+  }, [baseSpeed, clampSpeed, computeManualSigma, speedMultiplier]);
 
   // Transition control for smooth state changes
   const transitionControl = useTransitionControl({
@@ -152,12 +167,13 @@ function ScrollRotator({
     }
 
     externalVelocityRef.current = externalVelocity;
-  }, [externalVelocity, transitionControl]);
+    updateManualTarget();
+  }, [externalVelocity, transitionControl, updateManualTarget]);
 
   useEffect(() => {
-    const baseWithExternal = Math.max(-maxAngularVelocity, Math.min(maxAngularVelocity, baseSpeed + externalVelocityRef.current));
-    targetSpeedRef.current = baseWithExternal;
-  }, [baseSpeed, externalVelocityRef.current, maxAngularVelocity]);
+    const clampedBase = clampSpeed(baseSpeed + externalVelocityRef.current);
+    targetSpeedRef.current = clampedBase;
+  }, [baseSpeed, clampSpeed, updateManualTarget]);
 
   useEffect(() => {
     prevScrollYRef.current = window.scrollY || 0;
@@ -165,31 +181,19 @@ function ScrollRotator({
       const y = window.scrollY || 0;
       const dy = y - prevScrollYRef.current;
       prevScrollYRef.current = y;
-      const baseWithExternal = baseSpeed + externalVelocityRef.current;
       const scrollVelocity = dy * 0.001;
 
       // Apply velocity smoothing
       smoothedVelocityRef.current += (scrollVelocity - smoothedVelocityRef.current) * velocitySmoothing;
-
-      // Calculate target speed with limits
-      let newTargetSpeed = baseWithExternal + smoothedVelocityRef.current * speedMultiplier;
-      newTargetSpeed = Math.max(-maxAngularVelocity, Math.min(maxAngularVelocity, newTargetSpeed));
-
-      targetSpeedRef.current = newTargetSpeed;
+      updateManualTarget();
     };
     const onWheel = (e: WheelEvent) => {
       const unit = e.deltaMode === 1 ? 16 : 1;
-      const baseWithExternal = baseSpeed + externalVelocityRef.current;
       const scrollVelocity = e.deltaY * unit * 0.001;
 
       // Apply velocity smoothing
       smoothedVelocityRef.current += (scrollVelocity - smoothedVelocityRef.current) * velocitySmoothing;
-
-      // Calculate target speed with limits
-      let newTargetSpeed = baseWithExternal + smoothedVelocityRef.current * speedMultiplier;
-      newTargetSpeed = Math.max(-maxAngularVelocity, Math.min(maxAngularVelocity, newTargetSpeed));
-
-      targetSpeedRef.current = newTargetSpeed;
+      updateManualTarget();
     };
 
     window.addEventListener("scroll", onScroll, { passive: true });
@@ -197,17 +201,11 @@ function ScrollRotator({
     const el = gl.domElement as HTMLCanvasElement;
     const onWheelCanvas = (e: WheelEvent) => {
       const unit = e.deltaMode === 1 ? 16 : 1;
-      const baseWithExternal = baseSpeed + externalVelocityRef.current;
       const scrollVelocity = e.deltaY * unit * 0.001;
 
       // Apply velocity smoothing
       smoothedVelocityRef.current += (scrollVelocity - smoothedVelocityRef.current) * velocitySmoothing;
-
-      // Calculate target speed with limits
-      let newTargetSpeed = baseWithExternal + smoothedVelocityRef.current * speedMultiplier;
-      newTargetSpeed = Math.max(-maxAngularVelocity, Math.min(maxAngularVelocity, newTargetSpeed));
-
-      targetSpeedRef.current = newTargetSpeed;
+      updateManualTarget();
       e.preventDefault();
     };
 
@@ -220,17 +218,11 @@ function ScrollRotator({
       const y = e.touches[0].clientY;
       const dy = lastTouchY.v - y;
       lastTouchY.v = y;
-      const baseWithExternal = baseSpeed + externalVelocityRef.current;
       const scrollVelocity = dy * 0.02;
 
       // Apply velocity smoothing
       smoothedVelocityRef.current += (scrollVelocity - smoothedVelocityRef.current) * velocitySmoothing;
-
-      // Calculate target speed with limits
-      let newTargetSpeed = baseWithExternal + scrollVelocity * speedMultiplier;
-      newTargetSpeed = Math.max(-maxAngularVelocity, Math.min(maxAngularVelocity, newTargetSpeed));
-
-      targetSpeedRef.current = newTargetSpeed;
+      updateManualTarget();
       e.preventDefault();
     };
 
@@ -245,7 +237,7 @@ function ScrollRotator({
       el.removeEventListener("touchstart", onTouchStart as any);
       el.removeEventListener("touchmove", onTouchMove as any);
     };
-  }, [baseSpeed, speedMultiplier, gl, maxAngularVelocity, velocitySmoothing]);
+  }, [baseSpeed, speedMultiplier, gl, maxAngularVelocity, velocitySmoothing, updateManualTarget]);
 
   useFrame((_, delta) => {
     if (!enabled || !groupRef.current) return;
@@ -259,8 +251,8 @@ function ScrollRotator({
 
     // Apply damping to target speed when no external input
     if (enableDamping) {
-      const baseWithExternal = Math.max(-maxAngularVelocity, Math.min(maxAngularVelocity, baseSpeed + externalVelocityRef.current));
-      targetSpeedRef.current += (baseWithExternal - targetSpeedRef.current) * (1 - dampingFactor);
+      const clampedBase = clampSpeed(baseSpeed + externalVelocityRef.current);
+      targetSpeedRef.current += (clampedBase - targetSpeedRef.current) * (1 - dampingFactor);
     }
 
     // Use transition velocity if transitioning, otherwise use normal speed
@@ -271,8 +263,18 @@ function ScrollRotator({
         console.log('[ScrollRotator] Using transition velocity:', transitionVelocity);
       }
     } else {
+      const manualSigma = computeManualSigma();
+      const manualActive = Math.abs(manualSigma) > manualOverrideThreshold;
+      const clampedManual = clampSpeed(baseSpeed + externalVelocityRef.current + manualSigma * speedMultiplier);
+      const defaultSpeed = clampSpeed(baseSpeed + externalVelocityRef.current);
+      const targetSpeed = manualActive ? clampedManual : defaultSpeed;
+
+      targetSpeedRef.current = targetSpeed;
+
+      const responseRate = manualActive ? Math.min(1, deltaTime * 22) : Math.min(1, deltaTime * 6);
+
       // Smooth current speed transition
-      currentSpeedRef.current += (targetSpeedRef.current - currentSpeedRef.current) * Math.min(1, deltaTime * 10);
+      currentSpeedRef.current += (targetSpeedRef.current - currentSpeedRef.current) * responseRate;
       effectiveSpeed = currentSpeedRef.current;
     }
 

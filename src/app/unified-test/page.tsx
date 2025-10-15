@@ -113,6 +113,7 @@ export default function UnifiedTestPage() {
           duration={duration}
           scrollTime={scrollTime}
           isPlaying={isPlaying}
+          isPreviewMode={false}
           scrollVelocity={scrollVelocity}
           currentAnchor={currentAnchor}
           onSeek={(time) => {

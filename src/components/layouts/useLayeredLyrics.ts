@@ -156,8 +156,7 @@ export function useLayeredLyrics({
       const trimmedText = rawText.trim();
       const displayText = trimmedText === '' ? '　' : trimmedText;
       const relativeOffset = targetAbsoluteIndex - currentIndexContinuous;
-      const loopParity = Math.floor(targetAbsoluteIndex / totalLines) % 2;
-      const isTopLane = ((wrappedIndex + loopParity) % 2) === 0;
+      const isTopLane = (wrappedIndex % 2) === 0;
       const isLeft = isTopLane; // 竖排下用于 renderOrder 的占位变量
       let x: number;
       let y: number;
@@ -172,7 +171,7 @@ export function useLayeredLyrics({
         x = travelOffset;
         y = isTopLane ? topLaneY : bottomLaneY;
         verticalAlign = isTopLane ? 'top' : 'bottom';
-        distanceRatio = travelLimit > 0 ? Math.abs(x) / travelLimit : 0;
+        distanceRatio = travelLimit > 0 ? Math.abs(travelOffset) / travelLimit : 0;
       } else {
         const sideOffset = isLeft ? -horizontalOffset : horizontalOffset;
         const verticalOffset = -relativeOffset * verticalSpacing;
@@ -185,16 +184,16 @@ export function useLayeredLyrics({
       let layer: LayerType;
       let depth: number;
       if (movement === 'horizontal') {
-        const absOffset = Math.abs(relativeOffset);
-        if (absOffset <= 0.75) {
-          layer = 'front';
-          depth = frontDepth;
-        } else if (relativeOffset < 0) {
-          layer = 'front';
-          depth = frontDepth - 0.6;
-        } else {
+        const patternIndex = wrappedIndex % 3;
+        if (patternIndex === 0) {
           layer = 'back-far';
           depth = backFarDepth;
+        } else if (patternIndex === 1) {
+          layer = 'front';
+          depth = frontDepth - 0.45;
+        } else {
+          layer = 'front';
+          depth = frontDepth;
         }
       } else {
         const absOffset = Math.abs(relativeOffset);
@@ -232,13 +231,19 @@ export function useLayeredLyrics({
       }
       const scale = 1;
       let renderOrder: number;
-      if (layer === 'front') {
-        const laneOffset = movement === 'horizontal' ? (isTopLane ? 220 : 200) : 180;
-        renderOrder = 3000 + laneOffset + targetAbsoluteIndex;
-      } else if (layer === 'back-near') {
-        renderOrder = 2000 + targetAbsoluteIndex;
+      if (movement === 'horizontal') {
+        const patternIndex = wrappedIndex % 3;
+        if (patternIndex === 0) {
+          renderOrder = 2100 + wrappedIndex;
+        } else if (patternIndex === 1) {
+          renderOrder = 3300 + (isTopLane ? 120 : 80) + wrappedIndex;
+        } else {
+          renderOrder = 3400 + (isTopLane ? 120 : 80) + wrappedIndex;
+        }
       } else {
-        renderOrder = 1000 + targetAbsoluteIndex;
+        renderOrder = layer === 'front'
+          ? 2000 + targetAbsoluteIndex + (isTopLane ? 120 : 80)
+          : 1000 + targetAbsoluteIndex;
       }
 
       items.push({

@@ -134,25 +134,25 @@ export const AudioEngine: React.FC<AudioEngineProps> = ({
     lastSeekTimeRef.current = now;
     lastForcedSeekRef.current = now;
 
-    // Calculate displayTime (不再修改 loopCount，使用外部同步的值)
     const base = Math.max(1, duration || audio.duration || 1);
     const displayTime = ((time % base) + base) % base;
+    const loopIndex = Math.floor(time / base);
 
     console.log('[AudioEngine] performSeek', {
       time,
       displayTime,
-      currentLoopCount: stateRef.current.loopCount
+      currentLoopCount: stateRef.current.loopCount,
+      targetLoopIndex: loopIndex
     });
 
     try {
       audio.currentTime = displayTime;
       stateRef.current.currentTime = displayTime;
-      // 不再修改 loopCount，保持外部同步的值
-      // stateRef.current.loopCount = Math.max(0, loopIndex);  // 删除这行
+      stateRef.current.loopCount = loopIndex;
       lastPlaybackTimeRef.current = displayTime;
 
       // Notify parent of time change (使用当前的 loopCount)
-      const absoluteTime = stateRef.current.loopCount * base + displayTime;
+      const absoluteTime = loopIndex * base + displayTime;
       onTimeUpdate(displayTime, absoluteTime);
 
       // Clear seeking state after a short delay
