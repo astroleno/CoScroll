@@ -1320,9 +1320,9 @@ export default function LyricsSyncV3({
                       color: active ? '#1a1a1a' : '#666',
                       letterSpacing: active ? '0.05em' : '0.02em',
                       marginRight: active ? '8px' : '0',
-                      textShadow: active ? '0 2px 8px rgba(0,0,0,0.1)' : 'none',
-                      transition: 'all 0.3s ease'
+                      textShadow: active ? '0 2px 8px rgba(0,0,0,0.1)' : 'none'
                     }}
+                    transition={{ duration: 0.3, ease: 'easeInOut' }}
                     style={{
                       fontFamily: 'system-ui, sans-serif',
                     }}
@@ -1474,7 +1474,7 @@ export default function LyricsSyncV3({
             fontWeight: 500,
             animation: 'pulse 2s infinite'
           }}>
-            👆 点击上方"🎵 点击开始体验"按钮开始心经数字之旅
+            👆 点击上方&quot;🎵 点击开始体验&quot;按钮开始心经数字之旅
           </div>
         )}
       </footer>

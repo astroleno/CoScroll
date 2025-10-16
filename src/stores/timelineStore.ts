@@ -21,7 +21,7 @@ class TimelineStore {
   }
 
   private emit() {
-    for (const fn of this.subs) fn();
+    this.subs.forEach(fn => fn());
   }
 
   setAudioTime(display: number, absolute: number) {

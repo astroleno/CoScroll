@@ -25,10 +25,10 @@ export default function Page() {
 
       <JadeV5
         modelPath={MODELS[idx]}
-        rotationDurationSec={8}
-        direction={1}
-        fitToView
-        background="#1f1e1c"
+        enableRotation={true}
+        baseSpeed={0.1}
+        showBackground={false}
+        containerStyle={{ background: "#1f1e1c" }}
       />
     </div>
   );

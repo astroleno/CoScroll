@@ -253,7 +253,7 @@ export default function Lyrics3DTestPage() {
         <div className="text-sm space-y-2">
           <p><strong>🎯 测试目标:</strong></p>
           <ul className="list-disc list-inside space-y-1 ml-2">
-            <li>观察"前-后-后"循环布局</li>
+            <li>观察&quot;前-后-后&quot;循环布局</li>
             <li>测试与锚字模型的遮挡效果</li>
             <li>验证性能优化和LOD系统</li>
             <li>检查文字渲染质量</li>

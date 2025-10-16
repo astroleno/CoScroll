@@ -16,7 +16,7 @@ export default function MochiSphere(props: Partial<MochiSphereProps> = {}) {
 
   // 应用主题预设
   const theme = config.theme ? mochiThemes[config.theme] : null;
-  const baseColor = theme?.baseColor || config.baseColor || defaultMochiConfig.baseColor || '#ffd4e5';
+  const baseColor = theme?.baseColor || config.baseColor || '#ffd4e5';
   const attenuationColor = theme?.attenuationColor || config.attenuationColor || '#b8d4ff';
   const glowColor = theme?.glowColor || config.glowColor || '#ffb3d9';
   const background = theme?.background || ['#e8d4f2', '#d4e8ff'];

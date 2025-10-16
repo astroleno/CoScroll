@@ -1,2 +1,0 @@
-# JadeShader
-Created with CodeSandbox

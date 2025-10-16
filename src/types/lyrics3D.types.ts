@@ -287,29 +287,4 @@ export interface Lyrics3DFullConfig {
   memoryManagement: MemoryManagementConfig;
 }
 
-export default {
-  QualityLevel,
-  LyricLine,
-  Lyrics3DConfig,
-  Lyrics3DProps,
-  LyricsControllerData,
-  TextPosition,
-  TextMaterialConfig,
-  PerformanceConfig,
-  AnimationConfig,
-  FontConfig,
-  Lyrics3DRendererConfig,
-  LayerType,
-  LayerCalculation,
-  Lyrics3DEvents,
-  DebugConfig,
-  Lyrics3DStateSnapshot,
-  Lyrics3DError,
-  Lyrics3DComponentState,
-  AnchorModelInfo,
-  FrustumCullingConfig,
-  LODConfig,
-  InstancedRenderingConfig,
-  MemoryManagementConfig,
-  Lyrics3DFullConfig
-};
+// 所有类型已通过命名导出提供，无需默认导出

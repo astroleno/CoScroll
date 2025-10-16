@@ -3,6 +3,7 @@
 import React, { useMemo, useRef, useEffect, useState, useCallback } from 'react';
 import { useFrame, useThree } from '@react-three/fiber';
 import * as THREE from 'three';
+import { Text } from '@react-three/drei';
 import { useLyrics3DStore } from '@/stores/lyrics3DStore';
 import Lyrics3DText from './Lyrics3DText';
 import type { 

@@ -117,6 +117,16 @@ const Lyrics3DIntegration: React.FC<Lyrics3DIntegrationProps> = ({
     return null;
   }
 
+  // 提供默认配置
+  const defaultConfig: Lyrics3DConfig = {
+    maxVisibleLyrics: 5,
+    updateRate: 60,
+    enableOcclusion: true,
+    qualityLevel: 'medium'
+  };
+
+  const finalConfig = { ...defaultConfig, ...config };
+
   return (
     <Lyrics3DRenderer
       lyricsData={lyricsData}
@@ -124,7 +134,7 @@ const Lyrics3DIntegration: React.FC<Lyrics3DIntegrationProps> = ({
       scrollTime={scrollTime}
       isPlaying={isPlaying}
       scrollVelocity={scrollVelocity}
-      config={config}
+      config={finalConfig}
       anchorModel={anchorModel}
       anchorModelSize={anchorModelSize}
       currentAnchor={currentAnchor}

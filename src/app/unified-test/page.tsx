@@ -121,14 +121,12 @@ export default function UnifiedTestPage() {
             setScrollTime(time);
           }}
           onScrollVelocityChange={setScrollVelocity}
-          onActiveLineChange={(line, index) => {
-            if (line?.text) {
-              // 简单的锚字提取逻辑
-              const anchor = line.text.charAt(0);
-              if (['观', '空', '苦', '色', '法', '生', '无', '死', '道', '心', '悟', '明', '真', '圆'].includes(anchor)) {
-                setCurrentAnchor(anchor);
-              }
-            }
+          modelPreloadStatus={{
+            isPreloading: false,
+            loaded: 0,
+            total: 0,
+            currentModel: '',
+            nextModel: ''
           }}
         />
       </div>

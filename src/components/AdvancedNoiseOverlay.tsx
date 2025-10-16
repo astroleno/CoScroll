@@ -125,7 +125,7 @@ export default function AdvancedNoiseOverlay({
   const fbm = useCallback((x: number, y: number, time: number = 0): number => {
     let value = 0.0;
     let amplitude = 0.5;
-    let frequency = frequency;
+    let frequency = 1.0;
     let maxValue = 0.0;
 
     for (let i = 0; i < octaves; i++) {

@@ -192,7 +192,7 @@ export default function LyricSync() {
       audio.removeEventListener('loadedmetadata', onLoadedMetadata)
       audio.removeEventListener('canplaythrough', tryAutoPlay)
     }
-  }, [lyrics.length, scrollToLyric])
+  }, [lyrics.length])
 
   // 获取当前歌词
   const currentLyric = lyrics[currentLyricIndex] || null

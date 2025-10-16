@@ -10,7 +10,6 @@ import LyricsController from '@/components/LyricsController';
 import EnhancedAudioPlayer from '@/components/audio/EnhancedAudioPlayer';
 import AudioEngine from '@/components/audio/AudioEngine';
 import PageVisibilityManager from '@/components/audio/PageVisibilityManager';
-import SmoothLoopManager from '@/components/audio/SmoothLoopManager';
 import AutoPlayGuard from '@/components/AutoPlayGuard';
 import ModelPreloader from '@/components/jade/ModelPreloader';
 import type { LyricLine } from '@/types';
@@ -824,19 +823,6 @@ export default function HomePage() {
           seekSignal={seekSignal}
         />
 
-        {/* Smooth Loop Manager */}
-        {typeof window !== 'undefined' && (window as any).__audioElement && (
-          <SmoothLoopManager
-            audioElement={(window as any).__audioElement}
-            isPlaying={isPlaying}
-            duration={duration}
-            currentTime={audioTime}
-            onLoopComplete={handleAudioLoopComplete}
-            onTimeUpdate={handleSmoothLoopTimeUpdate}
-            enableGaplessLoop={false}
-            loopOverlapTime={0.5}
-          />
-        )}
       
       {/* 自动播放引导 */}
       <AutoPlayGuard 
