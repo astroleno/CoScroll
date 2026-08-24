@@ -3,8 +3,8 @@
 import React, { useState, useCallback, useRef, useEffect, useMemo } from 'react';
 import timelineStore from '@/stores/timelineStore';
 import dynamic from 'next/dynamic';
-import { LRC_LYRICS } from './constants';
-import useLyrics from '@/components/hooks/useLyrics';
+// import { LRC_LYRICS } from './constants'; // 不再使用硬编码歌词
+import { useLyricsFromConfig } from '@/hooks/useLyricsFromConfig';
 import { useScrollVelocity } from '@/components/hooks/useScrollVelocity';
 import LyricsController from '@/components/LyricsController';
 import EnhancedAudioPlayer from '@/components/audio/EnhancedAudioPlayer';
@@ -14,6 +14,9 @@ import AutoPlayGuard from '@/components/AutoPlayGuard';
 import ModelPreloader from '@/components/jade/ModelPreloader';
 import type { LyricLine } from '@/types';
 import UnifiedLyricsAndModel from '@/components/layouts/UnifiedLyricsAndModel';
+// 配置系统导入
+import { useProjectConfigStore, useCurrentConfig } from '@/stores/projectConfigStore';
+import { useTheme } from '@/config/useTheme';
 const SilkR3FBackground = dynamic(() => import('@/components/backgrounds/SilkR3F'), { ssr: false });
 
 // 调试输出开关（仅开发环境生效）
@@ -82,13 +85,67 @@ const findCurrentLineIndex = (lyricLines: LyricLine[], time: number, durationPar
   return lineIndex;
 };
 
-const getModelPath = (anchorChar: string): string => {
-  return ANCHOR_MODEL_MAPPING[anchorChar] || ANCHOR_MODEL_MAPPING.default;
+const getModelPath = (anchorChar: string, mappings: Record<string, string>): string => {
+  return mappings[anchorChar] || mappings.default || '';
 };
 
 export default function HomePage() {
+  // ==================== 配置加载 ====================
+  const loadProject = useProjectConfigStore((state) => state.loadProject);
+  const config = useCurrentConfig();
+  const { isLoading: isConfigLoading } = useProjectConfigStore((state) => ({
+    isLoading: state.isLoading,
+  }));
 
-  // 音频相关状态 - 重构为单一时间源
+  // 从配置获取锚字映射和时间轴
+  const anchorConfig = useProjectConfigStore((state) => state.config?.anchors);
+  const timelineConfig = useProjectConfigStore((state) => state.config?.timeline);
+
+  // 构建锚字映射对象
+  const anchorModelMapping = useMemo(() => {
+    if (!anchorConfig?.mappings || !config?.assets?.models) {
+      return ANCHOR_MODEL_MAPPING; // 降级到硬编码
+    }
+
+    const modelsDirectory = config.assets.models.directory;
+    const mapping: Record<string, string> = {
+      default: `${modelsDirectory}/${anchorConfig.defaultModel}`
+    };
+
+    anchorConfig.mappings.forEach(mappingItem => {
+      mapping[mappingItem.anchor] = `${modelsDirectory}/${mappingItem.modelPath}`;
+    });
+
+    console.log('[AnchorMapping] 构建锚字映射:', mapping);
+    return mapping;
+  }, [anchorConfig, config]);
+
+  // 使用配置的时间轴或降级到硬编码
+  const anchorTimeline = useMemo(() => {
+    return timelineConfig || ANCHOR_TIMELINE;
+  }, [timelineConfig]);
+
+  // 自动注入主题
+  useTheme();
+
+  // 在组件挂载时加载配置
+  useEffect(() => {
+    console.log('[HomePage] 开始加载项目配置...');
+    loadProject('heart-sutra').catch((error) => {
+      console.error('[HomePage] 配置加载失败:', error);
+    });
+  }, [loadProject]);
+
+  // 使用配置的锚字映射
+  const anchorMappings = anchorModelMapping;
+
+  // 使用配置的时间轴
+  const timeline = anchorTimeline;
+
+  const audioSrcFromConfig = config?.assets.audio.src || '/audio/心经_2.mp3';
+  const lyricsSrcFromConfig = config?.assets.lyrics.src || '/lyrics/心经.lrc';
+
+  // ==================== 音频相关状态 ====================
   const [isPlaying, setIsPlaying] = useState(false);
   const [isReady, setIsReady] = useState(false);
   const [audioTime, setAudioTime] = useState(0); // 唯一真相源：音频时间
@@ -148,17 +205,31 @@ export default function HomePage() {
   const lyricTrackRef = useRef<HTMLDivElement>(null);
   const lastOverlayUpdateRef = useRef<number>(0);
 
-  const lyrics = useLyrics(LRC_LYRICS);
+  // 从配置动态加载歌词
+  const { lyrics, isLoading: isLyricsLoading } = useLyricsFromConfig();
 
   useEffect(() => {
     let cancelled = false;
     const bumpRevision = () => setFontRevision((rev) => rev + 1);
 
     if (typeof document !== 'undefined' && document.fonts) {
-      document.fonts.load(`16px ${selectedFont}`).then(() => {
-        if (!cancelled) bumpRevision();
-      });
+      // 改进字体加载逻辑
+      const fontSpec = `16px ${selectedFont}`;
+      console.log('[FontLoader] 开始加载字体:', fontSpec);
+
+      document.fonts.load(fontSpec)
+        .then(() => {
+          console.log('[FontLoader] ✅ 字体加载成功:', selectedFont);
+          if (!cancelled) bumpRevision();
+        })
+        .catch((error) => {
+          console.warn('[FontLoader] ❌ 字体加载失败:', selectedFont, error);
+          // 即使失败也触发一次，使用系统字体
+          if (!cancelled) bumpRevision();
+        });
     } else {
+      // 降级：直接触发一次
+      console.log('[FontLoader] 使用降级方案');
       bumpRevision();
     }
 
@@ -248,10 +319,11 @@ export default function HomePage() {
   }, []);
 
   const refreshPreloadStatus = useCallback(() => {
+    if (!config) return; // 如果配置未加载，跳过
     const preloader = ModelPreloader.getInstance();
     const status = preloader.getCacheStatus();
-    const currentModelPath = getModelPath(currentAnchor);
-    const nextModelPath = preloader.predictNextModel(audioTimeRef.current, ANCHOR_TIMELINE, ANCHOR_MODEL_MAPPING) || '';
+    const currentModelPath = getModelPath(currentAnchor, anchorMappings);
+    const nextModelPath = preloader.predictNextModel(audioTimeRef.current, timeline, anchorMappings) || '';
 
     if (DEBUG_DEV) {
       console.log('[HomePage] 模型预加载状态:', {
@@ -282,37 +354,42 @@ export default function HomePage() {
         nextModel: nextModelPath
       };
     });
-  }, [currentAnchor]);
+  }, [currentAnchor, config, anchorMappings, timeline]);
 
   // 页面初始化预加载逻辑
   useEffect(() => {
+    if (!config) return; // 等待配置加载
+
     const initializePreloading = async () => {
       try {
         console.log('[HomePage] 开始页面初始化预加载...');
         setModelPreloadStatus(prev => ({ ...prev, isPreloading: true }));
-        
+
         const preloader = ModelPreloader.getInstance();
-        
+
         // 确定优先级模型（前3个锚字对应的模型）
-        const priorityPaths = ANCHOR_TIMELINE.slice(0, 3).map(item => 
-          ANCHOR_MODEL_MAPPING[item.anchor]
+        const priorityPaths = timeline.slice(0, 3).map(item =>
+          anchorMappings[item.anchor]
         ).filter(Boolean);
-        
+
+        // 所有需要预加载的模型路径
+        const allModelPaths = Object.values(anchorMappings).filter(path => path !== anchorMappings.default);
+
         console.log('[HomePage] 优先级模型:', priorityPaths);
-        
+
         // 开始智能预加载
-        await preloader.preloadAllModels(ALL_MODEL_PATHS, priorityPaths);
-        
+        await preloader.preloadAllModels(allModelPaths, priorityPaths);
+
         // 更新状态
         const status = preloader.getCacheStatus();
         setModelPreloadStatus({
           isPreloading: false,
           loaded: status.loaded,
           total: status.total,
-          currentModel: getModelPath(currentAnchor),
+          currentModel: getModelPath(currentAnchor, anchorMappings),
           nextModel: ''
         });
-        
+
         console.log('[HomePage] ✅ 页面初始化预加载完成:', status);
       } catch (error) {
         console.error('[HomePage] ❌ 页面初始化预加载失败:', error);
@@ -323,7 +400,7 @@ export default function HomePage() {
     // 延迟一点开始预加载，避免阻塞页面渲染
     const timer = setTimeout(initializePreloading, 100);
     return () => clearTimeout(timer);
-  }, []);
+  }, [config, timeline, anchorMappings, currentAnchor]);
 
   // 检测移动端
   useEffect(() => {
@@ -351,9 +428,8 @@ export default function HomePage() {
   // 设置音频源
   useEffect(() => {
     try {
-      const audioPath = '/audio/心经_2.mp3';
-      DEBUG_DEV && console.log('[HomePage] Setting audio source:', audioPath);
-      setAudioSrc(audioPath);
+      DEBUG_DEV && console.log('[HomePage] Setting audio source:', audioSrcFromConfig);
+      setAudioSrc(audioSrcFromConfig);
       
       setAudioTime(0);
       setLoopCount(0);
@@ -362,7 +438,7 @@ export default function HomePage() {
     } catch (error) {
       console.error('[Audio] Failed to set audio source:', error);
     }
-  }, []);
+  }, [audioSrcFromConfig]);
 
   // 用户交互处理
   const handleUserInteraction = useCallback(() => {
@@ -597,19 +673,21 @@ export default function HomePage() {
   );
 
   // 使用精确时间轴查找锚字
-  const findAnchorCharByTime = (currentTime: number): string => {
+  const findAnchorCharByTime = useCallback((currentTime: number): string => {
+    if (timeline.length === 0) return '心'; // 默认值
+
     const loopTime = currentTime % duration;
-    
+
     // 从时间轴中找到当前时间对应的锚字
-    for (let i = ANCHOR_TIMELINE.length - 1; i >= 0; i--) {
-      if (loopTime >= ANCHOR_TIMELINE[i].time) {
-        return ANCHOR_TIMELINE[i].anchor;
+    for (let i = timeline.length - 1; i >= 0; i--) {
+      if (loopTime >= timeline[i].time) {
+        return timeline[i].anchor;
       }
     }
-    
+
     // 默认返回第一个锚字
-    return ANCHOR_TIMELINE[0].anchor;
-  };
+    return timeline[0]?.anchor || '心';
+  }, [timeline, duration]);
 
   // 保留原有的歌词行查找逻辑作为备用
   const findAnchorChar = (currentIndex: number): string => {
@@ -628,12 +706,12 @@ export default function HomePage() {
   // 使用精确时间轴查找锚字（使用 displayTime）
   const anchorChar = useMemo(
     () => findAnchorCharByTime(displayTime),
-    [displayTime, duration]
+    [findAnchorCharByTime, displayTime]
   );
 
   // 更新锚字状态和智能预加载（仅在锚字变更时触发）
   useEffect(() => {
-    if (anchorChar === currentAnchor) return;
+    if (anchorChar === currentAnchor || !config) return;
 
     if (DEBUG_DEV) {
       console.log(`[锚字更新] ${currentAnchor} -> ${anchorChar}`);
@@ -643,24 +721,24 @@ export default function HomePage() {
 
     const preloader = ModelPreloader.getInstance();
     preloader
-      .preloadNextModel(audioTimeRef.current, ANCHOR_TIMELINE, ANCHOR_MODEL_MAPPING)
+      .preloadNextModel(audioTimeRef.current, timeline, anchorMappings)
       .catch((error) => {
         console.error('[HomePage] 智能预加载失败:', error);
       })
       .finally(() => {
         refreshPreloadStatus();
       });
-  }, [anchorChar, currentAnchor, refreshPreloadStatus]);
+  }, [anchorChar, currentAnchor, config, timeline, anchorMappings, refreshPreloadStatus]);
 
   // 调试信息：显示当前锚字状态
   useEffect(() => {
     if (!DEBUG_DEV) return;
 
-    const currentAnchorInfo = ANCHOR_TIMELINE.find(item => item.anchor === anchorChar);
+    const currentAnchorInfo = timeline.find(item => item.anchor === anchorChar);
     if (currentAnchorInfo) {
       console.log(`[当前锚字] ${anchorChar} - ${currentAnchorInfo.text} (${currentAnchorInfo.meaning})`);
     }
-  }, [anchorChar]);
+  }, [anchorChar, timeline]);
 
   // 模型预加载状态监控（仅在状态发生变化时更新）
   useEffect(() => {
@@ -722,6 +800,20 @@ export default function HomePage() {
       updateLyricTrackTransform(current);
     }
   }, [isPreviewMode, previewTime, originTime, updateLyricTrackTransform]);
+
+  // 如果配置或歌词正在加载，显示加载状态
+  if (isConfigLoading || !config || isLyricsLoading) {
+    return (
+      <div className="flex items-center justify-center h-screen bg-gray-900">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-blue-500 mx-auto mb-4"></div>
+          <p className="text-white text-lg">
+            {isConfigLoading ? '加载配置中...' : '加载歌词中...'}
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col h-screen bg-transparent font-sans overflow-hidden opacity-100 transition-opacity duration-300">

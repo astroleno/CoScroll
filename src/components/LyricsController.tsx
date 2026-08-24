@@ -487,14 +487,35 @@ const LyricsController: React.FC<LyricsControllerProps & { layer?: LayerType; ve
       onActiveLineChange(lyrics[currentLineIndex] || null, currentLineIndex);
     }
     currentLineIndexRef.current = currentLineIndex;
-    
+
     // 自动滚动：仅在用户未交互时且不在预览模式时执行
-    if (!isUserInteractingRef.current && !previewActiveRef.current && currentLineIndex >= 0) {
-      const now = Date.now();
-      // 避免在 seek 后立即自动滚动
-      if (now > antiAutoScrollUntilRef.current) {
-        const normalizedIndex = ((currentLineIndex % visibleLyrics.length) + visibleLyrics.length) % visibleLyrics.length;
-        scrollToLine(normalizedIndex, { immediate: false });
+    const shouldAutoScroll = !isUserInteractingRef.current && !previewActiveRef.current && currentLineIndex >= 0;
+    const now = Date.now();
+    const canAutoScroll = now > antiAutoScrollUntilRef.current;
+
+    if (shouldAutoScroll && canAutoScroll) {
+      const normalizedIndex = ((currentLineIndex % visibleLyrics.length) + visibleLyrics.length) % visibleLyrics.length;
+
+      // 添加调试日志（仅在开发环境）
+      if (process.env.NODE_ENV === 'development') {
+        console.log('[LyricsController] 自动滚动:', {
+          currentLineIndex,
+          normalizedIndex,
+          isUserInteracting: isUserInteractingRef.current,
+          isPreviewActive: previewActiveRef.current,
+          canAutoScroll,
+        });
+      }
+
+      scrollToLine(normalizedIndex, { immediate: false });
+    } else if (shouldAutoScroll && !canAutoScroll) {
+      // 调试：为什么不能自动滚动
+      if (process.env.NODE_ENV === 'development') {
+        console.log('[LyricsController] 自动滚动被阻止:', {
+          now,
+          antiAutoScrollUntil: antiAutoScrollUntilRef.current,
+          remainingMs: antiAutoScrollUntilRef.current - now,
+        });
       }
     }
   }, [currentLineIndex, isInitialized, lyrics, duration, visibleLyrics, scrollToLine, onActiveLineChange]);
