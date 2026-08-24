@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>主题配置测试</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+      color: white;
+      padding: 20px;
+      min-height: 100vh;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 30px;
+      font-size: 2.5rem;
+    }
+
+    .status {
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 10px;
+      padding: 20px;
+      margin-bottom: 30px;
+    }
+
+    .theme-comparison {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 30px;
+      margin-bottom: 30px;
+    }
+
+    .theme-box {
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 15px;
+      padding: 30px;
+      border: 2px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .theme-box h2 {
+      margin-bottom: 20px;
+      text-align: center;
+    }
+
+    .anchor-demo {
+      text-align: center;
+      margin: 30px 0;
+    }
+
+    .anchor-char {
+      font-size: 150px;
+      font-weight: bold;
+      line-height: 1;
+    }
+
+    .old-theme .anchor-char {
+      color: #ffffff;
+      text-shadow:
+        0 0 25px rgba(244, 114, 182, 0.3),
+        0 0 60px rgba(107, 114, 255, 0.3);
+    }
+
+    .new-theme .anchor-char {
+      color: #ffd700;
+      text-shadow:
+        0 0 25px rgba(255, 215, 0, 0.4),
+        0 0 60px rgba(218, 165, 32, 0.4);
+    }
+
+    .color-swatches {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 20px;
+    }
+
+    .swatch {
+      width: 80px;
+      height: 80px;
+      border-radius: 10px;
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      text-align: center;
+      position: relative;
+    }
+
+    .swatch-label {
+      position: absolute;
+      bottom: -25px;
+      left: 0;
+      right: 0;
+      font-size: 11px;
+      color: rgba(255, 255, 255, 0.7);
+    }
+
+    .progress-demo {
+      margin-top: 30px;
+    }
+
+    .progress-bar {
+      height: 8px;
+      background: rgba(107, 114, 128, 0.3);
+      border-radius: 4px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .progress-fill {
+      height: 100%;
+      width: 60%;
+      transition: all 0.3s;
+    }
+
+    .old-theme .progress-fill {
+      background: #10b981;
+    }
+
+    .new-theme .progress-fill {
+      background: #ffd700;
+    }
+
+    .lyrics-demo {
+      margin-top: 20px;
+      line-height: 2;
+    }
+
+    .old-theme .lyric-current { color: #f8fafc; }
+    .old-theme .lyric-adjacent { color: #e5e7eb; }
+    .old-theme .lyric-distant { color: #6b7280; }
+
+    .new-theme .lyric-current { color: #ffd700; }
+    .new-theme .lyric-adjacent { color: #f0e68c; }
+    .new-theme .lyric-distant { color: #b8860b; }
+
+    .config-info {
+      background: rgba(0, 0, 0, 0.3);
+      border-radius: 10px;
+      padding: 20px;
+      font-family: 'Courier New', monospace;
+      font-size: 14px;
+      margin-top: 30px;
+    }
+
+    .info-item {
+      margin: 10px 0;
+      display: flex;
+      align-items: center;
+    }
+
+    .info-label {
+      color: #ffd700;
+      min-width: 150px;
+    }
+
+    .info-value {
+      color: #4ade80;
+    }
+
+    .btn {
+      display: inline-block;
+      padding: 12px 24px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      text-decoration: none;
+      border-radius: 8px;
+      margin: 10px 5px;
+      transition: transform 0.2s;
+    }
+
+    .btn:hover {
+      transform: translateY(-2px);
+    }
+
+    .btn-gold {
+      background: linear-gradient(135deg, #ffd700 0%, #daa520 100%);
+      color: #000;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🎨 主题配置测试页面</h1>
+
+    <div class="status">
+      <h3>📊 配置状态</h3>
+      <div class="config-info">
+        <div class="info-item">
+          <span class="info-label">配置文件：</span>
+          <span class="info-value">heart-sutra.json</span>
+        </div>
+        <div class="info-item">
+          <span class="info-label">当前主题：</span>
+          <span class="info-value">金色主题 🟡</span>
+        </div>
+        <div class="info-item">
+          <span class="info-label">备份文件：</span>
+          <span class="info-value">heart-sutra.json.backup</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="theme-comparison">
+      <!-- 原主题 -->
+      <div class="theme-box old-theme">
+        <h2>修改前：粉紫色主题</h2>
+
+        <div class="anchor-demo">
+          <div class="anchor-char">观</div>
+        </div>
+
+        <div class="color-swatches">
+          <div class="swatch" style="background: #ffffff;">
+            <div class="swatch-label">主色</div>
+          </div>
+          <div class="swatch" style="background: rgba(244, 114, 182, 1);">
+            <div class="swatch-label">光晕1</div>
+          </div>
+          <div class="swatch" style="background: rgba(107, 114, 255, 1);">
+            <div class="swatch-label">光晕2</div>
+          </div>
+        </div>
+
+        <div class="progress-demo">
+          <p>进度条：</p>
+          <div class="progress-bar">
+            <div class="progress-fill"></div>
+          </div>
+        </div>
+
+        <div class="lyrics-demo">
+          <p class="lyric-current">照见五蕴皆空</p>
+          <p class="lyric-adjacent">度一切苦厄</p>
+          <p class="lyric-distant">舍利子</p>
+        </div>
+      </div>
+
+      <!-- 新主题 -->
+      <div class="theme-box new-theme">
+        <h2>修改后：金色主题 ✨</h2>
+
+        <div class="anchor-demo">
+          <div class="anchor-char">观</div>
+        </div>
+
+        <div class="color-swatches">
+          <div class="swatch" style="background: #ffd700;">
+            <div class="swatch-label">主色</div>
+          </div>
+          <div class="swatch" style="background: rgba(255, 215, 0, 1);">
+            <div class="swatch-label">光晕1</div>
+          </div>
+          <div class="swatch" style="background: rgba(218, 165, 32, 1);">
+            <div class="swatch-label">光晕2</div>
+          </div>
+        </div>
+
+        <div class="progress-demo">
+          <p>进度条：</p>
+          <div class="progress-bar">
+            <div class="progress-fill"></div>
+          </div>
+        </div>
+
+        <div class="lyrics-demo">
+          <p class="lyric-current">照见五蕴皆空</p>
+          <p class="lyric-adjacent">度一切苦厄</p>
+          <p class="lyric-distant">舍利子</p>
+        </div>
+      </div>
+    </div>
+
+    <div style="text-align: center; margin-top: 40px;">
+      <a href="http://localhost:3002" class="btn btn-gold" target="_blank">
+        🚀 查看实际效果
+      </a>
+      <a href="javascript:location.reload()" class="btn">
+        🔄 刷新页面
+      </a>
+    </div>
+
+    <div class="config-info" style="margin-top: 40px;">
+      <h3 style="color: #ffd700; margin-bottom: 15px;">💡 测试说明</h3>
+      <p>1. 点击"查看实际效果"按钮打开应用</p>
+      <p>2. 在应用页面按 Cmd+Shift+R (Mac) 或 Ctrl+Shift+R (Windows) 硬刷新</p>
+      <p>3. 观察锚字、歌词和进度条的颜色变化</p>
+      <p>4. 打开浏览器控制台（F12）查看配置加载日志</p>
+      <p style="margin-top: 20px; color: #4ade80;">
+        ✅ 如果看到金色主题，说明配置系统工作正常！
+      </p>
+    </div>
+  </div>
+</body>
+</html>
