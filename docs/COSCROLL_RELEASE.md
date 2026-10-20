@@ -6,6 +6,8 @@ JS、CSS、字体、OBJ、HDR、图片、歌词和项目 JSON 使用 `assets.ait
 对象全部位于 `releases/aitoshuu-me/coscroll-<source-digest>/`，不覆盖已有对象。
 发布脚本启用静态导出；普通 `npm run build` / `npm run start` 保留 Next 的本地生产预览方式。
 
+当前线上版本为 `coscroll-80f24b659f7e9f82`，开场与正文共用丝绸 shader；最新验收记录见文末。
+
 ## 本地候选验证
 
 ```sh
@@ -59,7 +61,8 @@ TTF 为 6,048,788 字节，WOFF2 为 2,447,968 字节。主页面在字体规则
 4. `node deploy/verify-release.mjs <cdn-package> --cdn-only` 验证全部 CDN 对象。
 5. 将 `web/` 完整暂存到 `/www/wwwroot/coscroll-releases/<release-id>/web`，逐文件比对哈希。
    保留 Next 导出的 `.txt` 路由载荷；不能按 LuBirth 的两文件规则删掉它们。
-6. 只给现有 `html_aitoshuu.me.conf` 增加 `/coscroll` 路由，并保留现网安全响应头、TLS、首页和 LuBirth 配置。
+6. 首次接入时才给现有 `html_aitoshuu.me.conf` 增加 `/coscroll` 路由；后续更新只切换 CoScroll 入口。
+   保留现网安全响应头、TLS、首页和 LuBirth 配置。
    `stage-origin.mjs` 提供路由语义草案；实际配置须与现网合并、备份并通过 `nginx -t`。
 7. 原子切换 `/www/wwwroot/coscroll-current`，必要时 reload Nginx。
 8. `node deploy/verify-release.mjs <cdn-package>` 验证公网文件、重定向、404、缓存和邻站；再做浏览器交互检查。
@@ -186,3 +189,53 @@ Nginx 配置 SHA-256 仍为 `7263c4f493b541e88eb85c6d911ea1246570fe20ddd97eabc36
 
 本轮代码提交为 `42297de`（渲染与下载优化）和 `1a2eb65`（音频状态与首次加载恢复），
 沿用原来的 `decoupled` 分支。
+
+## 开场 shader 与公网复核（2026-10-20）
+
+线上版本为 `coscroll-80f24b659f7e9f82`，交付闭包 SHA-256 为
+`a2a505e5f2d25e0103404a6e90b892f216eb9c93490e6c06b6968d3a1cf75f51`。
+
+开场保留「点击开始／心经」两行文字，在其后显示既有的深青色丝绸 shader。
+`HomePage` 将背景提升到封面和正文共用的层，开始后只调整层级并显示正文、播放器；
+背景 Canvas 始终保留，不重建、不新增第三个 WebGL 画布，也没有新增素材或依赖。
+`AutoPlayGuard` 使用透明的全屏按钮接收触摸、点击及键盘输入，保留原有开始播放回调。
+动态视口高度覆盖手机竖屏；shader 未载入时，共用背景层提供原来的深色底色。
+
+类型检查、生产构建、部署测试 8/8、模型加载测试 3/3 通过。
+COS 新增 115 个不可变对象（含清单），源站暂存并校验 71 个文件。
+原子切换前发现 LuBirth 有并行部署，防护检查拒绝首次切换；重新核对现网后，
+保留其新入口 `lubirth-996b699a19bca700`，只切换 CoScroll。
+Nginx 配置 SHA-256 仍为 `7263c4f493b541e88eb85c6d911ea1246570fe20ddd97eabc365fa2d82e4f43e`。
+从源站独立公网出口通过 HTTPS 完整验证 185 个文件、3 个音频分段、哈希、MIME、
+缓存、跨域规则、308 查询参数保留和 404。首页及 LuBirth 页面哈希与最终切换前基线一致。
+
+正式公网的 Chrome for Testing 155，Android UA、390 × 844、DPR 2，禁用浏览器缓存，
+在前台各采样约 6 秒。除 requestAnimationFrame 外，也统计实际背景 WebGL 绘制调用，
+并确认 shader 的时间 uniform 持续更新。
+
+| 状态 | 页面帧率 / 背景实际绘制 | p95 帧间隔 | Canvas 文字上传 |
+| --- | --- | --- | --- |
+| 开场封面 | 60.16 / 60.16 FPS | 17.5 ms | 0 |
+| 开始播放后的正文 | 60.04 / 60.04 FPS | 17.2 ms | 0 |
+
+本次音频与字体就绪约 12.48 秒，该等待条件不代表首屏绘制时间；首访资源准备仍有优化空间。
+启动只请求当前与下一不同模型，共 2 个 OBJ。封面全屏、正文和播放器在开始前隐藏，
+触摸开始后显示且仍是同一个背景 Canvas；播放、暂停均通过，未捕获页面运行错误。
+左右各 180 px 横滑准确改变 15 秒，未出现 pointercancel；从 0 秒回退到 359.256327 秒、
+续播及 360 × 800 进度条触摸拖动均通过，无页面横向溢出。
+公网封面和正文截图已人工检查。未做 iOS/Android 真机测试，未隔离系统负载、
+未清空 CDN 或 GPU 缓存，因此这些数据不作为真机 GPU 帧率或标准化性能对比。
+
+桌面 1440 × 900、DPR 1 的 Tab 聚焦及 Enter 开始、播放和暂停通过。
+首次封面采样 59.45 FPS，正文曾测得 36.59 FPS、p95 50 ms，保留该波动记录。
+随后使用同一份采样脚本进行对照：专用测试浏览器临时载入旧版 HTML 与旧版真实 CDN 资源，
+正文为 60.04 FPS；取消该替换后，真实公网新版正文为 59.58 FPS、p95 17.6 ms。
+两版背景画布均为 1440 × 900 像素，正文画布均为 1440 × 772 像素。
+本次对照未复现持续的帧率下降；共享机器上的单次采样仍会波动，不能据此保证所有设备持续 60 FPS。
+对照期间没有切换生产入口；正式公网验收日志与候选页对照日志分别保留。
+
+最新发布证据位于 `.cache/production-coscroll-80f24b659f7e9f82/`；浏览器日志与截图位于
+`.cache/iteration-20261020/`，文件名以 `shader-public-` 开头。
+本轮回滚工具为 `python3 .cache/shader-origin.py rollback`，目标为上一版
+`coscroll-43fe2f5e582083ed`，执行前仍校验现有配置、CoScroll 入口及邻站链接。
+旧源站目录和 COS 对象继续保留。

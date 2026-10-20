@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { createPortal } from "react-dom";
 
 interface AutoPlayGuardProps {
   onUserInteraction: () => void;
@@ -9,32 +8,32 @@ interface AutoPlayGuardProps {
   isPlaying: boolean;
 }
 
-export default function AutoPlayGuard({ onUserInteraction, isReady, isPlaying }: AutoPlayGuardProps) {
+export default function AutoPlayGuard({ onUserInteraction }: AutoPlayGuardProps) {
   const [mounted, setMounted] = useState(false);
   const [shouldShow, setShouldShow] = useState(false);
   const [hasClicked, setHasClicked] = useState(false);
 
   useEffect(() => {
-    // 强制显示遮罩，不管什么情况
     if (!hasClicked) {
       setShouldShow(true);
-      console.log('[AutoPlayGuard] Force showing guard');
     }
     setMounted(true);
   }, [hasClicked]);
 
   const handleClick = () => {
-    console.log('[AutoPlayGuard] User clicked to start playback');
     setHasClicked(true);
     setShouldShow(false);
     onUserInteraction();
   };
 
-  // 直接使用固定定位，不用createPortal
   if (!mounted || !shouldShow) return null;
 
   return (
-    <div
+    <button
+      type="button"
+      aria-label="点击开始心经"
+      data-coscroll-intro
+      className="intro-start"
       style={{
         position: 'fixed',
         top: 0,
@@ -42,11 +41,15 @@ export default function AutoPlayGuard({ onUserInteraction, isReady, isPlaying }:
         right: 0,
         bottom: 0,
         width: '100vw',
-        height: '100vh',
+        height: '100dvh',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        background: '#202734',
+        // The page owns the shared shader; this layer only handles the gesture.
+        background: 'transparent',
+        border: 0,
+        padding: 0,
+        fontFamily: 'inherit',
         color: '#e2e8f0',
         zIndex: 2147483647,
         cursor: 'pointer',
@@ -59,24 +62,34 @@ export default function AutoPlayGuard({ onUserInteraction, isReady, isPlaying }:
       }}
       onClick={handleClick}
     >
-      <div style={{ textAlign: 'center' }}>
-        <div style={{
+      <span className="intro-copy" style={{ display: 'block', textAlign: 'center' }}>
+        <span style={{
+          display: 'block',
           fontSize: '2.5rem',
           fontWeight: 600,
           color: '#e2e8f0',
           marginBottom: '0.5rem'
         }}>
           点击开始
-        </div>
-        <div style={{
+        </span>
+        <span style={{
+          display: 'block',
           fontSize: '3rem',
           fontWeight: 700,
           color: '#e2e8f0',
           marginBottom: 0
         }}>
           心经
-        </div>
-      </div>
-    </div>
+        </span>
+      </span>
+      <style jsx>{`
+        .intro-start:focus-visible { outline: none; }
+        .intro-start:focus-visible .intro-copy {
+          outline: 2px solid #e2e8f0;
+          outline-offset: 16px;
+          border-radius: 4px;
+        }
+      `}</style>
+    </button>
   );
 }

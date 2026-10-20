@@ -827,6 +827,21 @@ export default function HomePage() {
         }
       `}</style>
 
+      {/* Keep one shader mounted across the cover and the reading scene. */}
+      <div
+        data-coscroll-background
+        className="fixed inset-0 pointer-events-none"
+        style={{ zIndex: hasUserInteracted ? 0 : 2147483646, background: '#202734' }}
+      >
+        <SilkR3FBackground
+          speed={4.9}
+          scale={1}
+          noiseIntensity={1.3}
+          rotation={2.42}
+          color="1f2e38"
+        />
+      </div>
+
       {/* Page Visibility Manager */}
       <PageVisibilityManager
         isPlaying={isPlaying}
@@ -861,16 +876,10 @@ export default function HomePage() {
         isPlaying={isPlaying || isIntroPlaying}
       />
       {/* 调试叠层（开发环境） */}
-      <main className="relative flex-grow w-full overflow-hidden flex items-center justify-center">
-        <SilkR3FBackground
-          speed={4.9}
-          scale={1}
-          noiseIntensity={1.3}
-          rotation={2.42}
-          color="1f2e38"
-          style={{ zIndex: 0 }}
-        />
-
+      <main
+        className="relative flex-grow w-full overflow-hidden flex items-center justify-center"
+        style={{ visibility: hasUserInteracted ? 'visible' : 'hidden' }}
+      >
         <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-10">
           <UnifiedLyricsAndModel
             currentTime={displayTime}
@@ -907,7 +916,10 @@ export default function HomePage() {
       </PageVisibilityManager>
 
       {/* 音频播放器 */}
-      <footer className="w-full flex justify-center py-8 z-20">
+      <footer
+        className="w-full flex justify-center py-8 z-20"
+        style={{ visibility: hasUserInteracted ? 'visible' : 'hidden' }}
+      >
         <EnhancedAudioPlayer
           isPlaying={isPlaying}
           isReady={isReady}
