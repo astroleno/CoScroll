@@ -141,7 +141,7 @@ class ModelPreloader {
   /**
    * 加载单个模型
    */
-  private async loadModel(modelPath: string): Promise<THREE.BufferGeometry> {
+  async loadModel(modelPath: string): Promise<THREE.BufferGeometry> {
     // 如果已经缓存，直接返回
     if (this.cache.has(modelPath)) {
       if (ModelPreloader.DEBUG) console.log('[ModelPreloader] 使用缓存模型:', modelPath);
@@ -155,17 +155,20 @@ class ModelPreloader {
     }
 
     // 开始加载
+    this.loadingStatus.set(modelPath, 'loading');
     const loadPromise = this.loadModelFromFile(modelPath);
     this.loadingPromises.set(modelPath, loadPromise);
 
     try {
       const geometry = await loadPromise;
       this.cache.set(modelPath, geometry);
+      this.loadingStatus.set(modelPath, 'loaded');
       this.loadingPromises.delete(modelPath);
       if (ModelPreloader.DEBUG) console.log('[ModelPreloader] 模型加载完成:', modelPath);
       return geometry;
     } catch (error) {
       this.loadingPromises.delete(modelPath);
+      this.loadingStatus.set(modelPath, 'error');
       throw error;
     }
   }
@@ -375,7 +378,7 @@ class ModelPreloader {
     priority: number;
   } {
     const loaded = this.cache.size;
-    const loading = this.currentLoads;
+    const loading = this.loadingPromises.size;
     const pending = Array.from(this.loadingStatus.values()).filter(status => status === 'pending').length;
     const error = Array.from(this.loadingStatus.values()).filter(status => status === 'error').length;
     const priority = this.priorityModels.size;
@@ -417,10 +420,17 @@ class ModelPreloader {
    * 预测下一个需要的模型（基于时间轴）
    */
   predictNextModel(currentTime: number, anchorTimeline: Array<{time: number, anchor: string}>, modelMapping: {[key: string]: string}): string | null {
-    // 找到当前时间之后的下一个锚点
-    const nextAnchor = anchorTimeline.find(item => item.time > currentTime);
-    if (nextAnchor && modelMapping[nextAnchor.anchor]) {
-      return modelMapping[nextAnchor.anchor];
+    if (!anchorTimeline.length) return null;
+    let current = 0;
+    for (let index = 0; index < anchorTimeline.length; index++) {
+      if (anchorTimeline[index].time <= currentTime) current = index;
+      else break;
+    }
+    const currentPath = modelMapping[anchorTimeline[current].anchor];
+    for (let step = 1; step < anchorTimeline.length; step++) {
+      const next = anchorTimeline[(current + step) % anchorTimeline.length];
+      const path = modelMapping[next.anchor];
+      if (path && path !== currentPath) return path;
     }
     return null;
   }

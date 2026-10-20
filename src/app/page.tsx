@@ -175,7 +175,7 @@ export default function HomePage() {
 
   // 计算值（不用state）
   const isPreviewMode = previewTime !== null;
-  const displayTime = isPreviewMode ? (previewTime % duration) : audioTime;
+  const displayTime = isPreviewMode ? ((previewTime % duration) + duration) % duration : audioTime;
   // 修复：预览模式时直接使用 previewTime 作为绝对时间，避免 loopCount 不同步
   const absoluteTime = isPreviewMode ? previewTime : (loopCount * duration + displayTime);
 
@@ -209,19 +209,22 @@ export default function HomePage() {
 
   // 从配置动态加载歌词
   const { lyrics, isLoading: isLyricsLoading } = useLyricsFromConfig();
+  const fontFaceReady = Boolean(config) && !isConfigLoading && !isLyricsLoading;
 
   useEffect(() => {
+    // The font rule is mounted with the scene, after config and lyrics resolve.
+    if (!fontFaceReady) return;
     let cancelled = false;
     const bumpRevision = () => setFontRevision((rev) => rev + 1);
 
     if (typeof document !== 'undefined' && document.fonts) {
       // 改进字体加载逻辑
       const fontSpec = `16px ${selectedFont}`;
-      console.log('[FontLoader] 开始加载字体:', fontSpec);
+      if (DEBUG_DEV) console.log('[FontLoader] 开始加载字体:', fontSpec);
 
       document.fonts.load(fontSpec)
         .then(() => {
-          console.log('[FontLoader] ✅ 字体加载成功:', selectedFont);
+          if (DEBUG_DEV) console.log('[FontLoader] ✅ 字体加载成功:', selectedFont);
           if (!cancelled) bumpRevision();
         })
         .catch((error) => {
@@ -231,14 +234,14 @@ export default function HomePage() {
         });
     } else {
       // 降级：直接触发一次
-      console.log('[FontLoader] 使用降级方案');
+      if (DEBUG_DEV) console.log('[FontLoader] 使用降级方案');
       bumpRevision();
     }
 
     return () => {
       cancelled = true;
     };
-  }, [selectedFont]);
+  }, [selectedFont, fontFaceReady]);
 
   const commitTimeUpdate = useCallback(
     (displayTime: number, absoluteTime: number, force: boolean = false) => {
@@ -357,52 +360,6 @@ export default function HomePage() {
       };
     });
   }, [currentAnchor, config, anchorMappings, timeline]);
-
-  // 页面初始化预加载逻辑
-  useEffect(() => {
-    if (!config) return; // 等待配置加载
-
-    const initializePreloading = async () => {
-      try {
-        console.log('[HomePage] 开始页面初始化预加载...');
-        setModelPreloadStatus(prev => ({ ...prev, isPreloading: true }));
-
-        const preloader = ModelPreloader.getInstance();
-
-        // 确定优先级模型（前3个锚字对应的模型）
-        const priorityPaths = timeline.slice(0, 3).map(item =>
-          anchorMappings[item.anchor]
-        ).filter(Boolean);
-
-        // 所有需要预加载的模型路径
-        const allModelPaths = Object.values(anchorMappings).filter(path => path !== anchorMappings.default);
-
-        console.log('[HomePage] 优先级模型:', priorityPaths);
-
-        // 开始智能预加载
-        await preloader.preloadAllModels(allModelPaths, priorityPaths);
-
-        // 更新状态
-        const status = preloader.getCacheStatus();
-        setModelPreloadStatus({
-          isPreloading: false,
-          loaded: status.loaded,
-          total: status.total,
-          currentModel: getModelPath(currentAnchor, anchorMappings),
-          nextModel: ''
-        });
-
-        console.log('[HomePage] ✅ 页面初始化预加载完成:', status);
-      } catch (error) {
-        console.error('[HomePage] ❌ 页面初始化预加载失败:', error);
-        setModelPreloadStatus(prev => ({ ...prev, isPreloading: false }));
-      }
-    };
-
-    // 延迟一点开始预加载，避免阻塞页面渲染
-    const timer = setTimeout(initializePreloading, 100);
-    return () => clearTimeout(timer);
-  }, [config, timeline, anchorMappings, currentAnchor]);
 
   // 检测移动端
   useEffect(() => {
@@ -526,7 +483,7 @@ export default function HomePage() {
 
   const handleLyricPreviewTime = useCallback((time: number) => {
     // 设置预览时间，不 seek
-    console.log('[handleLyricPreviewTime]', { time, isPlaying });
+    if (DEBUG_DEV) console.log('[handleLyricPreviewTime]', { time, isPlaying });
     setPreviewTime(time);
     const safeDuration = Math.max(1, duration);
     const displayTime = ((time % safeDuration) + safeDuration) % safeDuration;
@@ -546,7 +503,7 @@ export default function HomePage() {
   const handleLyricPreviewEnd = useCallback(() => {
     clearWheelPreviewTimeout();
     // 预览结束：执行一次性 seek 到预览终点
-    console.log('[handleLyricPreviewEnd] 预览结束并执行一次性 seek');
+    if (DEBUG_DEV) console.log('[handleLyricPreviewEnd] 预览结束并执行一次性 seek');
     const targetAbs = lastPreviewTimeRef.current ?? (isPreviewMode && previewTime != null ? previewTime : absoluteTime);
     setPreviewTime(null);
     lastPreviewTimeRef.current = null;
@@ -713,24 +670,28 @@ export default function HomePage() {
 
   // 更新锚字状态和智能预加载（仅在锚字变更时触发）
   useEffect(() => {
-    if (anchorChar === currentAnchor || !config) return;
+    if (!config) return;
 
     if (DEBUG_DEV) {
-      console.log(`[锚字更新] ${currentAnchor} -> ${anchorChar}`);
+      console.log(`[锚字更新] ${anchorChar}`);
     }
 
     setCurrentAnchor(anchorChar);
 
     const preloader = ModelPreloader.getInstance();
-    preloader
-      .preloadNextModel(audioTimeRef.current, timeline, anchorMappings)
+    let canceled = false;
+    // The visible model is loaded on demand; only warm the next distinct model.
+    const timer = setTimeout(() => preloader
+      .preloadNextModel(lastPreviewTimeRef.current === null ? audioTimeRef.current :
+        ((lastPreviewTimeRef.current % duration) + duration) % duration, timeline, anchorMappings)
       .catch((error) => {
         console.error('[HomePage] 智能预加载失败:', error);
       })
       .finally(() => {
-        refreshPreloadStatus();
-      });
-  }, [anchorChar, currentAnchor, config, timeline, anchorMappings, refreshPreloadStatus]);
+        if (!canceled) refreshPreloadStatus();
+      }), 400);
+    return () => { canceled = true; clearTimeout(timer); };
+  }, [anchorChar, config, timeline, anchorMappings, refreshPreloadStatus, duration]);
 
   // 调试信息：显示当前锚字状态
   useEffect(() => {
@@ -861,7 +822,7 @@ export default function HomePage() {
         /* 注册自定义字体（来自 public/fonts） */
         @font-face {
           font-family: 'RunZhiJiaKangXiZidian';
-          src: url('${assetUrl('/fonts/润植家康熙字典美化体.ttf')}') format('truetype');
+          src: url('${assetUrl('/fonts/润植家康熙字典美化体.woff2')}') format('woff2');
           font-display: swap;
         }
       `}</style>
@@ -917,7 +878,7 @@ export default function HomePage() {
             duration={duration}
             isPlaying={isPlaying}
             isPreviewMode={isPreviewMode}
-            currentAnchor={currentAnchor}
+            currentAnchor={anchorChar}
             lyrics={lyrics}
             onSeek={handleSeek}
             onScrollVelocityChange={handleScrollVelocityChange}
@@ -931,6 +892,7 @@ export default function HomePage() {
 
         <div
           className="absolute inset-0 z-50 pointer-events-auto"
+          style={{ touchAction: 'none' }}
           onPointerDown={handlePointerDown}
           onPointerMove={handlePointerMove}
           onPointerUp={handlePointerUpOrCancel}

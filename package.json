@@ -12,7 +12,8 @@
     "release:preview": "node deploy/preview-release.mjs",
     "release:verify": "node deploy/verify-release.mjs",
     "release:plan": "node deploy/stage-origin.mjs",
-    "test:deployment": "node --test test/deploy/*.test.mjs"
+    "test:deployment": "node --test test/deploy/*.test.mjs",
+    "test:runtime": "node --test test/runtime/*.test.mjs"
   },
   "dependencies": {
     "@react-three/drei": "^9.100.0",

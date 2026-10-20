@@ -225,7 +225,7 @@ export default function UnifiedLyricsAndModel(props: UnifiedLyricsAndModelProps)
   });
 
   // 调试信息
-  console.log('[UnifiedLyricsAndModel] 歌词数据:', {
+  if (process.env.NODE_ENV === 'development') console.log('[UnifiedLyricsAndModel] 歌词数据:', {
     totalLyrics: lyricData.length,
     frontCount: front.length,
     backCount: back.length,

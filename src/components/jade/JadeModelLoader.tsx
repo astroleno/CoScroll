@@ -7,9 +7,6 @@ import * as THREE from "three";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useTransitionControl } from "@/hooks/useTransitionControl";
 import { RGBELoader } from "three/examples/jsm/loaders/RGBELoader.js";
-import { OBJLoader } from "three/examples/jsm/loaders/OBJLoader.js";
-import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
-import { mergeVertices } from "three/examples/jsm/utils/BufferGeometryUtils.js";
 import ModelPreloader from "./ModelPreloader";
 
 const IS_DEV = process.env.NODE_ENV === 'development';
@@ -409,87 +406,16 @@ function DualLayerModelLoader({
           console.log('[JadeModelLoader] 开始加载模型:', modelPath);
         }
 
-        let loadedGeometry = preloader.getModel(modelPath);
-
-        if (loadedGeometry) {
-          if (IS_DEV) {
-            console.log('[JadeModelLoader] 使用预加载模型:', modelPath);
-          }
-          if (disposed) return;
-          setGeometry(loadedGeometry);
-          setLoading(false);
-          return;
-        }
-
-        if (preloader.isModelLoading(modelPath)) {
-          if (IS_DEV) {
-            console.log('[JadeModelLoader] 等待预加载完成:', modelPath);
-          }
-          while (preloader.isModelLoading(modelPath)) {
-            await new Promise(resolve => setTimeout(resolve, 50));
-            if (disposed) return;
-          }
-          
-          loadedGeometry = preloader.getModel(modelPath);
-          if (loadedGeometry) {
-            if (IS_DEV) {
-              console.log('[JadeModelLoader] 预加载完成，使用模型:', modelPath);
-            }
-            if (disposed) return;
-            setGeometry(loadedGeometry);
-            setLoading(false);
-            return;
-          }
-        }
-
-        if (IS_DEV) {
-          console.log('[JadeModelLoader] 直接加载模型:', modelPath);
-        }
-        if (modelPath.endsWith('.obj')) {
-          const loader = new OBJLoader();
-          const obj = await new Promise<THREE.Group>((resolve, reject) => {
-            loader.load(modelPath, resolve, undefined, reject);
-          });
-          
-          if (disposed) return;
-          
-          obj.traverse((child) => {
-            if (child instanceof THREE.Mesh && child.geometry) {
-              loadedGeometry = child.geometry;
-            }
-          });
-        } else if (modelPath.endsWith('.glb') || modelPath.endsWith('.gltf')) {
-          const loader = new GLTFLoader();
-          const gltf = await new Promise<any>((resolve, reject) => {
-            loader.load(modelPath, resolve, undefined, reject);
-          });
-          
-          if (disposed) return;
-          
-          gltf.scene.traverse((child: any) => {
-            if (child instanceof THREE.Mesh && child.geometry) {
-              loadedGeometry = child.geometry;
-            }
-          });
-        }
-
-        if (!loadedGeometry) {
-          throw new Error('未找到有效的几何体');
-        }
-
+        const loadedGeometry = await preloader.loadModel(modelPath);
         if (disposed) return;
-
-        loadedGeometry = mergeVertices(loadedGeometry);
-        loadedGeometry.computeVertexNormals();
-
         setGeometry(loadedGeometry);
-        preloader.addToCache(modelPath, loadedGeometry);
         setLoading(false);
 
         if (IS_DEV) {
           console.log('[JadeModelLoader] 模型加载成功:', modelPath);
         }
       } catch (err) {
+        if (disposed) return;
         console.error('[JadeModelLoader] 模型加载失败:', err);
         setError(err instanceof Error ? err.message : '未知错误');
         setLoading(false);
@@ -806,7 +732,7 @@ export default function JadeModelLoader({
       scene.environment = null;
       if (!showHdrBackground) {
         try {
-          scene.background = new THREE.Color(background as any);
+          scene.background = background === 'transparent' ? null : new THREE.Color(background as any);
         } catch (err) {
           if (IS_DEV) {
             console.error('[JadeModelLoader] 背景恢复失败:', err);

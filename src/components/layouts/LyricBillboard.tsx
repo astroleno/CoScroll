@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useMemo, useEffect } from 'react';
+import React, { useMemo, useEffect, useCallback, useRef } from 'react';
 import * as THREE from 'three';
 
 interface LyricBillboardProps {
@@ -39,26 +39,24 @@ interface BillboardData {
   aspect: number;
   heightMultiplier: number;
   glyphCount: number;
+  fontPx: number;
+  canvasWidth: number;
 }
 
 function createTextBillboard({
   text,
-  color,
   align,
   orientation,
   verticalAlign,
   fontFamily,
   fontSizeMultiplier = 1.0,
-  edgeFeather = 0,
 }: {
   text: string;
-  color: string;
   align: 'left' | 'right';
   orientation: Orientation;
   verticalAlign: 'top' | 'bottom';
   fontFamily?: string;
   fontSizeMultiplier?: number;
-  edgeFeather?: number;
 }): BillboardData | null {
   if (typeof document === 'undefined') return null;
 
@@ -73,11 +71,6 @@ function createTextBillboard({
   const resolvedStack = fontFamily ? `${fontFamily}, ${DEFAULT_FONT_STACK}` : DEFAULT_FONT_STACK;
   ctx.font = `${fontPx}px ${resolvedStack}`;
   
-  // 调试：检查字体是否正确应用
-  if (fontFamily) {
-    console.log('[LyricBillboard] 使用字体:', fontFamily, '完整栈:', resolvedStack);
-    console.log('[LyricBillboard] 实际字体:', ctx.font);
-  }
   ctx.textBaseline = 'middle';
   ctx.textAlign = orientation === 'horizontal' ? align : 'center';
 
@@ -108,7 +101,8 @@ function createTextBillboard({
   ctx.textBaseline = 'middle';
   ctx.textAlign = orientation === 'horizontal' ? align : 'center';
   ctx.clearRect(0, 0, canvasWidth, canvasHeight);
-  ctx.fillStyle = color;
+  // Bake only glyph coverage. Color, opacity and feathering are material uniforms.
+  ctx.fillStyle = '#ffffff';
 
   if (orientation === 'horizontal') {
     const textX = align === 'left' ? padding : canvasWidth - padding;
@@ -128,28 +122,6 @@ function createTextBillboard({
     });
   }
 
-  if (edgeFeather > 0) {
-    const clamped = Math.min(Math.max(edgeFeather, 0), 1);
-    const baseFeatherPx = fontPx * (orientation === 'vertical' ? 1.35 : 0.85);
-    const extraFeatherPx = fontPx * (orientation === 'vertical' ? 2.6 : 1.8) * clamped;
-    const featherPx = Math.min(Math.max(baseFeatherPx + extraFeatherPx, fontPx * 0.35), canvasWidth * 0.49);
-
-    const innerStartRatio = canvasWidth > 0 ? Math.min(Math.max(featherPx / canvasWidth, 0), 0.49) : 0.0;
-    const innerEndRatio = 1 - innerStartRatio;
-
-    if (innerEndRatio > innerStartRatio) {
-      const gradient = ctx.createLinearGradient(0, 0, canvasWidth, 0);
-      gradient.addColorStop(0, 'rgba(0,0,0,0)');
-      gradient.addColorStop(innerStartRatio, 'rgba(0,0,0,1)');
-      gradient.addColorStop(innerEndRatio, 'rgba(0,0,0,1)');
-      gradient.addColorStop(1, 'rgba(0,0,0,0)');
-
-      ctx.globalCompositeOperation = 'destination-in';
-      ctx.fillStyle = gradient;
-      ctx.fillRect(0, 0, canvasWidth, canvasHeight);
-      ctx.globalCompositeOperation = 'source-over';
-    }
-  }
   const baseCanvasHeight = fontPx * (LINE_HEIGHT_RATIO + 2 * PADDING_RATIO);
   const heightMultiplier = baseCanvasHeight > 0 ? canvasHeight / baseCanvasHeight : 1;
 
@@ -163,6 +135,8 @@ function createTextBillboard({
     aspect: canvasWidth / canvasHeight,
     heightMultiplier,
     glyphCount,
+    fontPx,
+    canvasWidth,
   };
 }
 
@@ -185,18 +159,36 @@ const LyricBillboard: React.FC<LyricBillboardProps> = ({
   fontRevision = 0,
 }) => {
   const billboard = useMemo(() => {
-    if (typeof window === 'undefined' || opacity <= 0) return null;
+    if (typeof window === 'undefined') return null;
     return createTextBillboard({
       text,
-      color,
       align,
       orientation,
       verticalAlign,
       fontFamily,
       fontSizeMultiplier,
-      edgeFeather,
     });
-  }, [align, color, opacity, orientation, text, verticalAlign, fontFamily, fontSizeMultiplier, edgeFeather, fontRevision]);
+  }, [align, orientation, text, verticalAlign, fontFamily, fontSizeMultiplier, fontRevision]);
+
+  const feather = useRef({ value: 0 });
+  if (billboard && edgeFeather > 0) {
+    const base = billboard.fontPx * (orientation === 'vertical' ? 1.35 : 0.85);
+    const extra = billboard.fontPx * (orientation === 'vertical' ? 2.6 : 1.8) * Math.min(edgeFeather, 1);
+    feather.current.value = Math.min(Math.max(base + extra, billboard.fontPx * 0.35) / billboard.canvasWidth, 0.49);
+  } else {
+    feather.current.value = 0;
+  }
+  const applyFeather = useCallback((shader: Parameters<THREE.MeshBasicMaterial['onBeforeCompile']>[0]) => {
+    shader.uniforms.uLyricFeather = feather.current;
+    shader.fragmentShader = shader.fragmentShader
+      .replace('#include <common>', '#include <common>\nuniform float uLyricFeather;')
+      .replace('#include <map_fragment>', `#include <map_fragment>
+        #ifdef USE_MAP
+          if (uLyricFeather > 0.0) {
+            diffuseColor.a *= clamp(min(vMapUv.x, 1.0 - vMapUv.x) / uLyricFeather, 0.0, 1.0);
+          }
+        #endif`);
+  }, []);
 
   useEffect(() => {
     return () => {
@@ -220,10 +212,12 @@ const LyricBillboard: React.FC<LyricBillboardProps> = ({
     : 0;
 
   return (
-    <mesh position={[x + offsetX, y + anchorYOffset, z]} renderOrder={renderOrder}>
-      <planeGeometry args={[planeWidth, planeHeight]} />
+    <mesh position={[x + offsetX, y + anchorYOffset, z]} scale={[planeWidth, planeHeight, 1]} renderOrder={renderOrder}>
+      <planeGeometry args={[1, 1]} />
       <meshBasicMaterial
         map={billboard.texture}
+        color={color}
+        onBeforeCompile={applyFeather}
         transparent
         opacity={opacity}
         depthWrite={depthWrite}
