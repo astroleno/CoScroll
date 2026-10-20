@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useMemo, useEffect, useCallback, useRef } from 'react';
+import React, { forwardRef, useMemo, useEffect, useCallback, useRef, useImperativeHandle } from 'react';
 import * as THREE from 'three';
 
 interface LyricBillboardProps {
@@ -26,6 +26,19 @@ interface LyricBillboardProps {
   fontRevision?: number;
 }
 
+export interface LyricBillboardFrame {
+  position: [number, number, number];
+  color: string;
+  opacity: number;
+  scale: number;
+  edgeFeather: number;
+}
+
+export interface LyricBillboardHandle {
+  update(frame: LyricBillboardFrame): void;
+  hide(): void;
+}
+
 const DEFAULT_FONT_STACK = '-apple-system, BlinkMacSystemFont, "PingFang SC", "Heiti SC", "Microsoft YaHei", sans-serif';
 const BASE_FONT_PX = 96;
 const LINE_HEIGHT_RATIO = 1.25;
@@ -41,6 +54,13 @@ interface BillboardData {
   glyphCount: number;
   fontPx: number;
   canvasWidth: number;
+}
+
+function featherWidth(billboard: BillboardData, orientation: Orientation, amount: number): number {
+  if (amount <= 0) return 0;
+  const base = billboard.fontPx * (orientation === 'vertical' ? 1.35 : .85);
+  const extra = billboard.fontPx * (orientation === 'vertical' ? 2.6 : 1.8) * Math.min(amount, 1);
+  return Math.min(Math.max(base + extra, billboard.fontPx * .35) / billboard.canvasWidth, .49);
 }
 
 function createTextBillboard({
@@ -140,7 +160,7 @@ function createTextBillboard({
   };
 }
 
-const LyricBillboard: React.FC<LyricBillboardProps> = ({
+const LyricBillboard = forwardRef<LyricBillboardHandle, LyricBillboardProps>(function LyricBillboard({
   text,
   position,
   color,
@@ -157,9 +177,12 @@ const LyricBillboard: React.FC<LyricBillboardProps> = ({
   fontSizeMultiplier = 1.0,
   edgeFeather = 0,
   fontRevision = 0,
-}) => {
+}, ref) {
+  const meshRef = useRef<THREE.Mesh<THREE.PlaneGeometry, THREE.MeshBasicMaterial>>(null);
   const billboard = useMemo(() => {
     if (typeof window === 'undefined') return null;
+    // A completed font load invalidates the existing glyph coverage texture.
+    void fontRevision;
     return createTextBillboard({
       text,
       align,
@@ -171,13 +194,27 @@ const LyricBillboard: React.FC<LyricBillboardProps> = ({
   }, [align, orientation, text, verticalAlign, fontFamily, fontSizeMultiplier, fontRevision]);
 
   const feather = useRef({ value: 0 });
-  if (billboard && edgeFeather > 0) {
-    const base = billboard.fontPx * (orientation === 'vertical' ? 1.35 : 0.85);
-    const extra = billboard.fontPx * (orientation === 'vertical' ? 2.6 : 1.8) * Math.min(edgeFeather, 1);
-    feather.current.value = Math.min(Math.max(base + extra, billboard.fontPx * 0.35) / billboard.canvasWidth, 0.49);
-  } else {
-    feather.current.value = 0;
-  }
+  feather.current.value = billboard ? featherWidth(billboard, orientation, edgeFeather) : 0;
+
+  useImperativeHandle(ref, () => ({
+    hide() {if (meshRef.current) meshRef.current.visible = false;},
+    update(frame) {
+      const mesh = meshRef.current;
+      if (!mesh || !billboard) return;
+      const height = fontSize * frame.scale * billboard.heightMultiplier;
+      const width = height * billboard.aspect;
+      const offsetX = orientation === 'vertical' ? 0 : (align === 'left' ? width / 2 : -width / 2);
+      const offsetY = orientation === 'vertical' ? (verticalAlign === 'top' ? -height / 2 : height / 2) : 0;
+      mesh.position.set(frame.position[0] + offsetX, frame.position[1] + offsetY, frame.position[2]);
+      mesh.scale.set(width, height, 1);
+      mesh.visible = frame.opacity > 0 && text.trim().length > 0;
+      mesh.material.opacity = frame.opacity;
+      // React may have just committed a new window or font; restore the actual
+      // material value instead of trusting a cache of its previous prop.
+      mesh.material.color.set(frame.color);
+      feather.current.value = featherWidth(billboard, orientation, frame.edgeFeather);
+    },
+  }), [billboard, fontSize, orientation, align, verticalAlign, text]);
   const applyFeather = useCallback((shader: Parameters<THREE.MeshBasicMaterial['onBeforeCompile']>[0]) => {
     shader.uniforms.uLyricFeather = feather.current;
     shader.fragmentShader = shader.fragmentShader
@@ -196,7 +233,7 @@ const LyricBillboard: React.FC<LyricBillboardProps> = ({
     };
   }, [billboard]);
 
-  if (!billboard || opacity <= 0) {
+  if (!billboard) {
     return null;
   }
 
@@ -212,7 +249,7 @@ const LyricBillboard: React.FC<LyricBillboardProps> = ({
     : 0;
 
   return (
-    <mesh position={[x + offsetX, y + anchorYOffset, z]} scale={[planeWidth, planeHeight, 1]} renderOrder={renderOrder}>
+    <mesh ref={meshRef} visible={opacity > 0 && text.trim().length > 0} position={[x + offsetX, y + anchorYOffset, z]} scale={[planeWidth, planeHeight, 1]} renderOrder={renderOrder}>
       <planeGeometry args={[1, 1]} />
       <meshBasicMaterial
         map={billboard.texture}
@@ -227,6 +264,6 @@ const LyricBillboard: React.FC<LyricBillboardProps> = ({
       />
     </mesh>
   );
-};
+});
 
 export default LyricBillboard;

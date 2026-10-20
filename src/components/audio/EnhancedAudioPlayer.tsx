@@ -35,6 +35,8 @@ const EnhancedAudioPlayer: React.FC<EnhancedAudioPlayerProps> = ({
   // Refs for seek debouncing
   const seekTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const lastSeekTimeRef = useRef(0);
+  const isDraggingRef = useRef(false);
+  const dragTimeRef = useRef(currentTime);
 
   const progress = duration > 0 ? (currentTime / duration) * 100 : 0;
   const dragProgress = duration > 0 ? (dragTime / duration) * 100 : 0;
@@ -74,15 +76,18 @@ const EnhancedAudioPlayer: React.FC<EnhancedAudioPlayerProps> = ({
   // Handle input change during drag
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const time = parseFloat(e.target.value);
+    dragTimeRef.current = time;
     setDragTime(time);
     handleSeekDebounced(time, true); // Immediate update during drag
   };
 
   // Handle seek release
   const handleInputEnd = useCallback(() => {
+    if (!isDraggingRef.current) return;
+    isDraggingRef.current = false;
     setIsDragging(false);
-    handleSeekDebounced(dragTime, true);
-  }, [dragTime, handleSeekDebounced]);
+    handleSeekDebounced(dragTimeRef.current, true);
+  }, [handleSeekDebounced]);
 
   // Handle mouse move on progress bar
   const handleMouseMove = useCallback((e: React.MouseEvent<HTMLInputElement>) => {
@@ -192,10 +197,17 @@ const EnhancedAudioPlayer: React.FC<EnhancedAudioPlayerProps> = ({
               max={duration || 0}
               value={displayTime}
               onChange={handleInputChange}
-              onMouseDown={() => setIsDragging(true)}
-              onMouseUp={handleInputEnd}
+              onPointerDown={(event) => {
+                if (event.pointerType === 'mouse' && event.button !== 0) return;
+                isDraggingRef.current = true;
+                dragTimeRef.current = currentTime;
+                setDragTime(currentTime);
+                setIsDragging(true);
+                event.currentTarget.setPointerCapture(event.pointerId);
+              }}
+              onPointerUp={handleInputEnd}
+              onPointerCancel={handleInputEnd}
               onMouseLeave={() => {
-                handleInputEnd();
                 setHoverTime(null);
               }}
               onMouseMove={handleMouseMove}

@@ -141,13 +141,18 @@ export const AudioEngine: React.FC<AudioEngineProps> = ({
         clearTimeout(seekThrottleTimeoutRef.current);
       }
       seekThrottleTimeoutRef.current = setTimeout(() => {
-        if (pendingSeekRef.current !== null) {
-          performSeek(pendingSeekRef.current);
-          pendingSeekRef.current = null;
-        }
+        const pending = pendingSeekRef.current;
+        pendingSeekRef.current = null;
+        seekThrottleTimeoutRef.current = null;
+        if (pending !== null) performSeek(pending);
       }, 100 - timeSinceLastSeek);
       return;
     }
+
+    // An immediately applied target supersedes any older queued seek.
+    if (seekThrottleTimeoutRef.current) clearTimeout(seekThrottleTimeoutRef.current);
+    seekThrottleTimeoutRef.current = null;
+    pendingSeekRef.current = null;
 
     const audio = audioRef.current;
     if (!audio) return;

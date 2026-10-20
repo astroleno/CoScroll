@@ -2,14 +2,15 @@
 import { assetUrl } from '@/utils/assetUrl';
 
 
-import React, { Suspense, useEffect, useMemo, useRef, useState } from 'react';
+import React, { Suspense, memo, useMemo, useRef } from 'react';
 import { Canvas } from '@react-three/fiber';
 import { UnifiedLayoutProps } from './types';
-import { useLayeredLyrics } from './useLayeredLyrics';
-import LyricBillboard from './LyricBillboard';
+import LayeredLyricsScene from './LayeredLyricsScene';
+import type { LyricMotionInput } from './lyricMotion';
 import JadeModelLoader from '@/components/jade/JadeModelLoader';
 import type { LyricLine } from '@/types';
-import getSpeedProfile, { SpeedProfileState } from './speedProfile';
+
+const MemoizedJadeModel = memo(JadeModelLoader);
 
 /**
  * 统一单Canvas布局 - 实现真实的3D遮挡关系
@@ -21,6 +22,10 @@ import getSpeedProfile, { SpeedProfileState } from './speedProfile';
  * 4. 统一光照：所有元素共享同一套光照系统
  */
 interface UnifiedLyricsAndModelProps extends UnifiedLayoutProps {
+  /** Keep the warm scene mounted without rendering it behind the cover. */
+  active?: boolean;
+  scrollTimeRef?: { readonly current: number };
+  seekRevision?: number;
   /** 可选：歌词渲染使用的字体族（需在页面注册 @font-face） */
   fontFamily?: string;
   /** 可选：字体大小倍数 */
@@ -40,157 +45,15 @@ export default function UnifiedLyricsAndModel(props: UnifiedLyricsAndModelProps)
     fontSize = 1.0,
     fontRevision = 0,
     isPreviewMode = false,
+    active = true,
+    scrollTimeRef,
+    seekRevision,
   } = props;
   const lyricData = (lyrics || []) as LyricLine[];
 
-  const DIFF_THRESHOLD = 0.0008;
-  const MAX_EMIT_INTERVAL_MS = 16;
-  const MANUAL_TRIGGER_VELOCITY = 0.016;
-  const MANUAL_RELEASE_MS = 520;
-
-  const initialTime = Number.isFinite(scrollTime) ? scrollTime : 0;
-  const [effectiveScrollTime, setEffectiveScrollTime] = useState(initialTime);
-  const effectiveTimeRef = useRef(initialTime);
-  const profileStateRef = useRef<SpeedProfileState | null>(null);
-  const lastEmitRef = useRef(0);
-  const baseTimeRef = useRef(scrollTime);
-  const durationRef = useRef(duration);
-  const velocityRef = useRef(scrollVelocity);
-  const manualHoldUntilRef = useRef(0);
-  const previewModeRef = useRef(isPreviewMode);
-
-  baseTimeRef.current = scrollTime;
-  durationRef.current = duration;
-  velocityRef.current = scrollVelocity;
-  previewModeRef.current = isPreviewMode;
-
-  useEffect(() => {
-    if (!isPreviewMode) {
-      return;
-    }
-
-    const now = typeof performance !== 'undefined' ? performance.now() : Date.now();
-    const time = Number.isFinite(scrollTime) ? scrollTime : 0;
-    const timestamp = now / 1000;
-    const state: SpeedProfileState = {
-      time,
-      baseTime: time,
-      timestamp,
-      baseSampleTimestamp: timestamp,
-      baseVelocity: 0,
-      manualOffset: 0,
-    };
-
-    profileStateRef.current = state;
-    effectiveTimeRef.current = time;
-    setEffectiveScrollTime(time);
-
-    // extend manual hold so that transition back to playback reuses latest preview position
-    manualHoldUntilRef.current = now + MANUAL_RELEASE_MS;
-  }, [isPreviewMode, scrollTime]);
-
-  useEffect(() => {
-    const now = typeof performance !== 'undefined' ? performance.now() : Date.now();
-    if (Math.abs(scrollVelocity) >= MANUAL_TRIGGER_VELOCITY) {
-      manualHoldUntilRef.current = now + MANUAL_RELEASE_MS;
-    }
-  }, [scrollVelocity]);
-
-  useEffect(() => {
-    const now = typeof performance !== 'undefined' ? performance.now() : Date.now();
-    const prevState = profileStateRef.current;
-    const hasState = Boolean(prevState);
-    const safeDuration = Math.max(1, durationRef.current || 1);
-
-    if (!hasState || Math.abs(scrollTime - (prevState?.baseTime ?? scrollTime)) > safeDuration * 0.5) {
-      const time = Number.isFinite(scrollTime) ? scrollTime : 0;
-      const timestamp = now / 1000;
-      profileStateRef.current = {
-        time,
-        baseTime: time,
-        timestamp,
-        baseSampleTimestamp: timestamp,
-        baseVelocity: 0,
-        manualOffset: 0,
-      };
-      effectiveTimeRef.current = time;
-      setEffectiveScrollTime(time);
-    }
-  }, [scrollTime]);
-
-  useEffect(() => {
-    if (typeof window === 'undefined') {
-      const time = Number.isFinite(scrollTime) ? scrollTime : 0;
-      const now = (typeof performance !== 'undefined' ? performance.now() : Date.now()) / 1000;
-      profileStateRef.current = {
-        time,
-        baseTime: time,
-        timestamp: now,
-        baseSampleTimestamp: now,
-        baseVelocity: 0,
-        manualOffset: 0,
-      };
-      effectiveTimeRef.current = time;
-      setEffectiveScrollTime(time);
-      return;
-    }
-
-    let frameId: number;
-    const step = () => {
-      const now = typeof performance !== 'undefined' ? performance.now() : Date.now();
-
-      if (previewModeRef.current) {
-        const time = Number.isFinite(baseTimeRef.current) ? baseTimeRef.current : 0;
-        const timestamp = now / 1000;
-        const diff = Math.abs(time - effectiveTimeRef.current);
-        if (diff > DIFF_THRESHOLD) {
-          effectiveTimeRef.current = time;
-          setEffectiveScrollTime(time);
-        }
-        profileStateRef.current = {
-          time,
-          baseTime: time,
-          timestamp,
-          baseSampleTimestamp: timestamp,
-          baseVelocity: 0,
-          manualOffset: 0,
-        };
-        frameId = window.requestAnimationFrame(step);
-        return;
-      }
-
-      const manualOffset = Math.abs(profileStateRef.current?.manualOffset ?? 0);
-      const manualBiasActive = manualOffset > 0.4;
-      const manualActive = now < manualHoldUntilRef.current || manualBiasActive;
-      const result = getSpeedProfile({
-        baseTime: baseTimeRef.current,
-        duration: durationRef.current,
-        velocity: velocityRef.current,
-        previous: profileStateRef.current,
-        now,
-        manualActive,
-        manualScale: manualActive ? 0.58 : 0.38,
-        correctionStrength: manualActive ? 0 : 0.16,
-      });
-
-      profileStateRef.current = result.state;
-
-      const diff = Math.abs(result.time - effectiveTimeRef.current);
-      const elapsed = now - lastEmitRef.current;
-      if (diff > DIFF_THRESHOLD || elapsed > MAX_EMIT_INTERVAL_MS) {
-        effectiveTimeRef.current = result.time;
-        lastEmitRef.current = now;
-        setEffectiveScrollTime(result.time);
-      }
-
-      frameId = window.requestAnimationFrame(step);
-    };
-
-    frameId = window.requestAnimationFrame(step);
-    return () => {
-      window.cancelAnimationFrame(frameId);
-    };
-  }, []);
+  const inputRef = useRef<LyricMotionInput>({scrollTime, scrollTimeRef, duration,
+    velocity: scrollVelocity, isPreviewMode, seekRevision});
+  inputRef.current = {scrollTime, scrollTimeRef, duration, velocity: scrollVelocity, isPreviewMode, seekRevision};
 
   const isMobile = typeof navigator !== 'undefined'
     ? /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)
@@ -215,23 +78,6 @@ export default function UnifiedLyricsAndModel(props: UnifiedLyricsAndModelProps)
     edgeFadeStart: isMobile ? 0.52 : 0.48,
     edgeFeatherExponent: isMobile ? 1.05 : 0.85,
   }), [isMobile]);
-
-  // 获取分层歌词数据
-  const { front, back } = useLayeredLyrics({
-    lyrics: lyricData,
-    scrollTime: effectiveScrollTime,
-    duration,
-    options: lyricsConfig
-  });
-
-  // 调试信息
-  if (process.env.NODE_ENV === 'development') console.log('[UnifiedLyricsAndModel] 歌词数据:', {
-    totalLyrics: lyricData.length,
-    frontCount: front.length,
-    backCount: back.length,
-    scrollTime,
-    duration
-  });
 
   // 字体大小配置
   const baseFontScale = isMobile ? (isCompactMobile ? 0.48 : 0.54) : 0.6;
@@ -263,6 +109,7 @@ export default function UnifiedLyricsAndModel(props: UnifiedLyricsAndModelProps)
         }}
       >
       <Canvas
+        frameloop={active ? 'always' : 'never'}
         orthographic
         camera={{ position: [0, 0, 12], zoom: isMobile ? 92 : 100, near: 0.1, far: 50 }}
         dpr={[1, 1.8]}
@@ -280,33 +127,20 @@ export default function UnifiedLyricsAndModel(props: UnifiedLyricsAndModelProps)
           <directionalLight position={[2, 2, 2]} intensity={1.2} />
           <pointLight position={[-2, 2, -2]} intensity={0.3} color="#4A90E2" />
 
-          {/* 后层歌词组 - 模型背后，Z轴为负数，被模型遮挡 */}
-          <group renderOrder={1000}>
-            {back.map((line, idx) => (
-              <LyricBillboard
-                key={line.key}
-                text={line.text}
-                position={[line.x, line.y + lyricsYOffset, line.z + idx * 0.01]}
-                fontSize={backFontSize}
-                color={line.isCurrent ? '#f8fafc' : '#cbd5f5'}
-                opacity={line.opacity}
-                align={line.isLeft ? 'left' : 'right'}
-                scale={line.scale}
-                depthTest={true}      // 启用深度测试，参与遮挡计算
-                depthWrite={true}     // 启用深度写入，影响后续渲染
-                renderOrder={line.renderOrder}
-                orientation="vertical"
-                verticalAlign={line.verticalAlign}
-                fontFamily={fontFamily}
-                edgeFeather={line.edgeFeather}
-                fontRevision={fontRevision}
-              />
-            ))}
-          </group>
+          <LayeredLyricsScene
+            lyrics={lyricData}
+            inputRef={inputRef}
+            options={lyricsConfig}
+            frontFontSize={frontFontSize}
+            backFontSize={backFontSize}
+            yOffset={lyricsYOffset}
+            fontFamily={fontFamily}
+            fontRevision={fontRevision}
+          />
 
           {/* 3D模型 - 中间层，Z轴在0，遮挡后层歌词 */}
           <group renderOrder={2000} position={[0, modelYOffset, 0]} scale={[modelScale, modelScale, modelScale]}>
-            <JadeModelLoader
+            <MemoizedJadeModel
               modelPath={getModelPath(currentAnchor)}
               fitToView={false}
               enableRotation
@@ -354,29 +188,6 @@ export default function UnifiedLyricsAndModel(props: UnifiedLyricsAndModelProps)
             />
           </group>
 
-          {/* 前层歌词组 - 模型前面，Z轴为正值，不被模型遮挡 */}
-          <group renderOrder={3000}>
-            {front.map((line) => (
-              <LyricBillboard
-                key={line.key}
-                text={line.text}
-                position={[line.x, line.y + lyricsYOffset, line.z]}
-                fontSize={frontFontSize}
-                color={line.isCurrent ? '#f8fafc' : '#cbd5f5'}
-                opacity={line.opacity}
-                align={line.isLeft ? 'left' : 'right'}
-                scale={line.scale}
-                depthTest={true}      // 启用深度测试，参与遮挡计算
-                depthWrite={true}     // 启用深度写入，影响后续渲染
-                renderOrder={line.renderOrder}
-                orientation="vertical"
-                verticalAlign={line.verticalAlign}
-                fontFamily={fontFamily}
-                edgeFeather={line.edgeFeather}
-                fontRevision={fontRevision}
-              />
-            ))}
-          </group>
         </Suspense>
       </Canvas>
       </div>

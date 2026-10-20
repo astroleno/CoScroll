@@ -171,7 +171,6 @@ export default function HomePage() {
   const PIXELS_PER_SECOND = 12; // 再次降低速度
   const DIRECTION = 1; // 改为 LTR，因为歌词现在是竖排的，需要从左到右滚动
   const DRAG_THRESHOLD_PX = 6; // 超过阈值才进入预览拖拽，避免点击被拦截
-  const RECENTER_THRESHOLD_SEC = 30; // 超过该时间位移则重置原点，避免超大 transform
 
   // 计算值（不用state）
   const isPreviewMode = previewTime !== null;
@@ -198,22 +197,15 @@ export default function HomePage() {
   const lastCommittedTimeRef = useRef({ stamp: 0, display: 0 });
   const lastSeekTimeRef = useRef<number>(0);
   const seekProtectionUntilRef = useRef<number>(0);
-  // RAF 渲染与相对原点（Phase 2）
+  // Continuous scene time is read by the Canvas without a React update per frame.
   const visualAbsoluteTimeRef = useRef<number>(0);
   const visualAnchorRef = useRef<{ engineAbs: number; stamp: number }>({ engineAbs: 0, stamp: 0 });
   const rafIdRef = useRef<number | null>(null);
-  const [visualAbsoluteTime, setVisualAbsoluteTime] = useState(0);
-  const [originTime, setOriginTime] = useState(0);
-  const lyricTrackRef = useRef<HTMLDivElement>(null);
-  const lastOverlayUpdateRef = useRef<number>(0);
 
   // 从配置动态加载歌词
   const { lyrics, isLoading: isLyricsLoading } = useLyricsFromConfig();
-  const fontFaceReady = Boolean(config) && !isConfigLoading && !isLyricsLoading;
-
   useEffect(() => {
-    // The font rule is mounted with the scene, after config and lyrics resolve.
-    if (!fontFaceReady) return;
+    // RootLayout declares and preloads the full font before client hydration.
     let cancelled = false;
     const bumpRevision = () => setFontRevision((rev) => rev + 1);
 
@@ -241,7 +233,7 @@ export default function HomePage() {
     return () => {
       cancelled = true;
     };
-  }, [selectedFont, fontFaceReady]);
+  }, [selectedFont]);
 
   const commitTimeUpdate = useCallback(
     (displayTime: number, absoluteTime: number, force: boolean = false) => {
@@ -273,6 +265,8 @@ export default function HomePage() {
         // Seek 保护期 500ms
         seekProtectionUntilRef.current = now + 500;
         lastSeekTimeRef.current = now;
+        visualAbsoluteTimeRef.current = absoluteTime;
+        visualAnchorRef.current = { engineAbs: absoluteTime, stamp: now };
       }
 
       lastCommittedTimeRef.current = { stamp: now, display: displayTime };
@@ -290,21 +284,6 @@ export default function HomePage() {
     if (DEBUG_DEV) console.log(logMessage);
     setDebugLogs(prev => [...prev.slice(-4), logMessage]);
   }, []);
-
-  // 当前用于映射位移的绝对时间（预览优先，播放态用视觉时间）
-  const mappedAbsoluteTime = useMemo(() => {
-    if (isPreviewMode && previewTime != null) return previewTime as number;
-    return visualAbsoluteTime;
-  }, [isPreviewMode, previewTime, visualAbsoluteTime]);
-
-  // 歌词轨道 transform（改为命令式更新以减少 setState 频率）
-  const updateLyricTrackTransform = useCallback((absTime: number) => {
-    const node = lyricTrackRef.current;
-    if (!node) return;
-    const relative = (absTime - originTime);
-    const x = DIRECTION * -(relative * PIXELS_PER_SECOND);
-    node.style.transform = `translate3d(${x}px, 0, 0)`;
-  }, [originTime]);
 
   // 预览拖拽状态（Phase 1）
   const isPointerPreviewingRef = useRef(false);
@@ -413,7 +392,7 @@ export default function HomePage() {
     const initialAbsolute = 0 * base + initialTime;
     setLoopCount(0);
     commitTimeUpdate(initialTime, initialAbsolute, true);
-  }, [isMobile, addDebugLog, commitTimeUpdate]);
+  }, [isMobile, addDebugLog, commitTimeUpdate, duration]);
 
   // 播放/暂停控制
   const handlePlayPause = useCallback(() => {
@@ -433,8 +412,6 @@ export default function HomePage() {
     commitTimeUpdate(displayTime, absoluteTime, true);
     // 立即同步视觉时间与位移，保证进度条/歌词/模型同跳
     visualAbsoluteTimeRef.current = absoluteTime;
-    setVisualAbsoluteTime(absoluteTime);
-    updateLyricTrackTransform(absoluteTime);
   }, [duration, commitTimeUpdate]);
 
   // AudioEngine event handlers
@@ -485,6 +462,7 @@ export default function HomePage() {
     // 设置预览时间，不 seek
     if (DEBUG_DEV) console.log('[handleLyricPreviewTime]', { time, isPlaying });
     setPreviewTime(time);
+    visualAbsoluteTimeRef.current = time;
     const safeDuration = Math.max(1, duration);
     const displayTime = ((time % safeDuration) + safeDuration) % safeDuration;
     timelineStore.setVisualTime(displayTime, time);
@@ -619,8 +597,7 @@ export default function HomePage() {
     audioTimeRef.current = 0;
     lastCommittedTimeRef.current = { stamp: 0, display: 0 };
     visualAbsoluteTimeRef.current = 0;
-    setVisualAbsoluteTime(0);
-    setOriginTime(0);
+    visualAnchorRef.current = { engineAbs: 0, stamp: performance.now() };
   }, [audioSrc]);
 
   // 不再需要平滑渲染 useEffect，使用 displayTime 直接计算
@@ -717,16 +694,6 @@ export default function HomePage() {
     if (!isPlaying || isPreviewMode) {
       const abs = (isPreviewMode && previewTime != null) ? (previewTime as number) : (absoluteTime as number);
       visualAbsoluteTimeRef.current = abs;
-      setVisualAbsoluteTime((prev) => {
-        // 降低 overlay 刷新频率
-        const now = typeof performance !== 'undefined' ? performance.now() : Date.now();
-        if (now - lastOverlayUpdateRef.current > 120) {
-          lastOverlayUpdateRef.current = now;
-          return abs;
-        }
-        return prev;
-      });
-      updateLyricTrackTransform(abs);
       return;
     }
     const tick = () => {
@@ -735,16 +702,6 @@ export default function HomePage() {
       const dtSec = Math.max(0, (now - stamp) / 1000);
       const expected = engineAbs + dtSec;
       visualAbsoluteTimeRef.current = expected;
-      // 轨道命令式更新
-      updateLyricTrackTransform(expected);
-      // 调试叠层节流更新
-      setVisualAbsoluteTime((prev) => {
-        if (now - lastOverlayUpdateRef.current > 120) {
-          lastOverlayUpdateRef.current = now;
-          return expected;
-        }
-        return prev;
-      });
       rafIdRef.current = requestAnimationFrame(tick);
     };
     rafIdRef.current = requestAnimationFrame(tick);
@@ -752,22 +709,14 @@ export default function HomePage() {
       if (rafIdRef.current != null) cancelAnimationFrame(rafIdRef.current);
       rafIdRef.current = null;
     };
-  }, [isPlaying, isPreviewMode, previewTime, absoluteTime, updateLyricTrackTransform]);
-
-  // 原点重置，避免超大位移
-  useEffect(() => {
-    const current = isPreviewMode && previewTime != null ? (previewTime as number) : visualAbsoluteTimeRef.current;
-    if (Math.abs(current - originTime) > RECENTER_THRESHOLD_SEC) {
-      setOriginTime(current);
-      // 重定位轨道，避免跳动
-      updateLyricTrackTransform(current);
-    }
-  }, [isPreviewMode, previewTime, originTime, updateLyricTrackTransform]);
+  }, [isPlaying, isPreviewMode, previewTime, absoluteTime]);
 
   // 如果配置或歌词正在加载，显示加载状态
   if (isConfigLoading || !config || isLyricsLoading) {
     return (
       <div className="flex items-center justify-center h-screen bg-gray-900">
+        <link rel="preload" href={assetUrl('/fonts/润植家康熙字典美化体.woff2')} as="font" type="font/woff2" crossOrigin="anonymous" fetchPriority="low" />
+        <link rel="preload" href={assetUrl('/projects/heart-sutra.json')} as="fetch" crossOrigin="anonymous" fetchPriority="high" />
         <div className="text-center">
           <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-blue-500 mx-auto mb-4"></div>
           <p className="text-white text-lg">
@@ -819,12 +768,6 @@ export default function HomePage() {
           image-rendering: crisp-edges;
         }
 
-        /* 注册自定义字体（来自 public/fonts） */
-        @font-face {
-          font-family: 'RunZhiJiaKangXiZidian';
-          src: url('${assetUrl('/fonts/润植家康熙字典美化体.woff2')}') format('woff2');
-          font-display: swap;
-        }
       `}</style>
 
       {/* Keep one shader mounted across the cover and the reading scene. */}
@@ -883,7 +826,10 @@ export default function HomePage() {
         <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-10">
           <UnifiedLyricsAndModel
             currentTime={displayTime}
-            scrollTime={mappedAbsoluteTime}
+            scrollTime={absoluteTime}
+            scrollTimeRef={visualAbsoluteTimeRef}
+            seekRevision={seekSignal}
+            active={hasUserInteracted}
             duration={duration}
             isPlaying={isPlaying}
             isPreviewMode={isPreviewMode}
