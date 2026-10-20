@@ -10,6 +10,7 @@ JS、CSS、字体、OBJ、HDR、图片、歌词和项目 JSON 使用 `assets.ait
 
 ```sh
 npm run test:deployment
+npm run test:runtime
 npm run release:package -- --profile local --output .cache/releases/local-1
 npm run release:preview -- .cache/releases/local-1
 # 在另一个终端运行完整 HTTP、哈希、MIME、缓存、CORS 和全部 MP3 Range 检查：
@@ -34,6 +35,18 @@ npm run release:plan -- .cache/releases/cdn-1
 发布身份包含源文件、锁文件、构建与部署配置、精确 Node/Next 版本和交付模式；
 构建期间输入发生变化会失败。所有交付文件记录 SHA-256、大小、MIME、缓存规则和 channel。
 备份、source map 和系统垃圾文件不进入交付包。Inter 已随应用打包，许可证在 `public/fonts/OFL-Inter.txt`。
+
+主页面使用原字体完整字库的 WOFF2，旧实验页仍可引用 TTF。重新生成时使用隔离依赖：
+
+```sh
+python3 -m pip install --no-cache-dir --target .cache/font-tools -r deploy/font-requirements.txt
+PYTHONPATH=.cache/font-tools PYTHONDONTWRITEBYTECODE=1 python3 deploy/compress-font.py
+```
+
+压缩器逐一验证全部 8106 个字形的轮廓、字符映射和字宽，不裁剪字库。
+TTF 为 6,048,788 字节，WOFF2 为 2,447,968 字节。主页面在字体规则挂载后等待字体载入，
+再刷新歌词纹理；透明度、颜色和边缘羽化由材质处理，避免每帧重新绘制、上传文字纹理。
+当前模型与下一个不同的模型共享下载和解析缓存，首访不再并发加载整套模型。
 
 ## 经批准后发布
 
@@ -111,3 +124,65 @@ CDN 可能重排 Cache-Control 指令，校验按完整指令集合比较。
 
 当前 Next 14.0.4 的依赖审计仍有已知告警，本方案部署静态导出，不运行 Next 服务，
 不发布 `.next/server`。这不等于依赖审计通过；框架升级需另行验证兼容性。
+
+## 第二轮优化与发布（2026-10-20）
+
+最终公网版本为 `coscroll-43fe2f5e582083ed`，交付闭包 SHA-256 为
+`4d6d74aca58197ed53ed01a8c68cbb2380a7f9ffed61e378b568f95bb7751c7d`。
+本轮保留书法字形、玉石双层材质、丝绸背景和歌词的深度、羽化效果。
+
+- 歌词交互层接管触摸手势，避免第一段移动后被浏览器取消；负数预览时间按音频循环归一化。
+- 文字纹理只在内容、字体或排版方向改变时生成，颜色、透明度和羽化改由材质处理。
+  字体载入完成后才刷新缓存，避免将系统字体永久留在纹理中。
+- 当前模型与下一不同模型共用正在进行的下载和解析；取消启动时加载整套模型。
+- 全字库 WOFF2 的 8106 个字形、映射与字宽均校验一致，体积减少约 60%。
+- 修复延迟返回的播放请求覆盖暂停状态的问题。受控延迟 1.5 秒时，旧版会出现
+  音频已暂停、按钮仍显示 Pause 的不一致；新版保持音频暂停、按钮显示 Play。
+- 首次音频加载失败后最多自动重试两次，间隔 1 秒、2 秒；切换音源或卸载时取消旧重试。
+  已经成功就绪的曲目不通过该机制重新加载。
+- 部署防护测试 8/8、模型加载回归测试 3/3、生产构建与 TypeScript 检查通过。
+
+COS 上传 115 个新对象（含清单）；源站暂存并校验 71 个文件后，原子切换
+`/www/wwwroot/coscroll-current` 到 `/www/wwwroot/coscroll-releases/coscroll-43fe2f5e582083ed/web`。
+Nginx 配置 SHA-256 仍为 `7263c4f493b541e88eb85c6d911ea1246570fe20ddd97eabc365fa2d82e4f43e`。
+回滚目标为前一个优化包 `coscroll-3159eb1b1a147b2f`；它和原始版本
+`coscroll-11630f6d25848056` 的源站目录及 COS 对象均保留。
+
+切换前，从源站独立公网出口完整验证 114 个 CDN 交付文件及全部 3 个音频分段；切换后从同一出口，
+通过 HTTPS 完整验证 185 个交付文件的哈希、MIME、缓存和跨域规则、全部音频分段、
+规范跳转及 404。首页与 LuBirth 页面哈希和最终切换前基线一致。
+此前本机全量重测曾遇到 CDN TLS 连接超时，未将该超时记为内容校验通过，
+也未跳过文件；上面的独立出口验证覆盖全部文件。
+
+发布证据位于 `.cache/production-coscroll-43fe2f5e582083ed/`，交互与性能证据位于
+`.cache/iteration-20261020/`。本轮回滚工具为 `python3 .cache/iteration-origin-final.py rollback`，
+会先比对当前入口、配置和邻站链接，拒绝覆盖后续部署。
+
+音频浏览器回归脚本为 `test/runtime/audio-browser.js` 与
+`test/runtime/audio-retry-limit-browser.js`。在专用、启用触摸的临时 Playwright 会话打开站点后，
+通过 `run-code --filename <script>` 执行。前者注入一次网络失败和延迟播放请求，
+同时验证暂停、左右各 180 px 横滑、循环回退、360 px 进度条拖动与续播；
+后者持续中断音频请求，验证只显式重载两次、总计三个失败后停止。
+这些故障注入记录与普通访问记录分别保存，不将预期的失败请求算作正常网络测试。
+
+最终公网浏览器回归通过上述两份脚本：第一次请求被中断后，第 2 次请求成功就绪；
+延迟播放请求返回后，音频保持暂停且按钮为 Play；两向 180 px 横滑均准确改变 15 秒，
+完整收到 pointerup，未出现 pointercancel。循环回退、360 × 800 进度拖动与续播通过。
+持续故障用例显式重载 2 次、收到 3 次错误后停止。
+
+| 采样条件 | 帧率与文字上传 |
+| --- | --- |
+| 旧版公网，Ego Chromium，390 × 844、DPR 2、Android UA | 6 秒约 2.14 FPS，54 次 Canvas 文字上传 |
+| 优化布局本地生产包，相同 Ego 尺寸与 UA | 6 秒约 29.50 FPS，0 次文字上传 |
+| 最终公网，独立 Chrome for Testing 155，390 × 844、DPR 2、Android UA | 6 秒约 59.34 FPS，p95 帧间隔 17.7 ms，0 次文字上传 |
+
+最终公网普通访问采样约 9.45 秒达到可播放、字体载入状态；启动只请求当前与下一个模型，
+共 2 个 OBJ，未捕获页面运行错误。字体与图形截图已人工检查。
+桌面 1440 × 900 的播放、暂停、进度跳转、歌词回退及从新位置续播通过，未出现页面横向溢出。
+上述帧率来自 requestAnimationFrame 采样；浏览器版本、交付环境和系统负载不同，
+没有清空 CDN 或 GPU 缓存，也没有隔离系统负载，不作为标准化提升倍数或真机 GPU 帧率。
+旧版与优化布局的完成下载采样约 23.7 / 8.6 MiB，各仍有 2 个请求进行中，不代表完整流量上限。
+未做 iOS 或 Android 真机测试。
+
+本轮代码提交为 `42297de`（渲染与下载优化）和 `1a2eb65`（音频状态与首次加载恢复），
+沿用原来的 `decoupled` 分支。
