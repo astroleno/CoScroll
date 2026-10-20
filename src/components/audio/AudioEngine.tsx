@@ -49,6 +49,17 @@ export const AudioEngine: React.FC<AudioEngineProps> = ({
   const gainNodeRef = useRef<GainNode | null>(null);
   const animationFrameRef = useRef<number | null>(null);
   const lastPlaybackTimeRef = useRef(0);
+  const playingIntentRef = useRef(desiredPlayingState);
+  const sourceRef = useRef(audioSrc);
+  const playGenerationRef = useRef(0);
+  const startupRetriesRef = useRef(0);
+  const startupRetryTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  if (playingIntentRef.current !== desiredPlayingState || sourceRef.current !== audioSrc) {
+    playGenerationRef.current++;
+    playingIntentRef.current = desiredPlayingState;
+    sourceRef.current = audioSrc;
+  }
 
   // Expose audio element to parent
   useEffect(() => {
@@ -66,6 +77,16 @@ export const AudioEngine: React.FC<AudioEngineProps> = ({
     loopCount: 0,
     isBuffering: false
   });
+
+  useEffect(() => {
+    stateRef.current.isReady = false;
+    startupRetriesRef.current = 0;
+    return () => {
+      playGenerationRef.current++;
+      if (startupRetryTimerRef.current) clearTimeout(startupRetryTimerRef.current);
+      startupRetryTimerRef.current = null;
+    };
+  }, [audioSrc]);
 
   // Seek management
   const isSeekingRef = useRef(false);
@@ -251,36 +272,53 @@ export const AudioEngine: React.FC<AudioEngineProps> = ({
 
   // Handle audio ready to play
   const handleCanPlay = useCallback(() => {
+    if (startupRetryTimerRef.current) {
+      clearTimeout(startupRetryTimerRef.current);
+      startupRetryTimerRef.current = null;
+    }
     if (!stateRef.current.isReady) {
       stateRef.current.isReady = true;
       onReady();
     }
 
-      if (desiredPlayingState) {
+      if (playingIntentRef.current) {
         const audio = audioRef.current;
         if (!audio) return;
 
         initAudioContext();
         resumeAudioContext();
 
+        const generation = playGenerationRef.current;
         const playPromise = audio.play();
         if (playPromise !== undefined) {
           playPromise
             .then(() => {
+              if (generation !== playGenerationRef.current || !playingIntentRef.current || audio !== audioRef.current || audio.paused) return;
               stateRef.current.isPlaying = true;
               onPlayStateChange(true);
             })
             .catch(error => {
+              if (generation !== playGenerationRef.current || !playingIntentRef.current || audio !== audioRef.current) return;
               console.error('[AudioEngine] Play on ready failed:', error);
             });
         }
       }
-  }, [desiredPlayingState, initAudioContext, resumeAudioContext, onPlayStateChange, onReady]);
+  }, [initAudioContext, resumeAudioContext, onPlayStateChange, onReady]);
 
   // Sync with desired playing state
   useEffect(() => {
     const audio = audioRef.current;
-    if (!audio || !stateRef.current.isReady) return;
+    if (!audio) return;
+    // Pause also cancels a pending play(), before its native play event arrives.
+    if (!desiredPlayingState) {
+      audio.pause();
+      if (stateRef.current.isPlaying) {
+        stateRef.current.isPlaying = false;
+        onPlayStateChange(false);
+      }
+      return;
+    }
+    if (!stateRef.current.isReady) return;
 
     // Initialize audio context on first play
       if (desiredPlayingState && !stateRef.current.isPlaying) {
@@ -291,27 +329,43 @@ export const AudioEngine: React.FC<AudioEngineProps> = ({
     const currentState = stateRef.current.isPlaying;
 
     if (desiredPlayingState && !currentState) {
+      const generation = playGenerationRef.current;
       const playPromise = audio.play();
 
       if (playPromise !== undefined) {
         playPromise
           .then(() => {
+            if (generation !== playGenerationRef.current || !playingIntentRef.current || audio !== audioRef.current || audio.paused) return;
             stateRef.current.isPlaying = true;
             onPlayStateChange(true);
           })
           .catch(error => {
+            if (generation !== playGenerationRef.current || !playingIntentRef.current || audio !== audioRef.current) return;
             console.error('[AudioEngine] Play failed:', error);
             stateRef.current.isPlaying = false;
             onPlayStateChange(false);
           });
       }
-    } else if (!desiredPlayingState && currentState) {
-      // Pause
-      audio.pause();
-      stateRef.current.isPlaying = false;
-      onPlayStateChange(false);
     }
   }, [desiredPlayingState, initAudioContext, resumeAudioContext, onPlayStateChange]);
+
+  const handleAudioError = useCallback((event: React.SyntheticEvent<HTMLAudioElement>) => {
+    const audio = event.currentTarget;
+    // Retry only startup failures. Never restart a track that has already played.
+    if (!stateRef.current.isReady && startupRetriesRef.current < 2) {
+      if (startupRetryTimerRef.current) return;
+      const attempt = ++startupRetriesRef.current;
+      console.warn(`[AudioEngine] Initial audio request failed; retry ${attempt}/2`);
+      startupRetryTimerRef.current = setTimeout(() => {
+        startupRetryTimerRef.current = null;
+        if (audio !== audioRef.current || sourceRef.current !== audioSrc || stateRef.current.isReady) return;
+        playGenerationRef.current++;
+        audio.load();
+      }, attempt * 1000);
+      return;
+    }
+    console.error('[AudioEngine] Audio error:', audio.error);
+  }, [audioSrc]);
 
   // Sync external loopCount to internal state
   useEffect(() => {
@@ -374,7 +428,11 @@ export const AudioEngine: React.FC<AudioEngineProps> = ({
       onTimeUpdate={handleTimeUpdate}
       onLoadedMetadata={handleLoadedMetadata}
       onCanPlay={handleCanPlay}
-      onPlay={() => {
+      onPlay={(event) => {
+        if (!playingIntentRef.current) {
+          event.currentTarget.pause();
+          return;
+        }
         stateRef.current.isPlaying = true;
       onPlayStateChange(true);
       startAnimationLoop();
@@ -384,9 +442,7 @@ export const AudioEngine: React.FC<AudioEngineProps> = ({
         onPlayStateChange(false);
         cancelAnimationLoop();
       }}
-      onError={(e) => {
-        console.error('[AudioEngine] Audio error:', e.currentTarget.error);
-      }}
+      onError={handleAudioError}
       preload="auto"
       playsInline
       webkit-playsinline="true"
