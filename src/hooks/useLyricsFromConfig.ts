@@ -7,6 +7,7 @@
 import { useState, useEffect } from 'react';
 import type { LyricLine } from '@/types';
 import { useAssetConfig } from '@/stores/projectConfigStore';
+import { assetUrl } from '@/utils/assetUrl';
 
 /**
  * 解析 LRC 格式歌词
@@ -72,7 +73,7 @@ export function useLyricsFromConfig() {
       setError(null);
 
       try {
-        const lyricsPath = assetConfig.lyrics.src;
+        const lyricsPath = assetUrl(assetConfig.lyrics.src);
         console.log('[useLyricsFromConfig] 加载歌词文件:', lyricsPath);
 
         const response = await fetch(lyricsPath);

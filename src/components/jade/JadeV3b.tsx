@@ -1,4 +1,6 @@
 "use client";
+import { assetUrl } from '@/utils/assetUrl';
+
 
 import dynamic from "next/dynamic";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
@@ -106,9 +108,9 @@ function ScrollRotator({
 
 // 承载自转并将速度传给 JadeV2（通过其 autoRotate + 内部 useFrame 应用）
 export default function JadeV3b({
-  modelPath = "/models/10k_obj/001_空.obj",
+  modelPath = assetUrl("/models/10k_obj/001_空.obj"),
   // 仅用于 IBL/反射的环境 HDR（按你的需求换成 dusk 版本）
-  hdrPath = "/textures/qwantani_moon_noon_puresky_1k.hdr",
+  hdrPath = assetUrl("/textures/qwantani_moon_noon_puresky_1k.hdr"),
   enableRotation = true,
   showBackground = true,
   hdrExposure = 1.0,
@@ -224,8 +226,8 @@ export default function JadeV3b({
             modelPath={modelList[index]}
             hdrPath={hdrPath}
             // 背景维持原来的 moon_noon，不随 env HDR 更换
-            backgroundHdrPath="/textures/qwantani_moon_noon_puresky_1k.hdr"
-            normalMapPath="/textures/normal.jpg"
+            backgroundHdrPath={assetUrl("/textures/qwantani_moon_noon_puresky_1k.hdr")}
+            normalMapPath={assetUrl("/textures/normal.jpg")}
             showBackground={showBackground}
             useDualPassRefraction={false}
             // 开启几何均匀化与一次细分，观察 FPS 影响

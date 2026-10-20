@@ -1,4 +1,6 @@
 "use client";
+import { assetUrl } from '@/utils/assetUrl';
+
 
 import dynamic from "next/dynamic";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
@@ -133,8 +135,8 @@ function ScrollRotator({
 
 // v5：承载交互自转 + 使用 v2 的高级材质/折射；新增模型切换
 export default function JadeV5({
-  modelPath = "/models/10k_obj/001_空.obj",
-  hdrPath = "/textures/qwantani_moon_noon_puresky_1k.hdr",
+  modelPath = assetUrl("/models/10k_obj/001_空.obj"),
+  hdrPath = assetUrl("/textures/qwantani_moon_noon_puresky_1k.hdr"),
   enableRotation = true,
   showBackground = true,
   hdrExposure = 1.0,
@@ -156,7 +158,7 @@ export default function JadeV5({
       return arr.filter(Boolean);
     } catch (err) {
       console.error("[JadeV5] normalize modelPath error", err);
-      return ["/models/10k_obj/001_空.obj"];
+      return [assetUrl("/models/10k_obj/001_空.obj")];
     }
   }, [modelPath]);
 
@@ -210,7 +212,7 @@ export default function JadeV5({
             <JadeV2
               modelPath={models[index]}
               hdrPath={hdrPath}
-              normalMapPath="/textures/normal.jpg"
+              normalMapPath={assetUrl("/textures/normal.jpg")}
               showBackground={showBackground}
               useDualPassRefraction={false}
               // 关闭几何细分与均匀化（maxEdge/subdivisions 全关）

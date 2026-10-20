@@ -1,12 +1,14 @@
 'use client';
+import { assetUrl } from '@/utils/assetUrl';
+
 
 import { useState } from 'react';
 import JadeV5 from '@/components/jade/JadeV5';
 
 const MODELS = [
-  '/models/10k_obj/001_空.obj',
-  '/models/10k_obj/002_心.obj',
-  '/models/10k_obj/003_道.obj',
+  assetUrl('/models/10k_obj/001_空.obj'),
+  assetUrl('/models/10k_obj/002_心.obj'),
+  assetUrl('/models/10k_obj/003_道.obj'),
 ];
 
 export default function Page() {

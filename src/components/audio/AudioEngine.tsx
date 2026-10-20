@@ -73,6 +73,7 @@ export const AudioEngine: React.FC<AudioEngineProps> = ({
   const lastSeekTimeRef = useRef(0);
   const seekThrottleTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const lastForcedSeekRef = useRef<number>(0);
+  const lastAppliedSeekSignalRef = useRef(seekSignal);
 
   // Audio context management
   const initAudioContext = useCallback(() => {
@@ -325,7 +326,16 @@ export const AudioEngine: React.FC<AudioEngineProps> = ({
 
   // Sync with desired time position
   useEffect(() => {
-    if (!stateRef.current.isReady || isSeekingRef.current) return;
+    if (!stateRef.current.isReady) return;
+
+    const base = Math.max(1, duration || audioRef.current?.duration || 1);
+    const targetTime = desiredLoopCount * base + desiredTime;
+    if (seekSignal !== lastAppliedSeekSignalRef.current) {
+      lastAppliedSeekSignalRef.current = seekSignal;
+      performSeek(targetTime);
+      return;
+    }
+    if (isSeekingRef.current) return;
 
     const currentTime = stateRef.current.currentTime;
     const timeDiff = Math.abs(desiredTime - currentTime);
@@ -337,15 +347,10 @@ export const AudioEngine: React.FC<AudioEngineProps> = ({
       const recentlyForced = now - lastForcedSeekRef.current < 500;
       const shouldSeek = diff > 0 || recentlyForced;
       if (shouldSeek) {
-        performSeek(desiredTime);
+        performSeek(targetTime);
       }
     }
-  }, [desiredTime, performSeek]);
-
-  useEffect(() => {
-    if (seekSignal === undefined) return;
-    lastForcedSeekRef.current = Date.now();
-  }, [seekSignal]);
+  }, [desiredTime, desiredLoopCount, duration, isReady, seekSignal, performSeek]);
 
   // Cleanup
   useEffect(() => {

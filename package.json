@@ -7,7 +7,12 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "type-check": "tsc --noEmit"
+    "type-check": "tsc --noEmit",
+    "release:package": "node deploy/package-release.mjs",
+    "release:preview": "node deploy/preview-release.mjs",
+    "release:verify": "node deploy/verify-release.mjs",
+    "release:plan": "node deploy/stage-origin.mjs",
+    "test:deployment": "node --test test/deploy/*.test.mjs"
   },
   "dependencies": {
     "@react-three/drei": "^9.100.0",

@@ -1,4 +1,6 @@
 'use client';
+import { assetUrl } from '@/utils/assetUrl';
+
 
 import React from 'react';
 import { Canvas, useLoader, useThree } from '@react-three/fiber';
@@ -15,7 +17,7 @@ import { mochiVertexShader } from '@/components/mochi/shaders/mochi.vert';
 import { mochiFixedFragmentShader } from '@/components/mochi/shaders/mochi-fixed.frag';
 import { useMemo } from 'react';
 
-function MochiObj({ path = '/models/10k_obj/001_空.obj' }) {
+function MochiObj({ path = assetUrl('/models/10k_obj/001_空.obj') }) {
   const obj = useLoader(OBJLoader, path);
 
   const uniforms = useMemo(
@@ -85,7 +87,7 @@ function MochiObj({ path = '/models/10k_obj/001_空.obj' }) {
   return <primitive object={obj} />;
 }
 
-function ModelShellsFromPath({ path = '/models/10k_obj/001_空.obj' }) {
+function ModelShellsFromPath({ path = assetUrl('/models/10k_obj/001_空.obj') }) {
   const obj = useLoader(OBJLoader, path);
   // 统一到与主体相同的居中与缩放（烘焙进几何）
   const meshes: any[] = [];
@@ -204,8 +206,8 @@ export default function MochiObjPage() {
         <directionalLight position={[5, 5, 5]} intensity={0.7} />
 
         {/* 主体 + 贴合模型的法线膨胀外壳 */}
-        <MochiObj path="/models/10k_obj/001_空.obj" />
-        <ModelShellsFromPath path="/models/10k_obj/001_空.obj" />
+        <MochiObj path={assetUrl("/models/10k_obj/001_空.obj")} />
+        <ModelShellsFromPath path={assetUrl("/models/10k_obj/001_空.obj")} />
 
         {/* Bloom 阈值拉高、强度适中，避免多层发光累加烧穿 */}
         <MochiComposerFixed bloomStrength={0.7} bloomRadius={0.75} bloomThreshold={0.62} />

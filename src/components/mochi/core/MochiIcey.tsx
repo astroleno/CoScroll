@@ -1,4 +1,6 @@
 'use client';
+import { assetUrl } from '@/utils/assetUrl';
+
 
 import React, { useMemo } from 'react';
 import * as THREE from 'three';
@@ -25,7 +27,7 @@ export interface MochiIceyProps {
  */
 export default function MochiIcey(props: MochiIceyProps) {
   const {
-    modelPath = '/models/10k_obj/001_空.obj',
+    modelPath = assetUrl('/models/10k_obj/001_空.obj'),
     thicknessMapUrl,
     thicknessRepeat = [1, 1],
     // 按文档建议的更“糯”的默认区间

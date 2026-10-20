@@ -1,4 +1,6 @@
 "use client";
+import { assetUrl } from '@/utils/assetUrl';
+
 
 import { Suspense, useState } from 'react';
 import { Canvas } from '@react-three/fiber';
@@ -40,7 +42,7 @@ function MiddleLayer() {
       <Environment preset="sunset" background={false} />
       <group>
         <JadeModelLoader
-          modelPath="/models/10k_obj/001_空.obj"
+          modelPath={assetUrl("/models/10k_obj/001_空.obj")}
           fitToView
           enableRotation
           rotationDurationSec={10}

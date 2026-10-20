@@ -4,6 +4,8 @@
  */
 
 'use client';
+import { assetUrl } from '@/utils/assetUrl';
+
 
 import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { AudioEngine } from './AudioEngine';
@@ -24,8 +26,8 @@ import {
 } from './types';
 
 // LRC文件路径
-const LRC_FILE_PATH = '/lyrics/心经.lrc';
-const AUDIO_FILE_PATH = '/audio/心经.mp3';
+const LRC_FILE_PATH = assetUrl('/lyrics/心经.lrc');
+const AUDIO_FILE_PATH = assetUrl('/audio/心经.mp3');
 
 export const LyricsSyncV3: React.FC = () => {
   // 模块引用
@@ -308,7 +310,7 @@ export const LyricsSyncV3: React.FC = () => {
       console.log('📅 Timeline 模块已初始化');
 
       const resolvedUrl = typeof window !== 'undefined'
-        ? `${window.location.origin}${encodeURI(LRC_FILE_PATH)}`
+        ? new URL(LRC_FILE_PATH, window.location.origin).href
         : LRC_FILE_PATH;
 
       console.log('📅 正在获取歌词文件:', resolvedUrl);

@@ -1,4 +1,6 @@
 "use client";
+import { assetUrl } from '@/utils/assetUrl';
+
 
 import JadeV4 from '@/components/jade/JadeV4';
 import LyricSyncV2 from '@/components/LyricSync-v2';
@@ -27,10 +29,10 @@ export default function Page() {
           hdrExposure={1.5}
           backgroundColor={'#101014'}
           // 可分别指定：背景与折射/IBL 环境
-          backgroundHdrPath="/textures/qwantani_moon_noon_puresky_1k.hdr"
-          refractionEnvPath="/textures/qwantani_moon_noon_puresky_1k.hdr"
-          modelPath="/models/10k_obj/001_空.obj"
-          normalMapPath="/textures/normal.jpg"
+          backgroundHdrPath={assetUrl("/textures/qwantani_moon_noon_puresky_1k.hdr")}
+          refractionEnvPath={assetUrl("/textures/qwantani_moon_noon_puresky_1k.hdr")}
+          modelPath={assetUrl("/models/10k_obj/001_空.obj")}
+          normalMapPath={assetUrl("/textures/normal.jpg")}
           debugForceReflection={false}
           useDualPassRefraction={true}
           refractionGain={params.refractionGain}

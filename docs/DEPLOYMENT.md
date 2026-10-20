@@ -1,5 +1,7 @@
 # CoScroll 部署指南
 
+当前 `aitoshuu.me/coscroll/` 的 COS/CDN 发布流程见 [CoScroll 发布说明](COSCROLL_RELEASE.md)。下面保留原 Vercel 方案供历史参考。
+
 ## Vercel 部署步骤
 
 ### 1. 准备工作

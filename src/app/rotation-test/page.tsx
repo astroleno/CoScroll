@@ -1,4 +1,6 @@
 "use client";
+import { assetUrl } from '@/utils/assetUrl';
+
 
 import React, { useState, useEffect, useRef } from 'react';
 import { Canvas } from '@react-three/fiber';
@@ -171,12 +173,12 @@ export default function RotationTestPage() {
               <ambientLight intensity={0.4} />
               <directionalLight position={[2, 2, 2]} intensity={1.2} />
               <Environment
-                files="/textures/qwantani_moon_noon_puresky_1k.hdr"
+                files={assetUrl("/textures/qwantani_moon_noon_puresky_1k.hdr")}
                 background={false}
               />
 
               <JadeModelLoader
-                modelPath="/models/10k_obj/001_空.obj"
+                modelPath={assetUrl("/models/10k_obj/001_空.obj")}
                 fitToView={true}
                 enableRotation={true}
                 rotationDurationSec={8}

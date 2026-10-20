@@ -1,4 +1,6 @@
 'use client';
+import { assetUrl } from '@/utils/assetUrl';
+
 
 import * as THREE from 'three';
 import { useEffect, useMemo, useRef, useState } from 'react';
@@ -63,11 +65,11 @@ export interface JadeV2Props {
 }
 
 export default function JadeV2({
-  modelPath = '/models/dragon.glb',
-  hdrPath = '/textures/qwantani_moon_noon_puresky_1k.hdr',
+  modelPath = assetUrl('/models/10k_obj/001_空.obj'),
+  hdrPath = assetUrl('/textures/qwantani_moon_noon_puresky_1k.hdr'),
   backgroundHdrPath,
-  backgroundTexturePath = '/textures/texture.jpg',
-  normalMapPath = '/textures/normal.jpg',
+  backgroundTexturePath = assetUrl('/textures/texture.jpg'),
+  normalMapPath = assetUrl('/textures/normal.jpg'),
   showBackground = false,
   useDualPassRefraction = false,
   refractionTexture = null,

@@ -1,4 +1,6 @@
 'use client';
+import { assetUrl } from '@/utils/assetUrl';
+
 
 import * as THREE from 'three';
 import { useRef, useState, useEffect, useMemo } from 'react';
@@ -260,7 +262,7 @@ export default function Jade({
     const rgbeLoader = new RGBELoader();
 
     rgbeLoader.load(
-      '/textures/qwantani_moon_noon_puresky_1k.hdr',
+      assetUrl('/textures/qwantani_moon_noon_puresky_1k.hdr'),
       (texture) => {
         texture.mapping = THREE.EquirectangularReflectionMapping;
         console.log('[Jade] HDR envMap loaded');
@@ -282,7 +284,7 @@ export default function Jade({
     const textureLoader = new THREE.TextureLoader();
 
     textureLoader.load(
-      '/textures/normal.jpg',
+      assetUrl('/textures/normal.jpg'),
       (texture) => {
         texture.wrapS = THREE.RepeatWrapping;
         texture.wrapT = THREE.RepeatWrapping;

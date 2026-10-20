@@ -1,4 +1,6 @@
 "use client";
+import { assetUrl } from '@/utils/assetUrl';
+
 
 import dynamic from "next/dynamic";
 import { Canvas } from "@react-three/fiber";
@@ -24,8 +26,8 @@ export default function JadeV3({
   showBackground = true,
   enableRotation = true,
   hdrExposure = 1.0,
-  hdrPath = "/textures/qwantani_moon_noon_puresky_1k.hdr",
-  modelPath = "/models/10k_obj/001_空.obj",
+  hdrPath = assetUrl("/textures/qwantani_moon_noon_puresky_1k.hdr"),
+  modelPath = assetUrl("/models/10k_obj/001_空.obj"),
 }: JadeV3Props) {
   // 固定一组默认材质参数（与 jade-v2 页面一致），支持后续按需外部扩展
   const materialOptions = useMemo(
@@ -57,7 +59,7 @@ export default function JadeV3({
         <JadeV2
           modelPath={modelPath}
           hdrPath={hdrPath}
-          normalMapPath="/textures/normal.jpg"
+          normalMapPath={assetUrl("/textures/normal.jpg")}
           showBackground={showBackground}
           useDualPassRefraction={false}
           color={materialOptions.color}

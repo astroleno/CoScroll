@@ -1,12 +1,14 @@
 'use client';
+import { assetUrl } from '@/utils/assetUrl';
+
 
 import { useState } from 'react';
 import JadeV6 from '@/components/jade/JadeV6';
 
 const MODELS = [
-  '/models/10k_obj/001_空.obj',
-  '/models/10k_obj/002_心.obj',
-  '/models/10k_obj/003_道.obj',
+  assetUrl('/models/10k_obj/001_空.obj'),
+  assetUrl('/models/10k_obj/002_心.obj'),
+  assetUrl('/models/10k_obj/003_道.obj'),
 ];
 
 export default function Page() {
@@ -529,7 +531,7 @@ export default function Page() {
         fitToView
         background="#1f1e1c"
         showHdrBackground={showHdrBackground}
-        environmentHdrPath="/textures/qwantani_moon_noon_puresky_1k.hdr"
+        environmentHdrPath={assetUrl("/textures/qwantani_moon_noon_puresky_1k.hdr")}
         environmentIntensity={1.4}
         
         // 滚动控制参数（新增）

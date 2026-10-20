@@ -1,4 +1,6 @@
 "use client";
+import { assetUrl } from '@/utils/assetUrl';
+
 
 import React, { Suspense, useEffect, useMemo, useRef, useState } from 'react';
 import { Canvas } from '@react-three/fiber';
@@ -319,7 +321,7 @@ export default function UnifiedLyricsAndModel(props: UnifiedLyricsAndModelProps)
               dampingFactor={0.92}
               velocitySmoothing={0.15}
               maxRotationPerFrame={0.08}
-              environmentHdrPath="/textures/qwantani_moon_noon_puresky_1k.hdr"
+              environmentHdrPath={assetUrl("/textures/qwantani_moon_noon_puresky_1k.hdr")}
               environmentIntensity={1.0}
               background="transparent"
               showHdrBackground={false}
@@ -346,7 +348,7 @@ export default function UnifiedLyricsAndModel(props: UnifiedLyricsAndModelProps)
               smoothShading
               innerSmoothShading
               outerSmoothShading
-              normalMapPath="/textures/normal.jpg"
+              normalMapPath={assetUrl("/textures/normal.jpg")}
               normalScale={0.3}
               normalRepeat={3}
             />
@@ -385,21 +387,21 @@ export default function UnifiedLyricsAndModel(props: UnifiedLyricsAndModelProps)
 // 辅助函数：根据锚字获取模型路径
 function getModelPath(anchorChar: string): string {
   const ANCHOR_MODEL_MAPPING = {
-    '观': '/models/10k_obj/101_观.obj',
-    '空': '/models/10k_obj/001_空.obj',
-    '苦': '/models/10k_obj/045_苦.obj',
-    '色': '/models/10k_obj/094_色.obj',
-    '法': '/models/10k_obj/022_法.obj',
-    '生': '/models/10k_obj/019_生.obj',
-    '无': '/models/10k_obj/012_无.obj',
-    '死': '/models/10k_obj/020_死.obj',
-    '道': '/models/10k_obj/003_道.obj',
-    '心': '/models/10k_obj/002_心.obj',
-    '悟': '/models/10k_obj/008_悟.obj',
-    '明': '/models/10k_obj/007_明.obj',
-    '真': '/models/10k_obj/009_真.obj',
-    '圆': '/models/10k_obj/001_空.obj',
-    default: '/models/10k_obj/001_空.obj'
+    '观': assetUrl('/models/10k_obj/101_观.obj'),
+    '空': assetUrl('/models/10k_obj/001_空.obj'),
+    '苦': assetUrl('/models/10k_obj/045_苦.obj'),
+    '色': assetUrl('/models/10k_obj/094_色.obj'),
+    '法': assetUrl('/models/10k_obj/022_法.obj'),
+    '生': assetUrl('/models/10k_obj/019_生.obj'),
+    '无': assetUrl('/models/10k_obj/012_无.obj'),
+    '死': assetUrl('/models/10k_obj/020_死.obj'),
+    '道': assetUrl('/models/10k_obj/003_道.obj'),
+    '心': assetUrl('/models/10k_obj/002_心.obj'),
+    '悟': assetUrl('/models/10k_obj/008_悟.obj'),
+    '明': assetUrl('/models/10k_obj/007_明.obj'),
+    '真': assetUrl('/models/10k_obj/009_真.obj'),
+    '圆': assetUrl('/models/10k_obj/001_空.obj'),
+    default: assetUrl('/models/10k_obj/001_空.obj')
   };
 
   return ANCHOR_MODEL_MAPPING[anchorChar as keyof typeof ANCHOR_MODEL_MAPPING] || ANCHOR_MODEL_MAPPING.default;

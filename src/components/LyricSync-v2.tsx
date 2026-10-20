@@ -1,4 +1,6 @@
 'use client'
+import { assetUrl } from '@/utils/assetUrl';
+
 
 import { useState, useEffect, useRef, useCallback } from 'react'
 
@@ -50,7 +52,7 @@ const parseLRC = (lrcContent: string): Lyric[] => {
 const PROGRAM_SCROLL_COOLDOWN = 300  // 程序滚动冷却时间（ms）
 const WRAP_COOLDOWN = 100  // 回绕窗口冷却时间（ms）
 const WRAP_EPS = 0.5  // 回绕检测阈值（秒）
-const LRC_FILE_PATH = '/lyrics/心经.lrc'
+const LRC_FILE_PATH = assetUrl('/lyrics/心经.lrc')
 
 export default function LyricSyncV2() {
   const [lyrics, setLyrics] = useState<Lyric[]>([])
@@ -882,7 +884,7 @@ export default function LyricSyncV2() {
       {/* 音频元素 */}
       <audio
         ref={audioRef}
-        src="/audio/心经.mp3"
+        src={assetUrl("/audio/心经.mp3")}
         preload="auto"
       />
 

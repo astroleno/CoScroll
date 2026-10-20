@@ -1,4 +1,6 @@
 'use client'
+import { assetUrl } from '@/utils/assetUrl';
+
 
 import { useState, useEffect, useLayoutEffect, useRef, useCallback } from 'react'
 
@@ -50,7 +52,7 @@ const parseLRC = (lrcContent: string): Lyric[] => {
   return lyrics.sort((a, b) => a.time - b.time)
 }
 
-const LRC_FILE_PATH = '/lyrics/心经.lrc'
+const LRC_FILE_PATH = assetUrl('/lyrics/心经.lrc')
 
 // Spotify风格的歌词同步组件
 export default function LyricSync() {
@@ -93,9 +95,7 @@ export default function LyricSync() {
             return LRC_FILE_PATH
           }
 
-          const basePath = window.location.origin
-          const normalizedPath = LRC_FILE_PATH.startsWith('/') ? LRC_FILE_PATH : `/${LRC_FILE_PATH}`
-          return `${basePath}${encodeURI(normalizedPath)}`
+          return new URL(LRC_FILE_PATH, window.location.origin).href
         })()
 
         const response = await fetch(resolvedUrl, { cache: 'no-store' })
@@ -1012,7 +1012,7 @@ export default function LyricSync() {
       {/* 音频元素 */}
       <audio
         ref={audioRef}
-        src="/audio/心经.mp3"
+        src={assetUrl("/audio/心经.mp3")}
         preload="metadata"
       />
 

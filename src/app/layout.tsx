@@ -3,6 +3,7 @@ import './globals.css';
 export const metadata = {
   title: 'CoScroll',
   description: 'Immersive Heart Sutra experience',
+  other: { 'coscroll-release-id': process.env.COSCROLL_RELEASE_ID || 'development' },
 };
 
 export default function RootLayout({

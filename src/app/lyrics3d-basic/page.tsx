@@ -1,4 +1,6 @@
 "use client";
+import { assetUrl } from '@/utils/assetUrl';
+
 
 import React, { useState, useEffect, useRef } from 'react';
 import { Canvas } from '@react-three/fiber';
@@ -36,9 +38,9 @@ const testLyrics = [
 
 // 可用的3D模型列表
 const AVAILABLE_MODELS = [
-  '/models/10k_obj/001_空.obj',
-  '/models/10k_obj/002_心.obj',
-  '/models/10k_obj/003_道.obj',
+  assetUrl('/models/10k_obj/001_空.obj'),
+  assetUrl('/models/10k_obj/002_心.obj'),
+  assetUrl('/models/10k_obj/003_道.obj'),
 ];
 
 // JadeV6 硬编码设置常量

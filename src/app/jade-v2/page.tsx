@@ -1,4 +1,6 @@
 'use client';
+import { assetUrl } from '@/utils/assetUrl';
+
 
 import dynamic from 'next/dynamic';
 import { Canvas } from '@react-three/fiber';
@@ -16,7 +18,7 @@ function TestHDRIDisplay() {
   
   useEffect(() => {
     const loader = new RGBELoader();
-    loader.load('/textures/qwantani_moon_noon_puresky_1k.hdr', (tex) => {
+    loader.load(assetUrl('/textures/qwantani_moon_noon_puresky_1k.hdr'), (tex) => {
       console.log('[TestHDRI] ✅ HDRI 加载成功');
       setHdrTex(tex);
     }, undefined, (err) => {
@@ -183,7 +185,7 @@ export default function Page() {
             - 这样可以实现：背景显示遮罩层，但折射显示 HDRI
           */}
           <OffscreenHDRIRT
-            hdrPath="/textures/qwantani_moon_noon_puresky_1k.hdr"
+            hdrPath={assetUrl("/textures/qwantani_moon_noon_puresky_1k.hdr")}
             rtScale={1.0}
             yawSpeed={0.15}
             updateEveryFrame={true}
@@ -191,9 +193,9 @@ export default function Page() {
             onReady={(tex, info) => { setRefractionTexture(tex); setRtInfo(info); }}
           />
           <JadeV2
-            modelPath="/models/10k_obj/001_空.obj"
-            hdrPath="/textures/qwantani_moon_noon_puresky_1k.hdr"
-            normalMapPath="/textures/normal.jpg"
+            modelPath={assetUrl("/models/10k_obj/001_空.obj")}
+            hdrPath={assetUrl("/textures/qwantani_moon_noon_puresky_1k.hdr")}
+            normalMapPath={assetUrl("/textures/normal.jpg")}
             showBackground={showBackground}  // 控制是否直接显示 HDRI（false 时由 onBeforeRender 临时切换）
             useDualPassRefraction={useDualPassRefraction}
             refractionTexture={refractionTexture}

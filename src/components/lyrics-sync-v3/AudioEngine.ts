@@ -20,7 +20,9 @@ export class AudioEngine {
 
   constructor(audioSrc: string, config: LyricsSyncV3Config) {
     this.config = config;
-    this.audio = new Audio(audioSrc);
+    this.audio = new Audio();
+    this.audio.crossOrigin = 'anonymous';
+    this.audio.src = audioSrc;
 
     // 初始化状态
     this.state = {

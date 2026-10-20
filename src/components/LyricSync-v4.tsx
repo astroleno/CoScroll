@@ -1,3 +1,5 @@
+
+import { assetUrl } from '@/utils/assetUrl';
 // LyricsSync-v3 基础版（单文件示例）
 // 说明：
 // 1) 这是一个最小可运行的基础实现，包含：主时钟/吸附器/USER_SCRUB 子态/LOOP_COOLING/滚动归一化/简单 UI。
@@ -102,7 +104,7 @@ const HEART_SUTRA_LYRICS: LyricLine[] = [
 // 默认使用心经数据，保持向后兼容
 const DEMO_LYRICS = HEART_SUTRA_LYRICS
 const DEMO_DURATION = 350 // 心经实际音频时长约 5分48秒 (348.8秒)，为循环效果设置为 350 秒
-const DEMO_AUDIO = '/audio/心经.mp3' // 心经音频文件路径
+const DEMO_AUDIO = assetUrl('/audio/心经.mp3') // 心经音频文件路径
 
 // -----------------------------
 // 工具：环形时间轴 wrap()
@@ -270,10 +272,10 @@ function useAudioEngine(audioUrl?: string) {
     cleanup()
 
     const el = new Audio()
+    el.crossOrigin = 'anonymous'
     el.src = audioUrl
     el.loop = false // We handle looping manually for better control
     el.preload = 'auto'
-    el.crossOrigin = 'anonymous' // Handle CORS issues
 
     // 添加事件监听器
     el.addEventListener('error', handleError)

@@ -1,4 +1,6 @@
 'use client';
+import { assetUrl } from '@/utils/assetUrl';
+
 
 import { Canvas } from '@react-three/fiber';
 import { Suspense, useState } from 'react';
@@ -211,9 +213,9 @@ export default function Page() {
           {/* 主模型：使用动态 envMap，关闭屏幕空间折射 */}
           {showModel && (
             <JadeV2
-              modelPath="/models/10k_obj/001_空.obj"
-              hdrPath="/textures/qwantani_moon_noon_puresky_1k.hdr"
-              normalMapPath="/textures/normal.jpg"
+              modelPath={assetUrl("/models/10k_obj/001_空.obj")}
+              hdrPath={assetUrl("/textures/qwantani_moon_noon_puresky_1k.hdr")}
+              normalMapPath={assetUrl("/textures/normal.jpg")}
               showBackground={false}
               useDualPassRefraction={false}  // ❌ 关闭屏幕空间折射
               dynamicEnvMap={dynamicEnvMap}  // ✅ 使用动态环境贴图

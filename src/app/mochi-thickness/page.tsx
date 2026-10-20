@@ -1,4 +1,6 @@
 'use client';
+import { assetUrl } from '@/utils/assetUrl';
+
 
 import { Canvas } from '@react-three/fiber';
 import { OrbitControls, Stats } from '@react-three/drei';
@@ -45,7 +47,7 @@ export default function MochiThicknessPage() {
     fresnelPower: 3.0,
   });
 
-  const objModelPath = '/models/10k_obj/001_空.obj';
+  const objModelPath = assetUrl('/models/10k_obj/001_空.obj');
 
   return (
     <div style={{ position: 'fixed', inset: 0, width: '100vw', height: '100vh', margin: 0, padding: 0, overflow: 'hidden' }}>

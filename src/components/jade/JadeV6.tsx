@@ -1,4 +1,6 @@
 "use client";
+import { assetUrl } from '@/utils/assetUrl';
+
 
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import * as THREE from "three";
@@ -606,7 +608,7 @@ function RotationController({
 
 // 主渲染组件
 function JadeV6Content({
-  modelPath = "/models/10k_obj/001_空.obj",
+  modelPath = assetUrl("/models/10k_obj/001_空.obj"),
   rotationDurationSec = 8,
   direction = 1,
   fitToView = true,
@@ -619,7 +621,7 @@ function JadeV6Content({
   
   background = "#1f1e1c",
   showHdrBackground = false,
-  environmentHdrPath = "/textures/qwantani_moon_noon_puresky_1k.hdr",
+  environmentHdrPath = assetUrl("/textures/qwantani_moon_noon_puresky_1k.hdr"),
   environmentIntensity = 1.0,
   
   // 内层材质参数
@@ -648,7 +650,7 @@ function JadeV6Content({
   outerClearcoat = 0.0,
   outerClearcoatRoughness = 1.0,
   outerEnvMapIntensity = 5.0,
-  normalMapPath = "/textures/normal.jpg",
+  normalMapPath = assetUrl("/textures/normal.jpg"),
   normalScale = 0.3,
   normalRepeat = 3,
   

@@ -1,4 +1,6 @@
 'use client';
+import { assetUrl } from '@/utils/assetUrl';
+
 
 import React, { useState, useCallback, useRef, useEffect, useMemo } from 'react';
 import timelineStore from '@/stores/timelineStore';
@@ -30,21 +32,21 @@ const MOCK_DURATION = 364; // ~6 分 4 秒
 // 锚字到模型的映射 - 按精确时间轴硬编码
 const ANCHOR_MODEL_MAPPING = {
   // 核心锚字 - 按心经语义层级映射（精确时间轴版本）
-  '观': '/models/10k_obj/101_观.obj',      // [00:11.84] 观自在菩萨 - 起点——觉知开启
-  '空': '/models/10k_obj/001_空.obj',      // [00:28.87] 照见五蕴皆空 - 体悟本性
-  '苦': '/models/10k_obj/045_苦.obj',      // [00:36.79] 度一切苦厄 - 觉悟之因
-  '色': '/models/10k_obj/094_色.obj',      // [00:52.53] 色不异空 - 现象与本质统一
-  '法': '/models/10k_obj/022_法.obj',      // [01:34.09] 是诸法空相 - 法性显现
-  '生': '/models/10k_obj/019_生.obj',      // [01:38.88] 不生不灭 - 生灭寂然
-  '无': '/models/10k_obj/012_无.obj',      // [01:46.77] 是故空中无色 - 空寂归无
-  '死': '/models/10k_obj/020_死.obj',      // [02:20.50] 乃至无老死 - 轮回消融
-  '道': '/models/10k_obj/003_道.obj',      // [02:27.05] 无苦集灭道 - 八正道总摄
-  '心': '/models/10k_obj/002_心.obj',      // [03:14.10] 心无挂碍 - 安住无碍
-  '悟': '/models/10k_obj/008_悟.obj',      // [03:41.27] 得阿耨多罗三藐三菩提 - 智慧圆成
-  '明': '/models/10k_obj/007_明.obj',      // [03:59.06] 是大明咒 - 光明智慧
-  '真': '/models/10k_obj/009_真.obj',      // [04:07.59] 真实不虚 - 终点——实相圆满
-  '圆': '/models/10k_obj/001_空.obj',      // [05:22.62] 波罗揭谛 - 圆满智慧（使用空模型）
-  default: '/models/10k_obj/001_空.obj'
+  '观': assetUrl('/models/10k_obj/101_观.obj'),      // [00:11.84] 观自在菩萨 - 起点——觉知开启
+  '空': assetUrl('/models/10k_obj/001_空.obj'),      // [00:28.87] 照见五蕴皆空 - 体悟本性
+  '苦': assetUrl('/models/10k_obj/045_苦.obj'),      // [00:36.79] 度一切苦厄 - 觉悟之因
+  '色': assetUrl('/models/10k_obj/094_色.obj'),      // [00:52.53] 色不异空 - 现象与本质统一
+  '法': assetUrl('/models/10k_obj/022_法.obj'),      // [01:34.09] 是诸法空相 - 法性显现
+  '生': assetUrl('/models/10k_obj/019_生.obj'),      // [01:38.88] 不生不灭 - 生灭寂然
+  '无': assetUrl('/models/10k_obj/012_无.obj'),      // [01:46.77] 是故空中无色 - 空寂归无
+  '死': assetUrl('/models/10k_obj/020_死.obj'),      // [02:20.50] 乃至无老死 - 轮回消融
+  '道': assetUrl('/models/10k_obj/003_道.obj'),      // [02:27.05] 无苦集灭道 - 八正道总摄
+  '心': assetUrl('/models/10k_obj/002_心.obj'),      // [03:14.10] 心无挂碍 - 安住无碍
+  '悟': assetUrl('/models/10k_obj/008_悟.obj'),      // [03:41.27] 得阿耨多罗三藐三菩提 - 智慧圆成
+  '明': assetUrl('/models/10k_obj/007_明.obj'),      // [03:59.06] 是大明咒 - 光明智慧
+  '真': assetUrl('/models/10k_obj/009_真.obj'),      // [04:07.59] 真实不虚 - 终点——实相圆满
+  '圆': assetUrl('/models/10k_obj/001_空.obj'),      // [05:22.62] 波罗揭谛 - 圆满智慧（使用空模型）
+  default: assetUrl('/models/10k_obj/001_空.obj')
 };
 
 // 精确时间轴锚点映射（硬编码版本）
@@ -107,7 +109,7 @@ export default function HomePage() {
       return ANCHOR_MODEL_MAPPING; // 降级到硬编码
     }
 
-    const modelsDirectory = config.assets.models.directory;
+    const modelsDirectory = assetUrl(config.assets.models.directory);
     const mapping: Record<string, string> = {
       default: `${modelsDirectory}/${anchorConfig.defaultModel}`
     };
@@ -142,8 +144,8 @@ export default function HomePage() {
   // 使用配置的时间轴
   const timeline = anchorTimeline;
 
-  const audioSrcFromConfig = config?.assets.audio.src || '/audio/心经_2.mp3';
-  const lyricsSrcFromConfig = config?.assets.lyrics.src || '/lyrics/心经.lrc';
+  const audioSrcFromConfig = assetUrl(config?.assets.audio.src || '/audio/心经_2.mp3');
+  const lyricsSrcFromConfig = assetUrl(config?.assets.lyrics.src || '/lyrics/心经.lrc');
 
   // ==================== 音频相关状态 ====================
   const [isPlaying, setIsPlaying] = useState(false);
@@ -467,7 +469,7 @@ export default function HomePage() {
   // 跳转处理
   const handleSeek = useCallback((absoluteTime: number) => {
     const safeDuration = Math.max(1, duration);
-    const displayTime = absoluteTime % safeDuration;
+    const displayTime = ((absoluteTime % safeDuration) + safeDuration) % safeDuration;
 
     // 只调用 commitTimeUpdate，它会内部更新 loopCount
     // 不要重复调用 setLoopCount，避免状态冲突
@@ -545,7 +547,7 @@ export default function HomePage() {
     clearWheelPreviewTimeout();
     // 预览结束：执行一次性 seek 到预览终点
     console.log('[handleLyricPreviewEnd] 预览结束并执行一次性 seek');
-    const targetAbs = isPreviewMode && previewTime != null ? previewTime : absoluteTime;
+    const targetAbs = lastPreviewTimeRef.current ?? (isPreviewMode && previewTime != null ? previewTime : absoluteTime);
     setPreviewTime(null);
     lastPreviewTimeRef.current = null;
     handleScrollVelocityChange(0);
@@ -858,33 +860,8 @@ export default function HomePage() {
 
         /* 注册自定义字体（来自 public/fonts） */
         @font-face {
-          font-family: 'YanShiYouRanXiaoKai2';
-          src: url('/fonts/YanShiYouRanXiaoKai-2.ttf') format('truetype');
-          font-display: swap;
-        }
-        @font-face {
-          font-family: 'SlidefuRegular2';
-          src: url('/fonts/Slidefu-Regular-2.ttf') format('truetype');
-          font-display: swap;
-        }
-        @font-face {
-          font-family: 'NanXiXinYueSong2025';
-          src: url('/fonts/2025南西新月宋-标准简体.ttf') format('truetype');
-          font-display: swap;
-        }
-        @font-face {
-          font-family: 'NanXiYuQingSong';
-          src: url('/fonts/南西玉清宋.ttf') format('truetype');
-          font-display: swap;
-        }
-        @font-face {
           font-family: 'RunZhiJiaKangXiZidian';
-          src: url('/fonts/润植家康熙字典美化体.ttf') format('truetype');
-          font-display: swap;
-        }
-        @font-face {
-          font-family: 'HuiWenZhuDiDiWuHaoMingChao';
-          src: url('/fonts/汇文筑地五号明朝体.otf') format('opentype');
+          src: url('${assetUrl('/fonts/润植家康熙字典美化体.ttf')}') format('truetype');
           font-display: swap;
         }
       `}</style>

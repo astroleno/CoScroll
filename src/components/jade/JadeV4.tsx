@@ -1,4 +1,6 @@
 "use client";
+import { assetUrl } from '@/utils/assetUrl';
+
 
 import * as THREE from "three";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
@@ -56,10 +58,10 @@ function JadeV4Content({
   showBackground = true,
   enableRotation = true,
   backgroundColor,
-  backgroundHdrPath = "/textures/qwantani_moon_noon_puresky_1k.hdr",
-  refractionEnvPath = "/textures/qwantani_moon_noon_puresky_1k.hdr",
-  modelPath = "/models/10k_obj/001_空.obj",
-  normalMapPath = "/textures/normal.jpg",
+  backgroundHdrPath = assetUrl("/textures/qwantani_moon_noon_puresky_1k.hdr"),
+  refractionEnvPath = assetUrl("/textures/qwantani_moon_noon_puresky_1k.hdr"),
+  modelPath = assetUrl("/models/10k_obj/001_空.obj"),
+  normalMapPath = assetUrl("/textures/normal.jpg"),
   debugForceReflection = false,
   useDualPassRefraction = true,
   refractionGain = 1.8,

@@ -1,4 +1,6 @@
 "use client";
+import { assetUrl } from '@/utils/assetUrl';
+
 
 import { useFrame, useThree } from "@react-three/fiber";
 import * as THREE from "three";
@@ -612,7 +614,7 @@ function DualLayerModelLoader({
 }
 
 export default function JadeModelLoader({
-  modelPath = "/models/10k_obj/001_空.obj",
+  modelPath = assetUrl("/models/10k_obj/001_空.obj"),
   rotationDurationSec = 8,
   direction = 1,
   fitToView = true,
@@ -630,7 +632,7 @@ export default function JadeModelLoader({
   velocitySmoothing = 0.1,
   maxRotationPerFrame = 0.1,
   
-  environmentHdrPath = "/textures/qwantani_moon_noon_puresky_1k.hdr",
+  environmentHdrPath = assetUrl("/textures/qwantani_moon_noon_puresky_1k.hdr"),
   environmentIntensity = 1.0,
   background = "#1f1e1c",
   showHdrBackground = false,
@@ -658,7 +660,7 @@ export default function JadeModelLoader({
   outerClearcoat = 0.0,
   outerClearcoatRoughness = 1.0,
   outerEnvMapIntensity = 5.0,
-  normalMapPath = "/textures/normal.jpg",
+  normalMapPath = assetUrl("/textures/normal.jpg"),
   normalScale = 0.3,
   normalRepeat = 3,
   

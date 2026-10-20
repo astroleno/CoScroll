@@ -1,4 +1,6 @@
 'use client';
+import { assetUrl } from '@/utils/assetUrl';
+
 
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import * as THREE from 'three';
@@ -16,7 +18,7 @@ function HDRTest() {
     
     const rgbe = new RGBELoader();
     rgbe.load(
-      '/textures/qwantani_moon_noon_puresky_1k.hdr',
+      assetUrl('/textures/qwantani_moon_noon_puresky_1k.hdr'),
       (texture) => {
         console.log('[HDRTest] HDR 加载成功:', texture);
         

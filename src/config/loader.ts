@@ -7,6 +7,7 @@
 import type { ProjectConfig } from './types';
 import { safeValidateProjectConfig } from './schema';
 import { DEFAULT_PROJECT_CONFIG } from './defaults';
+import { assetUrl } from '@/utils/assetUrl';
 
 /**
  * 配置加载器类
@@ -70,7 +71,7 @@ class ProjectConfigLoader {
       console.log(`[ConfigLoader] 加载配置文件: /projects/${projectId}.json`);
 
       // 加载 JSON 文件
-      const response = await fetch(`/projects/${projectId}.json`);
+      const response = await fetch(assetUrl(`/projects/${projectId}.json`));
 
       if (!response.ok) {
         throw new Error(
