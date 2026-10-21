@@ -6,9 +6,10 @@ JS、CSS、字体、OBJ、HDR、图片、歌词和项目 JSON 使用 `assets.ait
 对象全部位于 `releases/aitoshuu-me/coscroll-<source-digest>/`，不覆盖已有对象。
 发布脚本启用静态导出；普通 `npm run build` / `npm run start` 保留 Next 的本地生产预览方式。
 
-当前线上版本为 `coscroll-4a084f3f852ebad4`，两个入口为 `aitoshuu.me/coscroll/` 和
+当前线上版本为 `coscroll-f4c036bd83d4ce9e`，两个入口为 `aitoshuu.me/coscroll/` 和
 `tongye.me/coscroll/`。最新复测、发布身份与回滚记录见
-[2026-10-21 手机渲染优化验收](MOBILE_RENDER_RELEASE_20261021.md)。
+[2026-10-21 完整模型预计算验收](MODEL_PRECOMPUTE_RELEASE_20261021.md)。
+[此前手机渲染优化](MOBILE_RENDER_RELEASE_20261021.md)、
 [此前公网复测](PUBLIC_RELEASE_20261021.md)及更早发布记录保留如下。
 
 ## 本地候选验证
