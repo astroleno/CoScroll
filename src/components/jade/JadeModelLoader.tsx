@@ -8,6 +8,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useTransitionControl } from "@/hooks/useTransitionControl";
 import { RGBELoader } from "three/examples/jsm/loaders/RGBELoader.js";
 import ModelPreloader from "./ModelPreloader";
+import { specializePhysicalMaterial } from './specializePhysicalMaterial';
 
 const IS_DEV = process.env.NODE_ENV === 'development';
 
@@ -622,7 +623,7 @@ export default function JadeModelLoader({
       mat.normalMap.repeat.set(normalRepeat, normalRepeat);
     }
 
-    return mat;
+    return specializePhysicalMaterial(mat);
   }, [
     innerColor, innerMetalness, innerRoughness, innerTransmission, innerEmissiveColor, innerEmissiveIntensity, 
     enableEmissive, innerEnvMapIntensity, innerSmoothShading, normalMap, normalScale, normalRepeat
@@ -653,12 +654,17 @@ export default function JadeModelLoader({
       mat.normalMap.repeat.set(normalRepeat, normalRepeat);
     }
 
-    return mat;
+    return specializePhysicalMaterial(mat);
   }, [
     outerColor, outerMetalness, outerRoughness, outerTransmission, outerIor, outerReflectivity, 
     outerThickness, outerClearcoat, outerClearcoatRoughness, outerEnvMapIntensity, 
     outerSmoothShading, normalMap, normalScale, normalRepeat
   ]);
+
+  // Material props can replace these objects while the model stays mounted.
+  // Release their programs without disposing the independently owned textures.
+  useEffect(() => () => innerMaterial.dispose(), [innerMaterial]);
+  useEffect(() => () => outerMaterial.dispose(), [outerMaterial]);
 
   useEffect(() => {
     let disposed = false;

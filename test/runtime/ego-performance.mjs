@@ -11,6 +11,8 @@ function installInstrumentation() {
   };
   addEventListener('error', e => {if (q.errors.length < 50) q.errors.push(e.message || e.target?.src || e.target?.href || 'resource error');}, true);
   addEventListener('unhandledrejection', e => {if (q.errors.length < 50) q.errors.push(String(e.reason?.message || e.reason));});
+  const error = console.error;
+  console.error = function(...args) {if (q.errors.length < 50) q.errors.push(args.map(String).join(' ')); return error.apply(this, args);};
   const warn = console.warn;
   console.warn = function(...args) {if (q.warnings.length < 50) q.warnings.push(args.map(String).join(' ')); return warn.apply(this, args);};
   const hook = window.__REACT_DEVTOOLS_GLOBAL_HOOK__ || {

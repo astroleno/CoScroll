@@ -8,6 +8,10 @@ import type { IUniform } from "three";
 
 type NormalizedRGB = [number, number, number];
 
+// One opaque plane covers the viewport. There are no geometry edges to smooth
+// or overlapping surfaces to depth-test in this background-only renderer.
+const BACKGROUND_GL = { alpha: false, antialias: false, depth: false, stencil: false };
+
 const hexToNormalizedRGB = (hex: string): NormalizedRGB => {
   const clean = hex.replace('#', '');
   const r = parseInt(clean.slice(0, 2), 16) / 255;
@@ -114,7 +118,7 @@ const SilkPlane = forwardRef<Mesh, SilkPlaneProps>(function SilkPlane({ uniforms
   return (
     <mesh ref={ref}>
       <planeGeometry args={[1, 1, 1, 1]} />
-      <shaderMaterial uniforms={uniforms} vertexShader={vertexShader} fragmentShader={fragmentShader} />
+      <shaderMaterial uniforms={uniforms} vertexShader={vertexShader} fragmentShader={fragmentShader} depthTest={false} depthWrite={false} />
     </mesh>
   );
 });
@@ -147,13 +151,13 @@ const SilkR3F: React.FC<SilkR3FProps> = ({ speed = 5, scale = 1, color = "#7B748
 
   return (
     <div className={className} style={{ position: "fixed", inset: 0, pointerEvents: "none", ...style }} aria-hidden>
-      <Canvas dpr={[1, 2]} frameloop="always">
+      <Canvas dpr={[1, 2]} frameloop="always" gl={BACKGROUND_GL}>
         <SilkPlane ref={meshRef} uniforms={uniforms} />
       </Canvas>
     </div>
   );
 };
 
-export default SilkR3F;
+export default React.memo(SilkR3F);
 
 
