@@ -8,6 +8,8 @@
     "start": "next start",
     "lint": "next lint",
     "type-check": "tsc --noEmit",
+    "models:prepare": "node deploy/prepare-models.mjs",
+    "models:check": "node deploy/prepare-models.mjs --check",
     "release:package": "node deploy/package-release.mjs",
     "release:preview": "node deploy/preview-release.mjs",
     "release:verify": "node deploy/verify-release.mjs",

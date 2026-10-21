@@ -85,8 +85,10 @@ export async function samplePerformance(page, duration = 6000) {
     await new Promise(resolve => {const tick = now => {frames.push(now - previous); previous = now; if (now - start >= duration) resolve(); else requestAnimationFrame(tick);}; requestAnimationFrame(tick);});
     const sorted = frames.slice().sort((a, b) => a - b), elapsed = previous - start;
     return {
-      fps: frames.length * 1000 / elapsed, frames: frames.length, elapsedMs: elapsed,
-      p95FrameMs: sorted[Math.floor(sorted.length * .95)], focused: document.hasFocus(), visible: document.visibilityState,
+      fps: frames.length * 1000 / elapsed, frames: frames.length, elapsedMs: elapsed, startMs: start, endMs: previous,
+      p95FrameMs: sorted[Math.floor(sorted.length * .95)], p99FrameMs: sorted[Math.floor(sorted.length * .99)],
+      firstFrameMs: frames[0], maxFrameMs: sorted[sorted.length - 1],
+      focused: document.hasFocus(), visible: document.visibilityState,
       draws: before.map(({context, draws}) => ({background: !!context.canvas.closest('[data-coscroll-background]'), count: context.draws - draws})),
       commits: Object.entries(q?.renderers || {}).map(([id, renderer]) => ({...renderer, count: q.commits.filter(c => String(c.id) === id && c.at >= start && c.at < previous).length})),
       textUploads: (q?.uploads || 0) - uploads,
@@ -101,7 +103,7 @@ export async function measurePage(page, {url, screenshotPrefix}) {
   const startup = await page.evaluate(() => ({
     url: location.href, release: document.querySelector('meta[name="coscroll-release-id"]')?.content,
     milestones: window.__coscrollPerf.milestones, paint: performance.getEntriesByType('paint').map(e => ({name: e.name, at: e.startTime})),
-    resources: performance.getEntriesByType('resource').filter(e => /\.woff2|projects\/heart-sutra\.json|\.obj(?:\?|$)/.test(e.name)).map(e => ({url: e.name, start: e.startTime, duration: e.duration, initiator: e.initiatorType, bytes: e.encodedBodySize})),
+    resources: performance.getEntriesByType('resource').filter(e => /\.woff2|projects\/heart-sutra\.json|models\/prepared\/|\.obj(?:\?|$)/.test(e.name)).map(e => ({url: e.name, start: e.startTime, duration: e.duration, initiator: e.initiatorType, bytes: e.encodedBodySize})),
     viewport: [innerWidth, innerHeight], dpr: devicePixelRatio,
     canvases: [...document.querySelectorAll('canvas')].map(c => ({pixels: [c.width, c.height], css: [c.clientWidth, c.clientHeight]})),
   }));

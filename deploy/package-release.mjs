@@ -5,6 +5,7 @@ import { cp, mkdir, readFile, writeFile } from 'node:fs/promises';
 import { dirname, extname, join, relative, resolve, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { BASE_PATH, CACHE, MIME, bases, closureHash, excluded, sha, verifyPackage, walk } from './release-lib.mjs';
+import { checkPreparedModels } from './prepare-models.mjs';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const inputs = ['src', 'public', 'deploy', 'next.config.mjs', 'package.json', 'package-lock.json',
@@ -33,6 +34,7 @@ async function main() {
   if (!options.output) throw new Error('--output is required');
   const output = resolve(options.output);
   if (output === root || (output.startsWith(`${root}${sep}`) && !output.startsWith(`${root}/.cache/releases/`))) throw new Error('Output must be outside source inputs or inside .cache/releases');
+  await checkPreparedModels();
   const sourceDigest = await sourceIdentity(options.profile);
   const releaseId = `coscroll-${sourceDigest.slice(0, 16)}`;
   const urls = bases(options.profile, releaseId);

@@ -1,0 +1,3192 @@
+{
+  "schemaVersion": 1,
+  "legacyPreloaderSha256": "b3d6e54e6f5aafc1bc3698c9212d51f1f7796452afdd9d74c3c4ffde2c78cc2c",
+  "preset": {
+    "outerOffset": 0.001,
+    "maxEdge": 0.15,
+    "subdivisions": 0,
+    "creaseAngle": 30,
+    "smoothShading": true
+  },
+  "custom": {
+    "outerOffset": 0.002,
+    "maxEdge": 0.2,
+    "subdivisions": 1,
+    "creaseAngle": 75,
+    "smoothShading": false
+  },
+  "models": [
+    {
+      "path": "/models/10k_obj/001_空.obj",
+      "sourceSha256": "9c13acaabc066318aaebbbaabfdffd859ffbbed0adc78b4f48a13898a82c0c7e",
+      "base": {
+        "name": "",
+        "attributes": {
+          "normal": {
+            "type": "Float32Array",
+            "itemSize": 3,
+            "count": 9229,
+            "normalized": false,
+            "usage": 35044,
+            "name": "",
+            "sha256": "8ea65a2382a22451cf35cb979b6704767e888588cb37593a2e7eb0f5a5d2119e"
+          },
+          "position": {
+            "type": "Float32Array",
+            "itemSize": 3,
+            "count": 9229,
+            "normalized": false,
+            "usage": 35044,
+            "name": "",
+            "sha256": "d0b9f1cda1161e24be52f414fc65a459aaa955af9b57df2d05dba30f8da3e8c7"
+          }
+        },
+        "index": {
+          "type": "Uint16Array",
+          "itemSize": 1,
+          "count": 55122,
+          "normalized": false,
+          "usage": 35044,
+          "name": "",
+          "sha256": "ba438be53a5ed601d3844f956cd60929e6df474d2d8c92fd8be5bc9c80593803"
+        },
+        "groups": [],
+        "drawRange": {
+          "start": 0,
+          "count": "Infinity"
+        },
+        "morphAttributes": {},
+        "morphTargetsRelative": false,
+        "boundingBox": null,
+        "boundingSphere": null,
+        "userData": {}
+      },
+      "outer": {
+        "name": "",
+        "attributes": {
+          "normal": {
+            "type": "Float32Array",
+            "itemSize": 3,
+            "count": 14817,
+            "normalized": false,
+            "usage": 35044,
+            "name": "",
+            "sha256": "0956517305a66060ce6166a7b484926805a9a0d250b1f8c4c28d3fe4f33149e5"
+          },
+          "position": {
+            "type": "Float32Array",
+            "itemSize": 3,
+            "count": 14817,
+            "normalized": false,
+            "usage": 35044,
+            "name": "",
+            "sha256": "445a48dfd86cfa98d233b8f393843e51145efb67b0b0a3a11326de178f42bf33"
+          }
+        },
+        "index": {
+          "type": "Uint16Array",
+          "itemSize": 1,
+          "count": 55122,
+          "normalized": false,
+          "usage": 35044,
+          "name": "",
+          "sha256": "522baee5e80e52c8bcbf4f29e56db886e1aec4524a1c7442b2a60861acd0b240"
+        },
+        "groups": [],
+        "drawRange": {
+          "start": 0,
+          "count": "Infinity"
+        },
+        "morphAttributes": {},
+        "morphTargetsRelative": false,
+        "boundingBox": null,
+        "boundingSphere": null,
+        "userData": {}
+      },
+      "custom": {
+        "name": "",
+        "attributes": {
+          "normal": {
+            "type": "Float32Array",
+            "itemSize": 3,
+            "count": 220488,
+            "normalized": false,
+            "usage": 35044,
+            "name": "",
+            "sha256": "2b4858e5494f07dd9640580ca9eee8c54898836fbef2f16e88db113f8736ffcf"
+          },
+          "position": {
+            "type": "Float32Array",
+            "itemSize": 3,
+            "count": 220488,
+            "normalized": false,
+            "usage": 35044,
+            "name": "",
+            "sha256": "862a6b5e1819096352edc96dfe4f892c9c17d6abaa20ae6d0591954df497650e"
+          }
+        },
+        "index": null,
+        "groups": [],
+        "drawRange": {
+          "start": 0,
+          "count": "Infinity"
+        },
+        "morphAttributes": {},
+        "morphTargetsRelative": false,
+        "boundingBox": null,
+        "boundingSphere": null,
+        "userData": {}
+      }
+    },
+    {
+      "path": "/models/10k_obj/002_心.obj",
+      "sourceSha256": "e3ffa9aab0bd902c5fe0dece8196c8eaab661e1b054760f449719262e89ce4e5",
+      "base": {
+        "name": "",
+        "attributes": {
+          "normal": {
+            "type": "Float32Array",
+            "itemSize": 3,
+            "count": 10277,
+            "normalized": false,
+            "usage": 35044,
+            "name": "",
+            "sha256": "0b5701e6f18ab557e10c21d79bff401f442175932c4c60dbd65315e6ac5f54e2"
+          },
+          "position": {
+            "type": "Float32Array",
+            "itemSize": 3,
+            "count": 10277,
+            "normalized": false,
+            "usage": 35044,
+            "name": "",
+            "sha256": "30d43cd35dea19ed2809437f459650bc92630062258ec81c8e34b9159b7256ac"
+          }
+        },
+        "index": {
+          "type": "Uint16Array",
+          "itemSize": 1,
+          "count": 61614,
+          "normalized": false,
+          "usage": 35044,
+          "name": "",
+          "sha256": "2024fc405fdf989b98d2baa4ed56d91def9fccd4b1abb6444f6d076e6182ce0a"
+        },
+        "groups": [],
+        "drawRange": {
+          "start": 0,
+          "count": "Infinity"
+        },
+        "morphAttributes": {},
+        "morphTargetsRelative": false,
+        "boundingBox": null,
+        "boundingSphere": null,
+        "userData": {}
+      },
+      "outer": {
+        "name": "",
+        "attributes": {
+          "normal": {
+            "type": "Float32Array",
+            "itemSize": 3,
+            "count": 16518,
+            "normalized": false,
+            "usage": 35044,
+            "name": "",
+            "sha256": "6f6bcc25443ad43ff65c831485489b9d25ddc505ea239f700397c20f398fc5ae"
+          },
+          "position": {
+            "type": "Float32Array",
+            "itemSize": 3,
+            "count": 16518,
+            "normalized": false,
+            "usage": 35044,
+            "name": "",
+            "sha256": "5af4201bf92874be0eafb261fad64906f22dee1cbe73ebac2a05321a11160ca5"
+          }
+        },
+        "index": {
+          "type": "Uint16Array",
+          "itemSize": 1,
+          "count": 61614,
+          "normalized": false,
+          "usage": 35044,
+          "name": "",
+          "sha256": "19b9b1a86c0faf17e97203c281fc32856ca76a06f461a0ffdb9e010da5afb300"
+        },
+        "groups": [],
+        "drawRange": {
+          "start": 0,
+          "count": "Infinity"
+        },
+        "morphAttributes": {},
+        "morphTargetsRelative": false,
+        "boundingBox": null,
+        "boundingSphere": null,
+        "userData": {}
+      },
+      "custom": {
+        "name": "",
+        "attributes": {
+          "normal": {
+            "type": "Float32Array",
+            "itemSize": 3,
+            "count": 246456,
+            "normalized": false,
+            "usage": 35044,
+            "name": "",
+            "sha256": "162417588bf021dcc9e3563abcfa4c789125a533d1c0ede427c9c79881e872f5"
+          },
+          "position": {
+            "type": "Float32Array",
+            "itemSize": 3,
+            "count": 246456,
+            "normalized": false,
+            "usage": 35044,
+            "name": "",
+            "sha256": "80bf0ef7e1be759cdb51f90fc4d5dd9198b28ba83a6f012f278f0c5b8361eb65"
+          }
+        },
+        "index": null,
+        "groups": [],
+        "drawRange": {
+          "start": 0,
+          "count": "Infinity"
+        },
+        "morphAttributes": {},
+        "morphTargetsRelative": false,
+        "boundingBox": null,
+        "boundingSphere": null,
+        "userData": {}
+      }
+    },
+    {
+      "path": "/models/10k_obj/003_道.obj",
+      "sourceSha256": "50fef393a40ebdfd846e22af85c02252fce5a2a26ff5e5f06309281475b79361",
+      "base": {
+        "name": "",
+        "attributes": {
+          "normal": {
+            "type": "Float32Array",
+            "itemSize": 3,
+            "count": 14699,
+            "normalized": false,
+            "usage": 35044,
+            "name": "",
+            "sha256": "be53536b83ac807b71132b4d77a34060a2611c6ef56d169d3d14fbe6203db3fc"
+          },
+          "position": {
+            "type": "Float32Array",
+            "itemSize": 3,
+            "count": 14699,
+            "normalized": false,
+            "usage": 35044,
+            "name": "",
+            "sha256": "7755ce55d3d9e609e6eb33944ff5637fa5a993b9877a2a433a1d2fcbc585e5cf"
+          }
+        },
+        "index": {
+          "type": "Uint16Array",
+          "itemSize": 1,
+          "count": 88218,
+          "normalized": false,
+          "usage": 35044,
+          "name": "",
+          "sha256": "8baba2d44f6f9a3c9acfe25f57768e0ba8451d91472cf2fe5e82899b5e6ae7ab"
+        },
+        "groups": [],
+        "drawRange": {
+          "start": 0,
+          "count": "Infinity"
+        },
+        "morphAttributes": {},
+        "morphTargetsRelative": false,
+        "boundingBox": null,
+        "boundingSphere": null,
+        "userData": {}
+      },
+      "outer": {
+        "name": "",
+        "attributes": {
+          "normal": {
+            "type": "Float32Array",
+            "itemSize": 3,
+            "count": 31796,
+            "normalized": false,
+            "usage": 35044,
+            "name": "",
+            "sha256": "fe5021af5c460a090628c7c4bc14cb9222cdef6fdc2113b84b629932e323e4b1"
+          },
+          "position": {
+            "type": "Float32Array",
+            "itemSize": 3,
+            "count": 31796,
+            "normalized": false,
+            "usage": 35044,
+            "name": "",
+            "sha256": "f5bf8f0e56292541ebeace44958028f0fae2201902ba1b28deebc3cc008de020"
+          }
+        },
+        "index": {
+          "type": "Uint16Array",
+          "itemSize": 1,
+          "count": 88218,
+          "normalized": false,
+          "usage": 35044,
+          "name": "",
+          "sha256": "d1f79e85303394ac1d77109dca86dc4e3a540f1452d537d4f54e6e152b734284"
+        },
+        "groups": [],
+        "drawRange": {
+          "start": 0,
+          "count": "Infinity"
+        },
+        "morphAttributes": {},
+        "morphTargetsRelative": false,
+        "boundingBox": null,
+        "boundingSphere": null,
+        "userData": {}
+      },
+      "custom": {
+        "name": "",
+        "attributes": {
+          "normal": {
+            "type": "Float32Array",
+            "itemSize": 3,
+            "count": 352872,
+            "normalized": false,
+            "usage": 35044,
+            "name": "",
+            "sha256": "ffecba542df9036abd40b6451b0a043759330ea8c5c006bd52d114390b939efa"
+          },
+          "position": {
+            "type": "Float32Array",
+            "itemSize": 3,
+            "count": 352872,
+            "normalized": false,
+            "usage": 35044,
+            "name": "",
+            "sha256": "b34789a47ca5aaf9c0cf56574504e93d70321fee07f01d4f49021214767fa73f"
+          }
+        },
+        "index": null,
+        "groups": [],
+        "drawRange": {
+          "start": 0,
+          "count": "Infinity"
+        },
+        "morphAttributes": {},
+        "morphTargetsRelative": false,
+        "boundingBox": null,
+        "boundingSphere": null,
+        "userData": {}
+      }
+    },
+    {
+      "path": "/models/10k_obj/004_善.obj",
+      "sourceSha256": "3625e9e43f7ee3077807eab19d6402a7725ee32ae016b5f098eb07bca202dcdd",
+      "base": {
+        "name": "",
+        "attributes": {
+          "normal": {
+            "type": "Float32Array",
+            "itemSize": 3,
+            "count": 10825,
+            "normalized": false,
+            "usage": 35044,
+            "name": "",
+            "sha256": "3e30cc875bcdc156c227750348e6214bf02e1aaa1ffefe328368365f0687ab5e"
+          },
+          "position": {
+            "type": "Float32Array",
+            "itemSize": 3,
+            "count": 10825,
+            "normalized": false,
+            "usage": 35044,
+            "name": "",
+            "sha256": "6d9a9f89be24d31522fc108c17aba71b5b94fbabc3d394e91c1fef6705f1f625"
+          }
+        },
+        "index": {
+          "type": "Uint16Array",
+          "itemSize": 1,
+          "count": 64926,
+          "normalized": false,
+          "usage": 35044,
+          "name": "",
+          "sha256": "702bb5b8166d6af2154d7d0839764ee8031edf5d7397d6714ec2f24d4fd8e978"
+        },
+        "groups": [],
+        "drawRange": {
+          "start": 0,
+          "count": "Infinity"
+        },
+        "morphAttributes": {},
+        "morphTargetsRelative": false,
+        "boundingBox": null,
+        "boundingSphere": null,
+        "userData": {}
+      },
+      "outer": {
+        "name": "",
+        "attributes": {
+          "normal": {
+            "type": "Float32Array",
+            "itemSize": 3,
+            "count": 25333,
+            "normalized": false,
+            "usage": 35044,
+            "name": "",
+            "sha256": "f0f2f81271110a1aac2904dad1f8d64077d6af7204d81b438d2d8d6b7a17f760"
+          },
+          "position": {
+            "type": "Float32Array",
+            "itemSize": 3,
+            "count": 25333,
+            "normalized": false,
+            "usage": 35044,
+            "name": "",
+            "sha256": "6eafe0aa2b23f788cd3b555bb67bc129d30a5c0d147e1a0025776a5736140c28"
+          }
+        },
+        "index": {
+          "type": "Uint16Array",
+          "itemSize": 1,
+          "count": 64926,
+          "normalized": false,
+          "usage": 35044,
+          "name": "",
+          "sha256": "9f48e3d54213b5296d5360d830aecaaa9ced8d17c43dbbf346a7a2a855ca173d"
+        },
+        "groups": [],
+        "drawRange": {
+          "start": 0,
+          "count": "Infinity"
+        },
+        "morphAttributes": {},
+        "morphTargetsRelative": false,
+        "boundingBox": null,
+        "boundingSphere": null,
+        "userData": {}
+      },
+      "custom": {
+        "name": "",
+        "attributes": {
+          "normal": {
+            "type": "Float32Array",
+            "itemSize": 3,
+            "count": 259704,
+            "normalized": false,
+            "usage": 35044,
+            "name": "",
+            "sha256": "a09d32777bd7cfd93b62b9482cf5c4a0fd3c7b465574c4a5d80818ca21e1efec"
+          },
+          "position": {
+            "type": "Float32Array",
+            "itemSize": 3,
+            "count": 259704,
+            "normalized": false,
+            "usage": 35044,
+            "name": "",
+            "sha256": "9995652667786ec5c7f269108a90ab6d7bff10a8b74734618e9807d69cef3c92"
+          }
+        },
+        "index": null,
+        "groups": [],
+        "drawRange": {
+          "start": 0,
+          "count": "Infinity"
+        },
+        "morphAttributes": {},
+        "morphTargetsRelative": false,
+        "boundingBox": null,
+        "boundingSphere": null,
+        "userData": {}
+      }
+    },
+    {
+      "path": "/models/10k_obj/005_和.obj",
+      "sourceSha256": "7527a7d94cb71c565edac312244ec33a0f3b721b1d1625a335d6724c6a279440",
+      "base": {
+        "name": "",
+        "attributes": {
+          "normal": {
+            "type": "Float32Array",
+            "itemSize": 3,
+            "count": 13608,
+            "normalized": false,
+            "usage": 35044,
+            "name": "",
+            "sha256": "b23a678d77f4cd4bd1f80b093f8e523d2b1e660eac1d6140e0420dfbacd70f08"
+          },
+          "position": {
+            "type": "Float32Array",
+            "itemSize": 3,
+            "count": 13608,
+            "normalized": false,
+            "usage": 35044,
+            "name": "",
+            "sha256": "c43323844a00e62bb903af7b33594ccd0107919c9667037c7f7dbe1cf8e1ed19"
+          }
+        },
+        "index": {
+          "type": "Uint16Array",
+          "itemSize": 1,
+          "count": 81672,
+          "normalized": false,
+          "usage": 35044,
+          "name": "",
+          "sha256": "a387c857ab35e8f9062b4491d4ee19c48e2d1df9e2ad29071ed8c4b63a3c7299"
+        },
+        "groups": [],
+        "drawRange": {
+          "start": 0,
+          "count": "Infinity"
+        },
+        "morphAttributes": {},
+        "morphTargetsRelative": false,
+        "boundingBox": null,
+        "boundingSphere": null,
+        "userData": {}
+      },
+      "outer": {
+        "name": "",
+        "attributes": {
+          "normal": {
+            "type": "Float32Array",
+            "itemSize": 3,
+            "count": 22667,
+            "normalized": false,
+            "usage": 35044,
+            "name": "",
+            "sha256": "d9c936e45d5ba2193725aa59926191bd8e995d01e798cfa5288ae4f6e912e978"
+          },
+          "position": {
+            "type": "Float32Array",
+            "itemSize": 3,
+            "count": 22667,
+            "normalized": false,
+            "usage": 35044,
+            "name": "",
+            "sha256": "567bd119343e9ae43ce8d1ba56423e8a4bcd70ae799386a0d28a408d639a1027"
+          }
+        },
+        "index": {
+          "type": "Uint16Array",
+          "itemSize": 1,
+          "count": 81672,
+          "normalized": false,
+          "usage": 35044,
+          "name": "",
+          "sha256": "4f3fd2203c8814ec95e69136e1912c151a654a251e08c9ba629b0236f11fe90d"
+        },
+        "groups": [],
+        "drawRange": {
+          "start": 0,
+          "count": "Infinity"
+        },
+        "morphAttributes": {},
+        "morphTargetsRelative": false,
+        "boundingBox": null,
+        "boundingSphere": null,
+        "userData": {}
+      },
+      "custom": {
+        "name": "",
+        "attributes": {
+          "normal": {
+            "type": "Float32Array",
+            "itemSize": 3,
+            "count": 326688,
+            "normalized": false,
+            "usage": 35044,
+            "name": "",
+            "sha256": "e2ca95a7fb3f2b20b2b95f75d5ba03d2a77456526c042d4783738b8bbfec1db4"
+          },
+          "position": {
+            "type": "Float32Array",
+            "itemSize": 3,
+            "count": 326688,
+            "normalized": false,
+            "usage": 35044,
+            "name": "",
+            "sha256": "aae711282543b2d8555e3ce83ee54ca0659434e2e9b7683917950b6e1be6bb56"
+          }
+        },
+        "index": null,
+        "groups": [],
+        "drawRange": {
+          "start": 0,
+          "count": "Infinity"
+        },
+        "morphAttributes": {},
+        "morphTargetsRelative": false,
+        "boundingBox": null,
+        "boundingSphere": null,
+        "userData": {}
+      }
+    },
+    {
+      "path": "/models/10k_obj/006_静.obj",
+      "sourceSha256": "97404a1b5c289b5941b095962d293728cb6686d26c991fc5ef5b136d56529e92",
+      "base": {
+        "name": "",
+        "attributes": {
+          "normal": {
+            "type": "Float32Array",
+            "itemSize": 3,
+            "count": 16296,
+            "normalized": false,
+            "usage": 35044,
+            "name": "",
+            "sha256": "9b6239dda3c30bc0a10e18c957fcc2fd8d64103b03259aa747338104e3047715"
+          },
+          "position": {
+            "type": "Float32Array",
+            "itemSize": 3,
+            "count": 16296,
+            "normalized": false,
+            "usage": 35044,
+            "name": "",
+            "sha256": "470ef25ecd7bcbaee8a6107b305e0b1a7b9384f8828714069204d11be9c7560a"
+          }
+        },
+        "index": {
+          "type": "Uint16Array",
+          "itemSize": 1,
+          "count": 97836,
+          "normalized": false,
+          "usage": 35044,
+          "name": "",
+          "sha256": "44034b4212b0410296b90c8f9e892488bcde70b2f6135e01c47a21d47e8808ee"
+        },
+        "groups": [],
+        "drawRange": {
+          "start": 0,
+          "count": "Infinity"
+        },
+        "morphAttributes": {},
+        "morphTargetsRelative": false,
+        "boundingBox": null,
+        "boundingSphere": null,
+        "userData": {}
+      },
+      "outer": {
+        "name": "",
+        "attributes": {
+          "normal": {
+            "type": "Float32Array",
+            "itemSize": 3,
+            "count": 36287,
+            "normalized": false,
+            "usage": 35044,
+            "name": "",
+            "sha256": "a133a24d28144b4a2765a1c55cbdadb2430908185b9f2168f49b0990c21f6dfd"
+          },
+          "position": {
+            "type": "Float32Array",
+            "itemSize": 3,
+            "count": 36287,
+            "normalized": false,
+            "usage": 35044,
+            "name": "",
+            "sha256": "2f5c586b7bc2a4730fab747c1c54fcd384ecdcf9a8be5d325ca893c847e294a6"
+          }
+        },
+        "index": {
+          "type": "Uint16Array",
+          "itemSize": 1,
+          "count": 97836,
+          "normalized": false,
+          "usage": 35044,
+          "name": "",
+          "sha256": "1ea23cd6ba378f0f3c1e9e6a017fe644753c7752794fa871ea8dab0f3935a9a5"
+        },
+        "groups": [],
+        "drawRange": {
+          "start": 0,
+          "count": "Infinity"
+        },
+        "morphAttributes": {},
+        "morphTargetsRelative": false,
+        "boundingBox": null,
+        "boundingSphere": null,
+        "userData": {}
+      },
+      "custom": {
+        "name": "",
+        "attributes": {
+          "normal": {
+            "type": "Float32Array",
+            "itemSize": 3,
+            "count": 391344,
+            "normalized": false,
+            "usage": 35044,
+            "name": "",
+            "sha256": "a1d9acf0254004a9779aeb4c7ca6752c37e82e1c009db7e61355a63990771d6a"
+          },
+          "position": {
+            "type": "Float32Array",
+            "itemSize": 3,
+            "count": 391344,
+            "normalized": false,
+            "usage": 35044,
+            "name": "",
+            "sha256": "66a311c579b0e95abe0d801f1df731662f7cfbfb3c938b827c051919c37c9cd1"
+          }
+        },
+        "index": null,
+        "groups": [],
+        "drawRange": {
+          "start": 0,
+          "count": "Infinity"
+        },
+        "morphAttributes": {},
+        "morphTargetsRelative": false,
+        "boundingBox": null,
+        "boundingSphere": null,
+        "userData": {}
+      }
+    },
+    {
+      "path": "/models/10k_obj/007_明.obj",
+      "sourceSha256": "9cae0cd641836912cd2ee30f2da8bbaafd3db903c35f432a7c834ece88bd6a08",
+      "base": {
+        "name": "",
+        "attributes": {
+          "normal": {
+            "type": "Float32Array",
+            "itemSize": 3,
+            "count": 13981,
+            "normalized": false,
+            "usage": 35044,
+            "name": "",
+            "sha256": "9b3cf9dedbebe6b5b828f1ccb5816028b0eb5f5dd3efbb030aecba14bd5d4642"
+          },
+          "position": {
+            "type": "Float32Array",
+            "itemSize": 3,
+            "count": 13981,
+            "normalized": false,
+            "usage": 35044,
+            "name": "",
+            "sha256": "b57eefa36a404010219d2d373241fce017d39ce797e394251321a4bbc4257fd4"
+          }
+        },
+        "index": {
+          "type": "Uint16Array",
+          "itemSize": 1,
+          "count": 83946,
+          "normalized": false,
+          "usage": 35044,
+          "name": "",
+          "sha256": "6747f09de7b14adcae42671a257b4fc2365222adaaf623376c62a0515c3900df"
+        },
+        "groups": [],
+        "drawRange": {
+          "start": 0,
+          "count": "Infinity"
+        },
+        "morphAttributes": {},
+        "morphTargetsRelative": false,
+        "boundingBox": null,
+        "boundingSphere": null,
+        "userData": {}
+      },
+      "outer": {
+        "name": "",
+        "attributes": {
+          "normal": {
+            "type": "Float32Array",
+            "itemSize": 3,
+            "count": 22951,
+            "normalized": false,
+            "usage": 35044,
+            "name": "",
+            "sha256": "6419e4e0555d80ce7a429c6120ec9adcd7eaec77696c26bed25857484b3af4d5"
+          },
+          "position": {
+            "type": "Float32Array",
+            "itemSize": 3,
+            "count": 22951,
+            "normalized": false,
+            "usage": 35044,
+            "name": "",
+            "sha256": "d6b17c89b74f5d240fbdfecc953257d86e0aa841517a0d9313e16374c589a257"
+          }
+        },
+        "index": {
+          "type": "Uint16Array",
+          "itemSize": 1,
+          "count": 83946,
+          "normalized": false,
+          "usage": 35044,
+          "name": "",
+          "sha256": "53db752b53a1367d72e6926265e85ab852c40cab884e5534926ce30fe35e99e3"
+        },
+        "groups": [],
+        "drawRange": {
+          "start": 0,
+          "count": "Infinity"
+        },
+        "morphAttributes": {},
+        "morphTargetsRelative": false,
+        "boundingBox": null,
+        "boundingSphere": null,
+        "userData": {}
+      },
+      "custom": {
+        "name": "",
+        "attributes": {
+          "normal": {
+            "type": "Float32Array",
+            "itemSize": 3,
+            "count": 335784,
+            "normalized": false,
+            "usage": 35044,
+            "name": "",
+            "sha256": "d3898c49d360b11a36e1378e41d39faa4f7115e8c06fb3fbd31d234cc63e79b8"
+          },
+          "position": {
+            "type": "Float32Array",
+            "itemSize": 3,
+            "count": 335784,
+            "normalized": false,
+            "usage": 35044,
+            "name": "",
+            "sha256": "c148c3561fdd994b80e5678f52ebc47318e682ef56e190ce6ca1ea1fa80cee89"
+          }
+        },
+        "index": null,
+        "groups": [],
+        "drawRange": {
+          "start": 0,
+          "count": "Infinity"
+        },
+        "morphAttributes": {},
+        "morphTargetsRelative": false,
+        "boundingBox": null,
+        "boundingSphere": null,
+        "userData": {}
+      }
+    },
+    {
+      "path": "/models/10k_obj/008_悟.obj",
+      "sourceSha256": "f2562251ffb0e66806ca83e025c3f7761e702bd37fe00965673a7e19845c7f1d",
+      "base": {
+        "name": "",
+        "attributes": {
+          "normal": {
+            "type": "Float32Array",
+            "itemSize": 3,
+            "count": 14182,
+            "normalized": false,
+            "usage": 35044,
+            "name": "",
+            "sha256": "b9369f923901c7defb3d1bfc9e724ef0f03981054e54f5ce1e94cb0158e8d2c8"
+          },
+          "position": {
+            "type": "Float32Array",
+            "itemSize": 3,
+            "count": 14182,
+            "normalized": false,
+            "usage": 35044,
+            "name": "",
+            "sha256": "cfee8f0ea5876ed1ed3724b96cc6692a6478049efb0bd20934cdc7f5da7c92ca"
+          }
+        },
+        "index": {
+          "type": "Uint16Array",
+          "itemSize": 1,
+          "count": 85068,
+          "normalized": false,
+          "usage": 35044,
+          "name": "",
+          "sha256": "00118cd8feb0b37ba6f7d4d8016c61f97779b4069f0c47260ed7bb1ddc618f28"
+        },
+        "groups": [],
+        "drawRange": {
+          "start": 0,
+          "count": "Infinity"
+        },
+        "morphAttributes": {},
+        "morphTargetsRelative": false,
+        "boundingBox": null,
+        "boundingSphere": null,
+        "userData": {}
+      },
+      "outer": {
+        "name": "",
+        "attributes": {
+          "normal": {
+            "type": "Float32Array",
+            "itemSize": 3,
+            "count": 24616,
+            "normalized": false,
+            "usage": 35044,
+            "name": "",
+            "sha256": "517a76e9f36b36d5f5a0fa8da9fead113278c36c2bfe2209e7f096f6c5cb666d"
+          },
+          "position": {
+            "type": "Float32Array",
+            "itemSize": 3,
+            "count": 24616,
+            "normalized": false,
+            "usage": 35044,
+            "name": "",
+            "sha256": "1a4d845f61b8adcc1f6881a0bcb7bc9dcb985a75452784d23be505d020c01022"
+          }
+        },
+        "index": {
+          "type": "Uint16Array",
+          "itemSize": 1,
+          "count": 85068,
+          "normalized": false,
+          "usage": 35044,
+          "name": "",
+          "sha256": "af0aeecd13ac531b56ba5d16da7c37042c26a010b6df72b06836d1f2b46b5111"
+        },
+        "groups": [],
+        "drawRange": {
+          "start": 0,
+          "count": "Infinity"
+        },
+        "morphAttributes": {},
+        "morphTargetsRelative": false,
+        "boundingBox": null,
+        "boundingSphere": null,
+        "userData": {}
+      },
+      "custom": {
+        "name": "",
+        "attributes": {
+          "normal": {
+            "type": "Float32Array",
+            "itemSize": 3,
+            "count": 340272,
+            "normalized": false,
+            "usage": 35044,
+            "name": "",
+            "sha256": "95bf0002bb0d414e8fbc050fccfe5652d1bd9a62af3e1554475ef526138526f2"
+          },
+          "position": {
+            "type": "Float32Array",
+            "itemSize": 3,
+            "count": 340272,
+            "normalized": false,
+            "usage": 35044,
+            "name": "",
+            "sha256": "23ffccbe45b70b56dec10642c46ecb7f2670f6f6484636f021baf770b49e8b25"
+          }
+        },
+        "index": null,
+        "groups": [],
+        "drawRange": {
+          "start": 0,
+          "count": "Infinity"
+        },
+        "morphAttributes": {},
+        "morphTargetsRelative": false,
+        "boundingBox": null,
+        "boundingSphere": null,
+        "userData": {}
+      }
+    },
+    {
+      "path": "/models/10k_obj/009_真.obj",
+      "sourceSha256": "49934e5498e84baa3b803f05d88524a56009cbcd041154ea2e3cb7e01f1ddfcc",
+      "base": {
+        "name": "",
+        "attributes": {
+          "normal": {
+            "type": "Float32Array",
+            "itemSize": 3,
+            "count": 12735,
+            "normalized": false,
+            "usage": 35044,
+            "name": "",
+            "sha256": "b00750a5301f1bdc0121aa6a9d3815bd8ca7c3ab47a0d1ba20fe2677229ad244"
+          },
+          "position": {
+            "type": "Float32Array",
+            "itemSize": 3,
+            "count": 12735,
+            "normalized": false,
+            "usage": 35044,
+            "name": "",
+            "sha256": "ff88aa8177bce77b39dafb03404ea381adfd4b815dc2c96ca4dcc9ee50590fcc"
+          }
+        },
+        "index": {
+          "type": "Uint16Array",
+          "itemSize": 1,
+          "count": 76422,
+          "normalized": false,
+          "usage": 35044,
+          "name": "",
+          "sha256": "29186c5f6e19b93c8940a292909604c7213a03bbffc298d15cd208f68a7f7e6d"
+        },
+        "groups": [],
+        "drawRange": {
+          "start": 0,
+          "count": "Infinity"
+        },
+        "morphAttributes": {},
+        "morphTargetsRelative": false,
+        "boundingBox": null,
+        "boundingSphere": null,
+        "userData": {}
+      },
+      "outer": {
+        "name": "",
+        "attributes": {
+          "normal": {
+            "type": "Float32Array",
+            "itemSize": 3,
+            "count": 25598,
+            "normalized": false,
+            "usage": 35044,
+            "name": "",
+            "sha256": "103c2631516dea051f9d49931354429b593e59a21113f43823f82a5e302f710f"
+          },
+          "position": {
+            "type": "Float32Array",
+            "itemSize": 3,
+            "count": 25598,
+            "normalized": false,
+            "usage": 35044,
+            "name": "",
+            "sha256": "05ace63b95ae87a86f46dceaa207c5e78091c021f72ea58d1199b61fb589884f"
+          }
+        },
+        "index": {
+          "type": "Uint16Array",
+          "itemSize": 1,
+          "count": 76422,
+          "normalized": false,
+          "usage": 35044,
+          "name": "",
+          "sha256": "f45a782bdd153bd83b95fc22aecd670eae7ab0ea97bdb23d1d183fc49eb53d12"
+        },
+        "groups": [],
+        "drawRange": {
+          "start": 0,
+          "count": "Infinity"
+        },
+        "morphAttributes": {},
+        "morphTargetsRelative": false,
+        "boundingBox": null,
+        "boundingSphere": null,
+        "userData": {}
+      },
+      "custom": {
+        "name": "",
+        "attributes": {
+          "normal": {
+            "type": "Float32Array",
+            "itemSize": 3,
+            "count": 305688,
+            "normalized": false,
+            "usage": 35044,
+            "name": "",
+            "sha256": "f21fe7bfcdb639d6af814435db384189d06960c7dfb2c66cbeb285eba6389713"
+          },
+          "position": {
+            "type": "Float32Array",
+            "itemSize": 3,
+            "count": 305688,
+            "normalized": false,
+            "usage": 35044,
+            "name": "",
+            "sha256": "ff9b4bb97d93b67a1c647425c5e38417af6c2d254ed4fbb178e95193b11a6770"
+          }
+        },
+        "index": null,
+        "groups": [],
+        "drawRange": {
+          "start": 0,
+          "count": "Infinity"
+        },
+        "morphAttributes": {},
+        "morphTargetsRelative": false,
+        "boundingBox": null,
+        "boundingSphere": null,
+        "userData": {}
+      }
+    },
+    {
+      "path": "/models/10k_obj/010_圆.obj",
+      "sourceSha256": "73e2fccf412a39dee2790f73b3bd212e3c98b360feb4a6601e458f22bef36de5",
+      "base": {
+        "name": "",
+        "attributes": {
+          "normal": {
+            "type": "Float32Array",
+            "itemSize": 3,
+            "count": 12573,
+            "normalized": false,
+            "usage": 35044,
+            "name": "",
+            "sha256": "9dc76d098e556a0dc51f383e5a1d34b48bff3d7704e0a84d7c7cfb73bd61ee22"
+          },
+          "position": {
+            "type": "Float32Array",
+            "itemSize": 3,
+            "count": 12573,
+            "normalized": false,
+            "usage": 35044,
+            "name": "",
+            "sha256": "a2d69db49117af03c439d6dc725740d0b4debdd63f01add728838baa5e3cdc39"
+          }
+        },
+        "index": {
+          "type": "Uint16Array",
+          "itemSize": 1,
+          "count": 75426,
+          "normalized": false,
+          "usage": 35044,
+          "name": "",
+          "sha256": "081b9ae36de160576a056c940a4bcaf0730270ac6ccd66e85c60b99ac6dec675"
+        },
+        "groups": [],
+        "drawRange": {
+          "start": 0,
+          "count": "Infinity"
+        },
+        "morphAttributes": {},
+        "morphTargetsRelative": false,
+        "boundingBox": null,
+        "boundingSphere": null,
+        "userData": {}
+      },
+      "outer": {
+        "name": "",
+        "attributes": {
+          "normal": {
+            "type": "Float32Array",
+            "itemSize": 3,
+            "count": 21253,
+            "normalized": false,
+            "usage": 35044,
+            "name": "",
+            "sha256": "b0b38dfd7667119adb42a1500e677cc7321c4556c3d03569529fac5956f5f84c"
+          },
+          "position": {
+            "type": "Float32Array",
+            "itemSize": 3,
+            "count": 21253,
+            "normalized": false,
+            "usage": 35044,
+            "name": "",
+            "sha256": "6e60a9bca0dd0f0c3cb09d7c04d761d999a43444265bab79afb37f276e3d9a71"
+          }
+        },
+        "index": {
+          "type": "Uint16Array",
+          "itemSize": 1,
+          "count": 75426,
+          "normalized": false,
+          "usage": 35044,
+          "name": "",
+          "sha256": "2e498a26b9367833323691e54134c053fce401545b103b304564493efb5bd525"
+        },
+        "groups": [],
+        "drawRange": {
+          "start": 0,
+          "count": "Infinity"
+        },
+        "morphAttributes": {},
+        "morphTargetsRelative": false,
+        "boundingBox": null,
+        "boundingSphere": null,
+        "userData": {}
+      },
+      "custom": {
+        "name": "",
+        "attributes": {
+          "normal": {
+            "type": "Float32Array",
+            "itemSize": 3,
+            "count": 301704,
+            "normalized": false,
+            "usage": 35044,
+            "name": "",
+            "sha256": "ab9b212fc4008973226abc566bbf32a4f49056dcae3a139aebcab2fa78a158f9"
+          },
+          "position": {
+            "type": "Float32Array",
+            "itemSize": 3,
+            "count": 301704,
+            "normalized": false,
+            "usage": 35044,
+            "name": "",
+            "sha256": "6211e103dd55a47e756c6e133d7431fde6e32236e85c64184fdc644d08ab5c87"
+          }
+        },
+        "index": null,
+        "groups": [],
+        "drawRange": {
+          "start": 0,
+          "count": "Infinity"
+        },
+        "morphAttributes": {},
+        "morphTargetsRelative": false,
+        "boundingBox": null,
+        "boundingSphere": null,
+        "userData": {}
+      }
+    },
+    {
+      "path": "/models/10k_obj/011_缘.obj",
+      "sourceSha256": "0a90652295617a9a56c760268954130791cc7516d3c2426a0cffb0415424e2eb",
+      "base": {
+        "name": "",
+        "attributes": {
+          "normal": {
+            "type": "Float32Array",
+            "itemSize": 3,
+            "count": 15316,
+            "normalized": false,
+            "usage": 35044,
+            "name": "",
+            "sha256": "511268f453da90b3e97680e8c3dfca11d14e633a503ad62d1868c4d8fbed2b18"
+          },
+          "position": {
+            "type": "Float32Array",
+            "itemSize": 3,
+            "count": 15316,
+            "normalized": false,
+            "usage": 35044,
+            "name": "",
+            "sha256": "0c86d7dc9df5e646b5e48aa71a942349d2e70dee5ed99890404a1a7207915dfe"
+          }
+        },
+        "index": {
+          "type": "Uint16Array",
+          "itemSize": 1,
+          "count": 91944,
+          "normalized": false,
+          "usage": 35044,
+          "name": "",
+          "sha256": "22d47e318d145801fa34ac24ec12b87c3b117209396f83dfc288e05caabc4169"
+        },
+        "groups": [],
+        "drawRange": {
+          "start": 0,
+          "count": "Infinity"
+        },
+        "morphAttributes": {},
+        "morphTargetsRelative": false,
+        "boundingBox": null,
+        "boundingSphere": null,
+        "userData": {}
+      },
+      "outer": {
+        "name": "",
+        "attributes": {
+          "normal": {
+            "type": "Float32Array",
+            "itemSize": 3,
+            "count": 28469,
+            "normalized": false,
+            "usage": 35044,
+            "name": "",
+            "sha256": "581e98bffb5fe7a9479fff685da15a87657dce93755da1482bf57e9e196fc1f4"
+          },
+          "position": {
+            "type": "Float32Array",
+            "itemSize": 3,
+            "count": 28469,
+            "normalized": false,
+            "usage": 35044,
+            "name": "",
+            "sha256": "dcdb456299d50ba8d711207f0519410c022d9efba3a1f415b07584e04ec1dbcf"
+          }
+        },
+        "index": {
+          "type": "Uint16Array",
+          "itemSize": 1,
+          "count": 91944,
+          "normalized": false,
+          "usage": 35044,
+          "name": "",
+          "sha256": "b781178aa0e54c01920287d4c8ad79f74234c74b2ae126fa1f4333c1f6ad6dbb"
+        },
+        "groups": [],
+        "drawRange": {
+          "start": 0,
+          "count": "Infinity"
+        },
+        "morphAttributes": {},
+        "morphTargetsRelative": false,
+        "boundingBox": null,
+        "boundingSphere": null,
+        "userData": {}
+      },
+      "custom": {
+        "name": "",
+        "attributes": {
+          "normal": {
+            "type": "Float32Array",
+            "itemSize": 3,
+            "count": 367776,
+            "normalized": false,
+            "usage": 35044,
+            "name": "",
+            "sha256": "9475ae2f239edd0212483bfbc157200dc10aca3c1ca22f3fb0adc6a530ed53f2"
+          },
+          "position": {
+            "type": "Float32Array",
+            "itemSize": 3,
+            "count": 367776,
+            "normalized": false,
+            "usage": 35044,
+            "name": "",
+            "sha256": "9988145b7cc259e79915432011e3b06bdffc54780efda34cdc9b62d5a2feb638"
+          }
+        },
+        "index": null,
+        "groups": [],
+        "drawRange": {
+          "start": 0,
+          "count": "Infinity"
+        },
+        "morphAttributes": {},
+        "morphTargetsRelative": false,
+        "boundingBox": null,
+        "boundingSphere": null,
+        "userData": {}
+      }
+    },
+    {
+      "path": "/models/10k_obj/012_无.obj",
+      "sourceSha256": "76249da46b2585ab9e6ee699e2647996c7d8922475cc7af72151c75a8acc1632",
+      "base": {
+        "name": "",
+        "attributes": {
+          "normal": {
+            "type": "Float32Array",
+            "itemSize": 3,
+            "count": 10583,
+            "normalized": false,
+            "usage": 35044,
+            "name": "",
+            "sha256": "56bde6f4dfc46e3ef8531eb2d2316015a7ce58999e2bcc7b9b965409eeff19c7"
+          },
+          "position": {
+            "type": "Float32Array",
+            "itemSize": 3,
+            "count": 10583,
+            "normalized": false,
+            "usage": 35044,
+            "name": "",
+            "sha256": "7f942aace718c4e831e4dd8bc76d12672110dbef2ce2097447fddc10f885f64b"
+          }
+        },
+        "index": {
+          "type": "Uint16Array",
+          "itemSize": 1,
+          "count": 63498,
+          "normalized": false,
+          "usage": 35044,
+          "name": "",
+          "sha256": "fe63b222f16ecca36f2a855b51f84e8f90620bc082673584bb0658f9c174c0aa"
+        },
+        "groups": [],
+        "drawRange": {
+          "start": 0,
+          "count": "Infinity"
+        },
+        "morphAttributes": {},
+        "morphTargetsRelative": false,
+        "boundingBox": null,
+        "boundingSphere": null,
+        "userData": {}
+      },
+      "outer": {
+        "name": "",
+        "attributes": {
+          "normal": {
+            "type": "Float32Array",
+            "itemSize": 3,
+            "count": 15491,
+            "normalized": false,
+            "usage": 35044,
+            "name": "",
+            "sha256": "560a128acf153e4e7faa76e96b4d395ee54803319e29587cf9db2e2939c62fa3"
+          },
+          "position": {
+            "type": "Float32Array",
+            "itemSize": 3,
+            "count": 15491,
+            "normalized": false,
+            "usage": 35044,
+            "name": "",
+            "sha256": "bde4f8743c363e41195a14e3228d165d802948bd681638b68fa0b5e13d36febd"
+          }
+        },
+        "index": {
+          "type": "Uint16Array",
+          "itemSize": 1,
+          "count": 63498,
+          "normalized": false,
+          "usage": 35044,
+          "name": "",
+          "sha256": "ba1aae5bf7aedae77951f93c8a29d330be40a786598135081a8dc7dd34264318"
+        },
+        "groups": [],
+        "drawRange": {
+          "start": 0,
+          "count": "Infinity"
+        },
+        "morphAttributes": {},
+        "morphTargetsRelative": false,
+        "boundingBox": null,
+        "boundingSphere": null,
+        "userData": {}
+      },
+      "custom": {
+        "name": "",
+        "attributes": {
+          "normal": {
+            "type": "Float32Array",
+            "itemSize": 3,
+            "count": 253992,
+            "normalized": false,
+            "usage": 35044,
+            "name": "",
+            "sha256": "44f19e9b9453676f06e5e9b1c64e1ad82ee193ec895d90c99a4d7988427bc8a0"
+          },
+          "position": {
+            "type": "Float32Array",
+            "itemSize": 3,
+            "count": 253992,
+            "normalized": false,
+            "usage": 35044,
+            "name": "",
+            "sha256": "c96c6b4e1fc5edcd41b0d191655bef211d637f2f1b5e6100e1c0d4aa6af4f6be"
+          }
+        },
+        "index": null,
+        "groups": [],
+        "drawRange": {
+          "start": 0,
+          "count": "Infinity"
+        },
+        "morphAttributes": {},
+        "morphTargetsRelative": false,
+        "boundingBox": null,
+        "boundingSphere": null,
+        "userData": {}
+      }
+    },
+    {
+      "path": "/models/10k_obj/013_水.obj",
+      "sourceSha256": "595c5839ed49395aa0034dfbca5b3c8a8983432abbffc73dd6313d9056a34fe6",
+      "base": {
+        "name": "",
+        "attributes": {
+          "normal": {
+            "type": "Float32Array",
+            "itemSize": 3,
+            "count": 11251,
+            "normalized": false,
+            "usage": 35044,
+            "name": "",
+            "sha256": "254919ba579b67667804fac3c58005f4ad292f87a6bb2e37f4ef898e496f25db"
+          },
+          "position": {
+            "type": "Float32Array",
+            "itemSize": 3,
+            "count": 11251,
+            "normalized": false,
+            "usage": 35044,
+            "name": "",
+            "sha256": "34f10d384b75a6c2739ed52cdee3960407104f6a9ed70c5b554658455b96ab43"
+          }
+        },
+        "index": {
+          "type": "Uint16Array",
+          "itemSize": 1,
+          "count": 67494,
+          "normalized": false,
+          "usage": 35044,
+          "name": "",
+          "sha256": "16c06f9992a638415e9047a5f0ba51e82890efa6a19d403ab560da2efbcb5834"
+        },
+        "groups": [],
+        "drawRange": {
+          "start": 0,
+          "count": "Infinity"
+        },
+        "morphAttributes": {},
+        "morphTargetsRelative": false,
+        "boundingBox": null,
+        "boundingSphere": null,
+        "userData": {}
+      },
+      "outer": {
+        "name": "",
+        "attributes": {
+          "normal": {
+            "type": "Float32Array",
+            "itemSize": 3,
+            "count": 17861,
+            "normalized": false,
+            "usage": 35044,
+            "name": "",
+            "sha256": "382c6ce05fa516e195f87e7743e201bcccd31455b670e32a006c7acab1292bf2"
+          },
+          "position": {
+            "type": "Float32Array",
+            "itemSize": 3,
+            "count": 17861,
+            "normalized": false,
+            "usage": 35044,
+            "name": "",
+            "sha256": "8fe241cae5121598bbe9450544277651440a23add9ecbb27f3f3d43d8eff991c"
+          }
+        },
+        "index": {
+          "type": "Uint16Array",
+          "itemSize": 1,
+          "count": 67494,
+          "normalized": false,
+          "usage": 35044,
+          "name": "",
+          "sha256": "5caf7d24d22caf906cfa102fe936848f51b86c1fc16a13169aa679be7afc600e"
+        },
+        "groups": [],
+        "drawRange": {
+          "start": 0,
+          "count": "Infinity"
+        },
+        "morphAttributes": {},
+        "morphTargetsRelative": false,
+        "boundingBox": null,
+        "boundingSphere": null,
+        "userData": {}
+      },
+      "custom": {
+        "name": "",
+        "attributes": {
+          "normal": {
+            "type": "Float32Array",
+            "itemSize": 3,
+            "count": 269976,
+            "normalized": false,
+            "usage": 35044,
+            "name": "",
+            "sha256": "33abe36c0dd07112059c033c93da1d9c248a45cdbb4fe2a4fe3e0abb2d677510"
+          },
+          "position": {
+            "type": "Float32Array",
+            "itemSize": 3,
+            "count": 269976,
+            "normalized": false,
+            "usage": 35044,
+            "name": "",
+            "sha256": "d1718638ca802377c74032d196c6d637ee9eada3cca0115b77173ffbb7fd2456"
+          }
+        },
+        "index": null,
+        "groups": [],
+        "drawRange": {
+          "start": 0,
+          "count": "Infinity"
+        },
+        "morphAttributes": {},
+        "morphTargetsRelative": false,
+        "boundingBox": null,
+        "boundingSphere": null,
+        "userData": {}
+      }
+    },
+    {
+      "path": "/models/10k_obj/014_山.obj",
+      "sourceSha256": "2f3ea8e13153a704b5e884b786685cac7c678e9b5c79f46d8d2d350d1f62a952",
+      "base": {
+        "name": "",
+        "attributes": {
+          "normal": {
+            "type": "Float32Array",
+            "itemSize": 3,
+            "count": 12040,
+            "normalized": false,
+            "usage": 35044,
+            "name": "",
+            "sha256": "357ffe24be9b1d39e1c42026c8a362c56409c1cd9fb9bcd397a9b7540f425bea"
+          },
+          "position": {
+            "type": "Float32Array",
+            "itemSize": 3,
+            "count": 12040,
+            "normalized": false,
+            "usage": 35044,
+            "name": "",
+            "sha256": "236fe041a2010a90a96e43e42474ed66c037cfb316205c180e6556c776b1b4bc"
+          }
+        },
+        "index": {
+          "type": "Uint16Array",
+          "itemSize": 1,
+          "count": 72228,
+          "normalized": false,
+          "usage": 35044,
+          "name": "",
+          "sha256": "493c0829a54d0b6421a97408046f9d18f0f28d1fd3b6e6d075bb9940188fd96f"
+        },
+        "groups": [],
+        "drawRange": {
+          "start": 0,
+          "count": "Infinity"
+        },
+        "morphAttributes": {},
+        "morphTargetsRelative": false,
+        "boundingBox": null,
+        "boundingSphere": null,
+        "userData": {}
+      },
+      "outer": {
+        "name": "",
+        "attributes": {
+          "normal": {
+            "type": "Float32Array",
+            "itemSize": 3,
+            "count": 17736,
+            "normalized": false,
+            "usage": 35044,
+            "name": "",
+            "sha256": "601f0b1cd748377aa8b3e00455cb7d5c67a95b9f6765a2ed162a17850f759587"
+          },
+          "position": {
+            "type": "Float32Array",
+            "itemSize": 3,
+            "count": 17736,
+            "normalized": false,
+            "usage": 35044,
+            "name": "",
+            "sha256": "0df4493a9be82ee55578eb8087d8287f380ee1c91950e3b0fa830483713c7542"
+          }
+        },
+        "index": {
+          "type": "Uint16Array",
+          "itemSize": 1,
+          "count": 72228,
+          "normalized": false,
+          "usage": 35044,
+          "name": "",
+          "sha256": "4ab54b6b3e2d4826092d2e6841cb54f55a0819a1de8b2d4e8a968c4bd839a684"
+        },
+        "groups": [],
+        "drawRange": {
+          "start": 0,
+          "count": "Infinity"
+        },
+        "morphAttributes": {},
+        "morphTargetsRelative": false,
+        "boundingBox": null,
+        "boundingSphere": null,
+        "userData": {}
+      },
+      "custom": {
+        "name": "",
+        "attributes": {
+          "normal": {
+            "type": "Float32Array",
+            "itemSize": 3,
+            "count": 288912,
+            "normalized": false,
+            "usage": 35044,
+            "name": "",
+            "sha256": "512aabd7d2ca25a2dc9583b31360dfad4ab64b000e984ef0e62927575834d84e"
+          },
+          "position": {
+            "type": "Float32Array",
+            "itemSize": 3,
+            "count": 288912,
+            "normalized": false,
+            "usage": 35044,
+            "name": "",
+            "sha256": "be07435eaae3345153ecf7be84b17596a1f947865ab8e71f163f1ebcc3e7eae7"
+          }
+        },
+        "index": null,
+        "groups": [],
+        "drawRange": {
+          "start": 0,
+          "count": "Infinity"
+        },
+        "morphAttributes": {},
+        "morphTargetsRelative": false,
+        "boundingBox": null,
+        "boundingSphere": null,
+        "userData": {}
+      }
+    },
+    {
+      "path": "/models/10k_obj/015_月.obj",
+      "sourceSha256": "37e7b2aa7051449bd98328ea66c85b167ffd720ed7e01c3bda4ba1388210bb2c",
+      "base": {
+        "name": "",
+        "attributes": {
+          "normal": {
+            "type": "Float32Array",
+            "itemSize": 3,
+            "count": 11250,
+            "normalized": false,
+            "usage": 35044,
+            "name": "",
+            "sha256": "b4189a85b641b95a772a97e915f5bd6e98656459b7458cf906284ea1fa64ac78"
+          },
+          "position": {
+            "type": "Float32Array",
+            "itemSize": 3,
+            "count": 11250,
+            "normalized": false,
+            "usage": 35044,
+            "name": "",
+            "sha256": "37d3abbac907f77a8cbf5c2600ae5d45cbc2c2bdfdd2fbef313a1748fe96a320"
+          }
+        },
+        "index": {
+          "type": "Uint16Array",
+          "itemSize": 1,
+          "count": 67512,
+          "normalized": false,
+          "usage": 35044,
+          "name": "",
+          "sha256": "a29a9adce996bcd72b8ea097356f551e7b67c93969ddbec67c28f8c6a136665d"
+        },
+        "groups": [],
+        "drawRange": {
+          "start": 0,
+          "count": "Infinity"
+        },
+        "morphAttributes": {},
+        "morphTargetsRelative": false,
+        "boundingBox": null,
+        "boundingSphere": null,
+        "userData": {}
+      },
+      "outer": {
+        "name": "",
+        "attributes": {
+          "normal": {
+            "type": "Float32Array",
+            "itemSize": 3,
+            "count": 13961,
+            "normalized": false,
+            "usage": 35044,
+            "name": "",
+            "sha256": "94c5c658331f1ca05728636bdc9be1c68a37913a1fd7aa8f98d1a23c82315ae3"
+          },
+          "position": {
+            "type": "Float32Array",
+            "itemSize": 3,
+            "count": 13961,
+            "normalized": false,
+            "usage": 35044,
+            "name": "",
+            "sha256": "3e24b662cbd2dfc597f96eb2e01a96ab6356aa3aee3219741c8c76ffefae6221"
+          }
+        },
+        "index": {
+          "type": "Uint16Array",
+          "itemSize": 1,
+          "count": 67512,
+          "normalized": false,
+          "usage": 35044,
+          "name": "",
+          "sha256": "73515a5a02fdec57a244b2bdabea0d042d4e887d16a1ecc47b7b480b1ed33130"
+        },
+        "groups": [],
+        "drawRange": {
+          "start": 0,
+          "count": "Infinity"
+        },
+        "morphAttributes": {},
+        "morphTargetsRelative": false,
+        "boundingBox": null,
+        "boundingSphere": null,
+        "userData": {}
+      },
+      "custom": {
+        "name": "",
+        "attributes": {
+          "normal": {
+            "type": "Float32Array",
+            "itemSize": 3,
+            "count": 270048,
+            "normalized": false,
+            "usage": 35044,
+            "name": "",
+            "sha256": "f1976b99535b3143379f2947b50d61c186e5b8c4e87c37d764e3b53ec39c8415"
+          },
+          "position": {
+            "type": "Float32Array",
+            "itemSize": 3,
+            "count": 270048,
+            "normalized": false,
+            "usage": 35044,
+            "name": "",
+            "sha256": "61658e438fdd3e6deeb94fd1dd15d6972bda72cacd26b8ca18464f3a8b851bb4"
+          }
+        },
+        "index": null,
+        "groups": [],
+        "drawRange": {
+          "start": 0,
+          "count": "Infinity"
+        },
+        "morphAttributes": {},
+        "morphTargetsRelative": false,
+        "boundingBox": null,
+        "boundingSphere": null,
+        "userData": {}
+      }
+    },
+    {
+      "path": "/models/10k_obj/016_日.obj",
+      "sourceSha256": "778b16a55156ab35ce7ed15e1b803b31d2f305a7f2914e4fcf88afee2ccd9e79",
+      "base": {
+        "name": "",
+        "attributes": {
+          "normal": {
+            "type": "Float32Array",
+            "itemSize": 3,
+            "count": 11927,
+            "normalized": false,
+            "usage": 35044,
+            "name": "",
+            "sha256": "bb0cbc3cb49e49352ea366721cd554ea9701af085a2ff7c4e02c243d994820c5"
+          },
+          "position": {
+            "type": "Float32Array",
+            "itemSize": 3,
+            "count": 11927,
+            "normalized": false,
+            "usage": 35044,
+            "name": "",
+            "sha256": "3621abbdf5a8bb1356ccc0d888ea604bc78ef85cdd6cb60dd24287ef94089570"
+          }
+        },
+        "index": {
+          "type": "Uint16Array",
+          "itemSize": 1,
+          "count": 71598,
+          "normalized": false,
+          "usage": 35044,
+          "name": "",
+          "sha256": "9bb04c6c559442d804de47c1c32286afedefd2a3683a6c39934843e9fb19ac32"
+        },
+        "groups": [],
+        "drawRange": {
+          "start": 0,
+          "count": "Infinity"
+        },
+        "morphAttributes": {},
+        "morphTargetsRelative": false,
+        "boundingBox": null,
+        "boundingSphere": null,
+        "userData": {}
+      },
+      "outer": {
+        "name": "",
+        "attributes": {
+          "normal": {
+            "type": "Float32Array",
+            "itemSize": 3,
+            "count": 15809,
+            "normalized": false,
+            "usage": 35044,
+            "name": "",
+            "sha256": "6c2baf7e933a34dcf80f052dabe6b305f508b079ce8a4f99afb25a8728d9e853"
+          },
+          "position": {
+            "type": "Float32Array",
+            "itemSize": 3,
+            "count": 15809,
+            "normalized": false,
+            "usage": 35044,
+            "name": "",
+            "sha256": "08a8b687e9f62038fdea69235d1530221dae783966df88aaa56d9bbe59e33df8"
+          }
+        },
+        "index": {
+          "type": "Uint16Array",
+          "itemSize": 1,
+          "count": 71598,
+          "normalized": false,
+          "usage": 35044,
+          "name": "",
+          "sha256": "c90d5b3a9416f8e31ca7ab38d8dc86a685fa2c5a6c63ac98ad935e9c89dd14e1"
+        },
+        "groups": [],
+        "drawRange": {
+          "start": 0,
+          "count": "Infinity"
+        },
+        "morphAttributes": {},
+        "morphTargetsRelative": false,
+        "boundingBox": null,
+        "boundingSphere": null,
+        "userData": {}
+      },
+      "custom": {
+        "name": "",
+        "attributes": {
+          "normal": {
+            "type": "Float32Array",
+            "itemSize": 3,
+            "count": 286392,
+            "normalized": false,
+            "usage": 35044,
+            "name": "",
+            "sha256": "998bddf4e8e3ed6e12ac4b0121f5cb8fb8bfd7f14d3bf32bf85040e50970e952"
+          },
+          "position": {
+            "type": "Float32Array",
+            "itemSize": 3,
+            "count": 286392,
+            "normalized": false,
+            "usage": 35044,
+            "name": "",
+            "sha256": "61125058644271501091c6a9d406441485c303aa34a6c18b0c761b47abc71ffb"
+          }
+        },
+        "index": null,
+        "groups": [],
+        "drawRange": {
+          "start": 0,
+          "count": "Infinity"
+        },
+        "morphAttributes": {},
+        "morphTargetsRelative": false,
+        "boundingBox": null,
+        "boundingSphere": null,
+        "userData": {}
+      }
+    },
+    {
+      "path": "/models/10k_obj/017_风.obj",
+      "sourceSha256": "58d56cc7df8a418b2d1b3ca7d16d571488a99e72f155f10a73ab12e1861d60f1",
+      "base": {
+        "name": "",
+        "attributes": {
+          "normal": {
+            "type": "Float32Array",
+            "itemSize": 3,
+            "count": 11924,
+            "normalized": false,
+            "usage": 35044,
+            "name": "",
+            "sha256": "ec3250ebd23a0dba327b7ae0148be121d5c105b8980fddc354f2d624a8b6074a"
+          },
+          "position": {
+            "type": "Float32Array",
+            "itemSize": 3,
+            "count": 11924,
+            "normalized": false,
+            "usage": 35044,
+            "name": "",
+            "sha256": "a90a13f58f77b06f4b15de7a90c48819fd60c561c555c0d29d59f8c5fd59f31b"
+          }
+        },
+        "index": {
+          "type": "Uint16Array",
+          "itemSize": 1,
+          "count": 71520,
+          "normalized": false,
+          "usage": 35044,
+          "name": "",
+          "sha256": "ccd49ecc3c926bc50cc42b35931ba8c8f295c0833cc080163cab69c5c2dfc15c"
+        },
+        "groups": [],
+        "drawRange": {
+          "start": 0,
+          "count": "Infinity"
+        },
+        "morphAttributes": {},
+        "morphTargetsRelative": false,
+        "boundingBox": null,
+        "boundingSphere": null,
+        "userData": {}
+      },
+      "outer": {
+        "name": "",
+        "attributes": {
+          "normal": {
+            "type": "Float32Array",
+            "itemSize": 3,
+            "count": 19858,
+            "normalized": false,
+            "usage": 35044,
+            "name": "",
+            "sha256": "addec74208ac1d33f03ea3594aed988326c7cdec4977c5185e18516f1ccf1f27"
+          },
+          "position": {
+            "type": "Float32Array",
+            "itemSize": 3,
+            "count": 19858,
+            "normalized": false,
+            "usage": 35044,
+            "name": "",
+            "sha256": "375e4483ddca6bdcc6886f4f348693e6bd9fe3cad1646ecfc16068df31aba369"
+          }
+        },
+        "index": {
+          "type": "Uint16Array",
+          "itemSize": 1,
+          "count": 71520,
+          "normalized": false,
+          "usage": 35044,
+          "name": "",
+          "sha256": "e7e2449efcdc026277a908c2c47f0a0bbf2072c570a56c4caec03e9c294b65f1"
+        },
+        "groups": [],
+        "drawRange": {
+          "start": 0,
+          "count": "Infinity"
+        },
+        "morphAttributes": {},
+        "morphTargetsRelative": false,
+        "boundingBox": null,
+        "boundingSphere": null,
+        "userData": {}
+      },
+      "custom": {
+        "name": "",
+        "attributes": {
+          "normal": {
+            "type": "Float32Array",
+            "itemSize": 3,
+            "count": 286080,
+            "normalized": false,
+            "usage": 35044,
+            "name": "",
+            "sha256": "522b330e8bd0c0b6425181ef1de1590016721cf2f88a480243ee010337950435"
+          },
+          "position": {
+            "type": "Float32Array",
+            "itemSize": 3,
+            "count": 286080,
+            "normalized": false,
+            "usage": 35044,
+            "name": "",
+            "sha256": "65828b3de18787ff132719a065d03ebfb1e47ae206cf491ee980d278b5c3b2a3"
+          }
+        },
+        "index": null,
+        "groups": [],
+        "drawRange": {
+          "start": 0,
+          "count": "Infinity"
+        },
+        "morphAttributes": {},
+        "morphTargetsRelative": false,
+        "boundingBox": null,
+        "boundingSphere": null,
+        "userData": {}
+      }
+    },
+    {
+      "path": "/models/10k_obj/018_光.obj",
+      "sourceSha256": "a6fe6c7f4595216cc4e6b5e6b6ceffce2904e39d873ce30675e2eb0f782f85f5",
+      "base": {
+        "name": "",
+        "attributes": {
+          "normal": {
+            "type": "Float32Array",
+            "itemSize": 3,
+            "count": 11725,
+            "normalized": false,
+            "usage": 35044,
+            "name": "",
+            "sha256": "7e9412eb7fcc1ed7af136327dff32be0ed3d427f66bd5a0bf211048345bec036"
+          },
+          "position": {
+            "type": "Float32Array",
+            "itemSize": 3,
+            "count": 11725,
+            "normalized": false,
+            "usage": 35044,
+            "name": "",
+            "sha256": "1c8a60b8f0c6e5199d87b727ac2bb7a9ba407ed4a239c1e4f1da5d3e6847bc43"
+          }
+        },
+        "index": {
+          "type": "Uint16Array",
+          "itemSize": 1,
+          "count": 70350,
+          "normalized": false,
+          "usage": 35044,
+          "name": "",
+          "sha256": "e51ed17cb7c3673be5e2e4ccdf311b68ac8cdb38f94ac09911e10334dba92e1f"
+        },
+        "groups": [],
+        "drawRange": {
+          "start": 0,
+          "count": "Infinity"
+        },
+        "morphAttributes": {},
+        "morphTargetsRelative": false,
+        "boundingBox": null,
+        "boundingSphere": null,
+        "userData": {}
+      },
+      "outer": {
+        "name": "",
+        "attributes": {
+          "normal": {
+            "type": "Float32Array",
+            "itemSize": 3,
+            "count": 18958,
+            "normalized": false,
+            "usage": 35044,
+            "name": "",
+            "sha256": "471a7ee009b7820485767f40b7e0d380585e45f851714304ba468fb62c9c897b"
+          },
+          "position": {
+            "type": "Float32Array",
+            "itemSize": 3,
+            "count": 18958,
+            "normalized": false,
+            "usage": 35044,
+            "name": "",
+            "sha256": "ce1c37871ac87adddda31412103a6b7b5acc2091e7cc22742d7cd2d5e0fce64a"
+          }
+        },
+        "index": {
+          "type": "Uint16Array",
+          "itemSize": 1,
+          "count": 70350,
+          "normalized": false,
+          "usage": 35044,
+          "name": "",
+          "sha256": "edcbd4a93ae234973738281f73afbf0f97adb238420fe2400bf967a4460186f7"
+        },
+        "groups": [],
+        "drawRange": {
+          "start": 0,
+          "count": "Infinity"
+        },
+        "morphAttributes": {},
+        "morphTargetsRelative": false,
+        "boundingBox": null,
+        "boundingSphere": null,
+        "userData": {}
+      },
+      "custom": {
+        "name": "",
+        "attributes": {
+          "normal": {
+            "type": "Float32Array",
+            "itemSize": 3,
+            "count": 281400,
+            "normalized": false,
+            "usage": 35044,
+            "name": "",
+            "sha256": "ddf3d3eb9237681401f1dd2b5d5c2f3bfc7e4310f5ff6faf71f9744aaaa9edfe"
+          },
+          "position": {
+            "type": "Float32Array",
+            "itemSize": 3,
+            "count": 281400,
+            "normalized": false,
+            "usage": 35044,
+            "name": "",
+            "sha256": "c49183319bbb425040d7d18e26cfcdb83826a6192b52f44537a89d1611269c3f"
+          }
+        },
+        "index": null,
+        "groups": [],
+        "drawRange": {
+          "start": 0,
+          "count": "Infinity"
+        },
+        "morphAttributes": {},
+        "morphTargetsRelative": false,
+        "boundingBox": null,
+        "boundingSphere": null,
+        "userData": {}
+      }
+    },
+    {
+      "path": "/models/10k_obj/019_生.obj",
+      "sourceSha256": "a835e0a8e0d0157efe908f5605fb5b4154437bb323c7b0038bcd8dcac0fb6141",
+      "base": {
+        "name": "",
+        "attributes": {
+          "normal": {
+            "type": "Float32Array",
+            "itemSize": 3,
+            "count": 13466,
+            "normalized": false,
+            "usage": 35044,
+            "name": "",
+            "sha256": "7a950e108437817f9bc5c5e741a3e8d410aa42f4bf39a8709736906ffb9d8ec9"
+          },
+          "position": {
+            "type": "Float32Array",
+            "itemSize": 3,
+            "count": 13466,
+            "normalized": false,
+            "usage": 35044,
+            "name": "",
+            "sha256": "c48fe554e52a75ff9a1c52ed10a7678793d6f5fe3473613a70026009fdbcc030"
+          }
+        },
+        "index": {
+          "type": "Uint16Array",
+          "itemSize": 1,
+          "count": 80820,
+          "normalized": false,
+          "usage": 35044,
+          "name": "",
+          "sha256": "f3045d6688a82727774113c6675f32ef4be52686e2c86b20fca6da704dae0da2"
+        },
+        "groups": [],
+        "drawRange": {
+          "start": 0,
+          "count": "Infinity"
+        },
+        "morphAttributes": {},
+        "morphTargetsRelative": false,
+        "boundingBox": null,
+        "boundingSphere": null,
+        "userData": {}
+      },
+      "outer": {
+        "name": "",
+        "attributes": {
+          "normal": {
+            "type": "Float32Array",
+            "itemSize": 3,
+            "count": 22550,
+            "normalized": false,
+            "usage": 35044,
+            "name": "",
+            "sha256": "64f7de7fcd855d69b02f38c767d53255d35ab7101fc9e8d8fb0786a68665278b"
+          },
+          "position": {
+            "type": "Float32Array",
+            "itemSize": 3,
+            "count": 22550,
+            "normalized": false,
+            "usage": 35044,
+            "name": "",
+            "sha256": "e54ed64253934c392deb5f42da4d248d33b29b7718ea8f241f444a8f8a607201"
+          }
+        },
+        "index": {
+          "type": "Uint16Array",
+          "itemSize": 1,
+          "count": 80820,
+          "normalized": false,
+          "usage": 35044,
+          "name": "",
+          "sha256": "8a9aff3fc0af87b36f220984078c0e6fee3296c4856c4063865f7c036a365de0"
+        },
+        "groups": [],
+        "drawRange": {
+          "start": 0,
+          "count": "Infinity"
+        },
+        "morphAttributes": {},
+        "morphTargetsRelative": false,
+        "boundingBox": null,
+        "boundingSphere": null,
+        "userData": {}
+      },
+      "custom": {
+        "name": "",
+        "attributes": {
+          "normal": {
+            "type": "Float32Array",
+            "itemSize": 3,
+            "count": 323280,
+            "normalized": false,
+            "usage": 35044,
+            "name": "",
+            "sha256": "27661089b633a4090449980ef5294a3e7d2e4d9c6902b0a6b27b68793668248e"
+          },
+          "position": {
+            "type": "Float32Array",
+            "itemSize": 3,
+            "count": 323280,
+            "normalized": false,
+            "usage": 35044,
+            "name": "",
+            "sha256": "4336107c63c26b73abaff2ab14344e71f627a9b228474d0b1df0787ec6b488af"
+          }
+        },
+        "index": null,
+        "groups": [],
+        "drawRange": {
+          "start": 0,
+          "count": "Infinity"
+        },
+        "morphAttributes": {},
+        "morphTargetsRelative": false,
+        "boundingBox": null,
+        "boundingSphere": null,
+        "userData": {}
+      }
+    },
+    {
+      "path": "/models/10k_obj/020_死.obj",
+      "sourceSha256": "03079847dae1abbeeae6616eba1494dd115fc85c6c66d96492cf918e9285f588",
+      "base": {
+        "name": "",
+        "attributes": {
+          "normal": {
+            "type": "Float32Array",
+            "itemSize": 3,
+            "count": 10664,
+            "normalized": false,
+            "usage": 35044,
+            "name": "",
+            "sha256": "6246a040a1c2f483e6eb63499e954d67de70ac1987e8554134b3ea154ea45bd8"
+          },
+          "position": {
+            "type": "Float32Array",
+            "itemSize": 3,
+            "count": 10664,
+            "normalized": false,
+            "usage": 35044,
+            "name": "",
+            "sha256": "cb6c305e1da0d8efe311f46e27a300a6c001482160c10fca3dbbbe52d45d06c0"
+          }
+        },
+        "index": {
+          "type": "Uint16Array",
+          "itemSize": 1,
+          "count": 63972,
+          "normalized": false,
+          "usage": 35044,
+          "name": "",
+          "sha256": "6377df07af7db8c2dfd7af34d98fb30f540a173970444a9dbc9e2697d8bdda7d"
+        },
+        "groups": [],
+        "drawRange": {
+          "start": 0,
+          "count": "Infinity"
+        },
+        "morphAttributes": {},
+        "morphTargetsRelative": false,
+        "boundingBox": null,
+        "boundingSphere": null,
+        "userData": {}
+      },
+      "outer": {
+        "name": "",
+        "attributes": {
+          "normal": {
+            "type": "Float32Array",
+            "itemSize": 3,
+            "count": 15112,
+            "normalized": false,
+            "usage": 35044,
+            "name": "",
+            "sha256": "e84bb887520dc0053de7e45b5d5be3e05e8bc9469de9d25d11eb642c8530af11"
+          },
+          "position": {
+            "type": "Float32Array",
+            "itemSize": 3,
+            "count": 15112,
+            "normalized": false,
+            "usage": 35044,
+            "name": "",
+            "sha256": "3652dd4f0734050b35554a740ca0d13b679008b57a36d8a44b83038ab15d7a70"
+          }
+        },
+        "index": {
+          "type": "Uint16Array",
+          "itemSize": 1,
+          "count": 63972,
+          "normalized": false,
+          "usage": 35044,
+          "name": "",
+          "sha256": "b11bd5f51ab48c3165141131b3188d4ce019fbe5958c904e255b0dd44a64b6bc"
+        },
+        "groups": [],
+        "drawRange": {
+          "start": 0,
+          "count": "Infinity"
+        },
+        "morphAttributes": {},
+        "morphTargetsRelative": false,
+        "boundingBox": null,
+        "boundingSphere": null,
+        "userData": {}
+      },
+      "custom": {
+        "name": "",
+        "attributes": {
+          "normal": {
+            "type": "Float32Array",
+            "itemSize": 3,
+            "count": 255888,
+            "normalized": false,
+            "usage": 35044,
+            "name": "",
+            "sha256": "794df3f54758f40a0d021cf219defc5415fcd0f8de686e31e29c0e94aa66d51f"
+          },
+          "position": {
+            "type": "Float32Array",
+            "itemSize": 3,
+            "count": 255888,
+            "normalized": false,
+            "usage": 35044,
+            "name": "",
+            "sha256": "92d20031e378aee2f8c8588ef1db8ced067a936f10dc61a07e38266983188a23"
+          }
+        },
+        "index": null,
+        "groups": [],
+        "drawRange": {
+          "start": 0,
+          "count": "Infinity"
+        },
+        "morphAttributes": {},
+        "morphTargetsRelative": false,
+        "boundingBox": null,
+        "boundingSphere": null,
+        "userData": {}
+      }
+    },
+    {
+      "path": "/models/10k_obj/021_德.obj",
+      "sourceSha256": "554aa7225cdc144b35504db66a6f0ced6803d1c9924f4738b8401f7c0c163cb2",
+      "base": {
+        "name": "",
+        "attributes": {
+          "normal": {
+            "type": "Float32Array",
+            "itemSize": 3,
+            "count": 14520,
+            "normalized": false,
+            "usage": 35044,
+            "name": "",
+            "sha256": "363b49540b2888e92672e6179e3289dab25eb839fdca94c3eda51ddfb3c9ff67"
+          },
+          "position": {
+            "type": "Float32Array",
+            "itemSize": 3,
+            "count": 14520,
+            "normalized": false,
+            "usage": 35044,
+            "name": "",
+            "sha256": "3ab75532db7b1b6c52823e16790fd115dcaccd479537a58d7bf823a69d8ecea9"
+          }
+        },
+        "index": {
+          "type": "Uint16Array",
+          "itemSize": 1,
+          "count": 87096,
+          "normalized": false,
+          "usage": 35044,
+          "name": "",
+          "sha256": "479c88be829a2eeda7def304560ce062ebf612a0f1ce18e310844aed745a1d96"
+        },
+        "groups": [],
+        "drawRange": {
+          "start": 0,
+          "count": "Infinity"
+        },
+        "morphAttributes": {},
+        "morphTargetsRelative": false,
+        "boundingBox": null,
+        "boundingSphere": null,
+        "userData": {}
+      },
+      "outer": {
+        "name": "",
+        "attributes": {
+          "normal": {
+            "type": "Float32Array",
+            "itemSize": 3,
+            "count": 32847,
+            "normalized": false,
+            "usage": 35044,
+            "name": "",
+            "sha256": "7d0bab840f9a8ccb17aedf0023fd989bf502179fc9ce923474634769c9286be2"
+          },
+          "position": {
+            "type": "Float32Array",
+            "itemSize": 3,
+            "count": 32847,
+            "normalized": false,
+            "usage": 35044,
+            "name": "",
+            "sha256": "12a1b720429b078deda5c3634b307dae0cfd77ae560d73faeddd20357d6f581c"
+          }
+        },
+        "index": {
+          "type": "Uint16Array",
+          "itemSize": 1,
+          "count": 87096,
+          "normalized": false,
+          "usage": 35044,
+          "name": "",
+          "sha256": "0df79ef4cd68f78797f6c0c37296145237a63cb8dbc6ce2df9ba19c6e64f4aed"
+        },
+        "groups": [],
+        "drawRange": {
+          "start": 0,
+          "count": "Infinity"
+        },
+        "morphAttributes": {},
+        "morphTargetsRelative": false,
+        "boundingBox": null,
+        "boundingSphere": null,
+        "userData": {}
+      },
+      "custom": {
+        "name": "",
+        "attributes": {
+          "normal": {
+            "type": "Float32Array",
+            "itemSize": 3,
+            "count": 348384,
+            "normalized": false,
+            "usage": 35044,
+            "name": "",
+            "sha256": "b95caffc7bc32adb25459dad6d86ccfbf2da2cf94decdbb736016528248cd499"
+          },
+          "position": {
+            "type": "Float32Array",
+            "itemSize": 3,
+            "count": 348384,
+            "normalized": false,
+            "usage": 35044,
+            "name": "",
+            "sha256": "8cd8e3f51550a17e1ca2b367acc545557c3c72fc31281280654c9726a13c6e5b"
+          }
+        },
+        "index": null,
+        "groups": [],
+        "drawRange": {
+          "start": 0,
+          "count": "Infinity"
+        },
+        "morphAttributes": {},
+        "morphTargetsRelative": false,
+        "boundingBox": null,
+        "boundingSphere": null,
+        "userData": {}
+      }
+    },
+    {
+      "path": "/models/10k_obj/022_法.obj",
+      "sourceSha256": "dfc9b3ba4746fd0ce1aacd049f92dd7ac5e0ac10cfc2d91f0e7acb1dce3b2066",
+      "base": {
+        "name": "",
+        "attributes": {
+          "normal": {
+            "type": "Float32Array",
+            "itemSize": 3,
+            "count": 12945,
+            "normalized": false,
+            "usage": 35044,
+            "name": "",
+            "sha256": "9f7ef1c4465de5869d8c01da64c892ca9bfcbedb115b7efa36c9b3b10b86c513"
+          },
+          "position": {
+            "type": "Float32Array",
+            "itemSize": 3,
+            "count": 12945,
+            "normalized": false,
+            "usage": 35044,
+            "name": "",
+            "sha256": "b7048998a61d0a23fa9c8366067fe3352f423d4525849269b487299f8b880a3e"
+          }
+        },
+        "index": {
+          "type": "Uint16Array",
+          "itemSize": 1,
+          "count": 77607,
+          "normalized": false,
+          "usage": 35044,
+          "name": "",
+          "sha256": "c281b65043bc88b72eedae04c16e39fbd922dcca38f5edc48bb108cfd24ac761"
+        },
+        "groups": [],
+        "drawRange": {
+          "start": 0,
+          "count": "Infinity"
+        },
+        "morphAttributes": {},
+        "morphTargetsRelative": false,
+        "boundingBox": null,
+        "boundingSphere": null,
+        "userData": {}
+      },
+      "outer": {
+        "name": "",
+        "attributes": {
+          "normal": {
+            "type": "Float32Array",
+            "itemSize": 3,
+            "count": 25982,
+            "normalized": false,
+            "usage": 35044,
+            "name": "",
+            "sha256": "230e213986d6987cde89596301831aa38c1236e5c9576b837f46ec8f40d35873"
+          },
+          "position": {
+            "type": "Float32Array",
+            "itemSize": 3,
+            "count": 25982,
+            "normalized": false,
+            "usage": 35044,
+            "name": "",
+            "sha256": "14a5b8399a2e0180de71039a368e431427dc0dd7ab1b1978c1d84b22c38a2930"
+          }
+        },
+        "index": {
+          "type": "Uint16Array",
+          "itemSize": 1,
+          "count": 77607,
+          "normalized": false,
+          "usage": 35044,
+          "name": "",
+          "sha256": "28633da579f463b9a3914360849c5eeeb297ca4cb314e6abe15c4a1a5decba69"
+        },
+        "groups": [],
+        "drawRange": {
+          "start": 0,
+          "count": "Infinity"
+        },
+        "morphAttributes": {},
+        "morphTargetsRelative": false,
+        "boundingBox": null,
+        "boundingSphere": null,
+        "userData": {}
+      },
+      "custom": {
+        "name": "",
+        "attributes": {
+          "normal": {
+            "type": "Float32Array",
+            "itemSize": 3,
+            "count": 310428,
+            "normalized": false,
+            "usage": 35044,
+            "name": "",
+            "sha256": "c3e9ee039389f2d31e785b937ba8842c1638fc4a2a3dc93b2ffe5183237f9f40"
+          },
+          "position": {
+            "type": "Float32Array",
+            "itemSize": 3,
+            "count": 310428,
+            "normalized": false,
+            "usage": 35044,
+            "name": "",
+            "sha256": "f4fef07cc7ebcfcbcf6bdc7e0f148193d01c081671a3155f7dcbd0e537d48203"
+          }
+        },
+        "index": null,
+        "groups": [],
+        "drawRange": {
+          "start": 0,
+          "count": "Infinity"
+        },
+        "morphAttributes": {},
+        "morphTargetsRelative": false,
+        "boundingBox": null,
+        "boundingSphere": null,
+        "userData": {}
+      }
+    },
+    {
+      "path": "/models/10k_obj/024_宁.obj",
+      "sourceSha256": "c0a8bc98c5ca87e78b4ddee9fc5611c4ad9a8abdf3061d968e9b9fa99df0f06c",
+      "base": {
+        "name": "",
+        "attributes": {
+          "normal": {
+            "type": "Float32Array",
+            "itemSize": 3,
+            "count": 10930,
+            "normalized": false,
+            "usage": 35044,
+            "name": "",
+            "sha256": "2f00c366c4881abb9dd9042897a6fb2065377cbaca05bf2c14737dd7bb9cd1e1"
+          },
+          "position": {
+            "type": "Float32Array",
+            "itemSize": 3,
+            "count": 10930,
+            "normalized": false,
+            "usage": 35044,
+            "name": "",
+            "sha256": "db01b993dc7fa0d92a85f679fac98377a1aa0a9663c00e6d559c61fc989ccf67"
+          }
+        },
+        "index": {
+          "type": "Uint16Array",
+          "itemSize": 1,
+          "count": 65544,
+          "normalized": false,
+          "usage": 35044,
+          "name": "",
+          "sha256": "7492090b5e2cb23293d08b345da19fcb83323bbe22316f04c567e74f0a28ffcb"
+        },
+        "groups": [],
+        "drawRange": {
+          "start": 0,
+          "count": "Infinity"
+        },
+        "morphAttributes": {},
+        "morphTargetsRelative": false,
+        "boundingBox": null,
+        "boundingSphere": null,
+        "userData": {}
+      },
+      "outer": {
+        "name": "",
+        "attributes": {
+          "normal": {
+            "type": "Float32Array",
+            "itemSize": 3,
+            "count": 17235,
+            "normalized": false,
+            "usage": 35044,
+            "name": "",
+            "sha256": "0071c83ee5a01ba6264864884d2417e9542e4c6863df4c58b6fec78d711a7b3d"
+          },
+          "position": {
+            "type": "Float32Array",
+            "itemSize": 3,
+            "count": 17235,
+            "normalized": false,
+            "usage": 35044,
+            "name": "",
+            "sha256": "30c857b01571aab7d831d3c5048478f5492083d070157480b55c200177220621"
+          }
+        },
+        "index": {
+          "type": "Uint16Array",
+          "itemSize": 1,
+          "count": 65544,
+          "normalized": false,
+          "usage": 35044,
+          "name": "",
+          "sha256": "9e278c73ca971da4f7c884c436d063fbb2de2f836bae1838c8fdcbce5b1ef807"
+        },
+        "groups": [],
+        "drawRange": {
+          "start": 0,
+          "count": "Infinity"
+        },
+        "morphAttributes": {},
+        "morphTargetsRelative": false,
+        "boundingBox": null,
+        "boundingSphere": null,
+        "userData": {}
+      },
+      "custom": {
+        "name": "",
+        "attributes": {
+          "normal": {
+            "type": "Float32Array",
+            "itemSize": 3,
+            "count": 262176,
+            "normalized": false,
+            "usage": 35044,
+            "name": "",
+            "sha256": "debc62a705f1d87279f6a4b027449a8f6a7ab663a1c54a9dbeae0f9acc1f23a5"
+          },
+          "position": {
+            "type": "Float32Array",
+            "itemSize": 3,
+            "count": 262176,
+            "normalized": false,
+            "usage": 35044,
+            "name": "",
+            "sha256": "e826ecfe9dbe65a2800988dad42231cb29609468f375bf348503f6b4c8e9748b"
+          }
+        },
+        "index": null,
+        "groups": [],
+        "drawRange": {
+          "start": 0,
+          "count": "Infinity"
+        },
+        "morphAttributes": {},
+        "morphTargetsRelative": false,
+        "boundingBox": null,
+        "boundingSphere": null,
+        "userData": {}
+      }
+    },
+    {
+      "path": "/models/10k_obj/045_苦.obj",
+      "sourceSha256": "9649a9138f2930b140d76df449362c28687b1792ca2fd70a9bfef8ba29b636b5",
+      "base": {
+        "name": "",
+        "attributes": {
+          "normal": {
+            "type": "Float32Array",
+            "itemSize": 3,
+            "count": 14016,
+            "normalized": false,
+            "usage": 35044,
+            "name": "",
+            "sha256": "fc438740ba61af46d52f8781de55aa99b34ad33003a3239cde9eca38e965331c"
+          },
+          "position": {
+            "type": "Float32Array",
+            "itemSize": 3,
+            "count": 14016,
+            "normalized": false,
+            "usage": 35044,
+            "name": "",
+            "sha256": "0c9c5ac46d43239ce8d1efc0579907a5a721024ff135f8e684e9d88db63d55d1"
+          }
+        },
+        "index": {
+          "type": "Uint16Array",
+          "itemSize": 1,
+          "count": 84072,
+          "normalized": false,
+          "usage": 35044,
+          "name": "",
+          "sha256": "40767089125d8951283f9f576e211e19c53fd2b278c4883b91ecbd1c86705a79"
+        },
+        "groups": [],
+        "drawRange": {
+          "start": 0,
+          "count": "Infinity"
+        },
+        "morphAttributes": {},
+        "morphTargetsRelative": false,
+        "boundingBox": null,
+        "boundingSphere": null,
+        "userData": {}
+      },
+      "outer": {
+        "name": "",
+        "attributes": {
+          "normal": {
+            "type": "Float32Array",
+            "itemSize": 3,
+            "count": 26821,
+            "normalized": false,
+            "usage": 35044,
+            "name": "",
+            "sha256": "444535af5eeee70b1e0ea8cfdd0ff002c8774ce0b37b9cbdc1e394b57496960e"
+          },
+          "position": {
+            "type": "Float32Array",
+            "itemSize": 3,
+            "count": 26821,
+            "normalized": false,
+            "usage": 35044,
+            "name": "",
+            "sha256": "96d6f15dbfd8695f385a9755e01dba4ce0430996ccc6f1fff6c8be20b3d1ae23"
+          }
+        },
+        "index": {
+          "type": "Uint16Array",
+          "itemSize": 1,
+          "count": 84072,
+          "normalized": false,
+          "usage": 35044,
+          "name": "",
+          "sha256": "4269dd940ac92ecca25632039de8e7e509d7a33312f5ec1b05b50a9783ed402a"
+        },
+        "groups": [],
+        "drawRange": {
+          "start": 0,
+          "count": "Infinity"
+        },
+        "morphAttributes": {},
+        "morphTargetsRelative": false,
+        "boundingBox": null,
+        "boundingSphere": null,
+        "userData": {}
+      },
+      "custom": {
+        "name": "",
+        "attributes": {
+          "normal": {
+            "type": "Float32Array",
+            "itemSize": 3,
+            "count": 336288,
+            "normalized": false,
+            "usage": 35044,
+            "name": "",
+            "sha256": "8df38629f6d4cfc28e6829bcbdf8af2cc7fbc0015fa15ef27aa21dae9347c6ef"
+          },
+          "position": {
+            "type": "Float32Array",
+            "itemSize": 3,
+            "count": 336288,
+            "normalized": false,
+            "usage": 35044,
+            "name": "",
+            "sha256": "d9d8635cee593b1fecc47386fa358c11006047bb37d81eb0b2219578c2f0cb4d"
+          }
+        },
+        "index": null,
+        "groups": [],
+        "drawRange": {
+          "start": 0,
+          "count": "Infinity"
+        },
+        "morphAttributes": {},
+        "morphTargetsRelative": false,
+        "boundingBox": null,
+        "boundingSphere": null,
+        "userData": {}
+      }
+    },
+    {
+      "path": "/models/10k_obj/094_色.obj",
+      "sourceSha256": "11f28303540d9f1aea1a16ca50233889635afc0b564d8f660dacbba567138dd6",
+      "base": {
+        "name": "",
+        "attributes": {
+          "normal": {
+            "type": "Float32Array",
+            "itemSize": 3,
+            "count": 11661,
+            "normalized": false,
+            "usage": 35044,
+            "name": "",
+            "sha256": "09a68d2e3e233319535c87c88b7523d2285a9f8a892d50ced65d37f8365870c9"
+          },
+          "position": {
+            "type": "Float32Array",
+            "itemSize": 3,
+            "count": 11661,
+            "normalized": false,
+            "usage": 35044,
+            "name": "",
+            "sha256": "0cb4064d4fae35aa60b496e9492096a6f9e360aefec5d7a8cc4e29e29a284317"
+          }
+        },
+        "index": {
+          "type": "Uint16Array",
+          "itemSize": 1,
+          "count": 69966,
+          "normalized": false,
+          "usage": 35044,
+          "name": "",
+          "sha256": "5fd1bedc829f9cc49192a83ebe93a66029c6d488030b5d6ebbed0178ad4a6eab"
+        },
+        "groups": [],
+        "drawRange": {
+          "start": 0,
+          "count": "Infinity"
+        },
+        "morphAttributes": {},
+        "morphTargetsRelative": false,
+        "boundingBox": null,
+        "boundingSphere": null,
+        "userData": {}
+      },
+      "outer": {
+        "name": "",
+        "attributes": {
+          "normal": {
+            "type": "Float32Array",
+            "itemSize": 3,
+            "count": 16116,
+            "normalized": false,
+            "usage": 35044,
+            "name": "",
+            "sha256": "3cceb45419c7868acfb356fb7cee707c879360b35bc66497640e07842fb835d3"
+          },
+          "position": {
+            "type": "Float32Array",
+            "itemSize": 3,
+            "count": 16116,
+            "normalized": false,
+            "usage": 35044,
+            "name": "",
+            "sha256": "206647aa03878df4b0616e9b0906bd1c62b0ff9472444f57edcf001bd47f69ee"
+          }
+        },
+        "index": {
+          "type": "Uint16Array",
+          "itemSize": 1,
+          "count": 69966,
+          "normalized": false,
+          "usage": 35044,
+          "name": "",
+          "sha256": "805a0e189970e194bbab7d91fa7558c6af815d35511cd3c7d13364154c763f55"
+        },
+        "groups": [],
+        "drawRange": {
+          "start": 0,
+          "count": "Infinity"
+        },
+        "morphAttributes": {},
+        "morphTargetsRelative": false,
+        "boundingBox": null,
+        "boundingSphere": null,
+        "userData": {}
+      },
+      "custom": {
+        "name": "",
+        "attributes": {
+          "normal": {
+            "type": "Float32Array",
+            "itemSize": 3,
+            "count": 279864,
+            "normalized": false,
+            "usage": 35044,
+            "name": "",
+            "sha256": "009e124c5a2dc8b4633d24bcbb4959ae05c84ec96edb249049da0f8b7a6d0b3b"
+          },
+          "position": {
+            "type": "Float32Array",
+            "itemSize": 3,
+            "count": 279864,
+            "normalized": false,
+            "usage": 35044,
+            "name": "",
+            "sha256": "9824655fa47bd5b6c179f5161dfacfba499b613644dcae3470d3d2c8af93d53d"
+          }
+        },
+        "index": null,
+        "groups": [],
+        "drawRange": {
+          "start": 0,
+          "count": "Infinity"
+        },
+        "morphAttributes": {},
+        "morphTargetsRelative": false,
+        "boundingBox": null,
+        "boundingSphere": null,
+        "userData": {}
+      }
+    },
+    {
+      "path": "/models/10k_obj/101_观.obj",
+      "sourceSha256": "03cbb59219e7fd2bb9f314c6941bd150ba925a713fb3a15834fa8f58f75ed4ee",
+      "base": {
+        "name": "",
+        "attributes": {
+          "normal": {
+            "type": "Float32Array",
+            "itemSize": 3,
+            "count": 12170,
+            "normalized": false,
+            "usage": 35044,
+            "name": "",
+            "sha256": "d46fd2a7ea23e4c572ffa3fe18150d5ed4bab4595a007bf36107defafd153168"
+          },
+          "position": {
+            "type": "Float32Array",
+            "itemSize": 3,
+            "count": 12170,
+            "normalized": false,
+            "usage": 35044,
+            "name": "",
+            "sha256": "82a7df516a1b878175f431f9f81d9dda7e768b8b6b283c776c0bf7846f913f69"
+          }
+        },
+        "index": {
+          "type": "Uint16Array",
+          "itemSize": 1,
+          "count": 73020,
+          "normalized": false,
+          "usage": 35044,
+          "name": "",
+          "sha256": "4d2eb28f64ffc0c927f0660b9af43c6900d2ef664897021faef6ca6cc5e42fa0"
+        },
+        "groups": [],
+        "drawRange": {
+          "start": 0,
+          "count": "Infinity"
+        },
+        "morphAttributes": {},
+        "morphTargetsRelative": false,
+        "boundingBox": null,
+        "boundingSphere": null,
+        "userData": {}
+      },
+      "outer": {
+        "name": "",
+        "attributes": {
+          "normal": {
+            "type": "Float32Array",
+            "itemSize": 3,
+            "count": 19252,
+            "normalized": false,
+            "usage": 35044,
+            "name": "",
+            "sha256": "0fdfd13a8642a08b140039c1529e8a45e9dd173187a71b2cd4a353b3514a234f"
+          },
+          "position": {
+            "type": "Float32Array",
+            "itemSize": 3,
+            "count": 19252,
+            "normalized": false,
+            "usage": 35044,
+            "name": "",
+            "sha256": "a9b35fd5bfcadbedeabeea27e5c9e9e351117757d15b18cdb2fa480072b25bc9"
+          }
+        },
+        "index": {
+          "type": "Uint16Array",
+          "itemSize": 1,
+          "count": 73020,
+          "normalized": false,
+          "usage": 35044,
+          "name": "",
+          "sha256": "45dea4133758f8f3bb6b9dfc03c4024f681ef8268c6e011250c21cc6b9f02163"
+        },
+        "groups": [],
+        "drawRange": {
+          "start": 0,
+          "count": "Infinity"
+        },
+        "morphAttributes": {},
+        "morphTargetsRelative": false,
+        "boundingBox": null,
+        "boundingSphere": null,
+        "userData": {}
+      },
+      "custom": {
+        "name": "",
+        "attributes": {
+          "normal": {
+            "type": "Float32Array",
+            "itemSize": 3,
+            "count": 292080,
+            "normalized": false,
+            "usage": 35044,
+            "name": "",
+            "sha256": "56a2a1045ba8fec2ac8d4823c5126a69f9320e4b14161ef5616593fe523bf1bc"
+          },
+          "position": {
+            "type": "Float32Array",
+            "itemSize": 3,
+            "count": 292080,
+            "normalized": false,
+            "usage": 35044,
+            "name": "",
+            "sha256": "c3aeda268bec7a2be18ec846e73ca825e63d63cb8893627368cd2e1ec4f7d42b"
+          }
+        },
+        "index": null,
+        "groups": [],
+        "drawRange": {
+          "start": 0,
+          "count": "Infinity"
+        },
+        "morphAttributes": {},
+        "morphTargetsRelative": false,
+        "boundingBox": null,
+        "boundingSphere": null,
+        "userData": {}
+      }
+    }
+  ]
+}

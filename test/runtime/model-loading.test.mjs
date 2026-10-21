@@ -1,25 +1,15 @@
 import assert from 'node:assert/strict';
-import { mkdtemp, mkdir, readFile, rm, writeFile } from 'node:fs/promises';
-import { resolve, join } from 'node:path';
-import { pathToFileURL } from 'node:url';
 import { test } from 'node:test';
-import ts from 'typescript';
+import { loadModelPipeline } from '../../deploy/prepare-models.mjs';
+import { loadPreloaderModule } from './model-modules.mjs';
 
 // Keep the compiled module under the repository so its real Three imports resolve.
-const cache = resolve('.cache');
-await mkdir(cache, { recursive: true });
-const temporary = await mkdtemp(join(cache, 'model-loading-test-'));
+const pipeline = await loadModelPipeline();
 let ModelPreloader;
 try {
-  const source = await readFile(new URL('../../src/components/jade/ModelPreloader.ts', import.meta.url), 'utf8');
-  const compiled = ts.transpileModule(source, {
-    compilerOptions: { module: ts.ModuleKind.ESNext, target: ts.ScriptTarget.ES2020 },
-  }).outputText;
-  const modulePath = join(temporary, 'ModelPreloader.mjs');
-  await writeFile(modulePath, compiled);
-  ({ default: ModelPreloader } = await import(pathToFileURL(modulePath).href));
+  ({ ModelPreloader } = await loadPreloaderModule(pipeline.directory));
 } finally {
-  await rm(temporary, { recursive: true, force: true });
+  await pipeline.dispose();
 }
 
 test('visible and lookahead requests share a single download and cached geometry', async () => {

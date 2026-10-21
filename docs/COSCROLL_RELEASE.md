@@ -53,6 +53,24 @@ TTF 为 6,048,788 字节，WOFF2 为 2,447,968 字节。主页面在字体规则
 再刷新歌词纹理；透明度、颜色和边缘羽化由材质处理，避免每帧重新绘制、上传文字纹理。
 当前模型与下一个不同的模型共享下载和解析缓存，首访不再并发加载整套模型。
 
+现有 26 个 OBJ 的完整基础几何和默认外层数据由离线工具生成：
+
+```sh
+npm run models:prepare
+npm run models:check
+```
+
+生成器与自定义参数回退共用 `modelGeometry.ts` 的原算法；默认参数为
+`outerOffset=.001, maxEdge=.15, subdivisions=0, creaseAngle=30, smoothShading=true`。
+属性和索引按原始类型、完整字节保存，经可逆字节预测和 gzip 压缩，不减面、不量化。
+`public/models/prepared/` 保存数据，`prepared-models.json` 记录源文件、生成流程与产物哈希。
+发布打包前自动检查来源、生成器、锁文件、数据完整性及文件集合，过期时拒绝构建。
+
+运行时仅按当前/下一模型读取数据，校验 SHA-256 后异步解压并填入两层几何缓存；
+`loadModel/getOffsetGeometry` 和配置接口保持原签名。外部自定义模型、非默认几何参数、
+缺少原生解压能力或预计算资源失败时继续使用原算法；原 OBJ 因此保留。
+全部模型的基础/外层属性字节及自定义参数结果，对照提取算法前保存的独立校验值回归。
+
 ## 经批准后发布
 
 1. 核对候选 release ID、`artifactClosureSha256`、COS 对象范围、Nginx 增量及回滚目标。
