@@ -100,3 +100,6 @@
 最终结果为 `final-performance.json`、`final-interactions.json`、`final-desktop.json` 和
 `final-rapid-seeks.json`；中间候选结果分别保留。测试空间和临时预览服务已关闭。
 本轮未上传 COS、未修改 CDN/Nginx、未切换公网版本。
+
+用户随后明确要求再次测试并更新公网，已使用正式 CDN 包发布同一份优化代码。
+后续公网身份、复测结果和性能限制见 [公网复测与更新](PUBLIC_RELEASE_20261021.md)。
