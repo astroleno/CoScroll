@@ -128,6 +128,12 @@ const AnchorMappingSchema = z.object({
   modelPath: z.string().min(1, '模型路径不能为空'),
   description: z.string().optional(),
   semanticMeaning: z.string().optional(),
+  characterId: z.string().optional(),
+  status: z.enum(['ready', 'placeholder']).optional(),
+  renderedCharacter: z.string().optional(),
+  pendingReason: z.enum(['pending-simplification', 'awaiting-acceptance', 'not-in-library']).optional(),
+}).refine(mapping => mapping.status !== 'placeholder' || Boolean(mapping.renderedCharacter && mapping.pendingReason), {
+  message: '占位模型必须注明实际显示字与占位原因',
 });
 
 const AnchorConfigSchema = z.object({
@@ -179,6 +185,16 @@ const ProjectConfigSchema = z.object({
       }
     ),
   performance: PerformanceConfigSchema,
+  appearance: z.object({
+    background: z.literal('silk'),
+    palette: z.enum(['original-jade', 'ink-green', 'warm-gold', 'violet-gray']),
+    hueOffset: z.number().min(-180).max(180),
+  }).optional(),
+}).refine(config => {
+  const anchors = new Set(config.anchors.mappings.map(mapping => mapping.anchor));
+  return anchors.size === config.anchors.mappings.length && config.timeline.every(item => anchors.has(item.anchor));
+}, {
+  message: '锚字映射不可重复，且必须覆盖全部时间轴锚字',
 }) satisfies z.ZodType<ProjectConfig>;
 
 /**

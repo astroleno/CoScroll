@@ -27,7 +27,7 @@ export const DEFAULT_PROJECT_CONFIG: ProjectConfig = {
     audio: {
       src: '/audio/心经_2.mp3',
       format: 'mp3',
-      duration: 364,
+      duration: 374.256327,
       title: '心经',
     },
     lyrics: {
@@ -150,6 +150,10 @@ export const DEFAULT_PROJECT_CONFIG: ProjectConfig = {
       {
         anchor: '圆',
         modelPath: '001_空.obj',
+        characterId: '010',
+        status: 'placeholder',
+        renderedCharacter: '空',
+        pendingReason: 'awaiting-acceptance',
         semanticMeaning: '圆满智慧',
       },
     ],

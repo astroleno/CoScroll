@@ -13,6 +13,24 @@ const {RetainedResourceCache} = await load('retainedResourceCache');
 const {default: timeline} = await load('../stores/timelineStore');
 const {lyricIntersectsViewport} = await load('../components/layouts/lyricViewport');
 
+test('switching recording clears the old clock, pending seek, visual phase, and inertia', () => {
+  const oldClock = timeline.registerAudioClock(() => ({display: 20, absolute: 620}));
+  timeline.requestAudioTime(25, -575);
+  timeline.setVisualTime(28, -572);
+  timeline.setScrollVelocity(3);
+  timeline.setPlaying(true);
+  timeline.reset();
+  assert.deepEqual(timeline.sampleAudioTime(), {display: 0, absolute: 0});
+  assert.equal(timeline.pendingAudioSeek, null);
+  assert.equal(timeline.visualAbsoluteTime, 0);
+  assert.equal(timeline.scrollVelocity, 0);
+  assert.equal(timeline.isPlaying, false);
+  const newClock = timeline.registerAudioClock(() => ({display: 1, absolute: 1}));
+  oldClock();
+  assert.deepEqual(timeline.sampleAudioTime(), {display: 1, absolute: 1});
+  newClock(); timeline.reset();
+});
+
 test('signed cycles preserve relative keyboard seeks and scrubber phase in either direction', () => {
   for (const cycle of [-1000000, -2, -1, 0, 1, 2, 1000000]) {
     const absolute = cycle * 40 + 5;

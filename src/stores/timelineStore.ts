@@ -4,6 +4,14 @@ type Subscriber = () => void;
 export interface AudioClockSample { display: number; absolute: number; }
 
 class TimelineStore {
+  reset() {
+    this.audioClock = null;
+    this.pendingAudioSeek = null;
+    this.audioDisplayTime = this.audioAbsoluteTime = 0;
+    this.visualDisplayTime = this.visualAbsoluteTime = 0;
+    this.scrollVelocity = 0;
+    this.isPlaying = false;
+  }
   // core timeline refs
   audioDisplayTime = 0; // within-loop time for audio
   audioAbsoluteTime = 0; // accumulated absolute time

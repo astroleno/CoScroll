@@ -4,8 +4,9 @@ import { assetUrl } from '@/utils/assetUrl';
 
 import { useFrame, useThree } from "@react-three/fiber";
 import * as THREE from "three";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import {scheduleIdle} from '@/utils/scheduleIdle';
+import {prepareMaterialPrograms} from '@/utils/prepareMaterialPrograms';
 import { useTransitionControl } from "@/hooks/useTransitionControl";
 import { RGBELoader } from "three/examples/jsm/loaders/RGBELoader.js";
 import ModelPreloader from "./ModelPreloader";
@@ -19,6 +20,8 @@ const IS_DEV = process.env.NODE_ENV === 'development';
  */
 interface JadeModelLoaderProps {
   modelPath: string;
+  onModelDisplayed?: (path: string) => void;
+  onModelError?: (path: string) => void;
   rotationDurationSec?: number;
   direction?: 1 | -1;
   fitToView?: boolean;
@@ -359,6 +362,8 @@ function RotationController({
 
 function DualLayerModelLoader({ 
   modelPath, 
+  onModelDisplayed,
+  onModelError,
   material,
   refractionMaterial,
   fitToView = true,
@@ -374,6 +379,8 @@ function DualLayerModelLoader({
   enablePreloading = true
 }: { 
   modelPath: string; 
+  onModelDisplayed?: (path: string) => void;
+  onModelError?: (path: string) => void;
   material: THREE.Material;
   refractionMaterial: THREE.Material;
   fitToView?: boolean;
@@ -397,6 +404,8 @@ function DualLayerModelLoader({
   const ownedOffsets = useRef(new WeakSet<THREE.BufferGeometry>());
   const { camera, scene, gl, get } = useThree();
   const preloader = ModelPreloader.getInstance();
+  const [resolvedPath, setResolvedPath] = useState('');
+  useEffect(() => { if (resolvedPath) onModelDisplayed?.(resolvedPath); }, [resolvedPath, onModelDisplayed]);
 
   useEffect(() => {
     let disposed = false;
@@ -427,6 +436,7 @@ function DualLayerModelLoader({
         // during a load, without cloning its geometry under the next path.
         setGeometry(loadedGeometry);
         setOffsetGeometry(outer);
+        setResolvedPath(modelPath);
         setLoading(false);
 
         if (IS_DEV) {
@@ -436,6 +446,7 @@ function DualLayerModelLoader({
         if (disposed) return;
         console.error('[JadeModelLoader] 模型加载失败:', err);
         setError(err instanceof Error ? err.message : '未知错误');
+        onModelError?.(modelPath);
         setLoading(false);
       }
     };
@@ -445,7 +456,7 @@ function DualLayerModelLoader({
     return () => {
       disposed = true;
     };
-  }, [modelPath, preloader, outerOffset, maxEdge, subdivisions, creaseAngle, outerSmoothShading]);
+  }, [modelPath, preloader, outerOffset, maxEdge, subdivisions, creaseAngle, outerSmoothShading, onModelError]);
 
   useEffect(() => () => {
     if (offsetGeometry && ownedOffsets.current.has(offsetGeometry)) offsetGeometry.dispose();
@@ -482,7 +493,7 @@ function DualLayerModelLoader({
     if (!geometry || !offsetGeometry || loading) return;
     let cancelled = false;
     const cancel = scheduleIdle(() => {
-      void gl.compileAsync(scene, camera).then(() => {
+      void prepareMaterialPrograms(gl, scene, camera).then(() => {
         if (!cancelled && get().frameloop === 'never') gl.render(scene, camera);
       }).catch(error => console.warn('[JadeModelLoader] Material preparation failed', error));
     });
@@ -502,7 +513,7 @@ function DualLayerModelLoader({
   return (
     <group>
       {showInnerLayer && (
-        <mesh ref={meshRef} geometry={geometry} material={material} />
+        <mesh ref={meshRef} geometry={geometry} material={material} dispose={null} />
       )}
       
       {showOuterLayer && (
@@ -510,6 +521,7 @@ function DualLayerModelLoader({
           ref={refractionMeshRef} 
           geometry={offsetGeometry} 
           material={refractionMaterial}
+          dispose={null}
         />
       )}
     </group>
@@ -518,6 +530,8 @@ function DualLayerModelLoader({
 
 export default function JadeModelLoader({
   modelPath = assetUrl("/models/10k_obj/001_空.obj"),
+  onModelDisplayed,
+  onModelError,
   rotationDurationSec = 8,
   direction = 1,
   fitToView = true,
@@ -581,11 +595,11 @@ export default function JadeModelLoader({
 
   const innerMaterial = useMemo(() => {
     const mat = new THREE.MeshPhysicalMaterial({
-      color: typeof innerColor === 'string' ? new THREE.Color(innerColor) : innerColor,
+      color: 0x2d6d8b,
       metalness: innerMetalness,
       roughness: innerRoughness,
       transmission: innerTransmission,
-      emissive: enableEmissive ? (typeof innerEmissiveColor === 'string' ? new THREE.Color(innerEmissiveColor) : innerEmissiveColor) : 0x000000,
+      emissive: 0x0f2b38,
       emissiveIntensity: enableEmissive ? innerEmissiveIntensity : 0,
       envMapIntensity: innerEnvMapIntensity,
       flatShading: !innerSmoothShading,
@@ -599,9 +613,9 @@ export default function JadeModelLoader({
       mat.normalMap.repeat.set(normalRepeat, normalRepeat);
     }
 
-    return specializePhysicalMaterial(mat);
+    return specializePhysicalMaterial(mat, {dynamicColors: true});
   }, [
-    innerColor, innerMetalness, innerRoughness, innerTransmission, innerEmissiveColor, innerEmissiveIntensity, 
+    innerMetalness, innerRoughness, innerTransmission, innerEmissiveIntensity,
     enableEmissive, innerEnvMapIntensity, innerSmoothShading, normalMap, normalScale, normalRepeat
   ]);
 
@@ -632,10 +646,18 @@ export default function JadeModelLoader({
 
     return specializePhysicalMaterial(mat);
   }, [
-    outerColor, outerMetalness, outerRoughness, outerTransmission, outerIor, outerReflectivity, 
+    outerColor, outerMetalness, outerRoughness, outerTransmission, outerIor, outerReflectivity,
     outerThickness, outerClearcoat, outerClearcoatRoughness, outerEnvMapIntensity, 
     outerSmoothShading, normalMap, normalScale, normalRepeat
   ]);
+
+  // Color uniforms stay live; geometry, physical constants, and program identity
+  // are unchanged while a user drags the hue control.
+  useLayoutEffect(() => {
+    innerMaterial.color.set(innerColor);
+    innerMaterial.emissive.set(enableEmissive ? innerEmissiveColor : 0x000000);
+    outerMaterial.color.set(outerColor);
+  }, [innerMaterial, outerMaterial, innerColor, innerEmissiveColor, outerColor, enableEmissive]);
 
   // Material props can replace these objects while the model stays mounted.
   // Release their programs without disposing the independently owned textures.
@@ -855,6 +877,8 @@ export default function JadeModelLoader({
     >
       <DualLayerModelLoader 
         modelPath={modelPath} 
+        onModelDisplayed={onModelDisplayed}
+        onModelError={onModelError}
         material={innerMaterial}
         refractionMaterial={outerMaterial}
         fitToView={fitToView}

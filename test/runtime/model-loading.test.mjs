@@ -57,3 +57,29 @@ test('lookahead skips repeated mappings and wraps at the end of the audio loop',
   assert.equal(loader.predictNextModel(0, [], mapping), null);
   assert.equal(loader.predictNextModel(20, timeline, { 观: '/same.obj', 照: '/same.obj', 空: '/same.obj', 无: '/same.obj' }), null);
 });
+
+test('geometry cache keeps active owners, bounds idle history, and disposes both layers once', async () => {
+  const loader = new ModelPreloader(), disposals = new Map();
+  loader.loadModelFromFile = async path => ({dispose() {disposals.set(path, (disposals.get(path) || 0) + 1);}});
+  const release = loader.retainPaths(['/active.obj']);
+  await loader.loadModel('/active.obj');
+  let offsetDisposals = 0;
+  for (let i = 0; i < 24; i++) {
+    const path = '/idle-' + i + '.obj';
+    const base = await loader.loadModel(path);
+    if (i === 0) loader.offsetGeometryCache.set(path, new Map([
+      ['outer', {dispose() {offsetDisposals++;}}], ['fallback', base],
+    ]));
+  }
+  loader.trimCache();
+  assert.equal(loader.isModelLoaded('/active.obj'), true);
+  assert.ok(loader.getCacheStatus().loaded <= 9);
+  assert.equal(disposals.get('/active.obj'), undefined);
+  assert.equal(offsetDisposals, 1);
+  release();
+  await loader.loadModel('/fresh.obj');
+  loader.trimCache();
+  assert.ok(loader.getCacheStatus().loaded <= 8);
+  assert.equal(disposals.get('/active.obj'), 1);
+  assert.ok(Array.from(disposals.values()).every(count => count === 1));
+});

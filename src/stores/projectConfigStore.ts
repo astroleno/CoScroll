@@ -9,6 +9,12 @@ import { create } from 'zustand';
 import type { ProjectConfig, ThemeConfig } from '@/config/types';
 import { projectConfigLoader } from '@/config/loader';
 import { DEFAULT_PROJECT_CONFIG } from '@/config/defaults';
+import type { LyricLine } from '@/types';
+import { prepareProject } from '@/config/prepareProject';
+
+let projectRequest: AbortController | null = null;
+let requestRevision = 0;
+let releasePrepared: (() => void) | null = null;
 
 interface ProjectConfigState {
   // ==================== 状态 ====================
@@ -24,13 +30,19 @@ interface ProjectConfigState {
 
   /** 错误信息 */
   error: string | null;
+  lyrics: LyricLine[];
+  mediaDuration: number;
+  sessionRevision: number;
+  pendingProjectId: string | null;
+  releasePreparation: () => void;
+  cancelPendingProject: () => void;
 
   // ==================== 操作 ====================
 
   /**
    * 加载项目配置
    */
-  loadProject: (projectId: string) => Promise<void>;
+  loadProject: (projectId: string, options?: {force?: boolean}) => Promise<void>;
 
   /**
    * 重新加载当前项目
@@ -68,52 +80,73 @@ export const useProjectConfigStore = create<ProjectConfigState>((set, get) => ({
   currentProjectId: null,
   isLoading: false,
   error: null,
+  lyrics: [],
+  mediaDuration: 0,
+  sessionRevision: 0,
+  pendingProjectId: null,
+  releasePreparation: () => { releasePrepared?.(); releasePrepared = null; },
+  cancelPendingProject: () => {
+    requestRevision++;
+    projectRequest?.abort();
+    set({isLoading: false, pendingProjectId: null});
+  },
 
   // ==================== 操作实现 ====================
 
   /**
    * 加载项目配置
    */
-  loadProject: async (projectId: string) => {
+  loadProject: async (projectId: string, options = {}) => {
+    projectRequest?.abort();
+    const controller = new AbortController();
+    projectRequest = controller;
+    const revision = ++requestRevision;
     const { currentProjectId } = get();
 
     // 如果已经加载了相同的项目，跳过
-    if (currentProjectId === projectId && get().config !== null) {
-      console.log(`[ProjectConfigStore] 项目 ${projectId} 已加载，跳过`);
+    if (!options.force && currentProjectId === projectId && get().config !== null) {
+      set({isLoading: false, pendingProjectId: null, error: null});
       return;
     }
 
     console.log(`[ProjectConfigStore] 🚀 开始加载项目: ${projectId}`);
-    set({ isLoading: true, error: null });
+    set({ isLoading: true, pendingProjectId: projectId, error: null });
+    const timeout = setTimeout(() => controller.abort(new Error('曲目准备超时，请重试')), 30000);
 
     try {
       console.log(`[ProjectConfigStore] 📡 调用 projectConfigLoader.load...`);
 
-      const config = await projectConfigLoader.load(projectId, {
-        useCache: true,
-        fallbackToDefault: true,
-      });
-
+      const prepared = await prepareProject(projectId, controller.signal, !options.force);
+      if (controller.signal.aborted || revision !== requestRevision) { prepared.release(); return; }
+      releasePrepared?.();
+      releasePrepared = prepared.release;
       set({
-        config,
+        config: prepared.config,
+        lyrics: prepared.lyrics,
+        mediaDuration: prepared.duration,
+        sessionRevision: get().sessionRevision + 1,
         currentProjectId: projectId,
         isLoading: false,
+        pendingProjectId: null,
         error: null,
       });
 
       console.log(`[ProjectConfigStore] ✅ 项目加载成功: ${projectId}`);
     } catch (error) {
+      if (revision !== requestRevision) return;
+      controller.abort();
       const errorMessage =
         error instanceof Error ? error.message : '未知错误';
 
       console.error(`[ProjectConfigStore] ❌ 加载失败:`, error);
 
       set({
-        config: null,
-        currentProjectId: null,
         isLoading: false,
+        pendingProjectId: null,
         error: errorMessage,
       });
+    } finally {
+      clearTimeout(timeout);
     }
   },
 
@@ -130,7 +163,7 @@ export const useProjectConfigStore = create<ProjectConfigState>((set, get) => ({
 
     // 清除缓存并重新加载
     projectConfigLoader.clearCache(currentProjectId);
-    await get().loadProject(currentProjectId);
+    await get().loadProject(currentProjectId, {force: true});
   },
 
   /**

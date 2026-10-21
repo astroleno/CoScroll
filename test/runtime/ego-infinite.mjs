@@ -45,11 +45,14 @@ export async function verifyInfiniteCommands(page) {
   await page.mouse.move(195,350,{label:'position over lyric gestures'});
   for (const delta of [base*12*4+120,-base*12*7-240,base*12*3+120]) {
     const before=await page.evaluate(()=>window.__infiniteRegression.read());
+    await page.evaluate(()=>{window.__infiniteWheelEvents=[];document.addEventListener('wheel',e=>window.__infiniteWheelEvents.push({x:e.deltaX,y:e.deltaY,mode:e.deltaMode}),{capture:true,once:true});});
     await page.cdp('Input.dispatchMouseEvent',{type:'mouseWheel',x:195,y:350,deltaX:delta,deltaY:0});
-    const expected=before.absolute+delta/12;
+    await page.waitForFunction(()=>window.__infiniteWheelEvents.length===1,undefined,{timeout:10000});
+    const native=await page.evaluate(()=>window.__infiniteWheelEvents[0]);
+    const expected=before.absolute+(native.x*(native.mode===1?16:1)||native.y)/12;
     await page.waitForFunction(expected=>Math.abs(window.__infiniteRegression.read().absolute-expected)<.05,expected,{timeout:15000});
     await page.waitForFunction(expected=>{const s=window.__infiniteRegression.read();const phase=((expected%s.duration)+s.duration)%s.duration;return Math.abs(s.mediaTime-phase)<.05;},expected,{timeout:15000});
-    states.push({wheel:delta,...await page.evaluate(()=>window.__infiniteRegression.read())});
+    states.push({wheel:delta,native,...await page.evaluate(()=>window.__infiniteRegression.read())});
   }
   // A phase scrub after reverse scrolling must stay in that negative cycle.
   await page.evaluate(base=>window.__infiniteRegression.seek(-3*base+7),base);
@@ -69,8 +72,9 @@ export async function verifyPausedLyricClock(page) {
     const next=index+1<p.lyrics.length?p.lyrics[index+1].time:duration+p.lyrics[0].time;
     const progress=(phase-p.lyrics[index].time)/(next-p.lyrics[index].time);
     const expected=-progress*.85,current=[];
+    const currentColor=parseInt((p.palette?.currentText||'#f8fafc').slice(1),16);
     for(const store of window.__renderProbe.stores)store.getState().scene.traverse(m=>{
-      if(m.material?.isMeshBasicMaterial&&m.material.color.getHex()===0xf8fafc)current.push({x:m.position.x,order:m.renderOrder});
+      if(m.material?.isMeshBasicMaterial&&m.material.color.getHex()===currentColor)current.push({x:m.position.x,order:m.renderOrder});
     });
     return {phase,velocity:p.scrollVelocity,expected,current,audio:document.querySelector('audio').currentTime};
   });

@@ -28,20 +28,20 @@ function vectorLiteral(values: number[]): string | null {
   return components.some(value => value === null) ? null : `vec${values.length}(${components.join(', ')})`;
 }
 
-export function specializePhysicalMaterial(material: MeshPhysicalMaterial): MeshPhysicalMaterial {
+export function specializePhysicalMaterial(material: MeshPhysicalMaterial, options: {dynamicColors?: boolean} = {}): MeshPhysicalMaterial {
   const previousCompile = material.onBeforeCompile;
   const previousCacheKey = material.customProgramCacheKey;
   const values: FixedBinding[] = STATIC_PARAMETERS.map(name => ({
     name, type: 'float', literal: floatLiteral(material[name]),
   }));
-  values.push(
+  if (!options.dynamicColors) values.push(
     {name: 'diffuse', type: 'vec3', literal: vectorLiteral(material.color.toArray())},
     {
       name: 'emissive', type: 'vec3',
       literal: vectorLiteral(material.emissive.toArray().map(value => value * material.emissiveIntensity)),
     },
-    {name: 'specularColor', type: 'vec3', literal: vectorLiteral(material.specularColor.toArray())},
   );
+  values.push({name: 'specularColor', type: 'vec3', literal: vectorLiteral(material.specularColor.toArray())});
   // Three flips normalScale while drawing back faces of a double-sided
   // transmissive object. Only specialize it for the loader's front-side layers.
   if (material.side === FrontSide) {

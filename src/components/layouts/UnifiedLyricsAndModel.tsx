@@ -9,6 +9,10 @@ import LayeredLyricsScene from './LayeredLyricsScene';
 import type { LyricMotionInput } from './lyricMotion';
 import JadeModelLoader from '@/components/jade/JadeModelLoader';
 import type { LyricLine } from '@/types';
+import type { ScenePalette } from '@/config/appearance';
+import { PALETTES } from '@/config/appearance';
+import { DEFAULT_PROJECT_CONFIG } from '@/config/defaults';
+import { resolveAnchor } from '@/config/resolveAnchor';
 
 const MemoizedJadeModel = memo(JadeModelLoader);
 
@@ -22,6 +26,11 @@ const MemoizedJadeModel = memo(JadeModelLoader);
  * 4. 统一光照：所有元素共享同一套光照系统
  */
 interface UnifiedLyricsAndModelProps extends UnifiedLayoutProps {
+  sceneKey?: number;
+  modelPath?: string;
+  palette?: ScenePalette;
+  onModelDisplayed?: (path: string) => void;
+  onModelError?: (path: string) => void;
   /** Keep the warm scene mounted without rendering it behind the cover. */
   active?: boolean;
   scrollTimeRef?: { readonly current: number };
@@ -49,6 +58,11 @@ export default function UnifiedLyricsAndModel(props: UnifiedLyricsAndModelProps)
     active = true,
     scrollTimeRef,
     seekRevision,
+    modelPath = resolveAnchor(currentAnchor, DEFAULT_PROJECT_CONFIG).modelPath,
+    palette = PALETTES['original-jade'].colors,
+    onModelDisplayed,
+    onModelError,
+    sceneKey = 0,
   } = props;
   const lyricData = (lyrics || []) as LyricLine[];
 
@@ -126,9 +140,10 @@ export default function UnifiedLyricsAndModel(props: UnifiedLyricsAndModelProps)
           {/* 统一光照系统 */}
           <ambientLight intensity={0.4} />
           <directionalLight position={[2, 2, 2]} intensity={1.2} />
-          <pointLight position={[-2, 2, -2]} intensity={0.3} color="#4A90E2" />
+          <pointLight position={[-2, 2, -2]} intensity={0.3} color={palette.light} />
 
           <LayeredLyricsScene
+            key={sceneKey}
             lyrics={lyricData}
             inputRef={inputRef}
             options={lyricsConfig}
@@ -137,12 +152,17 @@ export default function UnifiedLyricsAndModel(props: UnifiedLyricsAndModelProps)
             yOffset={lyricsYOffset}
             fontFamily={fontFamily}
             fontRevision={fontRevision}
+            currentColor={palette.currentText}
+            adjacentColor={palette.adjacentText}
           />
 
           {/* 3D模型 - 中间层，Z轴在0，遮挡后层歌词 */}
           <group renderOrder={2000} position={[0, modelYOffset, 0]} scale={[modelScale, modelScale, modelScale]}>
             <MemoizedJadeModel
-              modelPath={getModelPath(currentAnchor)}
+              key={sceneKey}
+              modelPath={modelPath}
+              onModelDisplayed={onModelDisplayed}
+              onModelError={onModelError}
               fitToView={false}
               enableRotation
               rotationDurationSec={8}
@@ -160,12 +180,12 @@ export default function UnifiedLyricsAndModel(props: UnifiedLyricsAndModelProps)
               environmentIntensity={1.0}
               background="transparent"
               showHdrBackground={false}
-              innerColor="#2d6d8b"
+              innerColor={palette.jade}
               innerMetalness={1.0}
               innerRoughness={1.0}
               innerTransmission={0.0}
               enableEmissive
-              innerEmissiveColor="#0f2b38"
+              innerEmissiveColor={palette.emissive}
               innerEmissiveIntensity={12.0}
               innerEnvMapIntensity={2.0}
               outerColor="#ffffff"
@@ -194,27 +214,4 @@ export default function UnifiedLyricsAndModel(props: UnifiedLyricsAndModelProps)
       </div>
     </div>
   );
-}
-
-// 辅助函数：根据锚字获取模型路径
-function getModelPath(anchorChar: string): string {
-  const ANCHOR_MODEL_MAPPING = {
-    '观': assetUrl('/models/10k_obj/101_观.obj'),
-    '空': assetUrl('/models/10k_obj/001_空.obj'),
-    '苦': assetUrl('/models/10k_obj/045_苦.obj'),
-    '色': assetUrl('/models/10k_obj/094_色.obj'),
-    '法': assetUrl('/models/10k_obj/022_法.obj'),
-    '生': assetUrl('/models/10k_obj/019_生.obj'),
-    '无': assetUrl('/models/10k_obj/012_无.obj'),
-    '死': assetUrl('/models/10k_obj/020_死.obj'),
-    '道': assetUrl('/models/10k_obj/003_道.obj'),
-    '心': assetUrl('/models/10k_obj/002_心.obj'),
-    '悟': assetUrl('/models/10k_obj/008_悟.obj'),
-    '明': assetUrl('/models/10k_obj/007_明.obj'),
-    '真': assetUrl('/models/10k_obj/009_真.obj'),
-    '圆': assetUrl('/models/10k_obj/001_空.obj'),
-    default: assetUrl('/models/10k_obj/001_空.obj')
-  };
-
-  return ANCHOR_MODEL_MAPPING[anchorChar as keyof typeof ANCHOR_MODEL_MAPPING] || ANCHOR_MODEL_MAPPING.default;
 }

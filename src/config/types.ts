@@ -92,6 +92,10 @@ export interface AnchorMapping {
   modelPath: string;            // 模型文件名（相对于 models.directory）
   description?: string;         // 描述
   semanticMeaning?: string;     // 语义含义
+  characterId?: string;
+  status?: 'ready' | 'placeholder';
+  renderedCharacter?: string;
+  pendingReason?: 'pending-simplification' | 'awaiting-acceptance' | 'not-in-library';
 }
 
 export interface AnchorConfig {
@@ -117,6 +121,13 @@ export interface PerformanceConfig {
   enableAdaptiveQuality?: boolean;
 }
 
+export type PaletteId = 'original-jade' | 'ink-green' | 'warm-gold' | 'violet-gray';
+export interface AppearanceSettings {
+  background: 'silk';
+  palette: PaletteId;
+  hueOffset: number;
+}
+
 // ==================== 完整项目配置 ====================
 
 export interface ProjectConfig {
@@ -127,4 +138,5 @@ export interface ProjectConfig {
   anchors: AnchorConfig;        // 锚字配置
   timeline: TimelineItem[];     // 时间轴配置
   performance: PerformanceConfig; // 性能配置
+  appearance?: AppearanceSettings;
 }

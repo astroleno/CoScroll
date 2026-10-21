@@ -3,12 +3,13 @@
 import { useEffect, useState } from "react";
 
 interface AutoPlayGuardProps {
+  title?: string;
   onUserInteraction: () => void;
   isReady: boolean;
   isPlaying: boolean;
 }
 
-export default function AutoPlayGuard({ onUserInteraction }: AutoPlayGuardProps) {
+export default function AutoPlayGuard({ onUserInteraction, title = '心经' }: AutoPlayGuardProps) {
   const [mounted, setMounted] = useState(false);
   const [shouldShow, setShouldShow] = useState(false);
   const [hasClicked, setHasClicked] = useState(false);
@@ -31,7 +32,7 @@ export default function AutoPlayGuard({ onUserInteraction }: AutoPlayGuardProps)
   return (
     <button
       type="button"
-      aria-label="点击开始心经"
+      aria-label={`点击开始${title}`}
       data-coscroll-intro
       className="intro-start"
       style={{
@@ -79,7 +80,7 @@ export default function AutoPlayGuard({ onUserInteraction }: AutoPlayGuardProps)
           color: '#e2e8f0',
           marginBottom: 0
         }}>
-          心经
+          {title}
         </span>
       </span>
       <style jsx>{`

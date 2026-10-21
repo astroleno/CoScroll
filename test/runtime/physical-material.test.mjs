@@ -90,3 +90,16 @@ test('non-finite scalars remain uniforms rather than producing invalid GLSL lite
   assert.match(shader.fragmentShader, /uniform vec3 diffuse;/);
   assert.doesNotMatch(shader.fragmentShader, /const float \w+ = (?:NaN|Infinity)/);
 });
+
+test('live jade colors do not change program identity or remove physical scalar specialization', () => {
+  const a = specializePhysicalMaterial(new MeshPhysicalMaterial({...parameters, color: '#2d6d8b'}), {dynamicColors: true});
+  const b = specializePhysicalMaterial(new MeshPhysicalMaterial({...parameters, color: '#36745a'}), {dynamicColors: true});
+  assert.equal(a.customProgramCacheKey(), b.customProgramCacheKey());
+  const source = compile(a).fragmentShader;
+  assert.match(source, /uniform vec3 diffuse;/);
+  assert.match(source, /uniform vec3 emissive;/);
+  assert.match(source, /const float transmission = 1.0;/);
+  a.color.set('#8b7037');
+  assert.equal(a.customProgramCacheKey(), b.customProgramCacheKey());
+  a.dispose(); b.dispose();
+});

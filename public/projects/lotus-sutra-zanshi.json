@@ -1,0 +1,242 @@
+{
+  "version": "1.0.0",
+  "project": {
+    "id": "lotus-sutra-zanshi",
+    "name": "妙法莲华经",
+    "description": "赞诗歌曲录音版，摘编自《妙法莲华经》，非全本诵读。",
+    "author": "CoScroll",
+    "createdAt": "2026-10-22T00:00:00+08:00"
+  },
+  "assets": {
+    "audio": {
+      "src": "/audio/lotus-sutra-zanshi.mp3",
+      "format": "mp3",
+      "duration": 241.843771,
+      "title": "妙法莲华经",
+      "artist": "赞诗",
+      "album": "神农尝百草·卷一"
+    },
+    "lyrics": {
+      "src": "/lyrics/lotus-sutra-zanshi.lrc",
+      "format": "lrc",
+      "encoding": "utf-8"
+    },
+    "models": {
+      "directory": "/models/10k_obj",
+      "format": "obj"
+    }
+  },
+  "theme": {
+    "anchor": {
+      "primary": "#ffd700",
+      "glowPrimary": "rgba(255, 215, 0, 0.4)",
+      "glowSecondary": "rgba(218, 165, 32, 0.4)",
+      "glowIntensity": 0.4
+    },
+    "lyrics": {
+      "current": "#ffd700",
+      "adjacent": "#f0e68c",
+      "nextAdjacent": "#daa520",
+      "distant": "#b8860b",
+      "gradientStart": "rgba(255, 215, 0, 0.15)",
+      "gradientEnd": "rgba(218, 165, 32, 0.15)",
+      "hoverBackground": "rgba(255, 215, 0, 0.08)"
+    },
+    "progressBar": {
+      "background": "rgba(139, 69, 19, 0.3)",
+      "completed": "#ffd700",
+      "slider": "#ffd700",
+      "border": "rgba(218, 165, 32, 0.4)"
+    },
+    "background": {
+      "base": "#1f2e38",
+      "overlay": "rgba(0, 0, 0, 0.5)",
+      "noise": true,
+      "noiseIntensity": 1.0
+    }
+  },
+  "anchors": {
+    "mappings": [
+      {
+        "anchor": "水",
+        "characterId": "013",
+        "modelPath": "013_水.obj",
+        "renderedCharacter": "水",
+        "status": "ready"
+      },
+      {
+        "anchor": "妙",
+        "characterId": "050",
+        "modelPath": "022_法.obj",
+        "renderedCharacter": "法",
+        "status": "placeholder",
+        "pendingReason": "pending-simplification"
+      },
+      {
+        "anchor": "竹",
+        "characterId": "073",
+        "modelPath": "019_生.obj",
+        "renderedCharacter": "生",
+        "status": "placeholder",
+        "pendingReason": "pending-simplification"
+      },
+      {
+        "anchor": "生",
+        "characterId": "019",
+        "modelPath": "019_生.obj",
+        "renderedCharacter": "生",
+        "status": "ready"
+      },
+      {
+        "anchor": "海",
+        "characterId": "027",
+        "modelPath": "013_水.obj",
+        "renderedCharacter": "水",
+        "status": "placeholder",
+        "pendingReason": "pending-simplification"
+      },
+      {
+        "anchor": "化",
+        "characterId": "099",
+        "modelPath": "019_生.obj",
+        "renderedCharacter": "生",
+        "status": "placeholder",
+        "pendingReason": "pending-simplification"
+      },
+      {
+        "anchor": "法",
+        "characterId": "022",
+        "modelPath": "022_法.obj",
+        "renderedCharacter": "法",
+        "status": "ready"
+      },
+      {
+        "anchor": "心",
+        "characterId": "002",
+        "modelPath": "002_心.obj",
+        "renderedCharacter": "心",
+        "status": "ready"
+      },
+      {
+        "anchor": "土",
+        "characterId": "083",
+        "modelPath": "014_山.obj",
+        "renderedCharacter": "山",
+        "status": "placeholder",
+        "pendingReason": "pending-simplification"
+      },
+      {
+        "anchor": "雨",
+        "characterId": "032",
+        "modelPath": "013_水.obj",
+        "renderedCharacter": "水",
+        "status": "placeholder",
+        "pendingReason": "pending-simplification"
+      },
+      {
+        "anchor": "天",
+        "characterId": "086",
+        "modelPath": "001_空.obj",
+        "renderedCharacter": "空",
+        "status": "placeholder",
+        "pendingReason": "pending-simplification"
+      },
+      {
+        "anchor": "无",
+        "characterId": "012",
+        "modelPath": "012_无.obj",
+        "renderedCharacter": "无",
+        "status": "ready"
+      }
+    ],
+    "defaultModel": "022_法.obj"
+  },
+  "timeline": [
+    {
+      "time": 0,
+      "anchor": "妙",
+      "text": ""
+    },
+    {
+      "time": 45.028,
+      "anchor": "竹",
+      "text": "稻竹充满十方刹"
+    },
+    {
+      "time": 56.287,
+      "anchor": "生",
+      "text": "众生处处令得出"
+    },
+    {
+      "time": 97.555,
+      "anchor": "海",
+      "text": "如海我闻疑网断"
+    },
+    {
+      "time": 101.31,
+      "anchor": "化",
+      "text": "无上教化诸菩萨"
+    },
+    {
+      "time": 135.067,
+      "anchor": "法",
+      "text": "说得法利者欢喜"
+    },
+    {
+      "time": 146.276,
+      "anchor": "心",
+      "text": "闻佛皆发无上心"
+    },
+    {
+      "time": 165.035,
+      "anchor": "土",
+      "text": "释梵无数佛土来"
+    },
+    {
+      "time": 168.827,
+      "anchor": "雨",
+      "text": "乱坠雨栴檀沈水"
+    },
+    {
+      "time": 172.532,
+      "anchor": "妙",
+      "text": "天鼓自然出妙声"
+    },
+    {
+      "time": 176.315,
+      "anchor": "天",
+      "text": "天衣旋转而来下"
+    },
+    {
+      "time": 180.052,
+      "anchor": "无",
+      "text": "众宝烧无价之香"
+    },
+    {
+      "time": 187.543,
+      "anchor": "妙",
+      "text": "高妙次第众梵天"
+    },
+    {
+      "time": 191.306,
+      "anchor": "生",
+      "text": "佛名闻十方众生"
+    },
+    {
+      "time": 195.06,
+      "anchor": "无",
+      "text": "南无阿弥陀佛"
+    }
+  ],
+  "performance": {
+    "qualityLevel": "high",
+    "preloadModels": true,
+    "maxConcurrentLoads": 3,
+    "enableAdaptiveQuality": true
+  },
+  "appearance": {
+    "background": "silk",
+    "palette": "ink-green",
+    "hueOffset": 0
+  }
+}

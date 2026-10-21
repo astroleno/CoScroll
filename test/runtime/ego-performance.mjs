@@ -68,6 +68,7 @@ export async function prepareMobilePerformance(page) {
 }
 
 export async function touchTap(page, selector) {
+  await page.waitForSelector(selector, {state: 'visible', timeout: 15000});
   const point = await page.evaluate(selector => {
     const r = document.querySelector(selector).getBoundingClientRect();
     return {x: r.x + r.width / 2, y: r.y + r.height / 2, id: 1, radiusX: 2, radiusY: 2, force: 1};

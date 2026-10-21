@@ -30,9 +30,39 @@ class ModelPreloader {
   private maxConcurrentLoads = 3; // 最大并发加载数
   private currentLoads = 0;
   private offsetGeometryCache = new Map<string, Map<string, THREE.BufferGeometry>>();
+  private owners = new Map<symbol, Set<string>>();
+  private trimTimer: ReturnType<typeof setTimeout> | null = null;
+  private readonly idleModelLimit = 8;
   private static DEBUG = false; // 如需调试，设为 true
 
   private constructor() {}
+
+  retainPaths(paths: string[]): () => void {
+    const owner = Symbol('model owner');
+    this.owners.set(owner, new Set(paths));
+    return () => { this.owners.delete(owner); this.scheduleTrim(); };
+  }
+
+  private scheduleTrim() {
+    if (this.trimTimer !== null) return;
+    this.trimTimer = setTimeout(() => { this.trimTimer = null; this.trimCache(); }, 0);
+  }
+
+  trimCache() {
+    const pinned = new Set(Array.from(this.owners.values()).flatMap(paths => Array.from(paths)));
+    const idle = Array.from(this.cache.keys()).filter(path => !pinned.has(path));
+    for (const path of idle.slice(0, Math.max(0, idle.length - this.idleModelLimit))) {
+      const geometries = new Set([this.cache.get(path), ...Array.from(this.offsetGeometryCache.get(path)?.values() ?? [])]);
+      geometries.forEach(geometry => geometry?.dispose());
+      this.cache.delete(path);
+      this.offsetGeometryCache.delete(path);
+      this.loadingStatus.delete(path);
+      this.priorityModels.delete(path);
+    }
+    this.loadingStatus.forEach((status, path) => {
+      if (status === 'error' && !pinned.has(path)) this.loadingStatus.delete(path);
+    });
+  }
 
   static getInstance(): ModelPreloader {
     if (!ModelPreloader.instance) {
@@ -150,7 +180,10 @@ class ModelPreloader {
     // 如果已经缓存，直接返回
     if (this.cache.has(modelPath)) {
       if (ModelPreloader.DEBUG) console.log('[ModelPreloader] 使用缓存模型:', modelPath);
-      return this.cache.get(modelPath)!;
+      const geometry = this.cache.get(modelPath)!;
+      this.cache.delete(modelPath);
+      this.cache.set(modelPath, geometry);
+      return geometry;
     }
 
     // 如果正在加载，等待加载完成
@@ -169,6 +202,7 @@ class ModelPreloader {
       this.cache.set(modelPath, geometry);
       this.loadingStatus.set(modelPath, 'loaded');
       this.loadingPromises.delete(modelPath);
+      this.scheduleTrim();
       if (ModelPreloader.DEBUG) console.log('[ModelPreloader] 模型加载完成:', modelPath);
       return geometry;
     } catch (error) {
@@ -378,6 +412,9 @@ class ModelPreloader {
         await this.loadModel(nextModelPath);
       } catch (error) {
         if (ModelPreloader.DEBUG) console.error('[ModelPreloader] 智能预加载失败:', error);
+      } finally {
+        this.priorityModels.delete(nextModelPath);
+        this.scheduleTrim();
       }
     }
   }

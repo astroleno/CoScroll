@@ -29,9 +29,11 @@ class ProjectConfigLoader {
     options: {
       useCache?: boolean;
       fallbackToDefault?: boolean;
+      signal?: AbortSignal;
     } = {}
   ): Promise<ProjectConfig> {
-    const { useCache = true, fallbackToDefault = true } = options;
+    const { useCache = true, fallbackToDefault = true, signal } = options;
+    signal?.throwIfAborted();
 
     // 1. 检查缓存
     if (useCache && this.cache.has(projectId)) {
@@ -40,23 +42,24 @@ class ProjectConfigLoader {
     }
 
     // 2. 检查是否正在加载（避免重复请求）
-    if (this.loadingPromises.has(projectId)) {
+    if (!signal && this.loadingPromises.has(projectId)) {
       console.log(`[ConfigLoader] 等待现有加载: ${projectId}`);
       return this.loadingPromises.get(projectId)!;
     }
 
     // 3. 开始加载
-    const loadPromise = this._loadAndValidate(projectId, fallbackToDefault);
-    this.loadingPromises.set(projectId, loadPromise);
+    const loadPromise = this._loadAndValidate(projectId, fallbackToDefault, signal);
+    if (!signal) this.loadingPromises.set(projectId, loadPromise);
 
     try {
       const config = await loadPromise;
+      signal?.throwIfAborted();
       // 加载成功，缓存结果
-      this.cache.set(projectId, config);
+      if (config.project.id === projectId) this.cache.set(projectId, config);
       return config;
     } finally {
       // 清理加载 Promise
-      this.loadingPromises.delete(projectId);
+      if (this.loadingPromises.get(projectId) === loadPromise) this.loadingPromises.delete(projectId);
     }
   }
 
@@ -65,13 +68,14 @@ class ProjectConfigLoader {
    */
   private async _loadAndValidate(
     projectId: string,
-    fallbackToDefault: boolean
+    fallbackToDefault: boolean,
+    signal?: AbortSignal,
   ): Promise<ProjectConfig> {
     try {
       console.log(`[ConfigLoader] 加载配置文件: /projects/${projectId}.json`);
 
       // 加载 JSON 文件
-      const response = await fetch(assetUrl(`/projects/${projectId}.json`));
+      const response = await fetch(assetUrl(`/projects/${projectId}.json`), {signal});
 
       if (!response.ok) {
         throw new Error(
@@ -94,9 +98,10 @@ class ProjectConfigLoader {
         );
       }
 
-      console.log(`[ConfigLoader] ✅ 配置加载成功: ${projectId}`);
-      return result.data;
+      if (result.data!.project.id !== projectId) throw new Error('曲目配置 ID 与请求不一致');
+      return result.data!;
     } catch (error) {
+      if (signal?.aborted) throw error;
       console.error(`[ConfigLoader] ❌ 加载配置失败:`, error);
 
       if (fallbackToDefault) {

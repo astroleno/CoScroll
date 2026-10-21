@@ -139,15 +139,23 @@ const SilkR3F: React.FC<SilkR3FProps> = ({ speed = 5, scale = 1, color = "#7B748
 
   const uniforms = useMemo<SilkUniforms>(
     () => ({
-      uSpeed: { value: speed },
-      uScale: { value: scale },
-      uNoiseIntensity: { value: noiseIntensity },
-      uColor: { value: new Color(...hexToNormalizedRGB(color)) as any },
-      uRotation: { value: rotation },
+      uSpeed: { value: 5 },
+      uScale: { value: 1 },
+      uNoiseIntensity: { value: 1.5 },
+      uColor: { value: new Color() },
+      uRotation: { value: 0 },
       uTime: { value: 0 },
     }),
-    [speed, scale, noiseIntensity, color, rotation]
+    []
   );
+
+  useLayoutEffect(() => {
+    uniforms.uSpeed.value = speed;
+    uniforms.uScale.value = scale;
+    uniforms.uNoiseIntensity.value = noiseIntensity;
+    uniforms.uColor.value.setRGB(...hexToNormalizedRGB(color));
+    uniforms.uRotation.value = rotation;
+  }, [uniforms, speed, scale, noiseIntensity, color, rotation]);
 
   return (
     <div className={className} style={{ position: "fixed", inset: 0, pointerEvents: "none", ...style }} aria-hidden>

@@ -5,8 +5,9 @@
 ## 当前基线与经典接入
 
 - [工程经验与多经典接入规范](docs/CLASSICS_INTEGRATION_SPEC.md)：现有能力、视觉约束、百字模型入库、配置与切换要求、验收及发布。
-- [曲目切换、画面设置与模型占位方案](docs/PLAYBACK_APPEARANCE_MODEL_PLAN.md)：101 字源模型盘点、占位标注及切歌/背景/色调的设计草案，待确认后实施。
-- [当前公网验收记录](docs/CONTINUOUS_SCROLL_RELEASE_20261021.md)与 [COS/CDN 发布流程](docs/COSCROLL_RELEASE.md)。
+- [曲目切换、画面设置与模型占位方案](docs/PLAYBACK_APPEARANCE_MODEL_PLAN.md)：已实现心经/赞诗切换、明确占位与按曲目调色；保留原丝绸背景。
+- [妙法莲华经内容核对](docs/LOTUS_SUTRA_CONTENT_REVIEW_20261022.md)：音源指纹、33 句歌词、重复段、时间点与补字依据。
+- [妙法莲华经接入与公网验收](docs/LOTUS_SUTRA_RELEASE_20261022.md)、[此前无限滚动验收](docs/CONTINUOUS_SCROLL_RELEASE_20261021.md)与 [COS/CDN 发布流程](docs/COSCROLL_RELEASE.md)。
 
 下文保留了早期 MVP 的实现说明；新增经典请先阅读接入规范，其中明确区分现状与待实现模块。
 

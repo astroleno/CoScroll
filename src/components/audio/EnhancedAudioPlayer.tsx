@@ -9,6 +9,7 @@ interface EnhancedAudioPlayerProps {
   onPlayPause: () => void;
   onSeek: (time: number) => void;
   showDebugInfo?: boolean;
+  accent?: string;
 }
 
 const formatTime = (timeInSeconds: number): string => {
@@ -25,8 +26,10 @@ const EnhancedAudioPlayer: React.FC<EnhancedAudioPlayerProps> = ({
   isBuffering = false,
   onPlayPause,
   onSeek,
-  showDebugInfo = false
+  showDebugInfo = false,
+  accent = '#87CEEB',
 }) => {
+  const accentRgb = [1, 3, 5].map(start => parseInt(accent.slice(start, start + 2), 16)).join(',');
   // State for visual feedback
   const [isDragging, setIsDragging] = useState(false);
   const [dragTime, setDragTime] = useState(currentTime);
@@ -151,18 +154,19 @@ const EnhancedAudioPlayer: React.FC<EnhancedAudioPlayerProps> = ({
 
   const BufferingIcon = () => (
     <div className="w-8 h-8 flex items-center justify-center">
-      <div className="w-6 h-6 border-2 border-[#87CEEB] border-t-transparent rounded-full animate-spin"></div>
+      <div className="w-6 h-6 border-2 rounded-full animate-spin" style={{borderColor: accent, borderTopColor: 'transparent'}}></div>
     </div>
   );
 
   return (
-    <div className="w-full max-w-2xl p-4">
+    <div className="w-full max-w-2xl p-4" style={{'--player-accent': accent, '--player-focus': `rgba(${accentRgb},0.3)`} as React.CSSProperties}>
       <div className="flex items-center gap-4">
         {/* Play/Pause Button */}
         <button
           onClick={onPlayPause}
-          disabled={!isReady || isBuffering}
-          className="text-[#87CEEB] hover:text-white transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed transform hover:scale-105 active:scale-95"
+          disabled={(!isReady && !isPlaying) || isBuffering}
+          className="hover:text-white transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed transform hover:scale-105 active:scale-95"
+          style={{color: accent}}
           aria-label={isPlaying ? 'Pause' : 'Play'}
         >
           {isBuffering ? <BufferingIcon /> : isPlaying ? <PauseIcon /> : <PlayIcon />}
@@ -192,6 +196,7 @@ const EnhancedAudioPlayer: React.FC<EnhancedAudioPlayerProps> = ({
 
             {/* Progress Bar */}
             <input
+              aria-label="播放进度"
               type="range"
               min="0"
               max={duration || 0}
@@ -215,7 +220,7 @@ const EnhancedAudioPlayer: React.FC<EnhancedAudioPlayerProps> = ({
               disabled={!isReady || isBuffering}
               className="w-full h-1.5 bg-gray-600/40 rounded-lg appearance-none cursor-pointer range-lg disabled:cursor-not-allowed transition-all duration-150"
               style={{
-                background: `linear-gradient(to right, #87CEEB ${displayProgress}%, rgba(74,85,104,0.4) ${displayProgress}%)`,
+                background: `linear-gradient(to right, ${accent} ${displayProgress}%, rgba(74,85,104,0.4) ${displayProgress}%)`,
               }}
             />
 
@@ -223,7 +228,7 @@ const EnhancedAudioPlayer: React.FC<EnhancedAudioPlayerProps> = ({
             {isBuffering && (
               <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
                 <div className="w-full h-0.5 bg-gray-600/20 rounded-full overflow-hidden">
-                  <div className="h-full bg-[#87CEEB]/50 animate-pulse" style={{ width: '30%' }}></div>
+                  <div className="h-full animate-pulse" style={{width: '30%', backgroundColor: `rgba(${accentRgb},0.5)`}}></div>
                 </div>
               </div>
             )}
@@ -251,7 +256,7 @@ const EnhancedAudioPlayer: React.FC<EnhancedAudioPlayerProps> = ({
           appearance: none;
           width: 16px;
           height: 16px;
-          background: #87CEEB;
+          background: var(--player-accent);
           border-radius: 50%;
           cursor: pointer;
           opacity: 0;
@@ -263,7 +268,7 @@ const EnhancedAudioPlayer: React.FC<EnhancedAudioPlayerProps> = ({
         .range-lg::-moz-range-thumb {
           width: 16px;
           height: 16px;
-          background: #87CEEB;
+          background: var(--player-accent);
           border-radius: 50%;
           cursor: pointer;
           opacity: 0;
@@ -278,11 +283,11 @@ const EnhancedAudioPlayer: React.FC<EnhancedAudioPlayerProps> = ({
         }
         .range-lg:focus::-webkit-slider-thumb {
           opacity: 1;
-          box-shadow: 0 0 0 3px rgba(135, 206, 235, 0.3);
+          box-shadow: 0 0 0 3px var(--player-focus);
         }
         .range-lg:focus::-moz-range-thumb {
           opacity: 1;
-          box-shadow: 0 0 0 3px rgba(135, 206, 235, 0.3);
+          box-shadow: 0 0 0 3px var(--player-focus);
         }
         @keyframes spin {
           to {

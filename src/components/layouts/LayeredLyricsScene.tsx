@@ -9,6 +9,7 @@ import type { LayeredLyricItem, UseLayeredLyricsOptions, UseLayeredLyricsResult 
 import { advanceLyricMotion, LyricMotionInput, LyricMotionState } from './lyricMotion';
 import {LyricTextureCache, BillboardRecipe} from './lyricTextureCache';
 import {scheduleIdle} from '@/utils/scheduleIdle';
+import {prepareMaterialPrograms} from '@/utils/prepareMaterialPrograms';
 import {loopPhase} from '@/utils/loopTimeline';
 import type {OrthographicCamera} from 'three';
 
@@ -21,9 +22,11 @@ interface LayeredLyricsSceneProps {
   yOffset: number;
   fontFamily?: string;
   fontRevision: number;
+  currentColor: string;
+  adjacentColor: string;
 }
 
-function LayeredLyricsScene({lyrics, inputRef, options, frontFontSize, backFontSize, yOffset, fontFamily, fontRevision}: LayeredLyricsSceneProps) {
+function LayeredLyricsScene({lyrics, inputRef, options, frontFontSize, backFontSize, yOffset, fontFamily, fontRevision, currentColor, adjacentColor}: LayeredLyricsSceneProps) {
   const {gl, scene, camera, get, size} = useThree();
   const viewportClip = useMemo(() => {
     const c = camera as OrthographicCamera;
@@ -80,7 +83,7 @@ function LayeredLyricsScene({lyrics, inputRef, options, frontFontSize, backFontS
       } else {
         // Public async compiler keeps first-use program linking out of a line
         // transition. Rendering formulas, samples and material values are intact.
-        void gl.compileAsync(scene, camera).then(() => {
+        void prepareMaterialPrograms(gl, scene, camera).then(() => {
           if (!cancelled && get().frameloop === 'never') gl.render(scene, camera);
         }).catch(error => console.warn('[Lyrics] Material preparation failed', error));
       }
@@ -95,7 +98,7 @@ function LayeredLyricsScene({lyrics, inputRef, options, frontFontSize, backFontS
     const update = (items: LayeredLyricItem[], back: boolean) => items.forEach((item, index) => {
       handles.current.get(item.key)?.update({
         position: [item.x, item.y + yOffset, item.z + (back ? index * .01 : 0)],
-        color: item.isCurrent ? '#f8fafc' : '#cbd5f5', opacity: item.opacity,
+        color: item.isCurrent ? currentColor : adjacentColor, opacity: item.opacity,
         scale: item.scale, edgeFeather: item.edgeFeather,
       });
     });
@@ -129,7 +132,7 @@ function LayeredLyricsScene({lyrics, inputRef, options, frontFontSize, backFontS
       text={item.text}
       position={[item.x, item.y + yOffset, item.z + (back ? index * .01 : 0)]}
       fontSize={back ? backFontSize : frontFontSize}
-      color={item.isCurrent ? '#f8fafc' : '#cbd5f5'}
+      color={item.isCurrent ? currentColor : adjacentColor}
       opacity={item.opacity}
       align={item.isLeft ? 'left' : 'right'}
       scale={item.scale}

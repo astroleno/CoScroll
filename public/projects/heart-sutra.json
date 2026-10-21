@@ -11,7 +11,7 @@
     "audio": {
       "src": "/audio/心经_2.mp3",
       "format": "mp3",
-      "duration": 364,
+      "duration": 374.256327,
       "title": "心经",
       "artist": "王菲"
     },
@@ -124,6 +124,10 @@
       {
         "anchor": "圆",
         "modelPath": "001_空.obj",
+        "characterId": "010",
+        "status": "placeholder",
+        "renderedCharacter": "空",
+        "pendingReason": "awaiting-acceptance",
         "semanticMeaning": "圆满智慧"
       }
     ],
@@ -227,6 +231,7 @@
       "meaning": "心性圆满"
     }
   ],
+  "appearance": {"background": "silk", "palette": "original-jade", "hueOffset": 0},
   "performance": {
     "qualityLevel": "high",
     "preloadModels": true,

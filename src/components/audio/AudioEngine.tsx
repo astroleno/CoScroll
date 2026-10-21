@@ -3,6 +3,8 @@ import timelineStore from '@/stores/timelineStore';
 import { loopCycle, loopDuration, loopPhase, playbackCycle } from '@/utils/loopTimeline';
 
 interface AudioEngineProps {
+  sessionRevision?: number;
+  audioElementRef?: React.MutableRefObject<HTMLAudioElement | null>;
   audioSrc: string;
   isPlaying: boolean;
   isReady: boolean;
@@ -29,6 +31,8 @@ interface AudioState {
 }
 
 export const AudioEngine: React.FC<AudioEngineProps> = ({
+  sessionRevision = 0,
+  audioElementRef,
   audioSrc,
   isPlaying: desiredPlayingState,
   isReady,
@@ -56,19 +60,37 @@ export const AudioEngine: React.FC<AudioEngineProps> = ({
   const playGenerationRef = useRef(0);
   const startupRetriesRef = useRef(0);
   const startupRetryTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const sessionRef = useRef(sessionRevision);
+  const transitioningRef = useRef(true);
 
-  if (playingIntentRef.current !== desiredPlayingState || sourceRef.current !== audioSrc) {
+  if (playingIntentRef.current !== desiredPlayingState || sourceRef.current !== audioSrc || sessionRef.current !== sessionRevision) {
+    if (sourceRef.current !== audioSrc || sessionRef.current !== sessionRevision) transitioningRef.current = true;
     playGenerationRef.current++;
     playingIntentRef.current = desiredPlayingState;
     sourceRef.current = audioSrc;
+    sessionRef.current = sessionRevision;
   }
 
   // Expose audio element to parent
   useEffect(() => {
-    if (audioRef.current && typeof window !== 'undefined') {
-      (window as any).__audioElement = audioRef.current;
+    const audio = audioRef.current;
+    if (audio && typeof window !== 'undefined') {
+      (window as any).__audioElement = audio;
     }
-  }, []);
+    if (audioElementRef) audioElementRef.current = audio;
+    return () => {if (audioElementRef?.current === audio) audioElementRef.current = null;};
+  }, [audioElementRef]);
+
+  useEffect(() => {
+    const audio = audioRef.current;
+    if (audio && audio.getAttribute('src') !== audioSrc) audio.src = audioSrc;
+    if (audio) { (window as any).__audioElement = audio; audio.load(); }
+    return () => {
+      playGenerationRef.current++;
+      if (audio) { audio.pause(); audio.removeAttribute('src'); audio.load(); }
+      if ((window as any).__audioElement === audio) delete (window as any).__audioElement;
+    };
+  }, [audioSrc, sessionRevision]);
 
   // State tracking
   const stateRef = useRef<AudioState>({
@@ -81,6 +103,7 @@ export const AudioEngine: React.FC<AudioEngineProps> = ({
   });
 
   useEffect(() => {
+    stateRef.current.isPlaying = false;
     stateRef.current.isReady = false;
     stateRef.current.currentTime = 0;
     stateRef.current.loopCount = 0;
@@ -88,12 +111,17 @@ export const AudioEngine: React.FC<AudioEngineProps> = ({
     timelineStore.pendingAudioSeek = null;
     timelineStore.setAudioTime(0, 0);
     startupRetriesRef.current = 0;
+    isSeekingRef.current = false;
+    pendingSeekRef.current = null;
+    lastSeekTimeRef.current = 0;
+    if (seekThrottleTimeoutRef.current) clearTimeout(seekThrottleTimeoutRef.current);
+    seekThrottleTimeoutRef.current = null;
     return () => {
       playGenerationRef.current++;
       if (startupRetryTimerRef.current) clearTimeout(startupRetryTimerRef.current);
       startupRetryTimerRef.current = null;
     };
-  }, [audioSrc]);
+  }, [audioSrc, sessionRevision]);
 
   // Seek management
   const isSeekingRef = useRef(false);
@@ -124,7 +152,7 @@ export const AudioEngine: React.FC<AudioEngineProps> = ({
     return {display, absolute};
   }, [duration, onLoopComplete]);
 
-  useEffect(() => timelineStore.registerAudioClock(sampleNativeClock), [sampleNativeClock]);
+  useEffect(() => timelineStore.registerAudioClock(sampleNativeClock), [sampleNativeClock, sessionRevision]);
 
   // Audio context management
   const initAudioContext = useCallback(() => {
@@ -259,7 +287,7 @@ export const AudioEngine: React.FC<AudioEngineProps> = ({
   // Handle time updates with buffering detection
   const handleTimeUpdate = useCallback((event: React.SyntheticEvent<HTMLAudioElement>) => {
     const audio = event.currentTarget;
-    if (!audio || isSeekingRef.current) return;
+    if (!audio || isSeekingRef.current || transitioningRef.current) return;
 
     const sample = sampleNativeClock();
     const newTime = sample.display;
@@ -284,7 +312,7 @@ export const AudioEngine: React.FC<AudioEngineProps> = ({
   // Handle audio metadata loaded
   const handleLoadedMetadata = useCallback(() => {
     const audio = audioRef.current;
-    if (!audio) return;
+    if (!audio || audio.readyState < 1) return;
 
     const realDuration = Math.max(1, audio.duration);
     stateRef.current.duration = realDuration;
@@ -299,6 +327,8 @@ export const AudioEngine: React.FC<AudioEngineProps> = ({
 
   // Handle audio ready to play
   const handleCanPlay = useCallback(() => {
+    if (!audioRef.current || audioRef.current.readyState < 3) return;
+    transitioningRef.current = false;
     if (startupRetryTimerRef.current) {
       clearTimeout(startupRetryTimerRef.current);
       startupRetryTimerRef.current = null;
@@ -327,6 +357,8 @@ export const AudioEngine: React.FC<AudioEngineProps> = ({
             .catch(error => {
               if (generation !== playGenerationRef.current || !playingIntentRef.current || audio !== audioRef.current) return;
               console.error('[AudioEngine] Play on ready failed:', error);
+              stateRef.current.isPlaying = false;
+              onPlayStateChange(false);
             });
         }
       }
@@ -378,6 +410,7 @@ export const AudioEngine: React.FC<AudioEngineProps> = ({
 
   const handleAudioError = useCallback((event: React.SyntheticEvent<HTMLAudioElement>) => {
     const audio = event.currentTarget;
+    if (!audio.error) return;
     // Retry only startup failures. Never restart a track that has already played.
     if (!stateRef.current.isReady && startupRetriesRef.current < 2) {
       if (startupRetryTimerRef.current) return;
@@ -465,11 +498,15 @@ export const AudioEngine: React.FC<AudioEngineProps> = ({
           event.currentTarget.pause();
           return;
         }
+        if (event.currentTarget.paused || event.currentTarget.readyState < 2) return;
+        transitioningRef.current = false;
         stateRef.current.isPlaying = true;
       onPlayStateChange(true);
       startAnimationLoop();
       }}
-      onPause={() => {
+      onPause={(event) => {
+        if (!event.currentTarget.paused || (playingIntentRef.current &&
+          (transitioningRef.current || !stateRef.current.isPlaying))) return;
         stateRef.current.isPlaying = false;
         onPlayStateChange(false);
         cancelAnimationLoop();
