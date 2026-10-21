@@ -1,0 +1,3323 @@
+{
+  "version": 1,
+  "capturedOn": "2026-10-22",
+  "originDirectory": "/Users/aitoshuu/Downloads/Character/Origin",
+  "scope": "metadata inventory and placeholder proposal only; no geometry quality validation or importing",
+  "sourceCount": 101,
+  "sourceBytes": 1459375232,
+  "existingProjectAssetCount": 26,
+  "pendingSimplificationCount": 75,
+  "defaultPlaceholder": "法",
+  "entries": [
+    {
+      "characterId": "001",
+      "character": "空",
+      "origin": {
+        "fileName": "001_空.glb",
+        "localPath": "/Users/aitoshuu/Downloads/Character/Origin/001_空.glb",
+        "bytes": 16164472,
+        "mtimeNs": 1759064528000000000,
+        "glbVersion": 2,
+        "meshCount": 1,
+        "primitiveCount": 1,
+        "positionAccessorCountsSum": 363423,
+        "triangleCountAcrossMeshPrimitives": 705712,
+        "declaredLengthMatches": true,
+        "status": "user-work-in-progress"
+      },
+      "existingProjectAsset": {
+        "obj": "/models/10k_obj/001_空.obj",
+        "prepared": "/models/prepared/001_空.json"
+      },
+      "deliveryStatus": "existing-project-asset",
+      "preview": {
+        "targetCharacter": "空",
+        "renderedCharacter": "空",
+        "modelPath": "001_空.obj",
+        "isPlaceholder": false,
+        "reason": null,
+        "state": "proposed-mapping-awaiting-runtime-resolver"
+      },
+      "legacyRenderer": {
+        "mappedPath": "/models/10k_obj/001_空.obj",
+        "recognizesTarget": true,
+        "matchesExistingAsset": true
+      }
+    },
+    {
+      "characterId": "002",
+      "character": "心",
+      "origin": {
+        "fileName": "002_心.glb",
+        "localPath": "/Users/aitoshuu/Downloads/Character/Origin/002_心.glb",
+        "bytes": 10733480,
+        "mtimeNs": 1759070466000000000,
+        "glbVersion": 2,
+        "meshCount": 1,
+        "primitiveCount": 1,
+        "positionAccessorCountsSum": 241593,
+        "triangleCountAcrossMeshPrimitives": 470868,
+        "declaredLengthMatches": true,
+        "status": "user-work-in-progress"
+      },
+      "existingProjectAsset": {
+        "obj": "/models/10k_obj/002_心.obj",
+        "prepared": "/models/prepared/002_心.json"
+      },
+      "deliveryStatus": "existing-project-asset",
+      "preview": {
+        "targetCharacter": "心",
+        "renderedCharacter": "心",
+        "modelPath": "002_心.obj",
+        "isPlaceholder": false,
+        "reason": null,
+        "state": "proposed-mapping-awaiting-runtime-resolver"
+      },
+      "legacyRenderer": {
+        "mappedPath": "/models/10k_obj/002_心.obj",
+        "recognizesTarget": true,
+        "matchesExistingAsset": true
+      }
+    },
+    {
+      "characterId": "003",
+      "character": "道",
+      "origin": {
+        "fileName": "003_道.glb",
+        "localPath": "/Users/aitoshuu/Downloads/Character/Origin/003_道.glb",
+        "bytes": 11518260,
+        "mtimeNs": 1759076924000000000,
+        "glbVersion": 2,
+        "meshCount": 1,
+        "primitiveCount": 1,
+        "positionAccessorCountsSum": 256732,
+        "triangleCountAcrossMeshPrimitives": 494040,
+        "declaredLengthMatches": true,
+        "status": "user-work-in-progress"
+      },
+      "existingProjectAsset": {
+        "obj": "/models/10k_obj/003_道.obj",
+        "prepared": "/models/prepared/003_道.json"
+      },
+      "deliveryStatus": "existing-project-asset",
+      "preview": {
+        "targetCharacter": "道",
+        "renderedCharacter": "道",
+        "modelPath": "003_道.obj",
+        "isPlaceholder": false,
+        "reason": null,
+        "state": "proposed-mapping-awaiting-runtime-resolver"
+      },
+      "legacyRenderer": {
+        "mappedPath": "/models/10k_obj/003_道.obj",
+        "recognizesTarget": true,
+        "matchesExistingAsset": true
+      }
+    },
+    {
+      "characterId": "004",
+      "character": "善",
+      "origin": {
+        "fileName": "004_善.glb",
+        "localPath": "/Users/aitoshuu/Downloads/Character/Origin/004_善.glb",
+        "bytes": 12511128,
+        "mtimeNs": 1759074838000000000,
+        "glbVersion": 2,
+        "meshCount": 1,
+        "primitiveCount": 1,
+        "positionAccessorCountsSum": 279725,
+        "triangleCountAcrossMeshPrimitives": 540346,
+        "declaredLengthMatches": true,
+        "status": "user-work-in-progress"
+      },
+      "existingProjectAsset": {
+        "obj": "/models/10k_obj/004_善.obj",
+        "prepared": "/models/prepared/004_善.json"
+      },
+      "deliveryStatus": "existing-project-asset",
+      "preview": {
+        "targetCharacter": "善",
+        "renderedCharacter": "善",
+        "modelPath": "004_善.obj",
+        "isPlaceholder": false,
+        "reason": null,
+        "state": "proposed-mapping-awaiting-runtime-resolver"
+      },
+      "legacyRenderer": {
+        "mappedPath": null,
+        "recognizesTarget": false,
+        "matchesExistingAsset": false
+      }
+    },
+    {
+      "characterId": "005",
+      "character": "和",
+      "origin": {
+        "fileName": "005_和.glb",
+        "localPath": "/Users/aitoshuu/Downloads/Character/Origin/005_和.glb",
+        "bytes": 17302880,
+        "mtimeNs": 1759074918000000000,
+        "glbVersion": 2,
+        "meshCount": 1,
+        "primitiveCount": 1,
+        "positionAccessorCountsSum": 391750,
+        "triangleCountAcrossMeshPrimitives": 759890,
+        "declaredLengthMatches": true,
+        "status": "user-work-in-progress"
+      },
+      "existingProjectAsset": {
+        "obj": "/models/10k_obj/005_和.obj",
+        "prepared": "/models/prepared/005_和.json"
+      },
+      "deliveryStatus": "existing-project-asset",
+      "preview": {
+        "targetCharacter": "和",
+        "renderedCharacter": "和",
+        "modelPath": "005_和.obj",
+        "isPlaceholder": false,
+        "reason": null,
+        "state": "proposed-mapping-awaiting-runtime-resolver"
+      },
+      "legacyRenderer": {
+        "mappedPath": null,
+        "recognizesTarget": false,
+        "matchesExistingAsset": false
+      }
+    },
+    {
+      "characterId": "006",
+      "character": "静",
+      "origin": {
+        "fileName": "006_静.glb",
+        "localPath": "/Users/aitoshuu/Downloads/Character/Origin/006_静.glb",
+        "bytes": 16499876,
+        "mtimeNs": 1759074486000000000,
+        "glbVersion": 2,
+        "meshCount": 1,
+        "primitiveCount": 1,
+        "positionAccessorCountsSum": 374728,
+        "triangleCountAcrossMeshPrimitives": 718734,
+        "declaredLengthMatches": true,
+        "status": "user-work-in-progress"
+      },
+      "existingProjectAsset": {
+        "obj": "/models/10k_obj/006_静.obj",
+        "prepared": "/models/prepared/006_静.json"
+      },
+      "deliveryStatus": "existing-project-asset",
+      "preview": {
+        "targetCharacter": "静",
+        "renderedCharacter": "静",
+        "modelPath": "006_静.obj",
+        "isPlaceholder": false,
+        "reason": null,
+        "state": "proposed-mapping-awaiting-runtime-resolver"
+      },
+      "legacyRenderer": {
+        "mappedPath": null,
+        "recognizesTarget": false,
+        "matchesExistingAsset": false
+      }
+    },
+    {
+      "characterId": "007",
+      "character": "明",
+      "origin": {
+        "fileName": "007_明.glb",
+        "localPath": "/Users/aitoshuu/Downloads/Character/Origin/007_明.glb",
+        "bytes": 22547624,
+        "mtimeNs": 1759071432000000000,
+        "glbVersion": 2,
+        "meshCount": 1,
+        "primitiveCount": 1,
+        "positionAccessorCountsSum": 513480,
+        "triangleCountAcrossMeshPrimitives": 1000100,
+        "declaredLengthMatches": true,
+        "status": "user-work-in-progress"
+      },
+      "existingProjectAsset": {
+        "obj": "/models/10k_obj/007_明.obj",
+        "prepared": "/models/prepared/007_明.json"
+      },
+      "deliveryStatus": "existing-project-asset",
+      "preview": {
+        "targetCharacter": "明",
+        "renderedCharacter": "明",
+        "modelPath": "007_明.obj",
+        "isPlaceholder": false,
+        "reason": null,
+        "state": "proposed-mapping-awaiting-runtime-resolver"
+      },
+      "legacyRenderer": {
+        "mappedPath": "/models/10k_obj/007_明.obj",
+        "recognizesTarget": true,
+        "matchesExistingAsset": true
+      }
+    },
+    {
+      "characterId": "008",
+      "character": "悟",
+      "origin": {
+        "fileName": "008_悟.glb",
+        "localPath": "/Users/aitoshuu/Downloads/Character/Origin/008_悟.glb",
+        "bytes": 20721012,
+        "mtimeNs": 1759074574000000000,
+        "glbVersion": 2,
+        "meshCount": 1,
+        "primitiveCount": 1,
+        "positionAccessorCountsSum": 467282,
+        "triangleCountAcrossMeshPrimitives": 908668,
+        "declaredLengthMatches": true,
+        "status": "user-work-in-progress"
+      },
+      "existingProjectAsset": {
+        "obj": "/models/10k_obj/008_悟.obj",
+        "prepared": "/models/prepared/008_悟.json"
+      },
+      "deliveryStatus": "existing-project-asset",
+      "preview": {
+        "targetCharacter": "悟",
+        "renderedCharacter": "悟",
+        "modelPath": "008_悟.obj",
+        "isPlaceholder": false,
+        "reason": null,
+        "state": "proposed-mapping-awaiting-runtime-resolver"
+      },
+      "legacyRenderer": {
+        "mappedPath": "/models/10k_obj/008_悟.obj",
+        "recognizesTarget": true,
+        "matchesExistingAsset": true
+      }
+    },
+    {
+      "characterId": "009",
+      "character": "真",
+      "origin": {
+        "fileName": "009_真.glb",
+        "localPath": "/Users/aitoshuu/Downloads/Character/Origin/009_真.glb",
+        "bytes": 11012396,
+        "mtimeNs": 1759074656000000000,
+        "glbVersion": 2,
+        "meshCount": 1,
+        "primitiveCount": 1,
+        "positionAccessorCountsSum": 247998,
+        "triangleCountAcrossMeshPrimitives": 476366,
+        "declaredLengthMatches": true,
+        "status": "user-work-in-progress"
+      },
+      "existingProjectAsset": {
+        "obj": "/models/10k_obj/009_真.obj",
+        "prepared": "/models/prepared/009_真.json"
+      },
+      "deliveryStatus": "existing-project-asset",
+      "preview": {
+        "targetCharacter": "真",
+        "renderedCharacter": "真",
+        "modelPath": "009_真.obj",
+        "isPlaceholder": false,
+        "reason": null,
+        "state": "proposed-mapping-awaiting-runtime-resolver"
+      },
+      "legacyRenderer": {
+        "mappedPath": "/models/10k_obj/009_真.obj",
+        "recognizesTarget": true,
+        "matchesExistingAsset": true
+      }
+    },
+    {
+      "characterId": "010",
+      "character": "圆",
+      "origin": {
+        "fileName": "010_圆.glb",
+        "localPath": "/Users/aitoshuu/Downloads/Character/Origin/010_圆.glb",
+        "bytes": 17582872,
+        "mtimeNs": 1759075934000000000,
+        "glbVersion": 2,
+        "meshCount": 1,
+        "primitiveCount": 1,
+        "positionAccessorCountsSum": 397187,
+        "triangleCountAcrossMeshPrimitives": 775552,
+        "declaredLengthMatches": true,
+        "status": "user-work-in-progress"
+      },
+      "existingProjectAsset": {
+        "obj": "/models/10k_obj/010_圆.obj",
+        "prepared": "/models/prepared/010_圆.json"
+      },
+      "deliveryStatus": "existing-project-asset",
+      "preview": {
+        "targetCharacter": "圆",
+        "renderedCharacter": "圆",
+        "modelPath": "010_圆.obj",
+        "isPlaceholder": false,
+        "reason": null,
+        "state": "proposed-mapping-awaiting-runtime-resolver"
+      },
+      "legacyRenderer": {
+        "mappedPath": "/models/10k_obj/001_空.obj",
+        "recognizesTarget": true,
+        "matchesExistingAsset": false
+      }
+    },
+    {
+      "characterId": "011",
+      "character": "缘",
+      "origin": {
+        "fileName": "011_缘.glb",
+        "localPath": "/Users/aitoshuu/Downloads/Character/Origin/011_缘.glb",
+        "bytes": 20039464,
+        "mtimeNs": 1759074992000000000,
+        "glbVersion": 2,
+        "meshCount": 1,
+        "primitiveCount": 1,
+        "positionAccessorCountsSum": 456377,
+        "triangleCountAcrossMeshPrimitives": 884300,
+        "declaredLengthMatches": true,
+        "status": "user-work-in-progress"
+      },
+      "existingProjectAsset": {
+        "obj": "/models/10k_obj/011_缘.obj",
+        "prepared": "/models/prepared/011_缘.json"
+      },
+      "deliveryStatus": "existing-project-asset",
+      "preview": {
+        "targetCharacter": "缘",
+        "renderedCharacter": "缘",
+        "modelPath": "011_缘.obj",
+        "isPlaceholder": false,
+        "reason": null,
+        "state": "proposed-mapping-awaiting-runtime-resolver"
+      },
+      "legacyRenderer": {
+        "mappedPath": null,
+        "recognizesTarget": false,
+        "matchesExistingAsset": false
+      }
+    },
+    {
+      "characterId": "012",
+      "character": "无",
+      "origin": {
+        "fileName": "012_无.glb",
+        "localPath": "/Users/aitoshuu/Downloads/Character/Origin/012_无.glb",
+        "bytes": 13687036,
+        "mtimeNs": 1759064266000000000,
+        "glbVersion": 2,
+        "meshCount": 1,
+        "primitiveCount": 1,
+        "positionAccessorCountsSum": 309475,
+        "triangleCountAcrossMeshPrimitives": 602576,
+        "declaredLengthMatches": true,
+        "status": "user-work-in-progress"
+      },
+      "existingProjectAsset": {
+        "obj": "/models/10k_obj/012_无.obj",
+        "prepared": "/models/prepared/012_无.json"
+      },
+      "deliveryStatus": "existing-project-asset",
+      "preview": {
+        "targetCharacter": "无",
+        "renderedCharacter": "无",
+        "modelPath": "012_无.obj",
+        "isPlaceholder": false,
+        "reason": null,
+        "state": "proposed-mapping-awaiting-runtime-resolver"
+      },
+      "legacyRenderer": {
+        "mappedPath": "/models/10k_obj/012_无.obj",
+        "recognizesTarget": true,
+        "matchesExistingAsset": true
+      }
+    },
+    {
+      "characterId": "013",
+      "character": "水",
+      "origin": {
+        "fileName": "013_水.glb",
+        "localPath": "/Users/aitoshuu/Downloads/Character/Origin/013_水.glb",
+        "bytes": 13251108,
+        "mtimeNs": 1759074760000000000,
+        "glbVersion": 2,
+        "meshCount": 1,
+        "primitiveCount": 1,
+        "positionAccessorCountsSum": 299690,
+        "triangleCountAcrossMeshPrimitives": 583420,
+        "declaredLengthMatches": true,
+        "status": "user-work-in-progress"
+      },
+      "existingProjectAsset": {
+        "obj": "/models/10k_obj/013_水.obj",
+        "prepared": "/models/prepared/013_水.json"
+      },
+      "deliveryStatus": "existing-project-asset",
+      "preview": {
+        "targetCharacter": "水",
+        "renderedCharacter": "水",
+        "modelPath": "013_水.obj",
+        "isPlaceholder": false,
+        "reason": null,
+        "state": "proposed-mapping-awaiting-runtime-resolver"
+      },
+      "legacyRenderer": {
+        "mappedPath": null,
+        "recognizesTarget": false,
+        "matchesExistingAsset": false
+      }
+    },
+    {
+      "characterId": "014",
+      "character": "山",
+      "origin": {
+        "fileName": "014_山.glb",
+        "localPath": "/Users/aitoshuu/Downloads/Character/Origin/014_山.glb",
+        "bytes": 15252036,
+        "mtimeNs": 1759075078000000000,
+        "glbVersion": 2,
+        "meshCount": 1,
+        "primitiveCount": 1,
+        "positionAccessorCountsSum": 342116,
+        "triangleCountAcrossMeshPrimitives": 665918,
+        "declaredLengthMatches": true,
+        "status": "user-work-in-progress"
+      },
+      "existingProjectAsset": {
+        "obj": "/models/10k_obj/014_山.obj",
+        "prepared": "/models/prepared/014_山.json"
+      },
+      "deliveryStatus": "existing-project-asset",
+      "preview": {
+        "targetCharacter": "山",
+        "renderedCharacter": "山",
+        "modelPath": "014_山.obj",
+        "isPlaceholder": false,
+        "reason": null,
+        "state": "proposed-mapping-awaiting-runtime-resolver"
+      },
+      "legacyRenderer": {
+        "mappedPath": null,
+        "recognizesTarget": false,
+        "matchesExistingAsset": false
+      }
+    },
+    {
+      "characterId": "015",
+      "character": "月",
+      "origin": {
+        "fileName": "015_月.glb",
+        "localPath": "/Users/aitoshuu/Downloads/Character/Origin/015_月.glb",
+        "bytes": 15729440,
+        "mtimeNs": 1759075152000000000,
+        "glbVersion": 2,
+        "meshCount": 1,
+        "primitiveCount": 1,
+        "positionAccessorCountsSum": 356783,
+        "triangleCountAcrossMeshPrimitives": 695770,
+        "declaredLengthMatches": true,
+        "status": "user-work-in-progress"
+      },
+      "existingProjectAsset": {
+        "obj": "/models/10k_obj/015_月.obj",
+        "prepared": "/models/prepared/015_月.json"
+      },
+      "deliveryStatus": "existing-project-asset",
+      "preview": {
+        "targetCharacter": "月",
+        "renderedCharacter": "月",
+        "modelPath": "015_月.obj",
+        "isPlaceholder": false,
+        "reason": null,
+        "state": "proposed-mapping-awaiting-runtime-resolver"
+      },
+      "legacyRenderer": {
+        "mappedPath": null,
+        "recognizesTarget": false,
+        "matchesExistingAsset": false
+      }
+    },
+    {
+      "characterId": "016",
+      "character": "日",
+      "origin": {
+        "fileName": "016_日.glb",
+        "localPath": "/Users/aitoshuu/Downloads/Character/Origin/016_日.glb",
+        "bytes": 22563536,
+        "mtimeNs": 1759076666000000000,
+        "glbVersion": 2,
+        "meshCount": 1,
+        "primitiveCount": 1,
+        "positionAccessorCountsSum": 511017,
+        "triangleCountAcrossMeshPrimitives": 1000044,
+        "declaredLengthMatches": true,
+        "status": "user-work-in-progress"
+      },
+      "existingProjectAsset": {
+        "obj": "/models/10k_obj/016_日.obj",
+        "prepared": "/models/prepared/016_日.json"
+      },
+      "deliveryStatus": "existing-project-asset",
+      "preview": {
+        "targetCharacter": "日",
+        "renderedCharacter": "日",
+        "modelPath": "016_日.obj",
+        "isPlaceholder": false,
+        "reason": null,
+        "state": "proposed-mapping-awaiting-runtime-resolver"
+      },
+      "legacyRenderer": {
+        "mappedPath": null,
+        "recognizesTarget": false,
+        "matchesExistingAsset": false
+      }
+    },
+    {
+      "characterId": "017",
+      "character": "风",
+      "origin": {
+        "fileName": "017_风.glb",
+        "localPath": "/Users/aitoshuu/Downloads/Character/Origin/017_风.glb",
+        "bytes": 11613236,
+        "mtimeNs": 1759076216000000000,
+        "glbVersion": 2,
+        "meshCount": 1,
+        "primitiveCount": 1,
+        "positionAccessorCountsSum": 261107,
+        "triangleCountAcrossMeshPrimitives": 506998,
+        "declaredLengthMatches": true,
+        "status": "user-work-in-progress"
+      },
+      "existingProjectAsset": {
+        "obj": "/models/10k_obj/017_风.obj",
+        "prepared": "/models/prepared/017_风.json"
+      },
+      "deliveryStatus": "existing-project-asset",
+      "preview": {
+        "targetCharacter": "风",
+        "renderedCharacter": "风",
+        "modelPath": "017_风.obj",
+        "isPlaceholder": false,
+        "reason": null,
+        "state": "proposed-mapping-awaiting-runtime-resolver"
+      },
+      "legacyRenderer": {
+        "mappedPath": null,
+        "recognizesTarget": false,
+        "matchesExistingAsset": false
+      }
+    },
+    {
+      "characterId": "018",
+      "character": "光",
+      "origin": {
+        "fileName": "018_光.glb",
+        "localPath": "/Users/aitoshuu/Downloads/Character/Origin/018_光.glb",
+        "bytes": 14079412,
+        "mtimeNs": 1759076754000000000,
+        "glbVersion": 2,
+        "meshCount": 1,
+        "primitiveCount": 1,
+        "positionAccessorCountsSum": 315867,
+        "triangleCountAcrossMeshPrimitives": 611888,
+        "declaredLengthMatches": true,
+        "status": "user-work-in-progress"
+      },
+      "existingProjectAsset": {
+        "obj": "/models/10k_obj/018_光.obj",
+        "prepared": "/models/prepared/018_光.json"
+      },
+      "deliveryStatus": "existing-project-asset",
+      "preview": {
+        "targetCharacter": "光",
+        "renderedCharacter": "光",
+        "modelPath": "018_光.obj",
+        "isPlaceholder": false,
+        "reason": null,
+        "state": "proposed-mapping-awaiting-runtime-resolver"
+      },
+      "legacyRenderer": {
+        "mappedPath": null,
+        "recognizesTarget": false,
+        "matchesExistingAsset": false
+      }
+    },
+    {
+      "characterId": "019",
+      "character": "生",
+      "origin": {
+        "fileName": "019_生.glb",
+        "localPath": "/Users/aitoshuu/Downloads/Character/Origin/019_生.glb",
+        "bytes": 15456628,
+        "mtimeNs": 1759076310000000000,
+        "glbVersion": 2,
+        "meshCount": 1,
+        "primitiveCount": 1,
+        "positionAccessorCountsSum": 349657,
+        "triangleCountAcrossMeshPrimitives": 678888,
+        "declaredLengthMatches": true,
+        "status": "user-work-in-progress"
+      },
+      "existingProjectAsset": {
+        "obj": "/models/10k_obj/019_生.obj",
+        "prepared": "/models/prepared/019_生.json"
+      },
+      "deliveryStatus": "existing-project-asset",
+      "preview": {
+        "targetCharacter": "生",
+        "renderedCharacter": "生",
+        "modelPath": "019_生.obj",
+        "isPlaceholder": false,
+        "reason": null,
+        "state": "proposed-mapping-awaiting-runtime-resolver"
+      },
+      "legacyRenderer": {
+        "mappedPath": "/models/10k_obj/019_生.obj",
+        "recognizesTarget": true,
+        "matchesExistingAsset": true
+      }
+    },
+    {
+      "characterId": "020",
+      "character": "死",
+      "origin": {
+        "fileName": "020_死.glb",
+        "localPath": "/Users/aitoshuu/Downloads/Character/Origin/020_死.glb",
+        "bytes": 15331528,
+        "mtimeNs": 1759071506000000000,
+        "glbVersion": 2,
+        "meshCount": 1,
+        "primitiveCount": 1,
+        "positionAccessorCountsSum": 347464,
+        "triangleCountAcrossMeshPrimitives": 677652,
+        "declaredLengthMatches": true,
+        "status": "user-work-in-progress"
+      },
+      "existingProjectAsset": {
+        "obj": "/models/10k_obj/020_死.obj",
+        "prepared": "/models/prepared/020_死.json"
+      },
+      "deliveryStatus": "existing-project-asset",
+      "preview": {
+        "targetCharacter": "死",
+        "renderedCharacter": "死",
+        "modelPath": "020_死.obj",
+        "isPlaceholder": false,
+        "reason": null,
+        "state": "proposed-mapping-awaiting-runtime-resolver"
+      },
+      "legacyRenderer": {
+        "mappedPath": "/models/10k_obj/020_死.obj",
+        "recognizesTarget": true,
+        "matchesExistingAsset": true
+      }
+    },
+    {
+      "characterId": "021",
+      "character": "德",
+      "origin": {
+        "fileName": "021_德.glb",
+        "localPath": "/Users/aitoshuu/Downloads/Character/Origin/021_德.glb",
+        "bytes": 15420892,
+        "mtimeNs": 1759497348000000000,
+        "glbVersion": 2,
+        "meshCount": 1,
+        "primitiveCount": 1,
+        "positionAccessorCountsSum": 339646,
+        "triangleCountAcrossMeshPrimitives": 653142,
+        "declaredLengthMatches": true,
+        "status": "user-work-in-progress"
+      },
+      "existingProjectAsset": {
+        "obj": "/models/10k_obj/021_德.obj",
+        "prepared": "/models/prepared/021_德.json"
+      },
+      "deliveryStatus": "existing-project-asset",
+      "preview": {
+        "targetCharacter": "德",
+        "renderedCharacter": "德",
+        "modelPath": "021_德.obj",
+        "isPlaceholder": false,
+        "reason": null,
+        "state": "proposed-mapping-awaiting-runtime-resolver"
+      },
+      "legacyRenderer": {
+        "mappedPath": null,
+        "recognizesTarget": false,
+        "matchesExistingAsset": false
+      }
+    },
+    {
+      "characterId": "022",
+      "character": "法",
+      "origin": {
+        "fileName": "022_法.glb",
+        "localPath": "/Users/aitoshuu/Downloads/Character/Origin/022_法.glb",
+        "bytes": 13541424,
+        "mtimeNs": 1759502158000000000,
+        "glbVersion": 2,
+        "meshCount": 1,
+        "primitiveCount": 1,
+        "positionAccessorCountsSum": 307213,
+        "triangleCountAcrossMeshPrimitives": 594570,
+        "declaredLengthMatches": true,
+        "status": "user-work-in-progress"
+      },
+      "existingProjectAsset": {
+        "obj": "/models/10k_obj/022_法.obj",
+        "prepared": "/models/prepared/022_法.json"
+      },
+      "deliveryStatus": "existing-project-asset",
+      "preview": {
+        "targetCharacter": "法",
+        "renderedCharacter": "法",
+        "modelPath": "022_法.obj",
+        "isPlaceholder": false,
+        "reason": null,
+        "state": "proposed-mapping-awaiting-runtime-resolver"
+      },
+      "legacyRenderer": {
+        "mappedPath": "/models/10k_obj/022_法.obj",
+        "recognizesTarget": true,
+        "matchesExistingAsset": true
+      }
+    },
+    {
+      "characterId": "023",
+      "character": "安",
+      "origin": {
+        "fileName": "023_安.glb",
+        "localPath": "/Users/aitoshuu/Downloads/Character/Origin/023_安.glb",
+        "bytes": 15213404,
+        "mtimeNs": 1761058854000000000,
+        "glbVersion": 2,
+        "meshCount": 1,
+        "primitiveCount": 1,
+        "positionAccessorCountsSum": 344020,
+        "triangleCountAcrossMeshPrimitives": 667726,
+        "declaredLengthMatches": true,
+        "status": "user-work-in-progress"
+      },
+      "existingProjectAsset": null,
+      "deliveryStatus": "pending-simplification",
+      "preview": {
+        "targetCharacter": "安",
+        "renderedCharacter": "法",
+        "modelPath": "022_法.obj",
+        "isPlaceholder": true,
+        "reason": "pending-simplification",
+        "state": "proposed-mapping-awaiting-runtime-resolver"
+      },
+      "legacyRenderer": {
+        "mappedPath": null,
+        "recognizesTarget": false,
+        "matchesExistingAsset": false
+      }
+    },
+    {
+      "characterId": "024",
+      "character": "宁",
+      "origin": {
+        "fileName": "024_宁.glb",
+        "localPath": "/Users/aitoshuu/Downloads/Character/Origin/024_宁.glb",
+        "bytes": 12176808,
+        "mtimeNs": 1759503336000000000,
+        "glbVersion": 2,
+        "meshCount": 1,
+        "primitiveCount": 1,
+        "positionAccessorCountsSum": 274599,
+        "triangleCountAcrossMeshPrimitives": 532542,
+        "declaredLengthMatches": true,
+        "status": "user-work-in-progress"
+      },
+      "existingProjectAsset": {
+        "obj": "/models/10k_obj/024_宁.obj",
+        "prepared": "/models/prepared/024_宁.json"
+      },
+      "deliveryStatus": "existing-project-asset",
+      "preview": {
+        "targetCharacter": "宁",
+        "renderedCharacter": "宁",
+        "modelPath": "024_宁.obj",
+        "isPlaceholder": false,
+        "reason": null,
+        "state": "proposed-mapping-awaiting-runtime-resolver"
+      },
+      "legacyRenderer": {
+        "mappedPath": null,
+        "recognizesTarget": false,
+        "matchesExistingAsset": false
+      }
+    },
+    {
+      "characterId": "025",
+      "character": "觉",
+      "origin": {
+        "fileName": "025_觉.glb",
+        "localPath": "/Users/aitoshuu/Downloads/Character/Origin/025_觉.glb",
+        "bytes": 14004188,
+        "mtimeNs": 1761059098000000000,
+        "glbVersion": 2,
+        "meshCount": 1,
+        "primitiveCount": 1,
+        "positionAccessorCountsSum": 315471,
+        "triangleCountAcrossMeshPrimitives": 612106,
+        "declaredLengthMatches": true,
+        "status": "user-work-in-progress"
+      },
+      "existingProjectAsset": null,
+      "deliveryStatus": "pending-simplification",
+      "preview": {
+        "targetCharacter": "觉",
+        "renderedCharacter": "法",
+        "modelPath": "022_法.obj",
+        "isPlaceholder": true,
+        "reason": "pending-simplification",
+        "state": "proposed-mapping-awaiting-runtime-resolver"
+      },
+      "legacyRenderer": {
+        "mappedPath": null,
+        "recognizesTarget": false,
+        "matchesExistingAsset": false
+      }
+    },
+    {
+      "characterId": "026",
+      "character": "川",
+      "origin": {
+        "fileName": "026_川.glb",
+        "localPath": "/Users/aitoshuu/Downloads/Character/Origin/026_川.glb",
+        "bytes": 6008056,
+        "mtimeNs": 1761059158000000000,
+        "glbVersion": 2,
+        "meshCount": 1,
+        "primitiveCount": 1,
+        "positionAccessorCountsSum": 133206,
+        "triangleCountAcrossMeshPrimitives": 256390,
+        "declaredLengthMatches": true,
+        "status": "user-work-in-progress"
+      },
+      "existingProjectAsset": null,
+      "deliveryStatus": "pending-simplification",
+      "preview": {
+        "targetCharacter": "川",
+        "renderedCharacter": "法",
+        "modelPath": "022_法.obj",
+        "isPlaceholder": true,
+        "reason": "pending-simplification",
+        "state": "proposed-mapping-awaiting-runtime-resolver"
+      },
+      "legacyRenderer": {
+        "mappedPath": null,
+        "recognizesTarget": false,
+        "matchesExistingAsset": false
+      }
+    },
+    {
+      "characterId": "027",
+      "character": "海",
+      "origin": {
+        "fileName": "027_海.glb",
+        "localPath": "/Users/aitoshuu/Downloads/Character/Origin/027_海.glb",
+        "bytes": 15542612,
+        "mtimeNs": 1761059254000000000,
+        "glbVersion": 2,
+        "meshCount": 1,
+        "primitiveCount": 1,
+        "positionAccessorCountsSum": 350699,
+        "triangleCountAcrossMeshPrimitives": 679034,
+        "declaredLengthMatches": true,
+        "status": "user-work-in-progress"
+      },
+      "existingProjectAsset": null,
+      "deliveryStatus": "pending-simplification",
+      "preview": {
+        "targetCharacter": "海",
+        "renderedCharacter": "水",
+        "modelPath": "013_水.obj",
+        "isPlaceholder": true,
+        "reason": "pending-simplification",
+        "state": "proposed-mapping-awaiting-runtime-resolver"
+      },
+      "legacyRenderer": {
+        "mappedPath": null,
+        "recognizesTarget": false,
+        "matchesExistingAsset": false
+      }
+    },
+    {
+      "characterId": "028",
+      "character": "江",
+      "origin": {
+        "fileName": "028_江.glb",
+        "localPath": "/Users/aitoshuu/Downloads/Character/Origin/028_江.glb",
+        "bytes": 12475632,
+        "mtimeNs": 1761059788000000000,
+        "glbVersion": 2,
+        "meshCount": 1,
+        "primitiveCount": 1,
+        "positionAccessorCountsSum": 281792,
+        "triangleCountAcrossMeshPrimitives": 548696,
+        "declaredLengthMatches": true,
+        "status": "user-work-in-progress"
+      },
+      "existingProjectAsset": null,
+      "deliveryStatus": "pending-simplification",
+      "preview": {
+        "targetCharacter": "江",
+        "renderedCharacter": "法",
+        "modelPath": "022_法.obj",
+        "isPlaceholder": true,
+        "reason": "pending-simplification",
+        "state": "proposed-mapping-awaiting-runtime-resolver"
+      },
+      "legacyRenderer": {
+        "mappedPath": null,
+        "recognizesTarget": false,
+        "matchesExistingAsset": false
+      }
+    },
+    {
+      "characterId": "029",
+      "character": "河",
+      "origin": {
+        "fileName": "029_河.glb",
+        "localPath": "/Users/aitoshuu/Downloads/Character/Origin/029_河.glb",
+        "bytes": 15599844,
+        "mtimeNs": 1761059514000000000,
+        "glbVersion": 2,
+        "meshCount": 1,
+        "primitiveCount": 1,
+        "positionAccessorCountsSum": 352379,
+        "triangleCountAcrossMeshPrimitives": 684154,
+        "declaredLengthMatches": true,
+        "status": "user-work-in-progress"
+      },
+      "existingProjectAsset": null,
+      "deliveryStatus": "pending-simplification",
+      "preview": {
+        "targetCharacter": "河",
+        "renderedCharacter": "法",
+        "modelPath": "022_法.obj",
+        "isPlaceholder": true,
+        "reason": "pending-simplification",
+        "state": "proposed-mapping-awaiting-runtime-resolver"
+      },
+      "legacyRenderer": {
+        "mappedPath": null,
+        "recognizesTarget": false,
+        "matchesExistingAsset": false
+      }
+    },
+    {
+      "characterId": "030",
+      "character": "湖",
+      "origin": {
+        "fileName": "030_湖.glb",
+        "localPath": "/Users/aitoshuu/Downloads/Character/Origin/030_湖.glb",
+        "bytes": 17691112,
+        "mtimeNs": 1761059392000000000,
+        "glbVersion": 2,
+        "meshCount": 1,
+        "primitiveCount": 1,
+        "positionAccessorCountsSum": 394988,
+        "triangleCountAcrossMeshPrimitives": 764472,
+        "declaredLengthMatches": true,
+        "status": "user-work-in-progress"
+      },
+      "existingProjectAsset": null,
+      "deliveryStatus": "pending-simplification",
+      "preview": {
+        "targetCharacter": "湖",
+        "renderedCharacter": "法",
+        "modelPath": "022_法.obj",
+        "isPlaceholder": true,
+        "reason": "pending-simplification",
+        "state": "proposed-mapping-awaiting-runtime-resolver"
+      },
+      "legacyRenderer": {
+        "mappedPath": null,
+        "recognizesTarget": false,
+        "matchesExistingAsset": false
+      }
+    },
+    {
+      "characterId": "031",
+      "character": "泉",
+      "origin": {
+        "fileName": "031_泉.glb",
+        "localPath": "/Users/aitoshuu/Downloads/Character/Origin/031_泉.glb",
+        "bytes": 11468456,
+        "mtimeNs": 1761059546000000000,
+        "glbVersion": 2,
+        "meshCount": 1,
+        "primitiveCount": 1,
+        "positionAccessorCountsSum": 259149,
+        "triangleCountAcrossMeshPrimitives": 499538,
+        "declaredLengthMatches": true,
+        "status": "user-work-in-progress"
+      },
+      "existingProjectAsset": null,
+      "deliveryStatus": "pending-simplification",
+      "preview": {
+        "targetCharacter": "泉",
+        "renderedCharacter": "法",
+        "modelPath": "022_法.obj",
+        "isPlaceholder": true,
+        "reason": "pending-simplification",
+        "state": "proposed-mapping-awaiting-runtime-resolver"
+      },
+      "legacyRenderer": {
+        "mappedPath": null,
+        "recognizesTarget": false,
+        "matchesExistingAsset": false
+      }
+    },
+    {
+      "characterId": "032",
+      "character": "雨",
+      "origin": {
+        "fileName": "032_雨.glb",
+        "localPath": "/Users/aitoshuu/Downloads/Character/Origin/032_雨.glb",
+        "bytes": 18630872,
+        "mtimeNs": 1761059600000000000,
+        "glbVersion": 2,
+        "meshCount": 1,
+        "primitiveCount": 1,
+        "positionAccessorCountsSum": 423072,
+        "triangleCountAcrossMeshPrimitives": 823682,
+        "declaredLengthMatches": true,
+        "status": "user-work-in-progress"
+      },
+      "existingProjectAsset": null,
+      "deliveryStatus": "pending-simplification",
+      "preview": {
+        "targetCharacter": "雨",
+        "renderedCharacter": "水",
+        "modelPath": "013_水.obj",
+        "isPlaceholder": true,
+        "reason": "pending-simplification",
+        "state": "proposed-mapping-awaiting-runtime-resolver"
+      },
+      "legacyRenderer": {
+        "mappedPath": null,
+        "recognizesTarget": false,
+        "matchesExistingAsset": false
+      }
+    },
+    {
+      "characterId": "033",
+      "character": "云",
+      "origin": {
+        "fileName": "033_云.glb",
+        "localPath": "/Users/aitoshuu/Downloads/Character/Origin/033_云.glb",
+        "bytes": 18746268,
+        "mtimeNs": 1761059666000000000,
+        "glbVersion": 2,
+        "meshCount": 1,
+        "primitiveCount": 1,
+        "positionAccessorCountsSum": 425795,
+        "triangleCountAcrossMeshPrimitives": 831816,
+        "declaredLengthMatches": true,
+        "status": "user-work-in-progress"
+      },
+      "existingProjectAsset": null,
+      "deliveryStatus": "pending-simplification",
+      "preview": {
+        "targetCharacter": "云",
+        "renderedCharacter": "法",
+        "modelPath": "022_法.obj",
+        "isPlaceholder": true,
+        "reason": "pending-simplification",
+        "state": "proposed-mapping-awaiting-runtime-resolver"
+      },
+      "legacyRenderer": {
+        "mappedPath": null,
+        "recognizesTarget": false,
+        "matchesExistingAsset": false
+      }
+    },
+    {
+      "characterId": "034",
+      "character": "雾",
+      "origin": {
+        "fileName": "034_雾.glb",
+        "localPath": "/Users/aitoshuu/Downloads/Character/Origin/034_雾.glb",
+        "bytes": 12036216,
+        "mtimeNs": 1761059910000000000,
+        "glbVersion": 2,
+        "meshCount": 1,
+        "primitiveCount": 1,
+        "positionAccessorCountsSum": 272708,
+        "triangleCountAcrossMeshPrimitives": 525008,
+        "declaredLengthMatches": true,
+        "status": "user-work-in-progress"
+      },
+      "existingProjectAsset": null,
+      "deliveryStatus": "pending-simplification",
+      "preview": {
+        "targetCharacter": "雾",
+        "renderedCharacter": "法",
+        "modelPath": "022_法.obj",
+        "isPlaceholder": true,
+        "reason": "pending-simplification",
+        "state": "proposed-mapping-awaiting-runtime-resolver"
+      },
+      "legacyRenderer": {
+        "mappedPath": null,
+        "recognizesTarget": false,
+        "matchesExistingAsset": false
+      }
+    },
+    {
+      "characterId": "035",
+      "character": "雪",
+      "origin": {
+        "fileName": "035_雪.glb",
+        "localPath": "/Users/aitoshuu/Downloads/Character/Origin/035_雪.glb",
+        "bytes": 14094488,
+        "mtimeNs": 1761059700000000000,
+        "glbVersion": 2,
+        "meshCount": 1,
+        "primitiveCount": 1,
+        "positionAccessorCountsSum": 319339,
+        "triangleCountAcrossMeshPrimitives": 618302,
+        "declaredLengthMatches": true,
+        "status": "user-work-in-progress"
+      },
+      "existingProjectAsset": null,
+      "deliveryStatus": "pending-simplification",
+      "preview": {
+        "targetCharacter": "雪",
+        "renderedCharacter": "法",
+        "modelPath": "022_法.obj",
+        "isPlaceholder": true,
+        "reason": "pending-simplification",
+        "state": "proposed-mapping-awaiting-runtime-resolver"
+      },
+      "legacyRenderer": {
+        "mappedPath": null,
+        "recognizesTarget": false,
+        "matchesExistingAsset": false
+      }
+    },
+    {
+      "characterId": "036",
+      "character": "星",
+      "origin": {
+        "fileName": "036_星.glb",
+        "localPath": "/Users/aitoshuu/Downloads/Character/Origin/036_星.glb",
+        "bytes": 15110640,
+        "mtimeNs": 1761058054000000000,
+        "glbVersion": 2,
+        "meshCount": 1,
+        "primitiveCount": 1,
+        "positionAccessorCountsSum": 342178,
+        "triangleCountAcrossMeshPrimitives": 662858,
+        "declaredLengthMatches": true,
+        "status": "user-work-in-progress"
+      },
+      "existingProjectAsset": null,
+      "deliveryStatus": "pending-simplification",
+      "preview": {
+        "targetCharacter": "星",
+        "renderedCharacter": "法",
+        "modelPath": "022_法.obj",
+        "isPlaceholder": true,
+        "reason": "pending-simplification",
+        "state": "proposed-mapping-awaiting-runtime-resolver"
+      },
+      "legacyRenderer": {
+        "mappedPath": null,
+        "recognizesTarget": false,
+        "matchesExistingAsset": false
+      }
+    },
+    {
+      "characterId": "037",
+      "character": "辰",
+      "origin": {
+        "fileName": "037_辰.glb",
+        "localPath": "/Users/aitoshuu/Downloads/Character/Origin/037_辰.glb",
+        "bytes": 12993312,
+        "mtimeNs": 1761057740000000000,
+        "glbVersion": 2,
+        "meshCount": 1,
+        "primitiveCount": 1,
+        "positionAccessorCountsSum": 293783,
+        "triangleCountAcrossMeshPrimitives": 570354,
+        "declaredLengthMatches": true,
+        "status": "user-work-in-progress"
+      },
+      "existingProjectAsset": null,
+      "deliveryStatus": "pending-simplification",
+      "preview": {
+        "targetCharacter": "辰",
+        "renderedCharacter": "法",
+        "modelPath": "022_法.obj",
+        "isPlaceholder": true,
+        "reason": "pending-simplification",
+        "state": "proposed-mapping-awaiting-runtime-resolver"
+      },
+      "legacyRenderer": {
+        "mappedPath": null,
+        "recognizesTarget": false,
+        "matchesExistingAsset": false
+      }
+    },
+    {
+      "characterId": "038",
+      "character": "影",
+      "origin": {
+        "fileName": "038_影.glb",
+        "localPath": "/Users/aitoshuu/Downloads/Character/Origin/038_影.glb",
+        "bytes": 15795580,
+        "mtimeNs": 1761059756000000000,
+        "glbVersion": 2,
+        "meshCount": 1,
+        "primitiveCount": 1,
+        "positionAccessorCountsSum": 357887,
+        "triangleCountAcrossMeshPrimitives": 693686,
+        "declaredLengthMatches": true,
+        "status": "user-work-in-progress"
+      },
+      "existingProjectAsset": null,
+      "deliveryStatus": "pending-simplification",
+      "preview": {
+        "targetCharacter": "影",
+        "renderedCharacter": "法",
+        "modelPath": "022_法.obj",
+        "isPlaceholder": true,
+        "reason": "pending-simplification",
+        "state": "proposed-mapping-awaiting-runtime-resolver"
+      },
+      "legacyRenderer": {
+        "mappedPath": null,
+        "recognizesTarget": false,
+        "matchesExistingAsset": false
+      }
+    },
+    {
+      "characterId": "039",
+      "character": "梦",
+      "origin": {
+        "fileName": "039_梦.glb",
+        "localPath": "/Users/aitoshuu/Downloads/Character/Origin/039_梦.glb",
+        "bytes": 11145260,
+        "mtimeNs": 1761057986000000000,
+        "glbVersion": 2,
+        "meshCount": 1,
+        "primitiveCount": 1,
+        "positionAccessorCountsSum": 249861,
+        "triangleCountAcrossMeshPrimitives": 480380,
+        "declaredLengthMatches": true,
+        "status": "user-work-in-progress"
+      },
+      "existingProjectAsset": null,
+      "deliveryStatus": "pending-simplification",
+      "preview": {
+        "targetCharacter": "梦",
+        "renderedCharacter": "法",
+        "modelPath": "022_法.obj",
+        "isPlaceholder": true,
+        "reason": "pending-simplification",
+        "state": "proposed-mapping-awaiting-runtime-resolver"
+      },
+      "legacyRenderer": {
+        "mappedPath": null,
+        "recognizesTarget": false,
+        "matchesExistingAsset": false
+      }
+    },
+    {
+      "characterId": "040",
+      "character": "幻",
+      "origin": {
+        "fileName": "040_幻.glb",
+        "localPath": "/Users/aitoshuu/Downloads/Character/Origin/040_幻.glb",
+        "bytes": 18145208,
+        "mtimeNs": 1761057320000000000,
+        "glbVersion": 2,
+        "meshCount": 1,
+        "primitiveCount": 1,
+        "positionAccessorCountsSum": 412058,
+        "triangleCountAcrossMeshPrimitives": 804584,
+        "declaredLengthMatches": true,
+        "status": "user-work-in-progress"
+      },
+      "existingProjectAsset": null,
+      "deliveryStatus": "pending-simplification",
+      "preview": {
+        "targetCharacter": "幻",
+        "renderedCharacter": "法",
+        "modelPath": "022_法.obj",
+        "isPlaceholder": true,
+        "reason": "pending-simplification",
+        "state": "proposed-mapping-awaiting-runtime-resolver"
+      },
+      "legacyRenderer": {
+        "mappedPath": null,
+        "recognizesTarget": false,
+        "matchesExistingAsset": false
+      }
+    },
+    {
+      "characterId": "041",
+      "character": "寂",
+      "origin": {
+        "fileName": "041_寂.glb",
+        "localPath": "/Users/aitoshuu/Downloads/Character/Origin/041_寂.glb",
+        "bytes": 15706524,
+        "mtimeNs": 1761055982000000000,
+        "glbVersion": 2,
+        "meshCount": 1,
+        "primitiveCount": 1,
+        "positionAccessorCountsSum": 354289,
+        "triangleCountAcrossMeshPrimitives": 686398,
+        "declaredLengthMatches": true,
+        "status": "user-work-in-progress"
+      },
+      "existingProjectAsset": null,
+      "deliveryStatus": "pending-simplification",
+      "preview": {
+        "targetCharacter": "寂",
+        "renderedCharacter": "法",
+        "modelPath": "022_法.obj",
+        "isPlaceholder": true,
+        "reason": "pending-simplification",
+        "state": "proposed-mapping-awaiting-runtime-resolver"
+      },
+      "legacyRenderer": {
+        "mappedPath": null,
+        "recognizesTarget": false,
+        "matchesExistingAsset": false
+      }
+    },
+    {
+      "characterId": "042",
+      "character": "灭",
+      "origin": {
+        "fileName": "042_灭.glb",
+        "localPath": "/Users/aitoshuu/Downloads/Character/Origin/042_灭.glb",
+        "bytes": 14901148,
+        "mtimeNs": 1761053364000000000,
+        "glbVersion": 2,
+        "meshCount": 1,
+        "primitiveCount": 1,
+        "positionAccessorCountsSum": 336473,
+        "triangleCountAcrossMeshPrimitives": 654480,
+        "declaredLengthMatches": true,
+        "status": "user-work-in-progress"
+      },
+      "existingProjectAsset": null,
+      "deliveryStatus": "pending-simplification",
+      "preview": {
+        "targetCharacter": "灭",
+        "renderedCharacter": "法",
+        "modelPath": "022_法.obj",
+        "isPlaceholder": true,
+        "reason": "pending-simplification",
+        "state": "proposed-mapping-awaiting-runtime-resolver"
+      },
+      "legacyRenderer": {
+        "mappedPath": null,
+        "recognizesTarget": false,
+        "matchesExistingAsset": false
+      }
+    },
+    {
+      "characterId": "043",
+      "character": "常",
+      "origin": {
+        "fileName": "043_常.glb",
+        "localPath": "/Users/aitoshuu/Downloads/Character/Origin/043_常.glb",
+        "bytes": 11086220,
+        "mtimeNs": 1761053508000000000,
+        "glbVersion": 2,
+        "meshCount": 1,
+        "primitiveCount": 1,
+        "positionAccessorCountsSum": 247260,
+        "triangleCountAcrossMeshPrimitives": 476556,
+        "declaredLengthMatches": true,
+        "status": "user-work-in-progress"
+      },
+      "existingProjectAsset": null,
+      "deliveryStatus": "pending-simplification",
+      "preview": {
+        "targetCharacter": "常",
+        "renderedCharacter": "法",
+        "modelPath": "022_法.obj",
+        "isPlaceholder": true,
+        "reason": "pending-simplification",
+        "state": "proposed-mapping-awaiting-runtime-resolver"
+      },
+      "legacyRenderer": {
+        "mappedPath": null,
+        "recognizesTarget": false,
+        "matchesExistingAsset": false
+      }
+    },
+    {
+      "characterId": "044",
+      "character": "乐",
+      "origin": {
+        "fileName": "044_乐.glb",
+        "localPath": "/Users/aitoshuu/Downloads/Character/Origin/044_乐.glb",
+        "bytes": 14336536,
+        "mtimeNs": 1761052448000000000,
+        "glbVersion": 2,
+        "meshCount": 1,
+        "primitiveCount": 1,
+        "positionAccessorCountsSum": 324583,
+        "triangleCountAcrossMeshPrimitives": 630896,
+        "declaredLengthMatches": true,
+        "status": "user-work-in-progress"
+      },
+      "existingProjectAsset": null,
+      "deliveryStatus": "pending-simplification",
+      "preview": {
+        "targetCharacter": "乐",
+        "renderedCharacter": "法",
+        "modelPath": "022_法.obj",
+        "isPlaceholder": true,
+        "reason": "pending-simplification",
+        "state": "proposed-mapping-awaiting-runtime-resolver"
+      },
+      "legacyRenderer": {
+        "mappedPath": null,
+        "recognizesTarget": false,
+        "matchesExistingAsset": false
+      }
+    },
+    {
+      "characterId": "045",
+      "character": "苦",
+      "origin": {
+        "fileName": "045_苦.glb",
+        "localPath": "/Users/aitoshuu/Downloads/Character/Origin/045_苦.glb",
+        "bytes": 14787852,
+        "mtimeNs": 1759068290000000000,
+        "glbVersion": 2,
+        "meshCount": 1,
+        "primitiveCount": 1,
+        "positionAccessorCountsSum": 331925,
+        "triangleCountAcrossMeshPrimitives": 643912,
+        "declaredLengthMatches": true,
+        "status": "user-work-in-progress"
+      },
+      "existingProjectAsset": {
+        "obj": "/models/10k_obj/045_苦.obj",
+        "prepared": "/models/prepared/045_苦.json"
+      },
+      "deliveryStatus": "existing-project-asset",
+      "preview": {
+        "targetCharacter": "苦",
+        "renderedCharacter": "苦",
+        "modelPath": "045_苦.obj",
+        "isPlaceholder": false,
+        "reason": null,
+        "state": "proposed-mapping-awaiting-runtime-resolver"
+      },
+      "legacyRenderer": {
+        "mappedPath": "/models/10k_obj/045_苦.obj",
+        "recognizesTarget": true,
+        "matchesExistingAsset": true
+      }
+    },
+    {
+      "characterId": "046",
+      "character": "净",
+      "origin": {
+        "fileName": "046_净.glb",
+        "localPath": "/Users/aitoshuu/Downloads/Character/Origin/046_净.glb",
+        "bytes": 12465572,
+        "mtimeNs": 1761053626000000000,
+        "glbVersion": 2,
+        "meshCount": 1,
+        "primitiveCount": 1,
+        "positionAccessorCountsSum": 282192,
+        "triangleCountAcrossMeshPrimitives": 546266,
+        "declaredLengthMatches": true,
+        "status": "user-work-in-progress"
+      },
+      "existingProjectAsset": null,
+      "deliveryStatus": "pending-simplification",
+      "preview": {
+        "targetCharacter": "净",
+        "renderedCharacter": "法",
+        "modelPath": "022_法.obj",
+        "isPlaceholder": true,
+        "reason": "pending-simplification",
+        "state": "proposed-mapping-awaiting-runtime-resolver"
+      },
+      "legacyRenderer": {
+        "mappedPath": null,
+        "recognizesTarget": false,
+        "matchesExistingAsset": false
+      }
+    },
+    {
+      "characterId": "047",
+      "character": "清",
+      "origin": {
+        "fileName": "047_清.glb",
+        "localPath": "/Users/aitoshuu/Downloads/Character/Origin/047_清.glb",
+        "bytes": 13828032,
+        "mtimeNs": 1761051596000000000,
+        "glbVersion": 2,
+        "meshCount": 1,
+        "primitiveCount": 1,
+        "positionAccessorCountsSum": 314083,
+        "triangleCountAcrossMeshPrimitives": 606668,
+        "declaredLengthMatches": true,
+        "status": "user-work-in-progress"
+      },
+      "existingProjectAsset": null,
+      "deliveryStatus": "pending-simplification",
+      "preview": {
+        "targetCharacter": "清",
+        "renderedCharacter": "法",
+        "modelPath": "022_法.obj",
+        "isPlaceholder": true,
+        "reason": "pending-simplification",
+        "state": "proposed-mapping-awaiting-runtime-resolver"
+      },
+      "legacyRenderer": {
+        "mappedPath": null,
+        "recognizesTarget": false,
+        "matchesExistingAsset": false
+      }
+    },
+    {
+      "characterId": "048",
+      "character": "虚",
+      "origin": {
+        "fileName": "048_虚.glb",
+        "localPath": "/Users/aitoshuu/Downloads/Character/Origin/048_虚.glb",
+        "bytes": 13429412,
+        "mtimeNs": 1761053672000000000,
+        "glbVersion": 2,
+        "meshCount": 1,
+        "primitiveCount": 1,
+        "positionAccessorCountsSum": 305243,
+        "triangleCountAcrossMeshPrimitives": 588176,
+        "declaredLengthMatches": true,
+        "status": "user-work-in-progress"
+      },
+      "existingProjectAsset": null,
+      "deliveryStatus": "pending-simplification",
+      "preview": {
+        "targetCharacter": "虚",
+        "renderedCharacter": "法",
+        "modelPath": "022_法.obj",
+        "isPlaceholder": true,
+        "reason": "pending-simplification",
+        "state": "proposed-mapping-awaiting-runtime-resolver"
+      },
+      "legacyRenderer": {
+        "mappedPath": null,
+        "recognizesTarget": false,
+        "matchesExistingAsset": false
+      }
+    },
+    {
+      "characterId": "049",
+      "character": "灵",
+      "origin": {
+        "fileName": "049_灵.glb",
+        "localPath": "/Users/aitoshuu/Downloads/Character/Origin/049_灵.glb",
+        "bytes": 13196620,
+        "mtimeNs": 1761053020000000000,
+        "glbVersion": 2,
+        "meshCount": 1,
+        "primitiveCount": 1,
+        "positionAccessorCountsSum": 298384,
+        "triangleCountAcrossMeshPrimitives": 578168,
+        "declaredLengthMatches": true,
+        "status": "user-work-in-progress"
+      },
+      "existingProjectAsset": null,
+      "deliveryStatus": "pending-simplification",
+      "preview": {
+        "targetCharacter": "灵",
+        "renderedCharacter": "法",
+        "modelPath": "022_法.obj",
+        "isPlaceholder": true,
+        "reason": "pending-simplification",
+        "state": "proposed-mapping-awaiting-runtime-resolver"
+      },
+      "legacyRenderer": {
+        "mappedPath": null,
+        "recognizesTarget": false,
+        "matchesExistingAsset": false
+      }
+    },
+    {
+      "characterId": "050",
+      "character": "妙",
+      "origin": {
+        "fileName": "050_妙.glb",
+        "localPath": "/Users/aitoshuu/Downloads/Character/Origin/050_妙.glb",
+        "bytes": 12063956,
+        "mtimeNs": 1761052070000000000,
+        "glbVersion": 2,
+        "meshCount": 1,
+        "primitiveCount": 1,
+        "positionAccessorCountsSum": 271827,
+        "triangleCountAcrossMeshPrimitives": 526924,
+        "declaredLengthMatches": true,
+        "status": "user-work-in-progress"
+      },
+      "existingProjectAsset": null,
+      "deliveryStatus": "pending-simplification",
+      "preview": {
+        "targetCharacter": "妙",
+        "renderedCharacter": "法",
+        "modelPath": "022_法.obj",
+        "isPlaceholder": true,
+        "reason": "pending-simplification",
+        "state": "proposed-mapping-awaiting-runtime-resolver"
+      },
+      "legacyRenderer": {
+        "mappedPath": null,
+        "recognizesTarget": false,
+        "matchesExistingAsset": false
+      }
+    },
+    {
+      "characterId": "051",
+      "character": "仁",
+      "origin": {
+        "fileName": "051_仁.glb",
+        "localPath": "/Users/aitoshuu/Downloads/Character/Origin/051_仁.glb",
+        "bytes": 12458900,
+        "mtimeNs": 1761052518000000000,
+        "glbVersion": 2,
+        "meshCount": 1,
+        "primitiveCount": 1,
+        "positionAccessorCountsSum": 280387,
+        "triangleCountAcrossMeshPrimitives": 545156,
+        "declaredLengthMatches": true,
+        "status": "user-work-in-progress"
+      },
+      "existingProjectAsset": null,
+      "deliveryStatus": "pending-simplification",
+      "preview": {
+        "targetCharacter": "仁",
+        "renderedCharacter": "法",
+        "modelPath": "022_法.obj",
+        "isPlaceholder": true,
+        "reason": "pending-simplification",
+        "state": "proposed-mapping-awaiting-runtime-resolver"
+      },
+      "legacyRenderer": {
+        "mappedPath": null,
+        "recognizesTarget": false,
+        "matchesExistingAsset": false
+      }
+    },
+    {
+      "characterId": "052",
+      "character": "义",
+      "origin": {
+        "fileName": "052_义.glb",
+        "localPath": "/Users/aitoshuu/Downloads/Character/Origin/052_义.glb",
+        "bytes": 11932184,
+        "mtimeNs": 1761058130000000000,
+        "glbVersion": 2,
+        "meshCount": 1,
+        "primitiveCount": 1,
+        "positionAccessorCountsSum": 269422,
+        "triangleCountAcrossMeshPrimitives": 524414,
+        "declaredLengthMatches": true,
+        "status": "user-work-in-progress"
+      },
+      "existingProjectAsset": null,
+      "deliveryStatus": "pending-simplification",
+      "preview": {
+        "targetCharacter": "义",
+        "renderedCharacter": "法",
+        "modelPath": "022_法.obj",
+        "isPlaceholder": true,
+        "reason": "pending-simplification",
+        "state": "proposed-mapping-awaiting-runtime-resolver"
+      },
+      "legacyRenderer": {
+        "mappedPath": null,
+        "recognizesTarget": false,
+        "matchesExistingAsset": false
+      }
+    },
+    {
+      "characterId": "053",
+      "character": "礼",
+      "origin": {
+        "fileName": "053_礼.glb",
+        "localPath": "/Users/aitoshuu/Downloads/Character/Origin/053_礼.glb",
+        "bytes": 12238272,
+        "mtimeNs": 1761052298000000000,
+        "glbVersion": 2,
+        "meshCount": 1,
+        "primitiveCount": 1,
+        "positionAccessorCountsSum": 274975,
+        "triangleCountAcrossMeshPrimitives": 533640,
+        "declaredLengthMatches": true,
+        "status": "user-work-in-progress"
+      },
+      "existingProjectAsset": null,
+      "deliveryStatus": "pending-simplification",
+      "preview": {
+        "targetCharacter": "礼",
+        "renderedCharacter": "法",
+        "modelPath": "022_法.obj",
+        "isPlaceholder": true,
+        "reason": "pending-simplification",
+        "state": "proposed-mapping-awaiting-runtime-resolver"
+      },
+      "legacyRenderer": {
+        "mappedPath": null,
+        "recognizesTarget": false,
+        "matchesExistingAsset": false
+      }
+    },
+    {
+      "characterId": "054",
+      "character": "智",
+      "origin": {
+        "fileName": "054_智.glb",
+        "localPath": "/Users/aitoshuu/Downloads/Character/Origin/054_智.glb",
+        "bytes": 12823868,
+        "mtimeNs": 1761052214000000000,
+        "glbVersion": 2,
+        "meshCount": 1,
+        "primitiveCount": 1,
+        "positionAccessorCountsSum": 291041,
+        "triangleCountAcrossMeshPrimitives": 560916,
+        "declaredLengthMatches": true,
+        "status": "user-work-in-progress"
+      },
+      "existingProjectAsset": null,
+      "deliveryStatus": "pending-simplification",
+      "preview": {
+        "targetCharacter": "智",
+        "renderedCharacter": "法",
+        "modelPath": "022_法.obj",
+        "isPlaceholder": true,
+        "reason": "pending-simplification",
+        "state": "proposed-mapping-awaiting-runtime-resolver"
+      },
+      "legacyRenderer": {
+        "mappedPath": null,
+        "recognizesTarget": false,
+        "matchesExistingAsset": false
+      }
+    },
+    {
+      "characterId": "055",
+      "character": "信",
+      "origin": {
+        "fileName": "055_信.glb",
+        "localPath": "/Users/aitoshuu/Downloads/Character/Origin/055_信.glb",
+        "bytes": 15270324,
+        "mtimeNs": 1761052612000000000,
+        "glbVersion": 2,
+        "meshCount": 1,
+        "primitiveCount": 1,
+        "positionAccessorCountsSum": 345885,
+        "triangleCountAcrossMeshPrimitives": 671856,
+        "declaredLengthMatches": true,
+        "status": "user-work-in-progress"
+      },
+      "existingProjectAsset": null,
+      "deliveryStatus": "pending-simplification",
+      "preview": {
+        "targetCharacter": "信",
+        "renderedCharacter": "法",
+        "modelPath": "022_法.obj",
+        "isPlaceholder": true,
+        "reason": "pending-simplification",
+        "state": "proposed-mapping-awaiting-runtime-resolver"
+      },
+      "legacyRenderer": {
+        "mappedPath": null,
+        "recognizesTarget": false,
+        "matchesExistingAsset": false
+      }
+    },
+    {
+      "characterId": "056",
+      "character": "勇",
+      "origin": {
+        "fileName": "056_勇.glb",
+        "localPath": "/Users/aitoshuu/Downloads/Character/Origin/056_勇.glb",
+        "bytes": 14443104,
+        "mtimeNs": 1761491786000000000,
+        "glbVersion": 2,
+        "meshCount": 1,
+        "primitiveCount": 1,
+        "positionAccessorCountsSum": 326751,
+        "triangleCountAcrossMeshPrimitives": 632800,
+        "declaredLengthMatches": true,
+        "status": "user-work-in-progress"
+      },
+      "existingProjectAsset": null,
+      "deliveryStatus": "pending-simplification",
+      "preview": {
+        "targetCharacter": "勇",
+        "renderedCharacter": "法",
+        "modelPath": "022_法.obj",
+        "isPlaceholder": true,
+        "reason": "pending-simplification",
+        "state": "proposed-mapping-awaiting-runtime-resolver"
+      },
+      "legacyRenderer": {
+        "mappedPath": null,
+        "recognizesTarget": false,
+        "matchesExistingAsset": false
+      }
+    },
+    {
+      "characterId": "057",
+      "character": "孝",
+      "origin": {
+        "fileName": "057_孝.glb",
+        "localPath": "/Users/aitoshuu/Downloads/Character/Origin/057_孝.glb",
+        "bytes": 12654904,
+        "mtimeNs": 1761051984000000000,
+        "glbVersion": 2,
+        "meshCount": 1,
+        "primitiveCount": 1,
+        "positionAccessorCountsSum": 285591,
+        "triangleCountAcrossMeshPrimitives": 552584,
+        "declaredLengthMatches": true,
+        "status": "user-work-in-progress"
+      },
+      "existingProjectAsset": null,
+      "deliveryStatus": "pending-simplification",
+      "preview": {
+        "targetCharacter": "孝",
+        "renderedCharacter": "法",
+        "modelPath": "022_法.obj",
+        "isPlaceholder": true,
+        "reason": "pending-simplification",
+        "state": "proposed-mapping-awaiting-runtime-resolver"
+      },
+      "legacyRenderer": {
+        "mappedPath": null,
+        "recognizesTarget": false,
+        "matchesExistingAsset": false
+      }
+    },
+    {
+      "characterId": "058",
+      "character": "悌",
+      "origin": {
+        "fileName": "058_悌.glb",
+        "localPath": "/Users/aitoshuu/Downloads/Character/Origin/058_悌.glb",
+        "bytes": 15696796,
+        "mtimeNs": 1761051806000000000,
+        "glbVersion": 2,
+        "meshCount": 1,
+        "primitiveCount": 1,
+        "positionAccessorCountsSum": 354683,
+        "triangleCountAcrossMeshPrimitives": 686406,
+        "declaredLengthMatches": true,
+        "status": "user-work-in-progress"
+      },
+      "existingProjectAsset": null,
+      "deliveryStatus": "pending-simplification",
+      "preview": {
+        "targetCharacter": "悌",
+        "renderedCharacter": "法",
+        "modelPath": "022_法.obj",
+        "isPlaceholder": true,
+        "reason": "pending-simplification",
+        "state": "proposed-mapping-awaiting-runtime-resolver"
+      },
+      "legacyRenderer": {
+        "mappedPath": null,
+        "recognizesTarget": false,
+        "matchesExistingAsset": false
+      }
+    },
+    {
+      "characterId": "059",
+      "character": "忠",
+      "origin": {
+        "fileName": "059_忠.glb",
+        "localPath": "/Users/aitoshuu/Downloads/Character/Origin/059_忠.glb",
+        "bytes": 16448424,
+        "mtimeNs": 1761052888000000000,
+        "glbVersion": 2,
+        "meshCount": 1,
+        "primitiveCount": 1,
+        "positionAccessorCountsSum": 373054,
+        "triangleCountAcrossMeshPrimitives": 725798,
+        "declaredLengthMatches": true,
+        "status": "user-work-in-progress"
+      },
+      "existingProjectAsset": null,
+      "deliveryStatus": "pending-simplification",
+      "preview": {
+        "targetCharacter": "忠",
+        "renderedCharacter": "法",
+        "modelPath": "022_法.obj",
+        "isPlaceholder": true,
+        "reason": "pending-simplification",
+        "state": "proposed-mapping-awaiting-runtime-resolver"
+      },
+      "legacyRenderer": {
+        "mappedPath": null,
+        "recognizesTarget": false,
+        "matchesExistingAsset": false
+      }
+    },
+    {
+      "characterId": "060",
+      "character": "恕",
+      "origin": {
+        "fileName": "060_恕.glb",
+        "localPath": "/Users/aitoshuu/Downloads/Character/Origin/060_恕.glb",
+        "bytes": 12675584,
+        "mtimeNs": 1761051680000000000,
+        "glbVersion": 2,
+        "meshCount": 1,
+        "primitiveCount": 1,
+        "positionAccessorCountsSum": 283914,
+        "triangleCountAcrossMeshPrimitives": 548776,
+        "declaredLengthMatches": true,
+        "status": "user-work-in-progress"
+      },
+      "existingProjectAsset": null,
+      "deliveryStatus": "pending-simplification",
+      "preview": {
+        "targetCharacter": "恕",
+        "renderedCharacter": "法",
+        "modelPath": "022_法.obj",
+        "isPlaceholder": true,
+        "reason": "pending-simplification",
+        "state": "proposed-mapping-awaiting-runtime-resolver"
+      },
+      "legacyRenderer": {
+        "mappedPath": null,
+        "recognizesTarget": false,
+        "matchesExistingAsset": false
+      }
+    },
+    {
+      "characterId": "061",
+      "character": "忍",
+      "origin": {
+        "fileName": "061_忍.glb",
+        "localPath": "/Users/aitoshuu/Downloads/Character/Origin/061_忍.glb",
+        "bytes": 17715876,
+        "mtimeNs": 1761051512000000000,
+        "glbVersion": 2,
+        "meshCount": 1,
+        "primitiveCount": 1,
+        "positionAccessorCountsSum": 401806,
+        "triangleCountAcrossMeshPrimitives": 783614,
+        "declaredLengthMatches": true,
+        "status": "user-work-in-progress"
+      },
+      "existingProjectAsset": null,
+      "deliveryStatus": "pending-simplification",
+      "preview": {
+        "targetCharacter": "忍",
+        "renderedCharacter": "法",
+        "modelPath": "022_法.obj",
+        "isPlaceholder": true,
+        "reason": "pending-simplification",
+        "state": "proposed-mapping-awaiting-runtime-resolver"
+      },
+      "legacyRenderer": {
+        "mappedPath": null,
+        "recognizesTarget": false,
+        "matchesExistingAsset": false
+      }
+    },
+    {
+      "characterId": "062",
+      "character": "宽",
+      "origin": {
+        "fileName": "062_宽.glb",
+        "localPath": "/Users/aitoshuu/Downloads/Character/Origin/062_宽.glb",
+        "bytes": 14283004,
+        "mtimeNs": 1761494974000000000,
+        "glbVersion": 2,
+        "meshCount": 1,
+        "primitiveCount": 1,
+        "positionAccessorCountsSum": 324008,
+        "triangleCountAcrossMeshPrimitives": 626898,
+        "declaredLengthMatches": true,
+        "status": "user-work-in-progress"
+      },
+      "existingProjectAsset": null,
+      "deliveryStatus": "pending-simplification",
+      "preview": {
+        "targetCharacter": "宽",
+        "renderedCharacter": "法",
+        "modelPath": "022_法.obj",
+        "isPlaceholder": true,
+        "reason": "pending-simplification",
+        "state": "proposed-mapping-awaiting-runtime-resolver"
+      },
+      "legacyRenderer": {
+        "mappedPath": null,
+        "recognizesTarget": false,
+        "matchesExistingAsset": false
+      }
+    },
+    {
+      "characterId": "063",
+      "character": "福",
+      "origin": {
+        "fileName": "063_福.glb",
+        "localPath": "/Users/aitoshuu/Downloads/Character/Origin/063_福.glb",
+        "bytes": 17218316,
+        "mtimeNs": 1761050900000000000,
+        "glbVersion": 2,
+        "meshCount": 1,
+        "primitiveCount": 1,
+        "positionAccessorCountsSum": 390174,
+        "triangleCountAcrossMeshPrimitives": 755696,
+        "declaredLengthMatches": true,
+        "status": "user-work-in-progress"
+      },
+      "existingProjectAsset": null,
+      "deliveryStatus": "pending-simplification",
+      "preview": {
+        "targetCharacter": "福",
+        "renderedCharacter": "法",
+        "modelPath": "022_法.obj",
+        "isPlaceholder": true,
+        "reason": "pending-simplification",
+        "state": "proposed-mapping-awaiting-runtime-resolver"
+      },
+      "legacyRenderer": {
+        "mappedPath": null,
+        "recognizesTarget": false,
+        "matchesExistingAsset": false
+      }
+    },
+    {
+      "characterId": "064",
+      "character": "寿",
+      "origin": {
+        "fileName": "064_寿.glb",
+        "localPath": "/Users/aitoshuu/Downloads/Character/Origin/064_寿.glb",
+        "bytes": 12729452,
+        "mtimeNs": 1761051128000000000,
+        "glbVersion": 2,
+        "meshCount": 1,
+        "primitiveCount": 1,
+        "positionAccessorCountsSum": 287023,
+        "triangleCountAcrossMeshPrimitives": 555366,
+        "declaredLengthMatches": true,
+        "status": "user-work-in-progress"
+      },
+      "existingProjectAsset": null,
+      "deliveryStatus": "pending-simplification",
+      "preview": {
+        "targetCharacter": "寿",
+        "renderedCharacter": "法",
+        "modelPath": "022_法.obj",
+        "isPlaceholder": true,
+        "reason": "pending-simplification",
+        "state": "proposed-mapping-awaiting-runtime-resolver"
+      },
+      "legacyRenderer": {
+        "mappedPath": null,
+        "recognizesTarget": false,
+        "matchesExistingAsset": false
+      }
+    },
+    {
+      "characterId": "065",
+      "character": "吉",
+      "origin": {
+        "fileName": "065_吉.glb",
+        "localPath": "/Users/aitoshuu/Downloads/Character/Origin/065_吉.glb",
+        "bytes": 12184680,
+        "mtimeNs": 1761049324000000000,
+        "glbVersion": 2,
+        "meshCount": 1,
+        "primitiveCount": 1,
+        "positionAccessorCountsSum": 272893,
+        "triangleCountAcrossMeshPrimitives": 530500,
+        "declaredLengthMatches": true,
+        "status": "user-work-in-progress"
+      },
+      "existingProjectAsset": null,
+      "deliveryStatus": "pending-simplification",
+      "preview": {
+        "targetCharacter": "吉",
+        "renderedCharacter": "法",
+        "modelPath": "022_法.obj",
+        "isPlaceholder": true,
+        "reason": "pending-simplification",
+        "state": "proposed-mapping-awaiting-runtime-resolver"
+      },
+      "legacyRenderer": {
+        "mappedPath": null,
+        "recognizesTarget": false,
+        "matchesExistingAsset": false
+      }
+    },
+    {
+      "characterId": "066",
+      "character": "祥",
+      "origin": {
+        "fileName": "066_祥.glb",
+        "localPath": "/Users/aitoshuu/Downloads/Character/Origin/066_祥.glb",
+        "bytes": 11210388,
+        "mtimeNs": 1761048596000000000,
+        "glbVersion": 2,
+        "meshCount": 1,
+        "primitiveCount": 1,
+        "positionAccessorCountsSum": 251506,
+        "triangleCountAcrossMeshPrimitives": 483468,
+        "declaredLengthMatches": true,
+        "status": "user-work-in-progress"
+      },
+      "existingProjectAsset": null,
+      "deliveryStatus": "pending-simplification",
+      "preview": {
+        "targetCharacter": "祥",
+        "renderedCharacter": "法",
+        "modelPath": "022_法.obj",
+        "isPlaceholder": true,
+        "reason": "pending-simplification",
+        "state": "proposed-mapping-awaiting-runtime-resolver"
+      },
+      "legacyRenderer": {
+        "mappedPath": null,
+        "recognizesTarget": false,
+        "matchesExistingAsset": false
+      }
+    },
+    {
+      "characterId": "067",
+      "character": "康",
+      "origin": {
+        "fileName": "067_康.glb",
+        "localPath": "/Users/aitoshuu/Downloads/Character/Origin/067_康.glb",
+        "bytes": 17924244,
+        "mtimeNs": 1761051448000000000,
+        "glbVersion": 2,
+        "meshCount": 1,
+        "primitiveCount": 1,
+        "positionAccessorCountsSum": 407585,
+        "triangleCountAcrossMeshPrimitives": 790694,
+        "declaredLengthMatches": true,
+        "status": "user-work-in-progress"
+      },
+      "existingProjectAsset": null,
+      "deliveryStatus": "pending-simplification",
+      "preview": {
+        "targetCharacter": "康",
+        "renderedCharacter": "法",
+        "modelPath": "022_法.obj",
+        "isPlaceholder": true,
+        "reason": "pending-simplification",
+        "state": "proposed-mapping-awaiting-runtime-resolver"
+      },
+      "legacyRenderer": {
+        "mappedPath": null,
+        "recognizesTarget": false,
+        "matchesExistingAsset": false
+      }
+    },
+    {
+      "characterId": "068",
+      "character": "泰",
+      "origin": {
+        "fileName": "068_泰.glb",
+        "localPath": "/Users/aitoshuu/Downloads/Character/Origin/068_泰.glb",
+        "bytes": 14596024,
+        "mtimeNs": 1761049758000000000,
+        "glbVersion": 2,
+        "meshCount": 1,
+        "primitiveCount": 1,
+        "positionAccessorCountsSum": 327738,
+        "triangleCountAcrossMeshPrimitives": 630636,
+        "declaredLengthMatches": true,
+        "status": "user-work-in-progress"
+      },
+      "existingProjectAsset": null,
+      "deliveryStatus": "pending-simplification",
+      "preview": {
+        "targetCharacter": "泰",
+        "renderedCharacter": "法",
+        "modelPath": "022_法.obj",
+        "isPlaceholder": true,
+        "reason": "pending-simplification",
+        "state": "proposed-mapping-awaiting-runtime-resolver"
+      },
+      "legacyRenderer": {
+        "mappedPath": null,
+        "recognizesTarget": false,
+        "matchesExistingAsset": false
+      }
+    },
+    {
+      "characterId": "069",
+      "character": "春",
+      "origin": {
+        "fileName": "069_春.glb",
+        "localPath": "/Users/aitoshuu/Downloads/Character/Origin/069_春.glb",
+        "bytes": 14601528,
+        "mtimeNs": 1761491580000000000,
+        "glbVersion": 2,
+        "meshCount": 1,
+        "primitiveCount": 1,
+        "positionAccessorCountsSum": 331945,
+        "triangleCountAcrossMeshPrimitives": 641364,
+        "declaredLengthMatches": true,
+        "status": "user-work-in-progress"
+      },
+      "existingProjectAsset": null,
+      "deliveryStatus": "pending-simplification",
+      "preview": {
+        "targetCharacter": "春",
+        "renderedCharacter": "法",
+        "modelPath": "022_法.obj",
+        "isPlaceholder": true,
+        "reason": "pending-simplification",
+        "state": "proposed-mapping-awaiting-runtime-resolver"
+      },
+      "legacyRenderer": {
+        "mappedPath": null,
+        "recognizesTarget": false,
+        "matchesExistingAsset": false
+      }
+    },
+    {
+      "characterId": "070",
+      "character": "夏",
+      "origin": {
+        "fileName": "070_夏.glb",
+        "localPath": "/Users/aitoshuu/Downloads/Character/Origin/070_夏.glb",
+        "bytes": 15166192,
+        "mtimeNs": 1761491580000000000,
+        "glbVersion": 2,
+        "meshCount": 1,
+        "primitiveCount": 1,
+        "positionAccessorCountsSum": 340093,
+        "triangleCountAcrossMeshPrimitives": 658220,
+        "declaredLengthMatches": true,
+        "status": "user-work-in-progress"
+      },
+      "existingProjectAsset": null,
+      "deliveryStatus": "pending-simplification",
+      "preview": {
+        "targetCharacter": "夏",
+        "renderedCharacter": "法",
+        "modelPath": "022_法.obj",
+        "isPlaceholder": true,
+        "reason": "pending-simplification",
+        "state": "proposed-mapping-awaiting-runtime-resolver"
+      },
+      "legacyRenderer": {
+        "mappedPath": null,
+        "recognizesTarget": false,
+        "matchesExistingAsset": false
+      }
+    },
+    {
+      "characterId": "071",
+      "character": "秋",
+      "origin": {
+        "fileName": "071_秋.glb",
+        "localPath": "/Users/aitoshuu/Downloads/Character/Origin/071_秋.glb",
+        "bytes": 14888280,
+        "mtimeNs": 1761491698000000000,
+        "glbVersion": 2,
+        "meshCount": 1,
+        "primitiveCount": 1,
+        "positionAccessorCountsSum": 333994,
+        "triangleCountAcrossMeshPrimitives": 648566,
+        "declaredLengthMatches": true,
+        "status": "user-work-in-progress"
+      },
+      "existingProjectAsset": null,
+      "deliveryStatus": "pending-simplification",
+      "preview": {
+        "targetCharacter": "秋",
+        "renderedCharacter": "法",
+        "modelPath": "022_法.obj",
+        "isPlaceholder": true,
+        "reason": "pending-simplification",
+        "state": "proposed-mapping-awaiting-runtime-resolver"
+      },
+      "legacyRenderer": {
+        "mappedPath": null,
+        "recognizesTarget": false,
+        "matchesExistingAsset": false
+      }
+    },
+    {
+      "characterId": "072",
+      "character": "冬",
+      "origin": {
+        "fileName": "072_冬.glb",
+        "localPath": "/Users/aitoshuu/Downloads/Character/Origin/072_冬.glb",
+        "bytes": 12508324,
+        "mtimeNs": 1761491688000000000,
+        "glbVersion": 2,
+        "meshCount": 1,
+        "primitiveCount": 1,
+        "positionAccessorCountsSum": 283152,
+        "triangleCountAcrossMeshPrimitives": 549226,
+        "declaredLengthMatches": true,
+        "status": "user-work-in-progress"
+      },
+      "existingProjectAsset": null,
+      "deliveryStatus": "pending-simplification",
+      "preview": {
+        "targetCharacter": "冬",
+        "renderedCharacter": "法",
+        "modelPath": "022_法.obj",
+        "isPlaceholder": true,
+        "reason": "pending-simplification",
+        "state": "proposed-mapping-awaiting-runtime-resolver"
+      },
+      "legacyRenderer": {
+        "mappedPath": null,
+        "recognizesTarget": false,
+        "matchesExistingAsset": false
+      }
+    },
+    {
+      "characterId": "073",
+      "character": "竹",
+      "origin": {
+        "fileName": "073_竹.glb",
+        "localPath": "/Users/aitoshuu/Downloads/Character/Origin/073_竹.glb",
+        "bytes": 12800756,
+        "mtimeNs": 1761492320000000000,
+        "glbVersion": 2,
+        "meshCount": 1,
+        "primitiveCount": 1,
+        "positionAccessorCountsSum": 286645,
+        "triangleCountAcrossMeshPrimitives": 558812,
+        "declaredLengthMatches": true,
+        "status": "user-work-in-progress"
+      },
+      "existingProjectAsset": null,
+      "deliveryStatus": "pending-simplification",
+      "preview": {
+        "targetCharacter": "竹",
+        "renderedCharacter": "生",
+        "modelPath": "019_生.obj",
+        "isPlaceholder": true,
+        "reason": "pending-simplification",
+        "state": "proposed-mapping-awaiting-runtime-resolver"
+      },
+      "legacyRenderer": {
+        "mappedPath": null,
+        "recognizesTarget": false,
+        "matchesExistingAsset": false
+      }
+    },
+    {
+      "characterId": "074",
+      "character": "松",
+      "origin": {
+        "fileName": "074_松.glb",
+        "localPath": "/Users/aitoshuu/Downloads/Character/Origin/074_松.glb",
+        "bytes": 14758828,
+        "mtimeNs": 1761491878000000000,
+        "glbVersion": 2,
+        "meshCount": 1,
+        "primitiveCount": 1,
+        "positionAccessorCountsSum": 334449,
+        "triangleCountAcrossMeshPrimitives": 647134,
+        "declaredLengthMatches": true,
+        "status": "user-work-in-progress"
+      },
+      "existingProjectAsset": null,
+      "deliveryStatus": "pending-simplification",
+      "preview": {
+        "targetCharacter": "松",
+        "renderedCharacter": "法",
+        "modelPath": "022_法.obj",
+        "isPlaceholder": true,
+        "reason": "pending-simplification",
+        "state": "proposed-mapping-awaiting-runtime-resolver"
+      },
+      "legacyRenderer": {
+        "mappedPath": null,
+        "recognizesTarget": false,
+        "matchesExistingAsset": false
+      }
+    },
+    {
+      "characterId": "075",
+      "character": "梅",
+      "origin": {
+        "fileName": "075_梅.glb",
+        "localPath": "/Users/aitoshuu/Downloads/Character/Origin/075_梅.glb",
+        "bytes": 16714084,
+        "mtimeNs": 1761491994000000000,
+        "glbVersion": 2,
+        "meshCount": 1,
+        "primitiveCount": 1,
+        "positionAccessorCountsSum": 377302,
+        "triangleCountAcrossMeshPrimitives": 730832,
+        "declaredLengthMatches": true,
+        "status": "user-work-in-progress"
+      },
+      "existingProjectAsset": null,
+      "deliveryStatus": "pending-simplification",
+      "preview": {
+        "targetCharacter": "梅",
+        "renderedCharacter": "法",
+        "modelPath": "022_法.obj",
+        "isPlaceholder": true,
+        "reason": "pending-simplification",
+        "state": "proposed-mapping-awaiting-runtime-resolver"
+      },
+      "legacyRenderer": {
+        "mappedPath": null,
+        "recognizesTarget": false,
+        "matchesExistingAsset": false
+      }
+    },
+    {
+      "characterId": "076",
+      "character": "兰",
+      "origin": {
+        "fileName": "076_兰.glb",
+        "localPath": "/Users/aitoshuu/Downloads/Character/Origin/076_兰.glb",
+        "bytes": 14967984,
+        "mtimeNs": 1761492362000000000,
+        "glbVersion": 2,
+        "meshCount": 1,
+        "primitiveCount": 1,
+        "positionAccessorCountsSum": 339584,
+        "triangleCountAcrossMeshPrimitives": 660944,
+        "declaredLengthMatches": true,
+        "status": "user-work-in-progress"
+      },
+      "existingProjectAsset": null,
+      "deliveryStatus": "pending-simplification",
+      "preview": {
+        "targetCharacter": "兰",
+        "renderedCharacter": "法",
+        "modelPath": "022_法.obj",
+        "isPlaceholder": true,
+        "reason": "pending-simplification",
+        "state": "proposed-mapping-awaiting-runtime-resolver"
+      },
+      "legacyRenderer": {
+        "mappedPath": null,
+        "recognizesTarget": false,
+        "matchesExistingAsset": false
+      }
+    },
+    {
+      "characterId": "077",
+      "character": "花",
+      "origin": {
+        "fileName": "077_花.glb",
+        "localPath": "/Users/aitoshuu/Downloads/Character/Origin/077_花.glb",
+        "bytes": 12742156,
+        "mtimeNs": 1761492034000000000,
+        "glbVersion": 2,
+        "meshCount": 1,
+        "primitiveCount": 1,
+        "positionAccessorCountsSum": 288311,
+        "triangleCountAcrossMeshPrimitives": 559318,
+        "declaredLengthMatches": true,
+        "status": "user-work-in-progress"
+      },
+      "existingProjectAsset": null,
+      "deliveryStatus": "pending-simplification",
+      "preview": {
+        "targetCharacter": "花",
+        "renderedCharacter": "法",
+        "modelPath": "022_法.obj",
+        "isPlaceholder": true,
+        "reason": "pending-simplification",
+        "state": "proposed-mapping-awaiting-runtime-resolver"
+      },
+      "legacyRenderer": {
+        "mappedPath": null,
+        "recognizesTarget": false,
+        "matchesExistingAsset": false
+      }
+    },
+    {
+      "characterId": "078",
+      "character": "草",
+      "origin": {
+        "fileName": "078_草.glb",
+        "localPath": "/Users/aitoshuu/Downloads/Character/Origin/078_草.glb",
+        "bytes": 9516056,
+        "mtimeNs": 1761493220000000000,
+        "glbVersion": 2,
+        "meshCount": 1,
+        "primitiveCount": 1,
+        "positionAccessorCountsSum": 215282,
+        "triangleCountAcrossMeshPrimitives": 411728,
+        "declaredLengthMatches": true,
+        "status": "user-work-in-progress"
+      },
+      "existingProjectAsset": null,
+      "deliveryStatus": "pending-simplification",
+      "preview": {
+        "targetCharacter": "草",
+        "renderedCharacter": "法",
+        "modelPath": "022_法.obj",
+        "isPlaceholder": true,
+        "reason": "pending-simplification",
+        "state": "proposed-mapping-awaiting-runtime-resolver"
+      },
+      "legacyRenderer": {
+        "mappedPath": null,
+        "recognizesTarget": false,
+        "matchesExistingAsset": false
+      }
+    },
+    {
+      "characterId": "079",
+      "character": "石",
+      "origin": {
+        "fileName": "079_石.glb",
+        "localPath": "/Users/aitoshuu/Downloads/Character/Origin/079_石.glb",
+        "bytes": 17332884,
+        "mtimeNs": 1761492196000000000,
+        "glbVersion": 2,
+        "meshCount": 1,
+        "primitiveCount": 1,
+        "positionAccessorCountsSum": 392216,
+        "triangleCountAcrossMeshPrimitives": 766532,
+        "declaredLengthMatches": true,
+        "status": "user-work-in-progress"
+      },
+      "existingProjectAsset": null,
+      "deliveryStatus": "pending-simplification",
+      "preview": {
+        "targetCharacter": "石",
+        "renderedCharacter": "法",
+        "modelPath": "022_法.obj",
+        "isPlaceholder": true,
+        "reason": "pending-simplification",
+        "state": "proposed-mapping-awaiting-runtime-resolver"
+      },
+      "legacyRenderer": {
+        "mappedPath": null,
+        "recognizesTarget": false,
+        "matchesExistingAsset": false
+      }
+    },
+    {
+      "characterId": "080",
+      "character": "玉",
+      "origin": {
+        "fileName": "080_玉.glb",
+        "localPath": "/Users/aitoshuu/Downloads/Character/Origin/080_玉.glb",
+        "bytes": 17519384,
+        "mtimeNs": 1761492654000000000,
+        "glbVersion": 2,
+        "meshCount": 1,
+        "primitiveCount": 1,
+        "positionAccessorCountsSum": 396769,
+        "triangleCountAcrossMeshPrimitives": 773398,
+        "declaredLengthMatches": true,
+        "status": "user-work-in-progress"
+      },
+      "existingProjectAsset": null,
+      "deliveryStatus": "pending-simplification",
+      "preview": {
+        "targetCharacter": "玉",
+        "renderedCharacter": "法",
+        "modelPath": "022_法.obj",
+        "isPlaceholder": true,
+        "reason": "pending-simplification",
+        "state": "proposed-mapping-awaiting-runtime-resolver"
+      },
+      "legacyRenderer": {
+        "mappedPath": null,
+        "recognizesTarget": false,
+        "matchesExistingAsset": false
+      }
+    },
+    {
+      "characterId": "081",
+      "character": "金",
+      "origin": {
+        "fileName": "081_金.glb",
+        "localPath": "/Users/aitoshuu/Downloads/Character/Origin/081_金.glb",
+        "bytes": 14058540,
+        "mtimeNs": 1761492554000000000,
+        "glbVersion": 2,
+        "meshCount": 1,
+        "primitiveCount": 1,
+        "positionAccessorCountsSum": 316577,
+        "triangleCountAcrossMeshPrimitives": 614096,
+        "declaredLengthMatches": true,
+        "status": "user-work-in-progress"
+      },
+      "existingProjectAsset": null,
+      "deliveryStatus": "pending-simplification",
+      "preview": {
+        "targetCharacter": "金",
+        "renderedCharacter": "法",
+        "modelPath": "022_法.obj",
+        "isPlaceholder": true,
+        "reason": "pending-simplification",
+        "state": "proposed-mapping-awaiting-runtime-resolver"
+      },
+      "legacyRenderer": {
+        "mappedPath": null,
+        "recognizesTarget": false,
+        "matchesExistingAsset": false
+      }
+    },
+    {
+      "characterId": "082",
+      "character": "木",
+      "origin": {
+        "fileName": "082_木.glb",
+        "localPath": "/Users/aitoshuu/Downloads/Character/Origin/082_木.glb",
+        "bytes": 14610816,
+        "mtimeNs": 1761492346000000000,
+        "glbVersion": 2,
+        "meshCount": 1,
+        "primitiveCount": 1,
+        "positionAccessorCountsSum": 330473,
+        "triangleCountAcrossMeshPrimitives": 643102,
+        "declaredLengthMatches": true,
+        "status": "user-work-in-progress"
+      },
+      "existingProjectAsset": null,
+      "deliveryStatus": "pending-simplification",
+      "preview": {
+        "targetCharacter": "木",
+        "renderedCharacter": "法",
+        "modelPath": "022_法.obj",
+        "isPlaceholder": true,
+        "reason": "pending-simplification",
+        "state": "proposed-mapping-awaiting-runtime-resolver"
+      },
+      "legacyRenderer": {
+        "mappedPath": null,
+        "recognizesTarget": false,
+        "matchesExistingAsset": false
+      }
+    },
+    {
+      "characterId": "083",
+      "character": "土",
+      "origin": {
+        "fileName": "083_土.glb",
+        "localPath": "/Users/aitoshuu/Downloads/Character/Origin/083_土.glb",
+        "bytes": 11815476,
+        "mtimeNs": 1761493618000000000,
+        "glbVersion": 2,
+        "meshCount": 1,
+        "primitiveCount": 1,
+        "positionAccessorCountsSum": 267002,
+        "triangleCountAcrossMeshPrimitives": 519372,
+        "declaredLengthMatches": true,
+        "status": "user-work-in-progress"
+      },
+      "existingProjectAsset": null,
+      "deliveryStatus": "pending-simplification",
+      "preview": {
+        "targetCharacter": "土",
+        "renderedCharacter": "山",
+        "modelPath": "014_山.obj",
+        "isPlaceholder": true,
+        "reason": "pending-simplification",
+        "state": "proposed-mapping-awaiting-runtime-resolver"
+      },
+      "legacyRenderer": {
+        "mappedPath": null,
+        "recognizesTarget": false,
+        "matchesExistingAsset": false
+      }
+    },
+    {
+      "characterId": "084",
+      "character": "火",
+      "origin": {
+        "fileName": "084_火.glb",
+        "localPath": "/Users/aitoshuu/Downloads/Character/Origin/084_火.glb",
+        "bytes": 14131688,
+        "mtimeNs": 1761492518000000000,
+        "glbVersion": 2,
+        "meshCount": 1,
+        "primitiveCount": 1,
+        "positionAccessorCountsSum": 318696,
+        "triangleCountAcrossMeshPrimitives": 620480,
+        "declaredLengthMatches": true,
+        "status": "user-work-in-progress"
+      },
+      "existingProjectAsset": null,
+      "deliveryStatus": "pending-simplification",
+      "preview": {
+        "targetCharacter": "火",
+        "renderedCharacter": "法",
+        "modelPath": "022_法.obj",
+        "isPlaceholder": true,
+        "reason": "pending-simplification",
+        "state": "proposed-mapping-awaiting-runtime-resolver"
+      },
+      "legacyRenderer": {
+        "mappedPath": null,
+        "recognizesTarget": false,
+        "matchesExistingAsset": false
+      }
+    },
+    {
+      "characterId": "085",
+      "character": "雷",
+      "origin": {
+        "fileName": "085_雷.glb",
+        "localPath": "/Users/aitoshuu/Downloads/Character/Origin/085_雷.glb",
+        "bytes": 14450596,
+        "mtimeNs": 1761492464000000000,
+        "glbVersion": 2,
+        "meshCount": 1,
+        "primitiveCount": 1,
+        "positionAccessorCountsSum": 326667,
+        "triangleCountAcrossMeshPrimitives": 632418,
+        "declaredLengthMatches": true,
+        "status": "user-work-in-progress"
+      },
+      "existingProjectAsset": null,
+      "deliveryStatus": "pending-simplification",
+      "preview": {
+        "targetCharacter": "雷",
+        "renderedCharacter": "法",
+        "modelPath": "022_法.obj",
+        "isPlaceholder": true,
+        "reason": "pending-simplification",
+        "state": "proposed-mapping-awaiting-runtime-resolver"
+      },
+      "legacyRenderer": {
+        "mappedPath": null,
+        "recognizesTarget": false,
+        "matchesExistingAsset": false
+      }
+    },
+    {
+      "characterId": "086",
+      "character": "天",
+      "origin": {
+        "fileName": "086_天.glb",
+        "localPath": "/Users/aitoshuu/Downloads/Character/Origin/086_天.glb",
+        "bytes": 15039056,
+        "mtimeNs": 1761492904000000000,
+        "glbVersion": 2,
+        "meshCount": 1,
+        "primitiveCount": 1,
+        "positionAccessorCountsSum": 340668,
+        "triangleCountAcrossMeshPrimitives": 664412,
+        "declaredLengthMatches": true,
+        "status": "user-work-in-progress"
+      },
+      "existingProjectAsset": null,
+      "deliveryStatus": "pending-simplification",
+      "preview": {
+        "targetCharacter": "天",
+        "renderedCharacter": "空",
+        "modelPath": "001_空.obj",
+        "isPlaceholder": true,
+        "reason": "pending-simplification",
+        "state": "proposed-mapping-awaiting-runtime-resolver"
+      },
+      "legacyRenderer": {
+        "mappedPath": null,
+        "recognizesTarget": false,
+        "matchesExistingAsset": false
+      }
+    },
+    {
+      "characterId": "087",
+      "character": "地",
+      "origin": {
+        "fileName": "087_地.glb",
+        "localPath": "/Users/aitoshuu/Downloads/Character/Origin/087_地.glb",
+        "bytes": 12758320,
+        "mtimeNs": 1761492814000000000,
+        "glbVersion": 2,
+        "meshCount": 1,
+        "primitiveCount": 1,
+        "positionAccessorCountsSum": 287481,
+        "triangleCountAcrossMeshPrimitives": 556698,
+        "declaredLengthMatches": true,
+        "status": "user-work-in-progress"
+      },
+      "existingProjectAsset": null,
+      "deliveryStatus": "pending-simplification",
+      "preview": {
+        "targetCharacter": "地",
+        "renderedCharacter": "法",
+        "modelPath": "022_法.obj",
+        "isPlaceholder": true,
+        "reason": "pending-simplification",
+        "state": "proposed-mapping-awaiting-runtime-resolver"
+      },
+      "legacyRenderer": {
+        "mappedPath": null,
+        "recognizesTarget": false,
+        "matchesExistingAsset": false
+      }
+    },
+    {
+      "characterId": "088",
+      "character": "乾",
+      "origin": {
+        "fileName": "088_乾.glb",
+        "localPath": "/Users/aitoshuu/Downloads/Character/Origin/088_乾.glb",
+        "bytes": 17116236,
+        "mtimeNs": 1761493198000000000,
+        "glbVersion": 2,
+        "meshCount": 1,
+        "primitiveCount": 1,
+        "positionAccessorCountsSum": 389177,
+        "triangleCountAcrossMeshPrimitives": 754452,
+        "declaredLengthMatches": true,
+        "status": "user-work-in-progress"
+      },
+      "existingProjectAsset": null,
+      "deliveryStatus": "pending-simplification",
+      "preview": {
+        "targetCharacter": "乾",
+        "renderedCharacter": "法",
+        "modelPath": "022_法.obj",
+        "isPlaceholder": true,
+        "reason": "pending-simplification",
+        "state": "proposed-mapping-awaiting-runtime-resolver"
+      },
+      "legacyRenderer": {
+        "mappedPath": null,
+        "recognizesTarget": false,
+        "matchesExistingAsset": false
+      }
+    },
+    {
+      "characterId": "089",
+      "character": "坤",
+      "origin": {
+        "fileName": "089_坤.glb",
+        "localPath": "/Users/aitoshuu/Downloads/Character/Origin/089_坤.glb",
+        "bytes": 10853808,
+        "mtimeNs": 1761494456000000000,
+        "glbVersion": 2,
+        "meshCount": 1,
+        "primitiveCount": 1,
+        "positionAccessorCountsSum": 244763,
+        "triangleCountAcrossMeshPrimitives": 474214,
+        "declaredLengthMatches": true,
+        "status": "user-work-in-progress"
+      },
+      "existingProjectAsset": null,
+      "deliveryStatus": "pending-simplification",
+      "preview": {
+        "targetCharacter": "坤",
+        "renderedCharacter": "法",
+        "modelPath": "022_法.obj",
+        "isPlaceholder": true,
+        "reason": "pending-simplification",
+        "state": "proposed-mapping-awaiting-runtime-resolver"
+      },
+      "legacyRenderer": {
+        "mappedPath": null,
+        "recognizesTarget": false,
+        "matchesExistingAsset": false
+      }
+    },
+    {
+      "characterId": "090",
+      "character": "宇",
+      "origin": {
+        "fileName": "090_宇.glb",
+        "localPath": "/Users/aitoshuu/Downloads/Character/Origin/090_宇.glb",
+        "bytes": 12170348,
+        "mtimeNs": 1761493526000000000,
+        "glbVersion": 2,
+        "meshCount": 1,
+        "primitiveCount": 1,
+        "positionAccessorCountsSum": 272782,
+        "triangleCountAcrossMeshPrimitives": 528880,
+        "declaredLengthMatches": true,
+        "status": "user-work-in-progress"
+      },
+      "existingProjectAsset": null,
+      "deliveryStatus": "pending-simplification",
+      "preview": {
+        "targetCharacter": "宇",
+        "renderedCharacter": "法",
+        "modelPath": "022_法.obj",
+        "isPlaceholder": true,
+        "reason": "pending-simplification",
+        "state": "proposed-mapping-awaiting-runtime-resolver"
+      },
+      "legacyRenderer": {
+        "mappedPath": null,
+        "recognizesTarget": false,
+        "matchesExistingAsset": false
+      }
+    },
+    {
+      "characterId": "091",
+      "character": "宙",
+      "origin": {
+        "fileName": "091_宙.glb",
+        "localPath": "/Users/aitoshuu/Downloads/Character/Origin/091_宙.glb",
+        "bytes": 17911956,
+        "mtimeNs": 1761493082000000000,
+        "glbVersion": 2,
+        "meshCount": 1,
+        "primitiveCount": 1,
+        "positionAccessorCountsSum": 406256,
+        "triangleCountAcrossMeshPrimitives": 791706,
+        "declaredLengthMatches": true,
+        "status": "user-work-in-progress"
+      },
+      "existingProjectAsset": null,
+      "deliveryStatus": "pending-simplification",
+      "preview": {
+        "targetCharacter": "宙",
+        "renderedCharacter": "法",
+        "modelPath": "022_法.obj",
+        "isPlaceholder": true,
+        "reason": "pending-simplification",
+        "state": "proposed-mapping-awaiting-runtime-resolver"
+      },
+      "legacyRenderer": {
+        "mappedPath": null,
+        "recognizesTarget": false,
+        "matchesExistingAsset": false
+      }
+    },
+    {
+      "characterId": "092",
+      "character": "源",
+      "origin": {
+        "fileName": "092_源.glb",
+        "localPath": "/Users/aitoshuu/Downloads/Character/Origin/092_源.glb",
+        "bytes": 13979260,
+        "mtimeNs": 1761493490000000000,
+        "glbVersion": 2,
+        "meshCount": 1,
+        "primitiveCount": 1,
+        "positionAccessorCountsSum": 316783,
+        "triangleCountAcrossMeshPrimitives": 614274,
+        "declaredLengthMatches": true,
+        "status": "user-work-in-progress"
+      },
+      "existingProjectAsset": null,
+      "deliveryStatus": "pending-simplification",
+      "preview": {
+        "targetCharacter": "源",
+        "renderedCharacter": "法",
+        "modelPath": "022_法.obj",
+        "isPlaceholder": true,
+        "reason": "pending-simplification",
+        "state": "proposed-mapping-awaiting-runtime-resolver"
+      },
+      "legacyRenderer": {
+        "mappedPath": null,
+        "recognizesTarget": false,
+        "matchesExistingAsset": false
+      }
+    },
+    {
+      "characterId": "093",
+      "character": "流",
+      "origin": {
+        "fileName": "093_流.glb",
+        "localPath": "/Users/aitoshuu/Downloads/Character/Origin/093_流.glb",
+        "bytes": 12091652,
+        "mtimeNs": 1761492752000000000,
+        "glbVersion": 2,
+        "meshCount": 1,
+        "primitiveCount": 1,
+        "positionAccessorCountsSum": 272982,
+        "triangleCountAcrossMeshPrimitives": 528068,
+        "declaredLengthMatches": true,
+        "status": "user-work-in-progress"
+      },
+      "existingProjectAsset": null,
+      "deliveryStatus": "pending-simplification",
+      "preview": {
+        "targetCharacter": "流",
+        "renderedCharacter": "法",
+        "modelPath": "022_法.obj",
+        "isPlaceholder": true,
+        "reason": "pending-simplification",
+        "state": "proposed-mapping-awaiting-runtime-resolver"
+      },
+      "legacyRenderer": {
+        "mappedPath": null,
+        "recognizesTarget": false,
+        "matchesExistingAsset": false
+      }
+    },
+    {
+      "characterId": "094",
+      "character": "色",
+      "origin": {
+        "fileName": "094_色.glb",
+        "localPath": "/Users/aitoshuu/Downloads/Character/Origin/094_色.glb",
+        "bytes": 16332580,
+        "mtimeNs": 1759069518000000000,
+        "glbVersion": 2,
+        "meshCount": 1,
+        "primitiveCount": 1,
+        "positionAccessorCountsSum": 368342,
+        "triangleCountAcrossMeshPrimitives": 717300,
+        "declaredLengthMatches": true,
+        "status": "user-work-in-progress"
+      },
+      "existingProjectAsset": {
+        "obj": "/models/10k_obj/094_色.obj",
+        "prepared": "/models/prepared/094_色.json"
+      },
+      "deliveryStatus": "existing-project-asset",
+      "preview": {
+        "targetCharacter": "色",
+        "renderedCharacter": "色",
+        "modelPath": "094_色.obj",
+        "isPlaceholder": false,
+        "reason": null,
+        "state": "proposed-mapping-awaiting-runtime-resolver"
+      },
+      "legacyRenderer": {
+        "mappedPath": "/models/10k_obj/094_色.obj",
+        "recognizesTarget": true,
+        "matchesExistingAsset": true
+      }
+    },
+    {
+      "characterId": "095",
+      "character": "潮",
+      "origin": {
+        "fileName": "095_潮.glb",
+        "localPath": "/Users/aitoshuu/Downloads/Character/Origin/095_潮.glb",
+        "bytes": 19189872,
+        "mtimeNs": 1761493584000000000,
+        "glbVersion": 2,
+        "meshCount": 1,
+        "primitiveCount": 1,
+        "positionAccessorCountsSum": 433227,
+        "triangleCountAcrossMeshPrimitives": 838696,
+        "declaredLengthMatches": true,
+        "status": "user-work-in-progress"
+      },
+      "existingProjectAsset": null,
+      "deliveryStatus": "pending-simplification",
+      "preview": {
+        "targetCharacter": "潮",
+        "renderedCharacter": "法",
+        "modelPath": "022_法.obj",
+        "isPlaceholder": true,
+        "reason": "pending-simplification",
+        "state": "proposed-mapping-awaiting-runtime-resolver"
+      },
+      "legacyRenderer": {
+        "mappedPath": null,
+        "recognizesTarget": false,
+        "matchesExistingAsset": false
+      }
+    },
+    {
+      "characterId": "096",
+      "character": "露",
+      "origin": {
+        "fileName": "096_露.glb",
+        "localPath": "/Users/aitoshuu/Downloads/Character/Origin/096_露.glb",
+        "bytes": 15491860,
+        "mtimeNs": 1761492908000000000,
+        "glbVersion": 2,
+        "meshCount": 1,
+        "primitiveCount": 1,
+        "positionAccessorCountsSum": 349029,
+        "triangleCountAcrossMeshPrimitives": 671790,
+        "declaredLengthMatches": true,
+        "status": "user-work-in-progress"
+      },
+      "existingProjectAsset": null,
+      "deliveryStatus": "pending-simplification",
+      "preview": {
+        "targetCharacter": "露",
+        "renderedCharacter": "法",
+        "modelPath": "022_法.obj",
+        "isPlaceholder": true,
+        "reason": "pending-simplification",
+        "state": "proposed-mapping-awaiting-runtime-resolver"
+      },
+      "legacyRenderer": {
+        "mappedPath": null,
+        "recognizesTarget": false,
+        "matchesExistingAsset": false
+      }
+    },
+    {
+      "characterId": "097",
+      "character": "霜",
+      "origin": {
+        "fileName": "097_霜.glb",
+        "localPath": "/Users/aitoshuu/Downloads/Character/Origin/097_霜.glb",
+        "bytes": 16224300,
+        "mtimeNs": 1761493816000000000,
+        "glbVersion": 2,
+        "meshCount": 1,
+        "primitiveCount": 1,
+        "positionAccessorCountsSum": 368483,
+        "triangleCountAcrossMeshPrimitives": 709972,
+        "declaredLengthMatches": true,
+        "status": "user-work-in-progress"
+      },
+      "existingProjectAsset": null,
+      "deliveryStatus": "pending-simplification",
+      "preview": {
+        "targetCharacter": "霜",
+        "renderedCharacter": "法",
+        "modelPath": "022_法.obj",
+        "isPlaceholder": true,
+        "reason": "pending-simplification",
+        "state": "proposed-mapping-awaiting-runtime-resolver"
+      },
+      "legacyRenderer": {
+        "mappedPath": null,
+        "recognizesTarget": false,
+        "matchesExistingAsset": false
+      }
+    },
+    {
+      "characterId": "098",
+      "character": "美",
+      "origin": {
+        "fileName": "098_美.glb",
+        "localPath": "/Users/aitoshuu/Downloads/Character/Origin/098_美.glb",
+        "bytes": 10475576,
+        "mtimeNs": 1761493316000000000,
+        "glbVersion": 2,
+        "meshCount": 1,
+        "primitiveCount": 1,
+        "positionAccessorCountsSum": 236806,
+        "triangleCountAcrossMeshPrimitives": 454252,
+        "declaredLengthMatches": true,
+        "status": "user-work-in-progress"
+      },
+      "existingProjectAsset": null,
+      "deliveryStatus": "pending-simplification",
+      "preview": {
+        "targetCharacter": "美",
+        "renderedCharacter": "法",
+        "modelPath": "022_法.obj",
+        "isPlaceholder": true,
+        "reason": "pending-simplification",
+        "state": "proposed-mapping-awaiting-runtime-resolver"
+      },
+      "legacyRenderer": {
+        "mappedPath": null,
+        "recognizesTarget": false,
+        "matchesExistingAsset": false
+      }
+    },
+    {
+      "characterId": "099",
+      "character": "化",
+      "origin": {
+        "fileName": "099_化.glb",
+        "localPath": "/Users/aitoshuu/Downloads/Character/Origin/099_化.glb",
+        "bytes": 10740516,
+        "mtimeNs": 1761494526000000000,
+        "glbVersion": 2,
+        "meshCount": 1,
+        "primitiveCount": 1,
+        "positionAccessorCountsSum": 241987,
+        "triangleCountAcrossMeshPrimitives": 469134,
+        "declaredLengthMatches": true,
+        "status": "user-work-in-progress"
+      },
+      "existingProjectAsset": null,
+      "deliveryStatus": "pending-simplification",
+      "preview": {
+        "targetCharacter": "化",
+        "renderedCharacter": "生",
+        "modelPath": "019_生.obj",
+        "isPlaceholder": true,
+        "reason": "pending-simplification",
+        "state": "proposed-mapping-awaiting-runtime-resolver"
+      },
+      "legacyRenderer": {
+        "mappedPath": null,
+        "recognizesTarget": false,
+        "matchesExistingAsset": false
+      }
+    },
+    {
+      "characterId": "100",
+      "character": "通",
+      "origin": {
+        "fileName": "100_通.glb",
+        "localPath": "/Users/aitoshuu/Downloads/Character/Origin/100_通.glb",
+        "bytes": 11910748,
+        "mtimeNs": 1761494266000000000,
+        "glbVersion": 2,
+        "meshCount": 1,
+        "primitiveCount": 1,
+        "positionAccessorCountsSum": 263735,
+        "triangleCountAcrossMeshPrimitives": 508602,
+        "declaredLengthMatches": true,
+        "status": "user-work-in-progress"
+      },
+      "existingProjectAsset": null,
+      "deliveryStatus": "pending-simplification",
+      "preview": {
+        "targetCharacter": "通",
+        "renderedCharacter": "法",
+        "modelPath": "022_法.obj",
+        "isPlaceholder": true,
+        "reason": "pending-simplification",
+        "state": "proposed-mapping-awaiting-runtime-resolver"
+      },
+      "legacyRenderer": {
+        "mappedPath": null,
+        "recognizesTarget": false,
+        "matchesExistingAsset": false
+      }
+    },
+    {
+      "characterId": "101",
+      "character": "观",
+      "origin": {
+        "fileName": "101_观.glb",
+        "localPath": "/Users/aitoshuu/Downloads/Character/Origin/101_观.glb",
+        "bytes": 14761660,
+        "mtimeNs": 1759071834000000000,
+        "glbVersion": 2,
+        "meshCount": 1,
+        "primitiveCount": 1,
+        "positionAccessorCountsSum": 334746,
+        "triangleCountAcrossMeshPrimitives": 650118,
+        "declaredLengthMatches": true,
+        "status": "user-work-in-progress"
+      },
+      "existingProjectAsset": {
+        "obj": "/models/10k_obj/101_观.obj",
+        "prepared": "/models/prepared/101_观.json"
+      },
+      "deliveryStatus": "existing-project-asset",
+      "preview": {
+        "targetCharacter": "观",
+        "renderedCharacter": "观",
+        "modelPath": "101_观.obj",
+        "isPlaceholder": false,
+        "reason": null,
+        "state": "proposed-mapping-awaiting-runtime-resolver"
+      },
+      "legacyRenderer": {
+        "mappedPath": "/models/10k_obj/101_观.obj",
+        "recognizesTarget": true,
+        "matchesExistingAsset": true
+      }
+    }
+  ]
+}
