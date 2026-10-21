@@ -45,6 +45,7 @@ export default function UnifiedLyricsAndModel(props: UnifiedLyricsAndModelProps)
     fontSize = 1.0,
     fontRevision = 0,
     isPreviewMode = false,
+    isPlaying = true,
     active = true,
     scrollTimeRef,
     seekRevision,
@@ -52,8 +53,8 @@ export default function UnifiedLyricsAndModel(props: UnifiedLyricsAndModelProps)
   const lyricData = (lyrics || []) as LyricLine[];
 
   const inputRef = useRef<LyricMotionInput>({scrollTime, scrollTimeRef, duration,
-    velocity: scrollVelocity, isPreviewMode, seekRevision});
-  inputRef.current = {scrollTime, scrollTimeRef, duration, velocity: scrollVelocity, isPreviewMode, seekRevision};
+    velocity: scrollVelocity, isPreviewMode, isPlaying, seekRevision});
+  inputRef.current = {scrollTime, scrollTimeRef, duration, velocity: scrollVelocity, isPreviewMode, isPlaying, seekRevision};
 
   const isMobile = typeof navigator !== 'undefined'
     ? /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)

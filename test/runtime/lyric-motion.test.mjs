@@ -9,10 +9,11 @@ await mkdir(resolve('.cache'), {recursive: true});
 const directory = await mkdtemp(join(resolve('.cache'), 'lyric-motion-test-'));
 let calculateLayeredLyrics, lyricWindowKey, advanceLyricMotion;
 try {
-  for (const name of ['speedProfile', 'lyricMotion', 'layeredLyrics']) {
-    const source = await readFile(new URL(`../../src/components/layouts/${name}.ts`, import.meta.url), 'utf8');
+  for (const name of ['speedProfile', 'lyricMotion', 'layeredLyrics', 'loopTimeline']) {
+    const source = await readFile(new URL(name === 'loopTimeline' ? '../../src/utils/loopTimeline.ts' : `../../src/components/layouts/${name}.ts`, import.meta.url), 'utf8');
     const output = ts.transpileModule(source, {compilerOptions: {module: ts.ModuleKind.ESNext, target: ts.ScriptTarget.ES2020}}).outputText
-      .replace(/from ['"]\.\/speedProfile['"]/g, "from './speedProfile.mjs'");
+      .replace(/from ['"]\.\/speedProfile['"]/g, "from './speedProfile.mjs'")
+      .replace(/from ['"]@\/utils\/loopTimeline['"]/g, "from './loopTimeline.mjs'");
     await writeFile(join(directory, `${name}.mjs`), output);
   }
   ({calculateLayeredLyrics, lyricWindowKey} = await import(pathToFileURL(join(directory, 'layeredLyrics.mjs')).href));
@@ -76,6 +77,40 @@ test('empty and blank lyric lines remain safe for an imperative scene', () => {
   assert.ok([...layout.front, ...layout.back].every(item => item.opacity === 0));
 });
 
+test('a full ring reuses keys and keeps positions precise through large positive and negative cycles', () => {
+  const baseline = layoutAt(5);
+  for (const cycle of [-1000000000, -10000, -4, 4, 10000, 1000000000]) {
+    const layout = layoutAt(cycle * 40 + 5);
+    assert.equal(lyricWindowKey(layout), lyricWindowKey(baseline));
+    assert.deepEqual([...layout.front, ...layout.back].map(item => [item.text, item.x, item.y, item.z, item.opacity]),
+      [...baseline.front, ...baseline.back].map(item => [item.text, item.x, item.y, item.z, item.opacity]));
+  }
+});
+
+test('loop seams retain shared columns and continuous positions in both directions', () => {
+  for (const boundary of [-80, -40, 0, 40, 80]) {
+    const before = [...layoutAt(boundary - .000001).front, ...layoutAt(boundary - .000001).back];
+    const after = [...layoutAt(boundary + .000001).front, ...layoutAt(boundary + .000001).back];
+    const shared = before.map(a => [a, after.find(b => b.key === a.key)]).filter(([, b]) => b);
+    assert.equal(shared.length, 12);
+    for (const [a, b] of shared) {
+      assert.equal(a.text, b.text);
+      assert.ok(Math.abs(a.x - b.x) < .000001);
+      assert.equal(a.y, b.y);
+      assert.equal(a.z, b.z);
+    }
+  }
+});
+
+test('nonzero first timestamps traverse the preceding last line without a reset', () => {
+  const lines = [{time: 5, text: 'first'}, {time: 15, text: 'last'}];
+  const at = time => calculateLayeredLyrics({lyrics: lines, scrollTime: time, duration: 20, options});
+  assert.equal(at(0).current.text, 'last');
+  assert.equal(at(0).current.x, -.425);
+  assert.equal(at(5).current.text, 'first');
+  assert.equal(at(-20).current.text, 'last');
+});
+
 const inputAt = (time, updates = {}) => ({scrollTime: time, duration: 374, velocity: 0, isPreviewMode: false, seekRevision: 0, ...updates});
 
 test('the scene reads a changing time ref without waiting for React props', () => {
@@ -105,6 +140,17 @@ test('a seek revision immediately clears old smoothing even for a small backward
   assert.equal(sought.profile.time, 5);
   assert.equal(sought.profile.manualOffset, 0);
   assert.equal(sought.profile.baseVelocity, 0);
+});
+
+test('pause freezes lyrics at the actual media time instead of integrating stale velocity', () => {
+  const state = advanceLyricMotion(null, inputAt(7), 1000);
+  state.profile.baseVelocity = 1;
+  state.profile.manualOffset = 4;
+  const paused = advanceLyricMotion(state, inputAt(7, {isPlaying: false, velocity: 650}), 1033);
+  assert.equal(paused.profile.time, 7);
+  assert.equal(paused.profile.baseVelocity, 0);
+  assert.equal(paused.profile.manualOffset, 0);
+  assert.equal(advanceLyricMotion(paused, inputAt(7, {isPlaying: false}), 3000).profile.time, 7);
 });
 
 test('the motion clock resets cleanly at a loop jump and tolerates invalid input', () => {

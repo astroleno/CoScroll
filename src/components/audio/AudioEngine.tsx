@@ -1,4 +1,6 @@
 import React, { useRef, useCallback, useEffect } from 'react';
+import timelineStore from '@/stores/timelineStore';
+import { loopCycle, loopDuration, loopPhase, playbackCycle } from '@/utils/loopTimeline';
 
 interface AudioEngineProps {
   audioSrc: string;
@@ -40,7 +42,7 @@ export const AudioEngine: React.FC<AudioEngineProps> = ({
   onLoopComplete,
   enableWebAudio = true,
   initialTime = 0,
-  seekSignal = 0
+  seekSignal
 }) => {
   // Refs
   const audioRef = useRef<HTMLAudioElement>(null);
@@ -80,6 +82,11 @@ export const AudioEngine: React.FC<AudioEngineProps> = ({
 
   useEffect(() => {
     stateRef.current.isReady = false;
+    stateRef.current.currentTime = 0;
+    stateRef.current.loopCount = 0;
+    lastPlaybackTimeRef.current = 0;
+    timelineStore.pendingAudioSeek = null;
+    timelineStore.setAudioTime(0, 0);
     startupRetriesRef.current = 0;
     return () => {
       playGenerationRef.current++;
@@ -93,8 +100,31 @@ export const AudioEngine: React.FC<AudioEngineProps> = ({
   const pendingSeekRef = useRef<number | null>(null);
   const lastSeekTimeRef = useRef(0);
   const seekThrottleTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const lastForcedSeekRef = useRef<number>(0);
   const lastAppliedSeekSignalRef = useRef(seekSignal);
+
+  const sampleNativeClock = useCallback(() => {
+    const audio = audioRef.current;
+    const base = loopDuration(duration || audio?.duration || 1);
+    if (timelineStore.pendingAudioSeek !== null) {
+      return {display: timelineStore.audioDisplayTime, absolute: timelineStore.pendingAudioSeek};
+    }
+    if (!audio || isSeekingRef.current) {
+      return {display: stateRef.current.currentTime,
+        absolute: stateRef.current.loopCount * base + stateRef.current.currentTime};
+    }
+    const display = audio.currentTime;
+    const previousCycle = stateRef.current.loopCount;
+    const cycle = playbackCycle(lastPlaybackTimeRef.current, display, previousCycle, base);
+    lastPlaybackTimeRef.current = display;
+    stateRef.current.currentTime = display;
+    stateRef.current.loopCount = cycle;
+    const absolute = cycle * base + display;
+    timelineStore.setAudioTime(display, absolute);
+    if (cycle !== previousCycle) onLoopComplete(cycle);
+    return {display, absolute};
+  }, [duration, onLoopComplete]);
+
+  useEffect(() => timelineStore.registerAudioClock(sampleNativeClock), [sampleNativeClock]);
 
   // Audio context management
   const initAudioContext = useCallback(() => {
@@ -131,6 +161,8 @@ export const AudioEngine: React.FC<AudioEngineProps> = ({
 
   // Handle seek operations with throttling
   const performSeek = useCallback((time: number) => {
+    // An old throttled request must never acknowledge a newer command.
+    if (timelineStore.pendingAudioSeek !== null && timelineStore.pendingAudioSeek !== time) return;
     const now = Date.now();
     const timeSinceLastSeek = now - lastSeekTimeRef.current;
 
@@ -159,11 +191,10 @@ export const AudioEngine: React.FC<AudioEngineProps> = ({
 
     isSeekingRef.current = true;
     lastSeekTimeRef.current = now;
-    lastForcedSeekRef.current = now;
 
-    const base = Math.max(1, duration || audio.duration || 1);
-    const displayTime = ((time % base) + base) % base;
-    const loopIndex = Math.floor(time / base);
+    const base = loopDuration(duration || audio.duration || 1);
+    const displayTime = loopPhase(time, base);
+    const loopIndex = loopCycle(time, base);
 
     console.log('[AudioEngine] performSeek', {
       time,
@@ -177,15 +208,15 @@ export const AudioEngine: React.FC<AudioEngineProps> = ({
       stateRef.current.currentTime = displayTime;
       stateRef.current.loopCount = loopIndex;
       lastPlaybackTimeRef.current = displayTime;
+      timelineStore.acknowledgeAudioSeek(displayTime, time);
 
       // Notify parent of time change (使用当前的 loopCount)
       const absoluteTime = loopIndex * base + displayTime;
       onTimeUpdate(displayTime, absoluteTime);
 
-      // Clear seeking state after a short delay
-      setTimeout(() => {
-        isSeekingRef.current = false;
-      }, 50);
+      // Native seeked releases the clock; no delayed callback from an older
+      // request can clear a newer seek's protection.
+      if (!audio.seeking) isSeekingRef.current = false;
     } catch (error) {
       console.error('[AudioEngine] Seek failed:', error);
       isSeekingRef.current = false;
@@ -211,13 +242,11 @@ export const AudioEngine: React.FC<AudioEngineProps> = ({
       return;
     }
 
-    const newTime = audio.currentTime;
-    const base = Math.max(1, duration || audio.duration || 1);
-    const absoluteTime = stateRef.current.loopCount * base + newTime;
-    onTimeUpdate(newTime, absoluteTime);
+    const sample = sampleNativeClock();
+    onTimeUpdate(sample.display, sample.absolute);
 
     animationFrameRef.current = requestAnimationFrame(animationStep);
-  }, [duration, onTimeUpdate]);
+  }, [sampleNativeClock, onTimeUpdate]);
 
   const startAnimationLoop = useCallback(() => {
     if (!enableWebAudio) {
@@ -232,14 +261,8 @@ export const AudioEngine: React.FC<AudioEngineProps> = ({
     const audio = event.currentTarget;
     if (!audio || isSeekingRef.current) return;
 
-    const newTime = audio.currentTime;
-    const previousTime = lastPlaybackTimeRef.current;
-
-    if (previousTime - newTime > 0.5) {
-      stateRef.current.loopCount += 1;
-      onLoopComplete(stateRef.current.loopCount);
-    }
-    lastPlaybackTimeRef.current = newTime;
+    const sample = sampleNativeClock();
+    const newTime = sample.display;
 
     const buffered = audio.buffered;
 
@@ -254,10 +277,9 @@ export const AudioEngine: React.FC<AudioEngineProps> = ({
     stateRef.current.isBuffering = isBuffering;
 
     if (animationFrameRef.current === null) {
-      const absoluteTime = stateRef.current.loopCount * Math.max(1, duration || audio.duration || 1) + newTime;
-      onTimeUpdate(newTime, absoluteTime);
+      onTimeUpdate(newTime, sample.absolute);
     }
-  }, [duration, onLoopComplete, onTimeUpdate]);
+  }, [sampleNativeClock, onTimeUpdate]);
 
   // Handle audio metadata loaded
   const handleLoadedMetadata = useCallback(() => {
@@ -374,6 +396,7 @@ export const AudioEngine: React.FC<AudioEngineProps> = ({
 
   // Sync external loopCount to internal state
   useEffect(() => {
+    if (seekSignal !== undefined && seekSignal === lastAppliedSeekSignalRef.current) return;
     if (stateRef.current.loopCount !== desiredLoopCount) {
       console.log('[AudioEngine] 外部同步 loopCount', {
         old: stateRef.current.loopCount,
@@ -381,30 +404,33 @@ export const AudioEngine: React.FC<AudioEngineProps> = ({
       });
       stateRef.current.loopCount = desiredLoopCount;
     }
-  }, [desiredLoopCount]);
+  }, [desiredLoopCount, seekSignal]);
 
   // Sync with desired time position
   useEffect(() => {
     if (!stateRef.current.isReady) return;
 
     const base = Math.max(1, duration || audioRef.current?.duration || 1);
-    const targetTime = desiredLoopCount * base + desiredTime;
-    if (seekSignal !== lastAppliedSeekSignalRef.current) {
+    // Keep the original absolute command. Reconstructing it from phase/cycle
+    // can change a fractional second by an ULP and fail latest-command checks.
+    const targetTime = timelineStore.pendingAudioSeek ?? desiredLoopCount * base + desiredTime;
+    if (seekSignal !== undefined && seekSignal !== lastAppliedSeekSignalRef.current) {
       lastAppliedSeekSignalRef.current = seekSignal;
       performSeek(targetTime);
       return;
     }
+    // With command revisions the remaining props are UI observations. An old
+    // phase paired with a just-completed cycle must never seek to the old tail.
+    // Legacy callers without revisions retain forward position synchronization.
+    if (seekSignal !== undefined) return;
     if (isSeekingRef.current) return;
 
     const currentTime = stateRef.current.currentTime;
-    const timeDiff = Math.abs(desiredTime - currentTime);
 
     // Only seek if the difference is significant (more than 100ms)
     const diff = desiredTime - currentTime;
     if (Math.abs(diff) > 0.1) {
-      const now = Date.now();
-      const recentlyForced = now - lastForcedSeekRef.current < 500;
-      const shouldSeek = diff > 0 || recentlyForced;
+      const shouldSeek = diff > 0;
       if (shouldSeek) {
         performSeek(targetTime);
       }
@@ -431,6 +457,7 @@ export const AudioEngine: React.FC<AudioEngineProps> = ({
       ref={audioRef}
       src={audioSrc}
       onTimeUpdate={handleTimeUpdate}
+      onSeeked={() => { isSeekingRef.current = false; sampleNativeClock(); }}
       onLoadedMetadata={handleLoadedMetadata}
       onCanPlay={handleCanPlay}
       onPlay={(event) => {

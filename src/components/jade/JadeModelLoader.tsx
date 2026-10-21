@@ -5,6 +5,7 @@ import { assetUrl } from '@/utils/assetUrl';
 import { useFrame, useThree } from "@react-three/fiber";
 import * as THREE from "three";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import {scheduleIdle} from '@/utils/scheduleIdle';
 import { useTransitionControl } from "@/hooks/useTransitionControl";
 import { RGBELoader } from "three/examples/jsm/loaders/RGBELoader.js";
 import ModelPreloader from "./ModelPreloader";
@@ -393,7 +394,8 @@ function DualLayerModelLoader({
   const [error, setError] = useState<string | null>(null);
   const meshRef = useRef<THREE.Mesh>(null);
   const refractionMeshRef = useRef<THREE.Mesh>(null);
-  const { camera, scene } = useThree();
+  const ownedOffsets = useRef(new WeakSet<THREE.BufferGeometry>());
+  const { camera, scene, gl, get } = useThree();
   const preloader = ModelPreloader.getInstance();
 
   useEffect(() => {
@@ -409,7 +411,22 @@ function DualLayerModelLoader({
 
         const loadedGeometry = await preloader.loadModel(modelPath);
         if (disposed) return;
+        let outer: THREE.BufferGeometry | null = null;
+        try {
+          outer = preloader.getOffsetGeometry(modelPath, {outerOffset, maxEdge, subdivisions,
+            creaseAngle, smoothShading: outerSmoothShading});
+        } catch (error) {
+          console.error('[JadeModelLoader] Offset geometry unavailable:', error);
+        }
+        if (!outer) {
+          outer = loadedGeometry.clone();
+          outer.computeVertexNormals();
+          ownedOffsets.current.add(outer);
+        }
+        // Publish the matching pair together. Keep the preceding pair visible
+        // during a load, without cloning its geometry under the next path.
         setGeometry(loadedGeometry);
+        setOffsetGeometry(outer);
         setLoading(false);
 
         if (IS_DEV) {
@@ -428,64 +445,12 @@ function DualLayerModelLoader({
     return () => {
       disposed = true;
     };
-  }, [modelPath, preloader]);
+  }, [modelPath, preloader, outerOffset, maxEdge, subdivisions, creaseAngle, outerSmoothShading]);
 
-  useEffect(() => {
-    if (!geometry) return;
+  useEffect(() => () => {
+    if (offsetGeometry && ownedOffsets.current.has(offsetGeometry)) offsetGeometry.dispose();
+  }, [offsetGeometry]);
 
-    const offsetGeometryFromCache = preloader.getOffsetGeometry(modelPath, {
-      outerOffset,
-      maxEdge,
-      subdivisions,
-      creaseAngle,
-      smoothShading: outerSmoothShading,
-    });
-
-    if (offsetGeometryFromCache) {
-      setOffsetGeometry(offsetGeometryFromCache);
-      if (IS_DEV) {
-        console.log('[JadeModelLoader] 使用缓存 Offset 几何体:', {
-          modelPath,
-          outerOffset,
-          maxEdge,
-          subdivisions,
-          creaseAngle,
-          smoothShading: outerSmoothShading,
-        });
-      }
-      return;
-    }
-
-    try {
-      const generated = preloader.getOffsetGeometry(modelPath, {
-        outerOffset,
-        maxEdge,
-        subdivisions,
-        creaseAngle,
-        smoothShading: outerSmoothShading,
-      });
-
-      if (generated) {
-        setOffsetGeometry(generated);
-        if (IS_DEV) {
-          console.log('[JadeModelLoader] 生成并缓存 Offset 几何体:', {
-            modelPath,
-            outerOffset,
-          });
-        }
-        return;
-      }
-    } catch (error) {
-      console.error('[JadeModelLoader] Offset 几何体生成失败:', error);
-    }
-
-    const fallback = geometry.clone();
-    fallback.computeVertexNormals();
-    setOffsetGeometry(fallback);
-    if (IS_DEV) {
-      console.warn('[JadeModelLoader] Offset 几何体缓存未命中，使用回退几何:', modelPath);
-    }
-  }, [geometry, modelPath, outerOffset, maxEdge, subdivisions, creaseAngle, outerSmoothShading, preloader]);
 
   useEffect(() => {
     if (!geometry || !offsetGeometry || !fitToView || !meshRef.current) return;
@@ -513,11 +478,22 @@ function DualLayerModelLoader({
     }
   }, [geometry, offsetGeometry, fitToView, camera]);
 
-  if (loading) {
+  useEffect(() => {
+    if (!geometry || !offsetGeometry || loading) return;
+    let cancelled = false;
+    const cancel = scheduleIdle(() => {
+      void gl.compileAsync(scene, camera).then(() => {
+        if (!cancelled && get().frameloop === 'never') gl.render(scene, camera);
+      }).catch(error => console.warn('[JadeModelLoader] Material preparation failed', error));
+    });
+    return () => { cancelled = true; cancel(); };
+  }, [geometry, offsetGeometry, loading, material, refractionMaterial, gl, scene, camera, get]);
+
+  if (loading && !geometry) {
     return null;
   }
 
-  if (error) {
+  if (error && !geometry) {
     return null;
   }
 

@@ -1,4 +1,5 @@
 import { useEffect, useRef, useCallback } from 'react';
+import timelineStore from '@/stores/timelineStore';
 
 interface PageVisibilityManagerProps {
   isPlaying: boolean;
@@ -23,9 +24,12 @@ export const PageVisibilityManager: React.FC<PageVisibilityManagerProps> = ({
   const wasHiddenRef = useRef<boolean>(false);
   const visibilityTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const resumeAttemptRef = useRef<number>(0);
+  const latest = useRef({isPlaying, currentTime, onVisibilityChange, onTimeSync});
+  latest.current = {isPlaying, currentTime, onVisibilityChange, onTimeSync};
 
   // Handle visibility changes
   const handleVisibilityChange = useCallback(() => {
+    const {isPlaying, currentTime, onVisibilityChange, onTimeSync} = latest.current;
     const isHidden = document.hidden;
     const wasHidden = wasHiddenRef.current;
 
@@ -49,12 +53,10 @@ export const PageVisibilityManager: React.FC<PageVisibilityManagerProps> = ({
       wasHiddenRef.current = false;
 
       // Check if we need to sync time
-      if (onTimeSync && Math.abs(currentTime - lastKnownTimeRef.current) > 0.5) {
-        console.log('[PageVisibility] Time drift detected, syncing...', {
-          expected: lastKnownTimeRef.current,
-          actual: currentTime
-        });
-        onTimeSync(lastKnownTimeRef.current, currentTime);
+      if (onTimeSync) {
+        // The media clock keeps advancing in the background. Never restore the
+        // phase saved when hiding, which used to rewind playback on return.
+        onTimeSync(timelineStore.sampleAudioTime().display, currentTime);
       }
 
       // Notify parent component
@@ -65,7 +67,7 @@ export const PageVisibilityManager: React.FC<PageVisibilityManagerProps> = ({
         resumeAttemptRef.current = 0;
         const attemptResume = (attempt: number = 0) => {
           const audio = document.querySelector('audio');
-          if (audio && audio.paused && isPlaying) {
+          if (audio && audio.paused && latest.current.isPlaying) {
             resumeAttemptRef.current = attempt;
             console.log(`[PageVisibility] Attempting to resume playback (attempt ${attempt + 1})`);
 
@@ -93,7 +95,14 @@ export const PageVisibilityManager: React.FC<PageVisibilityManagerProps> = ({
         visibilityTimeoutRef.current = setTimeout(() => attemptResume(0), 100);
       }
     }
-  }, [isPlaying, currentTime, onVisibilityChange, onTimeSync]);
+  }, []);
+
+  useEffect(() => {
+    if (!isPlaying && visibilityTimeoutRef.current) {
+      clearTimeout(visibilityTimeoutRef.current);
+      visibilityTimeoutRef.current = null;
+    }
+  }, [isPlaying]);
 
   // Set up visibility change listener
   useEffect(() => {

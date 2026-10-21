@@ -6,6 +6,7 @@ export interface LyricMotionInput {
   duration: number;
   velocity: number;
   isPreviewMode: boolean;
+  isPlaying?: boolean;
   seekRevision?: number;
 }
 
@@ -21,7 +22,7 @@ export function advanceLyricMotion(previous: LyricMotionState | null, input: Lyr
   const sampledTime = input.scrollTimeRef?.current ?? input.scrollTime;
   const time = Number.isFinite(sampledTime) ? sampledTime : 0;
   const duration = Math.max(1, input.duration || 1);
-  const reset = !previous || input.isPreviewMode || previous.seekRevision !== input.seekRevision ||
+  const reset = !previous || input.isPreviewMode || input.isPlaying === false || previous.seekRevision !== input.seekRevision ||
     Math.abs(time - previous.profile.baseTime) > duration * .5;
   let manualHoldUntil = previous?.manualHoldUntil || 0;
   if (input.isPreviewMode || Math.abs(input.velocity) >= .016) manualHoldUntil = now + 520;

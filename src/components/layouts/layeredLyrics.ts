@@ -1,4 +1,5 @@
 import type { LyricLine } from '@/types';
+import { loopCycle, loopDuration, loopPhase, lyricSlot } from '@/utils/loopTimeline';
 
 export type LayerType = 'front' | 'back-near' | 'back-far';
 
@@ -91,8 +92,8 @@ export function calculateLayeredLyrics({
     }
 
     const totalLines = lyrics.length;
-    const safeDuration = Math.max(1, duration || 1);
-    const normalizedTime = ((scrollTime % safeDuration) + safeDuration) % safeDuration;
+    const safeDuration = loopDuration(duration);
+    const normalizedTime = loopPhase(scrollTime, safeDuration);
 
     let currentIndex = -1;
     for (let i = 0; i < totalLines; i++) {
@@ -103,11 +104,10 @@ export function calculateLayeredLyrics({
       }
     }
 
-    if (currentIndex < 0) {
-      currentIndex = 0;
-    }
-
-    const loopCount = Math.floor(scrollTime / safeDuration);
+    let loopCount = loopCycle(scrollTime, safeDuration);
+    // A nonzero first timestamp still belongs to the preceding last line.
+    const beforeFirst = currentIndex < 0;
+    if (beforeFirst) { currentIndex = totalLines - 1; loopCount--; }
     const absoluteCurrentIndex = loopCount * totalLines + currentIndex;
 
     const currentLine = lyrics[currentIndex];
@@ -122,22 +122,11 @@ export function calculateLayeredLyrics({
 
     const nextLine = lyrics[nextIndex];
     const nextTimeBase = nextLine?.time ?? 0;
-    const nextTime = nextLoop * safeDuration + nextTimeBase;
-
-    const currentAbsoluteTime = loopCount * safeDuration + currentTime;
-    let adjustedTime = loopCount * safeDuration + normalizedTime;
-    if (adjustedTime < currentAbsoluteTime && nextLoop > loopCount) {
-      adjustedTime += safeDuration;
-    }
-
-    let progressToNext = 0;
-    if (nextTime > currentAbsoluteTime) {
-      progressToNext = (adjustedTime - currentAbsoluteTime) / (nextTime - currentAbsoluteTime);
-    }
-    progressToNext = Math.min(Math.max(progressToNext, 0), 0.999);
-
-    const progressWithLead = Math.min(Math.max(progressToNext + SCROLL_AHEAD_MARGIN, 0), 0.999);
-    const currentIndexContinuous = absoluteCurrentIndex + progressWithLead;
+    // Positions use one cycle, retaining precision after millions of loops.
+    const interval = (nextLoop - loopCount) * safeDuration + nextTimeBase - currentTime;
+    const elapsed = normalizedTime + (beforeFirst ? safeDuration : 0) - currentTime;
+    const progressToNext = interval > 0 ? elapsed / interval : 0;
+    const progressWithLead = Math.min(Math.max(progressToNext + SCROLL_AHEAD_MARGIN, 0), 1);
 
     const movement = movementAxis === 'horizontal' ? 'horizontal' : 'vertical';
     const travelStep = Math.max(0.01, travelSpacing ?? verticalSpacing * 0.85);
@@ -146,20 +135,20 @@ export function calculateLayeredLyrics({
 
     for (let offset = -range; offset <= range; offset++) {
       const targetAbsoluteIndex = absoluteCurrentIndex + offset;
-      const wrappedIndex = ((targetAbsoluteIndex % totalLines) + totalLines) % totalLines;
+      const wrappedIndex = loopPhase(currentIndex + offset, totalLines);
       const lyric = lyrics[wrappedIndex];
       if (!lyric) continue;
 
       const rawText = lyric.text ?? '';
       const trimmedText = rawText.trim();
       const displayText = trimmedText === '' ? '　' : trimmedText;
-      const relativeOffset = targetAbsoluteIndex - currentIndexContinuous;
+      const relativeOffset = offset - progressWithLead;
       const isTopLane = (wrappedIndex % 2) === 0;
       const isLeft = isTopLane; // 竖排下用于 renderOrder 的占位变量
       let x: number;
       let y: number;
       let verticalAlign: 'top' | 'bottom';
-      const isCurrent = targetAbsoluteIndex === absoluteCurrentIndex;
+      const isCurrent = offset === 0;
       let distanceRatio = 0;
 
       if (movement === 'horizontal') {
@@ -245,7 +234,7 @@ export function calculateLayeredLyrics({
       }
 
       items.push({
-        key: `${targetAbsoluteIndex}`,
+        key: lyricSlot(loopCount, currentIndex + offset, totalLines, range),
         text: displayText,
         absoluteIndex: targetAbsoluteIndex,
         relativeOffset,

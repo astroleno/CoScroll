@@ -109,12 +109,12 @@ const EnhancedAudioPlayer: React.FC<EnhancedAudioPlayerProps> = ({
     switch (e.key) {
       case 'ArrowLeft':
         e.preventDefault();
-        newTime = Math.max(0, currentTime - step);
+        newTime = currentTime - step;
         handleSeekDebounced(newTime, true);
         break;
       case 'ArrowRight':
         e.preventDefault();
-        newTime = Math.min(duration, currentTime + step);
+        newTime = currentTime + step;
         handleSeekDebounced(newTime, true);
         break;
       case 'Home':

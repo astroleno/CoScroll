@@ -1,6 +1,7 @@
 // Simple global timeline store using refs and a minimal subscribe API
 
 type Subscriber = () => void;
+export interface AudioClockSample { display: number; absolute: number; }
 
 class TimelineStore {
   // core timeline refs
@@ -10,6 +11,8 @@ class TimelineStore {
   visualAbsoluteTime = 0;
   scrollVelocity = 0;
   isPlaying = false;
+  pendingAudioSeek: number | null = null;
+  private audioClock: (() => AudioClockSample) | null = null;
 
   private subs: Set<Subscriber> = new Set();
 
@@ -28,6 +31,27 @@ class TimelineStore {
     this.audioDisplayTime = display;
     this.audioAbsoluteTime = absolute;
     // no emit by default to avoid high-frequency updates
+  }
+
+  requestAudioTime(display: number, absolute: number) {
+    this.pendingAudioSeek = absolute;
+    this.setAudioTime(display, absolute);
+  }
+
+  acknowledgeAudioSeek(display: number, absolute: number) {
+    if (this.pendingAudioSeek !== null && this.pendingAudioSeek !== absolute) return;
+    this.pendingAudioSeek = null;
+    this.setAudioTime(display, absolute);
+  }
+
+  registerAudioClock(read: () => AudioClockSample) {
+    this.audioClock = read;
+    return () => { if (this.audioClock === read) this.audioClock = null; };
+  }
+
+  sampleAudioTime(): AudioClockSample {
+    if (this.pendingAudioSeek !== null) return {display: this.audioDisplayTime, absolute: this.pendingAudioSeek};
+    return this.audioClock?.() ?? {display: this.audioDisplayTime, absolute: this.audioAbsoluteTime};
   }
 
   setVisualTime(display: number, absolute: number) {

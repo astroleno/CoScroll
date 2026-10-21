@@ -4,6 +4,7 @@ import { assetUrl } from '@/utils/assetUrl';
 
 import React, { useState, useCallback, useRef, useEffect, useMemo } from 'react';
 import timelineStore from '@/stores/timelineStore';
+import { loopPhase, timeInCurrentCycle } from '@/utils/loopTimeline';
 import dynamic from 'next/dynamic';
 // import { LRC_LYRICS } from './constants'; // 不再使用硬编码歌词
 import { useLyricsFromConfig } from '@/hooks/useLyricsFromConfig';
@@ -75,7 +76,7 @@ const ALL_MODEL_PATHS = Object.values(ANCHOR_MODEL_MAPPING).filter(path => path 
 const findCurrentLineIndex = (lyricLines: LyricLine[], time: number, durationParam: number): number => {
   if (!lyricLines || lyricLines.length === 0) return -1;
   const base = Math.max(1, durationParam || MOCK_DURATION);
-  const loopTime = time % base;
+  const loopTime = loopPhase(time, base);
   let lineIndex = -1;
   for (let i = 0; i < lyricLines.length; i++) {
     if (lyricLines[i].time <= loopTime) {
@@ -192,14 +193,10 @@ export default function HomePage() {
 
   const audioRef = useRef<HTMLAudioElement>(null);
   const lastUserInteractionRef = useRef<number>(0);
-  const isVisibilityChangeRef = useRef<boolean>(false);
   const audioTimeRef = useRef(0);
   const lastCommittedTimeRef = useRef({ stamp: 0, display: 0 });
-  const lastSeekTimeRef = useRef<number>(0);
-  const seekProtectionUntilRef = useRef<number>(0);
   // Continuous scene time is read by the Canvas without a React update per frame.
   const visualAbsoluteTimeRef = useRef<number>(0);
-  const visualAnchorRef = useRef<{ engineAbs: number; stamp: number }>({ engineAbs: 0, stamp: 0 });
   const rafIdRef = useRef<number | null>(null);
 
   // 从配置动态加载歌词
@@ -237,18 +234,19 @@ export default function HomePage() {
 
   const commitTimeUpdate = useCallback(
     (displayTime: number, absoluteTime: number, force: boolean = false) => {
-      audioTimeRef.current = displayTime;
       const newLoopCount = Math.floor(absoluteTime / duration);
 
       const now = typeof performance !== 'undefined' ? performance.now() : Date.now();
 
-      // Seek 保护期：在 seek 后的短时间内，忽略非强制的更新
-      if (!force && now < seekProtectionUntilRef.current) {
+      // Protect a queued command until the media engine acknowledges it, rather
+      // than dropping valid native loop samples for a fixed 500ms window.
+      if (!force && timelineStore.pendingAudioSeek !== null) {
         return;
       }
+      audioTimeRef.current = displayTime;
 
       // 写入全局时间 store
-      timelineStore.setAudioTime(displayTime, absoluteTime);
+      if (force) timelineStore.requestAudioTime(displayTime, absoluteTime);
 
       const last = lastCommittedTimeRef.current;
       if (!force) {
@@ -262,11 +260,7 @@ export default function HomePage() {
 
       if (force) {
         setSeekSignal((prev) => (prev + 1) % Number.MAX_SAFE_INTEGER);
-        // Seek 保护期 500ms
-        seekProtectionUntilRef.current = now + 500;
-        lastSeekTimeRef.current = now;
         visualAbsoluteTimeRef.current = absoluteTime;
-        visualAnchorRef.current = { engineAbs: absoluteTime, stamp: now };
       }
 
       lastCommittedTimeRef.current = { stamp: now, display: displayTime };
@@ -404,22 +398,29 @@ export default function HomePage() {
 
   // 跳转处理
   const handleSeek = useCallback((absoluteTime: number) => {
+    // A progress/keyboard command supersedes an older wheel or pointer preview.
+    // Its delayed release must not seek back over this newer command.
+    if (wheelPreviewTimeoutRef.current) clearTimeout(wheelPreviewTimeoutRef.current);
+    wheelPreviewTimeoutRef.current = null;
+    isPointerPreviewingRef.current = false;
+    isDraggingRef.current = false;
+    lastPreviewTimeRef.current = null;
+    previewStartTimeRef.current = null;
+    setPreviewTime(null);
+    handleScrollVelocityChange(0);
     const safeDuration = Math.max(1, duration);
-    const displayTime = ((absoluteTime % safeDuration) + safeDuration) % safeDuration;
+    const displayTime = loopPhase(absoluteTime, safeDuration);
 
     // 只调用 commitTimeUpdate，它会内部更新 loopCount
     // 不要重复调用 setLoopCount，避免状态冲突
     commitTimeUpdate(displayTime, absoluteTime, true);
     // 立即同步视觉时间与位移，保证进度条/歌词/模型同跳
     visualAbsoluteTimeRef.current = absoluteTime;
-  }, [duration, commitTimeUpdate]);
+  }, [duration, commitTimeUpdate, handleScrollVelocityChange]);
 
   // AudioEngine event handlers
   const handleAudioTimeUpdate = useCallback((displayTime: number, absoluteTime: number) => {
     commitTimeUpdate(displayTime, absoluteTime);
-    // 记录引擎时间作为 RAF 外推锚点
-    const now = typeof performance !== 'undefined' ? performance.now() : Date.now();
-    visualAnchorRef.current = { engineAbs: absoluteTime, stamp: now };
   }, [commitTimeUpdate]);
 
   const handleAudioDurationChange = useCallback((newDuration: number) => {
@@ -454,9 +455,9 @@ export default function HomePage() {
     clearWheelPreviewTimeout();
     // 预览模式开始
     // 记录起点时间
-    previewStartTimeRef.current = isPreviewMode ? (previewTime as number) : absoluteTime;
+    previewStartTimeRef.current = lastPreviewTimeRef.current ?? visualAbsoluteTimeRef.current;
     lastPreviewTimeRef.current = previewStartTimeRef.current;
-  }, [clearWheelPreviewTimeout, isPreviewMode, previewTime, absoluteTime]);
+  }, [clearWheelPreviewTimeout]);
 
   const handleLyricPreviewTime = useCallback((time: number) => {
     // 设置预览时间，不 seek
@@ -501,7 +502,7 @@ export default function HomePage() {
     isDraggingRef.current = false;
     previewStartClientXRef.current = e.clientX;
     // 不立刻进入预览，等待超过阈值
-  }, []);
+  }, [clearWheelPreviewTimeout]);
 
   const handlePointerMove = useCallback((event: React.PointerEvent<HTMLDivElement>) => {
     if (!isPointerPreviewingRef.current) return;
@@ -525,7 +526,7 @@ export default function HomePage() {
     const nextTime = base + deltaTime;
     handleLyricPreviewTime(nextTime);
 
-  }, [absoluteTime, handleLyricPreviewTime]);
+  }, [absoluteTime, clearWheelPreviewTimeout, handleLyricPreviewStart, handleLyricPreviewTime]);
 
   const handlePointerUpOrCancel = useCallback((e: React.PointerEvent<HTMLDivElement>) => {
     if (!isPointerPreviewingRef.current) return;
@@ -539,7 +540,7 @@ export default function HomePage() {
     }
     isPointerPreviewingRef.current = false;
     isDraggingRef.current = false;
-  }, [handleLyricPreviewEnd]);
+  }, [clearWheelPreviewTimeout, handleLyricPreviewEnd]);
 
   // Wheel 预览交互（Phase 1）
   const handleWheel = useCallback((e: React.WheelEvent<HTMLDivElement>) => {
@@ -550,10 +551,10 @@ export default function HomePage() {
     if (!dx) return;
     e.preventDefault();
     // 进入临时预览态
-    if (!isPreviewMode) {
+    if (lastPreviewTimeRef.current === null) {
       handleLyricPreviewStart();
     }
-    const base = isPreviewMode && previewTime != null ? previewTime : absoluteTime;
+    const base = lastPreviewTimeRef.current ?? visualAbsoluteTimeRef.current;
     const deltaTime = -(dx * DIRECTION) / Math.max(1, PIXELS_PER_SECOND);
     const nextTime = base + deltaTime;
     handleLyricPreviewTime(nextTime);
@@ -562,7 +563,7 @@ export default function HomePage() {
       handleLyricPreviewEnd();
     }, 240);
     // 惯性与持续滚轮在此不自动结束；由用户停止滚轮后短暂停顿再松手也可
-  }, [absoluteTime, isPreviewMode, previewTime, handleLyricPreviewStart, handleLyricPreviewTime, handleLyricPreviewEnd, clearWheelPreviewTimeout, handleScrollVelocityChange]);
+  }, [normalizeWheelDeltaX, handleLyricPreviewStart, handleLyricPreviewTime, handleLyricPreviewEnd, clearWheelPreviewTimeout]);
 
   const handleSmoothLoopTimeUpdate = useCallback((time: number) => {
     // If user is actively preview-scrolling, don't override UI time with loop-driven updates
@@ -572,20 +573,19 @@ export default function HomePage() {
   }, [commitTimeUpdate, isPreviewMode, loopCount, duration]);
 
   const handleVisibilityChange = useCallback((isVisible: boolean, wasHidden: boolean) => {
-    isVisibilityChangeRef.current = true;
     if (isVisible && wasHidden) {
       addDebugLog('Page became visible after being hidden');
     }
   }, [addDebugLog]);
 
   const handleTimeSync = useCallback((expectedTime: number, actualTime: number) => {
-    if (!isVisibilityChangeRef.current && Math.abs(expectedTime - actualTime) > 0.5) {
-      const absolute = loopCount * duration + expectedTime;
-      commitTimeUpdate(expectedTime, absolute, true);
+    if (Math.abs(expectedTime - actualTime) > 0.5) {
+      const sample = timelineStore.sampleAudioTime();
+      commitTimeUpdate(sample.display, sample.absolute);
+      visualAbsoluteTimeRef.current = sample.absolute;
       addDebugLog(`Time synced: ${actualTime.toFixed(2)} -> ${expectedTime.toFixed(2)}`);
     }
-    isVisibilityChangeRef.current = false;
-  }, [addDebugLog, commitTimeUpdate, loopCount, duration]);
+  }, [addDebugLog, commitTimeUpdate]);
 
   // 设置音频源时重置状态
   useEffect(() => {
@@ -597,7 +597,6 @@ export default function HomePage() {
     audioTimeRef.current = 0;
     lastCommittedTimeRef.current = { stamp: 0, display: 0 };
     visualAbsoluteTimeRef.current = 0;
-    visualAnchorRef.current = { engineAbs: 0, stamp: performance.now() };
   }, [audioSrc]);
 
   // 不再需要平滑渲染 useEffect，使用 displayTime 直接计算
@@ -612,7 +611,7 @@ export default function HomePage() {
   const findAnchorCharByTime = useCallback((currentTime: number): string => {
     if (timeline.length === 0) return '心'; // 默认值
 
-    const loopTime = currentTime % duration;
+    const loopTime = loopPhase(currentTime, duration);
 
     // 从时间轴中找到当前时间对应的锚字
     for (let i = timeline.length - 1; i >= 0; i--) {
@@ -692,16 +691,12 @@ export default function HomePage() {
       rafIdRef.current = null;
     }
     if (!isPlaying || isPreviewMode) {
-      const abs = (isPreviewMode && previewTime != null) ? (previewTime as number) : (absoluteTime as number);
-      visualAbsoluteTimeRef.current = abs;
+      visualAbsoluteTimeRef.current = lastPreviewTimeRef.current ?? timelineStore.sampleAudioTime().absolute;
       return;
     }
     const tick = () => {
-      const now = typeof performance !== 'undefined' ? performance.now() : Date.now();
-      const { engineAbs, stamp } = visualAnchorRef.current;
-      const dtSec = Math.max(0, (now - stamp) / 1000);
-      const expected = engineAbs + dtSec;
-      visualAbsoluteTimeRef.current = expected;
+      // Read media time through native loops and buffering, without wall-clock drift.
+      visualAbsoluteTimeRef.current = timelineStore.sampleAudioTime().absolute;
       rafIdRef.current = requestAnimationFrame(tick);
     };
     rafIdRef.current = requestAnimationFrame(tick);
@@ -709,7 +704,7 @@ export default function HomePage() {
       if (rafIdRef.current != null) cancelAnimationFrame(rafIdRef.current);
       rafIdRef.current = null;
     };
-  }, [isPlaying, isPreviewMode, previewTime, absoluteTime]);
+  }, [isPlaying, isPreviewMode, seekSignal]);
 
   // 如果配置或歌词正在加载，显示加载状态
   if (isConfigLoading || !config || isLyricsLoading) {
@@ -876,7 +871,7 @@ export default function HomePage() {
           onSeek={(time) => {
             // 支持快退与快进：显示层loopCount随目标时间重算
             const safe = Math.max(1, duration);
-            const targetAbs = Math.floor((visualAbsoluteTimeRef.current - (visualAbsoluteTimeRef.current % safe)) / safe) * safe + time;
+            const targetAbs = timeInCurrentCycle(visualAbsoluteTimeRef.current, time, safe);
             handleSeek(targetAbs);
           }}
         />
