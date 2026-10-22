@@ -2,13 +2,14 @@
 
 沿用 fv_slide / LuBirth 的基础设施：阿里云 Nginx 提供 HTML、Next 静态路由载荷和版本标记；
 腾讯上海私有 COS 桶 `tongye-1327162705` 存放不可变对象。
-JS、CSS、字体、OBJ、HDR、图片、歌词和项目 JSON 使用 `assets.aitoshuu.me`；音频使用 `media.aitoshuu.me`。
+JS、CSS、字体、OBJ/GLB、HDR、图片、歌词和项目 JSON 使用 `assets.aitoshuu.me`；音频使用 `media.aitoshuu.me`。
 对象全部位于 `releases/aitoshuu-me/coscroll-<source-digest>/`，不覆盖已有对象。
 发布脚本启用静态导出；普通 `npm run build` / `npm run start` 保留 Next 的本地生产预览方式。
 
-当前线上版本为 `coscroll-ecaa5a34a552ec90`，两个入口为 `aitoshuu.me/coscroll/` 和
+当前线上版本为 `coscroll-24d69d971564297f`，两个入口为 `aitoshuu.me/coscroll/` 和
 `tongye.me/coscroll/`。最新复测、发布身份与回滚记录见
-[2026-10-22 iPhone 加载与长帧验收](IPHONE_PERFORMANCE_RELEASE_20261022.md)。
+[七字模型接入与双站验收](PRIORITY7_MODEL_INTEGRATION_20261022.md)。
+[此前 iPhone 加载与长帧验收](IPHONE_PERFORMANCE_RELEASE_20261022.md)、
 [此前手机加载与触摸验收](MOBILE_LOADING_TOUCH_RELEASE_20261022.md)、
 [此前妙法莲华经接入](LOTUS_SUTRA_RELEASE_20261022.md)、
 [此前无限滚动与正文性能回归](CONTINUOUS_SCROLL_RELEASE_20261021.md)、
@@ -58,7 +59,7 @@ TTF 为 6,048,788 字节，WOFF2 为 2,447,968 字节。主页面在字体规则
 再刷新歌词纹理；透明度、颜色和边缘羽化由材质处理，避免每帧重新绘制、上传文字纹理。
 当前模型与下一个不同的模型共享下载和解析缓存，首访不再并发加载整套模型。
 
-现有 26 个 OBJ 的完整基础几何和默认外层数据由离线工具生成：
+现有 26 个 OBJ 与七个交付 GLB 的完整基础几何和默认外层数据由离线工具生成：
 
 ```sh
 npm run models:prepare
@@ -73,7 +74,7 @@ npm run models:check
 
 运行时仅按当前/下一模型读取数据，校验 SHA-256 后异步解压并填入两层几何缓存；
 `loadModel/getOffsetGeometry` 和配置接口保持原签名。外部自定义模型、非默认几何参数、
-缺少原生解压能力或预计算资源失败时继续使用原算法；原 OBJ 因此保留。
+缺少原生解压能力或预计算资源失败时继续使用原算法；原 OBJ/GLB 因此保留。
 全部模型的基础/外层属性字节及自定义参数结果，对照提取算法前保存的独立校验值回归。
 
 ## 经批准后发布

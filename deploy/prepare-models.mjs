@@ -5,7 +5,8 @@ import {dirname, join, resolve} from 'node:path';
 import {fileURLToPath, pathToFileURL} from 'node:url';
 import ts from 'typescript';
 import {OBJLoader} from 'three/examples/jsm/loaders/OBJLoader.js';
-import {Mesh} from 'three';
+import {GLTFLoader} from 'three/examples/jsm/loaders/GLTFLoader.js';
+import {Matrix4, Mesh} from 'three';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const registryPath = join(root, 'src/components/jade/prepared-models.json');
@@ -42,7 +43,36 @@ async function generationIdentity() {
 }
 
 async function sourceModels() {
-  return (await readdir(modelDirectory)).filter(name => name.endsWith('.obj')).sort();
+  const names = (await readdir(modelDirectory)).filter(name => /\.(obj|glb)$/.test(name)).sort();
+  if (new Set(names.map(preparedName)).size !== names.length) throw new Error('Duplicate prepared model basename');
+  return names;
+}
+
+function preparedName(name) { return name.replace(/\.(obj|glb)$/, '.json'); }
+
+async function readSourceGeometry(name, bytes) {
+  let extracted;
+  if (name.endsWith('.obj')) {
+    new OBJLoader().parse(bytes.toString('utf8')).traverse(child => {
+      // Preserve the legacy OBJ traversal and all previously recorded geometry bytes.
+      if (child instanceof Mesh && child.geometry) extracted = child.geometry;
+    });
+  } else {
+    const gltf = await new GLTFLoader().parseAsync(bytes.buffer.slice(bytes.byteOffset, bytes.byteOffset + bytes.byteLength), '');
+    gltf.scene.updateMatrixWorld(true);
+    const meshes = [];
+    gltf.scene.traverse(child => { if (child instanceof Mesh && child.geometry) meshes.push(child); });
+    // The existing runtime fallback reads one untransformed mesh. Reject other
+    // layouts rather than silently preparing incomplete/differently posed models.
+    if (meshes.length !== 1 || meshes[0].isSkinnedMesh || gltf.animations.length ||
+        !meshes[0].matrixWorld.equals(new Matrix4())) {
+      throw new Error('GLB must contain one static mesh with identity transforms: ' + name);
+    }
+    extracted = meshes[0].geometry;
+    meshes[0].material.dispose();
+  }
+  if (!extracted) throw new Error('No model geometry: ' + name);
+  return extracted;
 }
 
 export async function checkPreparedModels() {
@@ -55,17 +85,17 @@ export async function checkPreparedModels() {
   const expectedFiles = [];
   for (const entry of registry.models) {
     const name = entry.sourcePath.slice('/models/10k_obj/'.length);
-    const preparedName = name.replace(/\.obj$/, '.json');
-    if (entry.preparedPath !== '/models/prepared/' + preparedName ||
+    const outputName = preparedName(name);
+    if (entry.preparedPath !== '/models/prepared/' + outputName ||
         entry.sourceSha256 !== sha(await readFile(join(modelDirectory, name)))) {
       throw new Error('Prepared source changed: ' + name);
     }
-    const bytes = await readFile(join(preparedDirectory, preparedName));
+    const bytes = await readFile(join(preparedDirectory, outputName));
     if (bytes.length !== entry.bytes || sha(bytes) !== entry.preparedSha256) throw new Error('Prepared payload changed: ' + name);
     const payload = JSON.parse(bytes);
     if (payload.version !== registry.version || payload.generation !== registry.generation || payload.sourceSha256 !== entry.sourceSha256 ||
         JSON.stringify(payload.preset) !== JSON.stringify(registry.preset)) throw new Error('Prepared payload identity mismatch: ' + name);
-    expectedFiles.push(preparedName);
+    expectedFiles.push(outputName);
   }
   if (JSON.stringify((await readdir(preparedDirectory)).sort()) !== JSON.stringify(expectedFiles.sort())) {
     throw new Error('Unexpected prepared model files');
@@ -83,17 +113,12 @@ async function generatePreparedModels() {
     for (const name of await sourceModels()) {
       const bytes = await readFile(join(modelDirectory, name));
       const sourceSha256 = sha(bytes);
-      let extracted;
-      new OBJLoader().parse(bytes.toString('utf8')).traverse(child => {
-        // Preserve the existing loader's traversal behavior, including multiple meshes.
-        if (child instanceof Mesh && child.geometry) extracted = child.geometry;
-      });
-      if (!extracted) throw new Error('No model geometry: ' + name);
+      const extracted = await readSourceGeometry(name, bytes);
       const base = pipeline.normalizeModelGeometry(extracted);
       const outer = pipeline.createOffsetGeometry(base, preset.outerOffset, preset);
       const payload = {version:pipeline.PREPARED_MODEL_VERSION, generation, sourceSha256, preset,
         base:await pipeline.encodeGeometry(base), outer:await pipeline.encodeGeometry(outer)};
-      const preparedPath = '/models/prepared/' + name.replace(/\.obj$/, '.json');
+      const preparedPath = '/models/prepared/' + preparedName(name);
       const encoded = JSON.stringify(payload) + '\n';
       await writeFile(join(root, 'public', preparedPath), encoded);
       registry.models.push({sourcePath:'/models/10k_obj/' + name, sourceSha256,
@@ -101,7 +126,7 @@ async function generatePreparedModels() {
       extracted.dispose(); base.dispose(); outer.dispose();
       console.log(name, Buffer.byteLength(encoded));
     }
-    // A removed OBJ must not leave a deliverable that bypasses freshness checks.
+    // A removed source must not leave a deliverable that bypasses freshness checks.
     const expected = new Set(registry.models.map(entry => entry.preparedPath.split('/').at(-1)));
     for (const name of await readdir(preparedDirectory)) if (!expected.has(name)) await rm(join(preparedDirectory, name));
     await writeFile(registryPath, JSON.stringify(registry, null, 2) + '\n');

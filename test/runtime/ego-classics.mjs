@@ -114,9 +114,9 @@ export async function verifyClassicSessions(page) {
 export async function verifyLotusAnchors(page) {
   await installInfiniteProbe(page);
   const states=[];
-  for(const [time,target,actual] of [[0,'妙','法'],[46,'竹','生'],[58,'生','生'],[99,'海','水'],[103,'化','生'],
-    [136,'法','法'],[148,'心','心'],[166,'土','山'],[170,'雨','水'],[174,'妙','法'],[178,'天','空'],
-    [182,'无','无'],[190,'妙','法'],[193,'生','生'],[199,'无','无']]){
+  for(const [time,target,actual] of [[0,'妙','妙'],[46,'竹','竹'],[58,'生','生'],[99,'海','海'],[103,'化','化'],
+    [136,'法','法'],[148,'心','心'],[166,'土','土'],[170,'雨','雨'],[174,'妙','妙'],[178,'天','天'],
+    [182,'无','无'],[190,'妙','妙'],[193,'生','生'],[199,'无','无']]){
     await page.evaluate(time=>window.__infiniteRegression.seek(time),time);
     await page.waitForFunction(({time,target,actual})=>{
       const status=document.querySelector('[data-model-status]');return Math.abs(document.querySelector('audio').currentTime-time)<.01&&

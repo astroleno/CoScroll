@@ -67,18 +67,16 @@
       {
         "anchor": "妙",
         "characterId": "050",
-        "modelPath": "022_法.obj",
-        "renderedCharacter": "法",
-        "status": "placeholder",
-        "pendingReason": "pending-simplification"
+        "modelPath": "050_妙.glb",
+        "renderedCharacter": "妙",
+        "status": "ready"
       },
       {
         "anchor": "竹",
         "characterId": "073",
-        "modelPath": "019_生.obj",
-        "renderedCharacter": "生",
-        "status": "placeholder",
-        "pendingReason": "pending-simplification"
+        "modelPath": "073_竹.glb",
+        "renderedCharacter": "竹",
+        "status": "ready"
       },
       {
         "anchor": "生",
@@ -90,18 +88,16 @@
       {
         "anchor": "海",
         "characterId": "027",
-        "modelPath": "013_水.obj",
-        "renderedCharacter": "水",
-        "status": "placeholder",
-        "pendingReason": "pending-simplification"
+        "modelPath": "027_海.glb",
+        "renderedCharacter": "海",
+        "status": "ready"
       },
       {
         "anchor": "化",
         "characterId": "099",
-        "modelPath": "019_生.obj",
-        "renderedCharacter": "生",
-        "status": "placeholder",
-        "pendingReason": "pending-simplification"
+        "modelPath": "099_化.glb",
+        "renderedCharacter": "化",
+        "status": "ready"
       },
       {
         "anchor": "法",
@@ -120,26 +116,23 @@
       {
         "anchor": "土",
         "characterId": "083",
-        "modelPath": "014_山.obj",
-        "renderedCharacter": "山",
-        "status": "placeholder",
-        "pendingReason": "pending-simplification"
+        "modelPath": "083_土.glb",
+        "renderedCharacter": "土",
+        "status": "ready"
       },
       {
         "anchor": "雨",
         "characterId": "032",
-        "modelPath": "013_水.obj",
-        "renderedCharacter": "水",
-        "status": "placeholder",
-        "pendingReason": "pending-simplification"
+        "modelPath": "032_雨.glb",
+        "renderedCharacter": "雨",
+        "status": "ready"
       },
       {
         "anchor": "天",
         "characterId": "086",
-        "modelPath": "001_空.obj",
-        "renderedCharacter": "空",
-        "status": "placeholder",
-        "pendingReason": "pending-simplification"
+        "modelPath": "086_天.glb",
+        "renderedCharacter": "天",
+        "status": "ready"
       },
       {
         "anchor": "无",

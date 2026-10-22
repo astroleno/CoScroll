@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "generation": "35923ea9481def4a62db95793222bdc38919a02237cf3c2dba1e84f52e8cdf4c",
+  "generation": "0e12d332c0954284e937764d127d94a9a1da012002bdc5f074cfbc5b363cf81d",
   "preset": {
     "outerOffset": 0.001,
     "maxEdge": 0.15,
@@ -13,182 +13,231 @@
       "sourcePath": "/models/10k_obj/001_空.obj",
       "sourceSha256": "9c13acaabc066318aaebbbaabfdffd859ffbbed0adc78b4f48a13898a82c0c7e",
       "preparedPath": "/models/prepared/001_空.json",
-      "preparedSha256": "d4a8009664468d2b8c63cebc490525200c65cb34481443c21a21e7f3491d0a46",
+      "preparedSha256": "d19fe2cfa146e17ee8e05e9194b32f2b31f987403880595cba588c162939a7e0",
       "bytes": 748740
     },
     {
       "sourcePath": "/models/10k_obj/002_心.obj",
       "sourceSha256": "e3ffa9aab0bd902c5fe0dece8196c8eaab661e1b054760f449719262e89ce4e5",
       "preparedPath": "/models/prepared/002_心.json",
-      "preparedSha256": "7002984980dc8cddeaf1d0c21cc4a7f8afd521b09de66974bbf7d8dde2ff88a1",
+      "preparedSha256": "f3a39a5a1c0237ee0c7a6dea5a99ee54e9fdb0feebb767cc4a2e51e4a4f612b1",
       "bytes": 695140
     },
     {
       "sourcePath": "/models/10k_obj/003_道.obj",
       "sourceSha256": "50fef393a40ebdfd846e22af85c02252fce5a2a26ff5e5f06309281475b79361",
       "preparedPath": "/models/prepared/003_道.json",
-      "preparedSha256": "397315f39fad8897b4d87c1c624eb315f61934ee1a542d717f8f7bf27f4ca526",
+      "preparedSha256": "50904f93069689b61362aaadb9d30b4f7100aaf421d7d9f103033e712443c53d",
       "bytes": 1248884
     },
     {
       "sourcePath": "/models/10k_obj/004_善.obj",
       "sourceSha256": "3625e9e43f7ee3077807eab19d6402a7725ee32ae016b5f098eb07bca202dcdd",
       "preparedPath": "/models/prepared/004_善.json",
-      "preparedSha256": "b5b3fead9d04fe40f6c7694f2a87744343df4ad7f3ea8b92f3ca4b9f0f840662",
+      "preparedSha256": "cb85d758614e47b8154f8e87997cd315a019b2f7d2c69fcf21aa119cd8b763da",
       "bytes": 1052148
     },
     {
       "sourcePath": "/models/10k_obj/005_和.obj",
       "sourceSha256": "7527a7d94cb71c565edac312244ec33a0f3b721b1d1625a335d6724c6a279440",
       "preparedPath": "/models/prepared/005_和.json",
-      "preparedSha256": "a32205fbb3c6c78b23464d8700aac43758451126244174c2ddd712ae18cc3bf3",
+      "preparedSha256": "86bfd6eb03d5990a77c0e66e396ee3221cd0f8770bfb1b90eeb75e7b1aa5c69c",
       "bytes": 1010484
     },
     {
       "sourcePath": "/models/10k_obj/006_静.obj",
       "sourceSha256": "97404a1b5c289b5941b095962d293728cb6686d26c991fc5ef5b136d56529e92",
       "preparedPath": "/models/prepared/006_静.json",
-      "preparedSha256": "4522a0bfabdea709abc017be58f7a87032cc22fcea3fb649a0ecec1d89296fad",
+      "preparedSha256": "33cf1abe98313640573700cc12f4fa5a1e4e14f394db521472c2771dda0c004b",
       "bytes": 1417644
     },
     {
       "sourcePath": "/models/10k_obj/007_明.obj",
       "sourceSha256": "9cae0cd641836912cd2ee30f2da8bbaafd3db903c35f432a7c834ece88bd6a08",
       "preparedPath": "/models/prepared/007_明.json",
-      "preparedSha256": "15312b384b385655c047bf8a132c84d26383a29c7e6709ea76f0834f50da1cc7",
+      "preparedSha256": "542c921774d243bd25d83d0f7004a83aabb31057f45a741cbf84da361703cb32",
       "bytes": 1017052
     },
     {
       "sourcePath": "/models/10k_obj/008_悟.obj",
       "sourceSha256": "f2562251ffb0e66806ca83e025c3f7761e702bd37fe00965673a7e19845c7f1d",
       "preparedPath": "/models/prepared/008_悟.json",
-      "preparedSha256": "ee6626f1c08eb6aca62cc3e9a5f6e8ae70715a5d02912f39c30f5e9c9f5b7353",
+      "preparedSha256": "90a3e7202bd53a6326e08438b7f71865afc3731b9faa016043e1c7cd17366ca6",
       "bytes": 1068604
     },
     {
       "sourcePath": "/models/10k_obj/009_真.obj",
       "sourceSha256": "49934e5498e84baa3b803f05d88524a56009cbcd041154ea2e3cb7e01f1ddfcc",
       "preparedPath": "/models/prepared/009_真.json",
-      "preparedSha256": "6fad13a68c7d7e2ec2aab6a3bb9a0a19ec827a4397cc734816f2ac1f2a5eca1b",
+      "preparedSha256": "199a7b2b9b4b203672f73fabacf28ae7fd7a43702e31fd646f1458b513924533",
       "bytes": 1038912
     },
     {
       "sourcePath": "/models/10k_obj/010_圆.obj",
       "sourceSha256": "73e2fccf412a39dee2790f73b3bd212e3c98b360feb4a6601e458f22bef36de5",
       "preparedPath": "/models/prepared/010_圆.json",
-      "preparedSha256": "2b7f6b3c1190cf088ece86c1ce4ef3db1f1e0f968d6af04bfed6d6f793f5900d",
+      "preparedSha256": "eeb71d1d4b6f01eca60142f0d00b9110a33822927a6648fddae0922c652889e1",
       "bytes": 937864
     },
     {
       "sourcePath": "/models/10k_obj/011_缘.obj",
       "sourceSha256": "0a90652295617a9a56c760268954130791cc7516d3c2426a0cffb0415424e2eb",
       "preparedPath": "/models/prepared/011_缘.json",
-      "preparedSha256": "fb5d7431ba806b1e61f02fa71e1397e16c27d9d9d14c075c6832abd5d218d240",
+      "preparedSha256": "13e90aeafbc20932e56798c752fde7ebf210cc813d3c916ce4aaea487616c222",
       "bytes": 1207624
     },
     {
       "sourcePath": "/models/10k_obj/012_无.obj",
       "sourceSha256": "76249da46b2585ab9e6ee699e2647996c7d8922475cc7af72151c75a8acc1632",
       "preparedPath": "/models/prepared/012_无.json",
-      "preparedSha256": "40c0247b508ba884110428f21d1ae8acbde6c47b336d4f1978643989eeec6314",
+      "preparedSha256": "e8e912dd5cb2e8fd6d018fca5a36f004aef55e5fffbd745a9c0ee22fe505e1b1",
       "bytes": 716268
     },
     {
       "sourcePath": "/models/10k_obj/013_水.obj",
       "sourceSha256": "595c5839ed49395aa0034dfbca5b3c8a8983432abbffc73dd6313d9056a34fe6",
       "preparedPath": "/models/prepared/013_水.json",
-      "preparedSha256": "76654a750e50ea8a4991ac9081d7e55b86ce55224c1dc91241f74ce274a1090e",
+      "preparedSha256": "b2450fea0dc3a89aab94a65fa2a29ff73ec61674824603caa97bc26cfa6ae4ce",
       "bytes": 794704
     },
     {
       "sourcePath": "/models/10k_obj/014_山.obj",
       "sourceSha256": "2f3ea8e13153a704b5e884b786685cac7c678e9b5c79f46d8d2d350d1f62a952",
       "preparedPath": "/models/prepared/014_山.json",
-      "preparedSha256": "95cbeadc8c6bd12d0e33b9c53f0eb60ce7c868d2b3f2e5a93190c864790d7931",
+      "preparedSha256": "62b64be7909ab4703598a3f24d841e74b5cf1c2dc5822a48426fb9faf90ddb4f",
       "bytes": 814128
     },
     {
       "sourcePath": "/models/10k_obj/015_月.obj",
       "sourceSha256": "37e7b2aa7051449bd98328ea66c85b167ffd720ed7e01c3bda4ba1388210bb2c",
       "preparedPath": "/models/prepared/015_月.json",
-      "preparedSha256": "0b2eb905885be34f89613d303fa276a33014270a66768b2bb47dc0fbb82d7954",
+      "preparedSha256": "72f05d6bfec3821a31f20599d36cb01516fd6a73be4c8084a0382e5d72dd6ebd",
       "bytes": 700940
     },
     {
       "sourcePath": "/models/10k_obj/016_日.obj",
       "sourceSha256": "778b16a55156ab35ce7ed15e1b803b31d2f305a7f2914e4fcf88afee2ccd9e79",
       "preparedPath": "/models/prepared/016_日.json",
-      "preparedSha256": "0375000f0caf3be5d18658cf528022f845aefae4ecb66163b2236e768772b8ce",
+      "preparedSha256": "4128ec9ff86ae7c58c3a281dfeaa39cf1a20f99d16e9ed5138f40b810f9ee5d3",
       "bytes": 776724
     },
     {
       "sourcePath": "/models/10k_obj/017_风.obj",
       "sourceSha256": "58d56cc7df8a418b2d1b3ca7d16d571488a99e72f155f10a73ab12e1861d60f1",
       "preparedPath": "/models/prepared/017_风.json",
-      "preparedSha256": "02d187f384b74e45350a95ca5bcbf0e6dc55e86e7d2308b100593890dbb787d0",
+      "preparedSha256": "537ac3bb461d7d24bcd0e3ddbc441b3c492928061811706feb12accdc47b829a",
       "bytes": 850556
     },
     {
       "sourcePath": "/models/10k_obj/018_光.obj",
       "sourceSha256": "a6fe6c7f4595216cc4e6b5e6b6ceffce2904e39d873ce30675e2eb0f782f85f5",
       "preparedPath": "/models/prepared/018_光.json",
-      "preparedSha256": "c9e96a4c6a8f39bd0302a016146b99b1ba294fcf88c211d9ee7d3e89011dbbd6",
+      "preparedSha256": "f4eee247bc1185fc22015386141dcb70825b33967c030a966d289136602bf4d5",
       "bytes": 846432
     },
     {
       "sourcePath": "/models/10k_obj/019_生.obj",
       "sourceSha256": "a835e0a8e0d0157efe908f5605fb5b4154437bb323c7b0038bcd8dcac0fb6141",
       "preparedPath": "/models/prepared/019_生.json",
-      "preparedSha256": "8b2078094cbced9499436173a79434752df41be33eb6568bf64cbe146bd13468",
+      "preparedSha256": "e73c13cde2d148aa16fb91a0350c48b24fa1f046cb2ace49d0d184e8dd786c5d",
       "bytes": 993340
     },
     {
       "sourcePath": "/models/10k_obj/020_死.obj",
       "sourceSha256": "03079847dae1abbeeae6616eba1494dd115fc85c6c66d96492cf918e9285f588",
       "preparedPath": "/models/prepared/020_死.json",
-      "preparedSha256": "7a199f5fe19713bde01dd79ca1b4013262cb83f7a062ccd57c76775f2595196a",
+      "preparedSha256": "09b8e3e1b86b6cfe743acbbdbd8bdd38aaeef4274cdf72c05bca851e52e15bfd",
       "bytes": 709428
     },
     {
       "sourcePath": "/models/10k_obj/021_德.obj",
       "sourceSha256": "554aa7225cdc144b35504db66a6f0ced6803d1c9924f4738b8401f7c0c163cb2",
       "preparedPath": "/models/prepared/021_德.json",
-      "preparedSha256": "51c50719ea71ca420d8ea8f9ab751ced4c587581392ba3d829d0649f0b0e464b",
+      "preparedSha256": "ea4d0e73344d7cff4617d803dffd46dd21cba432fee3c537aa92a7c146db62e3",
       "bytes": 1256316
     },
     {
       "sourcePath": "/models/10k_obj/022_法.obj",
       "sourceSha256": "dfc9b3ba4746fd0ce1aacd049f92dd7ac5e0ac10cfc2d91f0e7acb1dce3b2066",
       "preparedPath": "/models/prepared/022_法.json",
-      "preparedSha256": "5befdccbae0e6d0fdb3dce770e3eb4b5fe740a2cd9d52502341f48fdeee18152",
+      "preparedSha256": "bfb81f35035084875309f5b8dfa76d9d103f80b8bf2dd9393610b65ad4b2a93d",
       "bytes": 1041568
     },
     {
       "sourcePath": "/models/10k_obj/024_宁.obj",
       "sourceSha256": "c0a8bc98c5ca87e78b4ddee9fc5611c4ad9a8abdf3061d968e9b9fa99df0f06c",
       "preparedPath": "/models/prepared/024_宁.json",
-      "preparedSha256": "209933b5e9bd78e5602234771e48c3067edef6837e407984ab14e55dc50385bd",
+      "preparedSha256": "2c2ff8e4d2544b9decd8c078baafe50f48f9e4772b54f1b8ff38799f28da4be3",
       "bytes": 764476
+    },
+    {
+      "sourcePath": "/models/10k_obj/027_海.glb",
+      "sourceSha256": "6b28c2adb3764a84e29b66372b230caf81a7f2b91a4d502d4ea2e42a19460c96",
+      "preparedPath": "/models/prepared/027_海.json",
+      "preparedSha256": "c5cf296accf081224d13e2d666178d719ce2658dc7071296457ad4f58c49feab",
+      "bytes": 2190514
+    },
+    {
+      "sourcePath": "/models/10k_obj/032_雨.glb",
+      "sourceSha256": "2b7d55fb8a83b0f4933845a54faaed09a22c11d4bac1191fc114d521242170ce",
+      "preparedPath": "/models/prepared/032_雨.json",
+      "preparedSha256": "22fca7f21a154e0f111d4cd87bbf0ff81ff5cfb01bb8afd8c4e756b767c63dcb",
+      "bytes": 2270222
     },
     {
       "sourcePath": "/models/10k_obj/045_苦.obj",
       "sourceSha256": "9649a9138f2930b140d76df449362c28687b1792ca2fd70a9bfef8ba29b636b5",
       "preparedPath": "/models/prepared/045_苦.json",
-      "preparedSha256": "29f39cb6eb06d543d9843cc038f597c88d217a3ba707160073a949458d272680",
+      "preparedSha256": "6b7a35898bb618c25f35e886a2145436d3a932a01097ea4fd4ebad5e4750f75b",
       "bytes": 1112740
+    },
+    {
+      "sourcePath": "/models/10k_obj/050_妙.glb",
+      "sourceSha256": "59a8cdd7f98e7554e4f426e4c10632f45b22331b2e5d81a53f44c9caf11822e8",
+      "preparedPath": "/models/prepared/050_妙.json",
+      "preparedSha256": "6888c91442f9878d6610e37f87d44685c00b6e0e445d795145232519a4019b6c",
+      "bytes": 2137702
+    },
+    {
+      "sourcePath": "/models/10k_obj/073_竹.glb",
+      "sourceSha256": "47bbab72dd010b82e10f7d54d75567fc38eae366179f2cfa6fec34baa47acff0",
+      "preparedPath": "/models/prepared/073_竹.json",
+      "preparedSha256": "cfa0d193739a10f90eea12896f39fb5cebaa4dfbe3a1e03a37815da0ea5535d3",
+      "bytes": 2172062
+    },
+    {
+      "sourcePath": "/models/10k_obj/083_土.glb",
+      "sourceSha256": "b0c0ccfaf7ba71820923957709ab750f84987ca104d2feac999dd332b6f2d764",
+      "preparedPath": "/models/prepared/083_土.json",
+      "preparedSha256": "86ed71c36acb3bad17a50c66c63bf751fc5d1facc70ffa9b9b2cdcc4bf73f602",
+      "bytes": 2024974
+    },
+    {
+      "sourcePath": "/models/10k_obj/086_天.glb",
+      "sourceSha256": "734c193835bbe97fa3f1e5af319a5e9835d1ee0c6982b265f5942cacddf5057c",
+      "preparedPath": "/models/prepared/086_天.json",
+      "preparedSha256": "0a4b3905a202042cd82476e57a00318252507d81dc2e41ef0f7a34ab550675c0",
+      "bytes": 1945406
     },
     {
       "sourcePath": "/models/10k_obj/094_色.obj",
       "sourceSha256": "11f28303540d9f1aea1a16ca50233889635afc0b564d8f660dacbba567138dd6",
       "preparedPath": "/models/prepared/094_色.json",
-      "preparedSha256": "a416e1c1142ed195bb622c7717243b20108fbd0f7a6cbb546217fb54116b8a6e",
+      "preparedSha256": "849b6cbfe6dce5d5773d61ec84a275f8c10316db8703f1e56f6b2478f2e31628",
       "bytes": 765604
+    },
+    {
+      "sourcePath": "/models/10k_obj/099_化.glb",
+      "sourceSha256": "14e424b48dc62add794e4142db23ee367307b7d3674a5ed17f8f04d72922bea4",
+      "preparedPath": "/models/prepared/099_化.json",
+      "preparedSha256": "ed6ade00313fa8044c018f84d8e46d45f01fffd119f1936f9a98c09c2c22c07f",
+      "bytes": 2011138
     },
     {
       "sourcePath": "/models/10k_obj/101_观.obj",
       "sourceSha256": "03cbb59219e7fd2bb9f314c6941bd150ba925a713fb3a15834fa8f58f75ed4ee",
       "preparedPath": "/models/prepared/101_观.json",
-      "preparedSha256": "ab4c2f2fa3210a6bd37be70c19cae691cd2fd3069e31ed8a613b41cb56ab627f",
+      "preparedSha256": "c038b7523152758b2f6b4e1836f9856658d0707fae190327d24ef20fe37adb55",
       "bytes": 875448
     }
   ]

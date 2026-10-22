@@ -52,13 +52,20 @@ test('both recordings validate and every timeline anchor resolves to an existing
     }
   }
   assert.equal(resolveAnchor('圆', heart).renderedCharacter, '空');
-  assert.equal(resolveAnchor('海', lotus).renderedCharacter, '水');
-  assert.match(resolveAnchor('海', lotus).modelPath, /013_水\.obj$/);
+  assert.equal(resolveAnchor('海', lotus).renderedCharacter, '海');
+  assert.match(resolveAnchor('海', lotus).modelPath, /027_海\.glb$/);
   assert.equal(resolveAnchor('水', lotus).isPlaceholder, false);
+  for (const character of '妙化竹海土雨天') {
+    const model = resolveAnchor(character, lotus);
+    assert.equal(model.renderedCharacter, character);
+    assert.equal(model.isPlaceholder, false);
+    assert.equal(model.pendingReason, undefined);
+  }
+  assert.ok(lotus.anchors.mappings.every(mapping => mapping.status === 'ready'));
 });
 
 test('invalid placeholders, missing timeline mappings, and out-of-range hue cannot enter a session', () => {
-  for (const edit of [p => {delete p.anchors.mappings.find(item => item.status === 'placeholder').pendingReason;},
+  for (const edit of [p => {Object.assign(p.anchors.mappings[0], {status: 'placeholder', renderedCharacter: '法'});},
     p => {p.timeline[0].anchor = '未映射';}, p => {p.appearance.hueOffset = 181;}]) {
     const invalid = structuredClone(lotus); edit(invalid);
     assert.equal(safeValidateProjectConfig(invalid).success, false);

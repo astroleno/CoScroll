@@ -35,6 +35,7 @@ export interface LyricsConfig {
 
 export interface ModelsConfig {
   directory: string;
+  /** Default source format; individual modelPath extensions select the loader. */
   format: 'obj' | 'glb' | 'gltf';
 }
 

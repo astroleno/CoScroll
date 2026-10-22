@@ -1,0 +1,601 @@
+{
+  "version": 1,
+  "date": "2026-10-22",
+  "sourceDirectory": "/Users/aitoshuu/Downloads/Character/_priority7_1mb_20261022",
+  "sourceManifestSha256": "c5637b9c6abab3071e947a3bca19773f6af969a724d826401d1e5d7b8b00cfe3",
+  "scope": "seven delivered models; existing runtime APIs, full geometry and default two-layer preset",
+  "pipelineInputs": {
+    "src/components/jade/modelGeometry.ts": "363266fc9fc5bc14908476c2eb6a5fb76bdc214b44c8e8dd161db2562d1548f3",
+    "src/components/jade/preparedModelGeometry.ts": "2ee030e1cf6a44edb790da752721b4b40af76cd80df8d7f939bdecc5923d0824"
+  },
+  "models": [
+    {
+      "character": "妙",
+      "characterId": "050",
+      "sourceFile": "第一批/050_妙.glb",
+      "modelPath": "/models/10k_obj/050_妙.glb",
+      "preparedPath": "/models/prepared/050_妙.json",
+      "bytes": 972944,
+      "sha256": "59a8cdd7f98e7554e4f426e4c10632f45b22331b2e5d81a53f44c9caf11822e8",
+      "positionSha256": "41b4c76d1d81a154064ede014912e54ecd1645d530cc70868bf958e8339a3f31",
+      "normalSha256": "f659dcae241c62176a4f003860afac42947254d68211bbb1555edb1f4e68882e",
+      "indexSha256": "0335de690420737c209f036164a7d65d457bd2f09435a9b0a4ceb01cacb12cf7",
+      "expandedPositionSha256": "23d1ab833122536f261c1b241650bad323adfa341b3594e1114347920ebf254e",
+      "bounds": {
+        "min": [
+          -0.033457204699516296,
+          -0.4714384377002716,
+          -0.5000181794166565
+        ],
+        "max": [
+          0.03346409648656845,
+          0.4714559316635132,
+          0.4999818205833435
+        ]
+      },
+      "topology": {
+        "vertices": 27004,
+        "triangles": 53996,
+        "components": 4,
+        "component_vertices": [
+          12641,
+          6708,
+          6066,
+          1589
+        ],
+        "boundary_edges": 0,
+        "overfull_edges": 0,
+        "nonmanifold_edges": 0,
+        "degenerate_triangles": 0,
+        "euler": 6,
+        "signed_volume": 0.01078563287218663
+      },
+      "outerTriangles": 53996,
+      "preset": {
+        "outerOffset": 0.001,
+        "maxEdge": 0.15,
+        "subdivisions": 0,
+        "creaseAngle": 30,
+        "smoothShading": true
+      },
+      "sourceReview": "APPROVED",
+      "formatErrors": 0,
+      "formatWarnings": 0,
+      "status": "released",
+      "preparedSha256": "6888c91442f9878d6610e37f87d44685c00b6e0e445d795145232519a4019b6c",
+      "preparedBytes": 2137702,
+      "generation": "0e12d332c0954284e937764d127d94a9a1da012002bdc5f074cfbc5b363cf81d",
+      "browser": {
+        "engine": "ego-lite Chromium",
+        "viewport": [
+          390,
+          844
+        ],
+        "deviceScaleFactor": 3,
+        "continuousRotationRadians": 14.316552079106273,
+        "layersStable": true,
+        "actualIPhone": false
+      },
+      "publicVerification": {
+        "tongye.me": {
+          "releaseId": "coscroll-24d69d971564297f",
+          "rotationRadians": 14.370044281786122,
+          "layersStable": true,
+          "errors": 0,
+          "actualIPhone": false
+        },
+        "aitoshuu.me": {
+          "releaseId": "coscroll-24d69d971564297f",
+          "rotationRadians": 14.605529091180207,
+          "layersStable": true,
+          "errors": 0,
+          "actualIPhone": false
+        }
+      }
+    },
+    {
+      "character": "化",
+      "characterId": "099",
+      "sourceFile": "第一批/099_化.glb",
+      "modelPath": "/models/10k_obj/099_化.glb",
+      "preparedPath": "/models/prepared/099_化.json",
+      "bytes": 972932,
+      "sha256": "14e424b48dc62add794e4142db23ee367307b7d3674a5ed17f8f04d72922bea4",
+      "positionSha256": "e80b598e54b009d4741087d46e642a1ea33ba720684a3b93acdaeb1860113c33",
+      "normalSha256": "107bd23500c6cf15c73ab5d937ed365e2f5470a2e2e3cb8bc663ff8dcc89ba91",
+      "indexSha256": "1e850361c3898d23ae327737822e77b7c4faa78625882cece75e5fe6b6d74a59",
+      "expandedPositionSha256": "37c353f00768f8972088e3d2f6e4ac0df8cec9984765c1fa186043d44b167129",
+      "bounds": {
+        "min": [
+          -0.04541299492120743,
+          -0.4041096270084381,
+          -0.5000574588775635
+        ],
+        "max": [
+          0.04542304202914238,
+          0.40411376953125,
+          0.5000091791152954
+        ]
+      },
+      "topology": {
+        "vertices": 27003,
+        "triangles": 53998,
+        "components": 2,
+        "component_vertices": [
+          13544,
+          13459
+        ],
+        "boundary_edges": 0,
+        "overfull_edges": 0,
+        "nonmanifold_edges": 0,
+        "degenerate_triangles": 0,
+        "euler": 4,
+        "signed_volume": 0.012042999798445015
+      },
+      "outerTriangles": 53998,
+      "preset": {
+        "outerOffset": 0.001,
+        "maxEdge": 0.15,
+        "subdivisions": 0,
+        "creaseAngle": 30,
+        "smoothShading": true
+      },
+      "sourceReview": "APPROVED",
+      "formatErrors": 0,
+      "formatWarnings": 0,
+      "status": "released",
+      "preparedSha256": "ed6ade00313fa8044c018f84d8e46d45f01fffd119f1936f9a98c09c2c22c07f",
+      "preparedBytes": 2011138,
+      "generation": "0e12d332c0954284e937764d127d94a9a1da012002bdc5f074cfbc5b363cf81d",
+      "browser": {
+        "engine": "ego-lite Chromium",
+        "viewport": [
+          390,
+          844
+        ],
+        "deviceScaleFactor": 3,
+        "continuousRotationRadians": 14.484223871515475,
+        "layersStable": true,
+        "actualIPhone": false
+      },
+      "publicVerification": {
+        "tongye.me": {
+          "releaseId": "coscroll-24d69d971564297f",
+          "rotationRadians": 14.48260136019099,
+          "layersStable": true,
+          "errors": 0,
+          "actualIPhone": false
+        },
+        "aitoshuu.me": {
+          "releaseId": "coscroll-24d69d971564297f",
+          "rotationRadians": 12.31455355728944,
+          "layersStable": true,
+          "errors": 0,
+          "actualIPhone": false
+        }
+      }
+    },
+    {
+      "character": "竹",
+      "characterId": "073",
+      "sourceFile": "第一批/073_竹.glb",
+      "modelPath": "/models/10k_obj/073_竹.glb",
+      "preparedPath": "/models/prepared/073_竹.json",
+      "bytes": 973304,
+      "sha256": "47bbab72dd010b82e10f7d54d75567fc38eae366179f2cfa6fec34baa47acff0",
+      "positionSha256": "c7dc06df2e3ea584e185c7473f173090af61e9cf631d8cf0f95e7b7affd3717d",
+      "normalSha256": "95da9d91ceb19a87c82e37cb668f3cb0f8671caaa1b64e7b11686dd4a7bd0aa4",
+      "indexSha256": "90bc0152d6bee253d20bce68ed7c7dfa825d202cb881d6792ab59185168003b4",
+      "expandedPositionSha256": "127f41b385d582e4caa5e811e930e5f5f4d132aa01ce5ba3ca76eddb04ebd105",
+      "bounds": {
+        "min": [
+          -0.04662690311670303,
+          -0.500076174736023,
+          -0.4525536000728607
+        ],
+        "max": [
+          0.04664500057697296,
+          0.49999886751174927,
+          0.4525647461414337
+        ]
+      },
+      "topology": {
+        "vertices": 27014,
+        "triangles": 54016,
+        "components": 3,
+        "component_vertices": [
+          14570,
+          12432,
+          12
+        ],
+        "boundary_edges": 0,
+        "overfull_edges": 0,
+        "nonmanifold_edges": 0,
+        "degenerate_triangles": 0,
+        "euler": 6,
+        "signed_volume": 0.013577447573742085
+      },
+      "outerTriangles": 54016,
+      "preset": {
+        "outerOffset": 0.001,
+        "maxEdge": 0.15,
+        "subdivisions": 0,
+        "creaseAngle": 30,
+        "smoothShading": true
+      },
+      "sourceReview": "APPROVED",
+      "formatErrors": 0,
+      "formatWarnings": 0,
+      "status": "released",
+      "preparedSha256": "cfa0d193739a10f90eea12896f39fb5cebaa4dfbe3a1e03a37815da0ea5535d3",
+      "preparedBytes": 2172062,
+      "generation": "0e12d332c0954284e937764d127d94a9a1da012002bdc5f074cfbc5b363cf81d",
+      "browser": {
+        "engine": "ego-lite Chromium",
+        "viewport": [
+          390,
+          844
+        ],
+        "deviceScaleFactor": 3,
+        "continuousRotationRadians": 14.489376633126255,
+        "layersStable": true,
+        "actualIPhone": false
+      },
+      "publicVerification": {
+        "tongye.me": {
+          "releaseId": "coscroll-24d69d971564297f",
+          "rotationRadians": 14.212655048263116,
+          "layersStable": true,
+          "errors": 0,
+          "actualIPhone": false
+        },
+        "aitoshuu.me": {
+          "releaseId": "coscroll-24d69d971564297f",
+          "rotationRadians": 14.899601217256482,
+          "layersStable": true,
+          "errors": 0,
+          "actualIPhone": false
+        }
+      }
+    },
+    {
+      "character": "海",
+      "characterId": "027",
+      "sourceFile": "第二批/027_海.glb",
+      "modelPath": "/models/10k_obj/027_海.glb",
+      "preparedPath": "/models/prepared/027_海.json",
+      "bytes": 972836,
+      "sha256": "6b28c2adb3764a84e29b66372b230caf81a7f2b91a4d502d4ea2e42a19460c96",
+      "positionSha256": "78cc89804c993af65a9ebbec6552414d119818bc86f8c114f4c9991acdda2564",
+      "normalSha256": "632c88c7447c1aaa1899e498353b474b246626a74ad5a27693e7ee732b0bf705",
+      "indexSha256": "b25e3f1f7161c4de9bbc00ec5ef67f686aa68c05e38e455911ce0b698e202bc4",
+      "expandedPositionSha256": "fc90a9f358f2a1b5811e6fcd0f46c77bf324eed4f650390e53107f2110c2f7c2",
+      "bounds": {
+        "min": [
+          -0.03286313638091087,
+          -0.454819917678833,
+          -0.5000384449958801
+        ],
+        "max": [
+          0.03287029638886452,
+          0.4548105299472809,
+          0.5000207424163818
+        ]
+      },
+      "topology": {
+        "vertices": 26999,
+        "triangles": 53998,
+        "components": 3,
+        "component_vertices": [
+          23497,
+          1831,
+          1671
+        ],
+        "boundary_edges": 0,
+        "overfull_edges": 0,
+        "nonmanifold_edges": 0,
+        "degenerate_triangles": 0,
+        "euler": 0,
+        "signed_volume": 0.016288699331315406
+      },
+      "outerTriangles": 53998,
+      "preset": {
+        "outerOffset": 0.001,
+        "maxEdge": 0.15,
+        "subdivisions": 0,
+        "creaseAngle": 30,
+        "smoothShading": true
+      },
+      "sourceReview": "APPROVED",
+      "formatErrors": 0,
+      "formatWarnings": 0,
+      "status": "released",
+      "preparedSha256": "c5cf296accf081224d13e2d666178d719ce2658dc7071296457ad4f58c49feab",
+      "preparedBytes": 2190514,
+      "generation": "0e12d332c0954284e937764d127d94a9a1da012002bdc5f074cfbc5b363cf81d",
+      "browser": {
+        "engine": "ego-lite Chromium",
+        "viewport": [
+          390,
+          844
+        ],
+        "deviceScaleFactor": 3,
+        "continuousRotationRadians": 14.487660564868968,
+        "layersStable": true,
+        "actualIPhone": false
+      },
+      "publicVerification": {
+        "tongye.me": {
+          "releaseId": "coscroll-24d69d971564297f",
+          "rotationRadians": 14.269799663651284,
+          "layersStable": true,
+          "errors": 0,
+          "actualIPhone": false
+        },
+        "aitoshuu.me": {
+          "releaseId": "coscroll-24d69d971564297f",
+          "rotationRadians": 14.474655162954484,
+          "layersStable": true,
+          "errors": 0,
+          "actualIPhone": false
+        }
+      }
+    },
+    {
+      "character": "土",
+      "characterId": "083",
+      "sourceFile": "第二批/083_土.glb",
+      "modelPath": "/models/10k_obj/083_土.glb",
+      "preparedPath": "/models/prepared/083_土.json",
+      "bytes": 972920,
+      "sha256": "b0c0ccfaf7ba71820923957709ab750f84987ca104d2feac999dd332b6f2d764",
+      "positionSha256": "caec0e5093ecae4698ae678b33d21339001d795971026e586e07618e50016753",
+      "normalSha256": "c27dfa9d61d4f3286c14793ec916668b37fff73759b7948850f3f155d20fe9ab",
+      "indexSha256": "37759f3fd74f18ac6fbc07df713174a27a8c2a8b6cd8c2a70ec193ffb8a82507",
+      "expandedPositionSha256": "b07ea72124c77c90dfe4d879c8fae484cbe9d4597fa4721180633aa301e571e0",
+      "bounds": {
+        "min": [
+          -0.0584622398018837,
+          -0.3899371027946472,
+          -0.5000357031822205
+        ],
+        "max": [
+          0.05844902992248535,
+          0.389923095703125,
+          0.5000165700912476
+        ]
+      },
+      "topology": {
+        "vertices": 27002,
+        "triangles": 54000,
+        "components": 1,
+        "component_vertices": [
+          27002
+        ],
+        "boundary_edges": 0,
+        "overfull_edges": 0,
+        "nonmanifold_edges": 0,
+        "degenerate_triangles": 0,
+        "euler": 2,
+        "signed_volume": 0.019357473815556248
+      },
+      "outerTriangles": 54000,
+      "preset": {
+        "outerOffset": 0.001,
+        "maxEdge": 0.15,
+        "subdivisions": 0,
+        "creaseAngle": 30,
+        "smoothShading": true
+      },
+      "sourceReview": "APPROVED",
+      "formatErrors": 0,
+      "formatWarnings": 0,
+      "status": "released",
+      "preparedSha256": "86ed71c36acb3bad17a50c66c63bf751fc5d1facc70ffa9b9b2cdcc4bf73f602",
+      "preparedBytes": 2024974,
+      "generation": "0e12d332c0954284e937764d127d94a9a1da012002bdc5f074cfbc5b363cf81d",
+      "browser": {
+        "engine": "ego-lite Chromium",
+        "viewport": [
+          390,
+          844
+        ],
+        "deviceScaleFactor": 3,
+        "continuousRotationRadians": 14.4490386766482,
+        "layersStable": true,
+        "actualIPhone": false
+      },
+      "publicVerification": {
+        "tongye.me": {
+          "releaseId": "coscroll-24d69d971564297f",
+          "rotationRadians": 9.840000000238447,
+          "layersStable": true,
+          "errors": 0,
+          "actualIPhone": false
+        },
+        "aitoshuu.me": {
+          "releaseId": "coscroll-24d69d971564297f",
+          "rotationRadians": 14.68415420804611,
+          "layersStable": true,
+          "errors": 0,
+          "actualIPhone": false
+        }
+      }
+    },
+    {
+      "character": "雨",
+      "characterId": "032",
+      "sourceFile": "第二批/032_雨.glb",
+      "modelPath": "/models/10k_obj/032_雨.glb",
+      "preparedPath": "/models/prepared/032_雨.json",
+      "bytes": 972932,
+      "sha256": "2b7d55fb8a83b0f4933845a54faaed09a22c11d4bac1191fc114d521242170ce",
+      "positionSha256": "a340353c659f7482fcc949936e51521296b88eead016e48123b78dd55c95e3c0",
+      "normalSha256": "a0d8fbf027887b55bfbc12b84148f3f5ead86b525ba4ac25f5cb7a0aa9425ac8",
+      "indexSha256": "798c09b1cd031f8c1dfdb93de5e2bb5de4d73195c3983a74201e2ba1e8655521",
+      "expandedPositionSha256": "a7b8b6fa66351ea1d9f770a48e4de0441a3daea93ad969f062cf49c569f9b86d",
+      "bounds": {
+        "min": [
+          -0.03780610114336014,
+          -0.4993651807308197,
+          -0.4999936819076538
+        ],
+        "max": [
+          0.037814605981111526,
+          0.4993753433227539,
+          0.5000185966491699
+        ]
+      },
+      "topology": {
+        "vertices": 27003,
+        "triangles": 53998,
+        "components": 3,
+        "component_vertices": [
+          21660,
+          2898,
+          2445
+        ],
+        "boundary_edges": 0,
+        "overfull_edges": 0,
+        "nonmanifold_edges": 0,
+        "degenerate_triangles": 0,
+        "euler": 4,
+        "signed_volume": 0.02165782820758849
+      },
+      "outerTriangles": 53998,
+      "preset": {
+        "outerOffset": 0.001,
+        "maxEdge": 0.15,
+        "subdivisions": 0,
+        "creaseAngle": 30,
+        "smoothShading": true
+      },
+      "sourceReview": "APPROVED",
+      "formatErrors": 0,
+      "formatWarnings": 0,
+      "status": "released",
+      "preparedSha256": "22fca7f21a154e0f111d4cd87bbf0ff81ff5cfb01bb8afd8c4e756b767c63dcb",
+      "preparedBytes": 2270222,
+      "generation": "0e12d332c0954284e937764d127d94a9a1da012002bdc5f074cfbc5b363cf81d",
+      "browser": {
+        "engine": "ego-lite Chromium",
+        "viewport": [
+          390,
+          844
+        ],
+        "deviceScaleFactor": 3,
+        "continuousRotationRadians": 14.486805603387296,
+        "layersStable": true,
+        "actualIPhone": false
+      },
+      "publicVerification": {
+        "tongye.me": {
+          "releaseId": "coscroll-24d69d971564297f",
+          "rotationRadians": 9.32630969756768,
+          "layersStable": true,
+          "errors": 0,
+          "actualIPhone": false
+        },
+        "aitoshuu.me": {
+          "releaseId": "coscroll-24d69d971564297f",
+          "rotationRadians": 14.332969561336583,
+          "layersStable": true,
+          "errors": 0,
+          "actualIPhone": false
+        }
+      }
+    },
+    {
+      "character": "天",
+      "characterId": "086",
+      "sourceFile": "第二批/086_天.glb",
+      "modelPath": "/models/10k_obj/086_天.glb",
+      "preparedPath": "/models/prepared/086_天.json",
+      "bytes": 972916,
+      "sha256": "734c193835bbe97fa3f1e5af319a5e9835d1ee0c6982b265f5942cacddf5057c",
+      "positionSha256": "13309b5c9f21aec507971dd1cbfa4cdc28fd81dc0f253860b933b8ec5ba82eec",
+      "normalSha256": "7a6184c1d32fce9e3f7586464fa0613e12eb4f7ba7263413a6af54faa9726ba9",
+      "indexSha256": "658413c7f17301324b018f153d604d2aefe1bae532ae9c35dea8d9c359c5faf0",
+      "expandedPositionSha256": "9f83d582f88b046b2e4d33be6c54a28ad83b886eb64932ffe03a09aaa6e1b9a7",
+      "bounds": {
+        "min": [
+          -0.05991460755467415,
+          -0.5,
+          -0.44800156354904175
+        ],
+        "max": [
+          0.05990409851074219,
+          0.500018298625946,
+          0.4480627179145813
+        ]
+      },
+      "topology": {
+        "vertices": 27003,
+        "triangles": 53998,
+        "components": 2,
+        "component_vertices": [
+          21262,
+          5741
+        ],
+        "boundary_edges": 0,
+        "overfull_edges": 0,
+        "nonmanifold_edges": 0,
+        "degenerate_triangles": 0,
+        "euler": 4,
+        "signed_volume": 0.02314982730536967
+      },
+      "outerTriangles": 53998,
+      "preset": {
+        "outerOffset": 0.001,
+        "maxEdge": 0.15,
+        "subdivisions": 0,
+        "creaseAngle": 30,
+        "smoothShading": true
+      },
+      "sourceReview": "APPROVED",
+      "formatErrors": 0,
+      "formatWarnings": 0,
+      "status": "released",
+      "preparedSha256": "0a4b3905a202042cd82476e57a00318252507d81dc2e41ef0f7a34ab550675c0",
+      "preparedBytes": 1945406,
+      "generation": "0e12d332c0954284e937764d127d94a9a1da012002bdc5f074cfbc5b363cf81d",
+      "browser": {
+        "engine": "ego-lite Chromium",
+        "viewport": [
+          390,
+          844
+        ],
+        "deviceScaleFactor": 3,
+        "continuousRotationRadians": 14.486834516306885,
+        "layersStable": true,
+        "actualIPhone": false
+      },
+      "publicVerification": {
+        "tongye.me": {
+          "releaseId": "coscroll-24d69d971564297f",
+          "rotationRadians": 14.626398787706094,
+          "layersStable": true,
+          "errors": 0,
+          "actualIPhone": false
+        },
+        "aitoshuu.me": {
+          "releaseId": "coscroll-24d69d971564297f",
+          "rotationRadians": 14.782001269642336,
+          "layersStable": true,
+          "errors": 0,
+          "actualIPhone": false
+        }
+      }
+    }
+  ],
+  "release": {
+    "releaseId": "coscroll-24d69d971564297f",
+    "sourceDigest": "24d69d971564297f271fecf6a66936e5377dc9c5be10157f504e544af4b54cfe",
+    "artifactClosureSha256": "e8fe5647b6480506f51b9bb21213d450d43f494297d64dac7b6680e9e21e0d81",
+    "publishedOn": "2026-10-22",
+    "origins": [
+      "https://tongye.me/coscroll/",
+      "https://aitoshuu.me/coscroll/"
+    ]
+  }
+}

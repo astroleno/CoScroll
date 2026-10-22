@@ -11,6 +11,7 @@ const root = resolve('.');
 const pipeline = await loadModelPipeline();
 const baseline = JSON.parse(await readFile(new URL('./fixtures/model-geometry-baseline.json', import.meta.url)));
 const registry = JSON.parse(await readFile(new URL('../../src/components/jade/prepared-models.json', import.meta.url)));
+const delivery = JSON.parse(await readFile(new URL('../../docs/model-assets/priority7-integration-20261022.json', import.meta.url)));
 const {ModelPreloader, assetUrl} = await loadPreloaderModule(pipeline.directory);
 const preloader = ModelPreloader.getInstance();
 after(() => pipeline.dispose());
@@ -37,7 +38,7 @@ async function payload(entry) {
 
 test('all 26 complete prepared models match independently recorded legacy geometry bytes and custom parameters', async () => {
   assert.equal(baseline.models.length, 26);
-  assert.equal(registry.models.length, baseline.models.length);
+  assert.ok(registry.models.length >= baseline.models.length);
   assert.deepEqual(pipeline.PREPARED_MODEL_PRESET, baseline.preset);
   for (const old of baseline.models) {
     const entry = registry.models.find(entry => entry.sourcePath === old.path);
@@ -58,6 +59,65 @@ test('all 26 complete prepared models match independently recorded legacy geomet
 });
 
 function registryEntryIdentity(entry) {return {generation:registry.generation, sourceSha256:entry.sourceSha256};}
+
+function expandedPositions(geometry) {
+  const positions = geometry.getAttribute('position'), index = geometry.index;
+  const expanded = new Float32Array((index?.count ?? positions.count) * 3);
+  for (let i = 0; i < expanded.length / 3; i++) {
+    const vertex = index ? index.getX(i) : i;
+    expanded.set([positions.getX(vertex), positions.getY(vertex), positions.getZ(vertex)], i * 3);
+  }
+  return Buffer.from(expanded.buffer);
+}
+
+function components(geometry) {
+  const count = geometry.getAttribute('position').count;
+  const parents = Array.from({length:count}, (_, i) => i);
+  const rootOf = i => {while (parents[i] !== i) {parents[i] = parents[parents[i]]; i = parents[i];} return i;};
+  const index = geometry.index;
+  for (let i = 0; i < index.count; i += 3) {
+    const a = rootOf(index.getX(i));
+    parents[rootOf(index.getX(i + 1))] = a;
+    parents[rootOf(index.getX(i + 2))] = a;
+  }
+  const sizes = new Map();
+  for (let i = 0; i < count; i++) {const id = rootOf(i); sizes.set(id, (sizes.get(id) || 0) + 1);}
+  return [...sizes.values()].sort((a,b) => b-a);
+}
+
+test('seven GLBs retain every delivered triangle, winding, stroke component and bound in complete prepared pairs', async () => {
+  assert.equal(delivery.models.length, 7);
+  assert.equal(registry.models.length, baseline.models.length + delivery.models.length);
+  for (const model of delivery.models) {
+    const entry = registry.models.find(entry => entry.sourcePath === model.modelPath);
+    const source = await readFile(join(root, 'public', model.modelPath));
+    assert.equal(hash(source), model.sha256);
+    assert.equal(source.length, model.bytes);
+    assert.ok(source.length < 1_000_000);
+    const decoded = await pipeline.decodePreparedModel(await payload(entry), registryEntryIdentity(entry));
+    try {
+      // This hash was read directly from the supplied GLB accessors, without
+      // GLTFLoader or the project's geometry preparation implementation.
+      assert.equal(hash(expandedPositions(decoded.base)), model.expandedPositionSha256, model.character);
+      assert.equal(decoded.base.index.count / 3, model.topology.triangles);
+      assert.equal(decoded.base.getAttribute('position').count, model.topology.vertices);
+      assert.deepEqual(components(decoded.base), model.topology.component_vertices, model.character + ' components');
+      decoded.base.computeBoundingBox();
+      assert.deepEqual(decoded.base.boundingBox.min.toArray(), model.bounds.min);
+      assert.deepEqual(decoded.base.boundingBox.max.toArray(), model.bounds.max);
+      assert.equal(decoded.outer.index.count / 3, model.outerTriangles);
+      assert.notEqual(decoded.outer, decoded.base);
+      assert.equal(decoded.base.getAttribute('uv'), undefined, 'do not invent UV coordinates absent from the delivery');
+      for (const geometry of [decoded.base, decoded.outer]) {
+        const normals = geometry.getAttribute('normal');
+        for (let i = 0; i < normals.count; i++) {
+          const length = Math.hypot(normals.getX(i), normals.getY(i), normals.getZ(i));
+          assert.ok(Number.isFinite(length) && Math.abs(length - 1) < .0001, model.character + ' unit normal');
+        }
+      }
+    } finally {decoded.base.dispose(); decoded.outer.dispose();}
+  }
+});
 
 test('lossless codec preserves negative zero, array types and geometry metadata', async () => {
   const geometry = new THREE.BufferGeometry();
@@ -105,7 +165,8 @@ async function withLoaderIO(options, run) {
     objLoads.push(url);
     const original = options.objSource || registry.models.find(entry => assetUrl(entry.sourcePath) === url)?.sourcePath;
     assert.ok(original, 'fallback source is explicit');
-    readFile(join(root, 'public', original), 'utf8').then(onLoad).catch(onError);
+    readFile(join(root, 'public', original)).then(bytes => onLoad(this.responseType === 'arraybuffer'
+      ? bytes.buffer.slice(bytes.byteOffset, bytes.byteOffset + bytes.byteLength) : bytes.toString('utf8'))).catch(onError);
     return this;
   };
   try {await run({fetches, objLoads});}
@@ -142,6 +203,31 @@ test('missing and corrupt prepared data fall back to the original OBJ and geomet
   }
 });
 
+test('all delivered GLBs use prepared pairs and retain matching full source fallback for corrupt payloads or missing decompression', async () => {
+  const saved = globalThis.DecompressionStream;
+  try {
+    for (const options of [{}, {corrupt:true}, {nativeDecompression:false}]) {
+      await withLoaderIO(options, async ({fetches, objLoads}) => {
+        for (const model of delivery.models) {
+          const entry = registry.models.find(entry => entry.sourcePath === model.modelPath);
+          const expected = await pipeline.decodePreparedModel(await payload(entry), registryEntryIdentity(entry));
+          globalThis.DecompressionStream = options.nativeDecompression === false ? undefined : saved;
+          try {
+            const path = assetUrl(model.modelPath);
+            assert.deepEqual(fingerprint(await preloader.loadModel(path)), fingerprint(expected.base), model.character);
+            assert.deepEqual(fingerprint(preloader.getOffsetGeometry(path, baseline.preset)), fingerprint(expected.outer), model.character + ' outer');
+          } finally {
+            globalThis.DecompressionStream = saved;
+            expected.base.dispose(); expected.outer.dispose();
+          }
+        }
+        assert.equal(fetches.length, options.nativeDecompression === false ? 0 : 7);
+        assert.equal(objLoads.length, options.corrupt || options.nativeDecompression === false ? 7 : 0);
+      });
+    }
+  } finally {globalThis.DecompressionStream = saved;}
+});
+
 test('an external custom model with a shipped basename keeps its original loading path', async () => {
   await withLoaderIO({objSource:registry.models[0].sourcePath}, async ({fetches, objLoads}) => {
     const path = 'https://custom.example.invalid/models/001_空.obj';
@@ -166,6 +252,6 @@ test('browsers without native decompression use the original model without downl
 
 test('release preflight validates the complete source set, pipeline identity and payload hashes', async () => {
   const checked = await checkPreparedModels();
-  assert.equal(checked.models, baseline.models.length);
+  assert.equal(checked.models, registry.models.length);
   assert.equal(checked.generation, registry.generation);
 });
