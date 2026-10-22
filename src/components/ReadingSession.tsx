@@ -673,7 +673,7 @@ export default function ReadingSession({sessionRevision, config, lyrics, mediaDu
 
   // 更新锚字状态和智能预加载（仅在锚字变更时触发）
   useEffect(() => {
-    if (!config) return;
+    if (!config || !entered) return;
 
     if (DEBUG_DEV) {
       console.log(`[锚字更新] ${anchorChar}`);
@@ -694,7 +694,7 @@ export default function ReadingSession({sessionRevision, config, lyrics, mediaDu
         if (!canceled) refreshPreloadStatus();
       }), 400);
     return () => { canceled = true; clearTimeout(timer); };
-  }, [anchorChar, config, timeline, anchorMappings, refreshPreloadStatus, duration]);
+  }, [anchorChar, config, timeline, anchorMappings, refreshPreloadStatus, duration, entered]);
 
   // 调试信息：显示当前锚字状态
   useEffect(() => {
@@ -817,6 +817,7 @@ export default function ReadingSession({sessionRevision, config, lyrics, mediaDu
           onPlayStateChange={handleAudioPlayStateChange}
           onLoopComplete={handleAudioLoopComplete}
           enableWebAudio={false}
+          preload={hasUserInteracted ? 'auto' : 'metadata'}
           initialTime={0}
           seekSignal={seekSignal}
         />

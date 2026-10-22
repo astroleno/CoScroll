@@ -1,5 +1,6 @@
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
+import { createHash } from 'node:crypto';
 import { PROJECT_CATALOG } from './catalog';
 import { safeValidateProjectConfig } from './schema';
 import { parseLRC } from './lyrics';
@@ -7,6 +8,14 @@ import { resolveAnchor } from './resolveAnchor';
 import { assetUrl } from '@/utils/assetUrl';
 import prepared from '@/components/jade/prepared-models.json';
 import type { EntryData } from './entryBootstrap';
+import entryFont from './entry-font.json';
+import { entryFontRanges } from './entryFont';
+
+const fontRanges = entryFontRanges(entryFont.codepoints);
+for (const [path, expected] of [[entryFont.source, entryFont.sourceSha256], [entryFont.entry, entryFont.entrySha256]]) {
+  const actual = createHash('sha256').update(readFileSync(join(process.cwd(), 'public', path))).digest('hex');
+  if (actual !== expected) throw new Error(`Entry font changed without validation: ${path}`);
+}
 
 export function createEntryBootstrap() {
   const data: EntryData = {version: 1, release: process.env.COSCROLL_RELEASE_ID || 'development', projects: {}};
@@ -22,5 +31,5 @@ export function createEntryBootstrap() {
     const record = prepared.models.find(item => assetUrl(item.sourcePath) === model);
     hints[id] = {model: record ? assetUrl(record.preparedPath) : model, audio: assetUrl(config.assets.audio.src), supplement: lyrics.includes('栴')};
   }
-  return {data, hints};
+  return {data, hints, font: {entry: assetUrl(entryFont.entry), full: assetUrl(entryFont.source), ranges: fontRanges}};
 }

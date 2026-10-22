@@ -100,7 +100,9 @@ export function createTextBillboard({
 
     safeGlyphs.forEach((glyph, index) => {
       const charY = startY + verticalSpacing * index;
-      ctx.fillText(glyph, centerX, charY);
+      // Invisible spacers still occupy their original cell, but drawing U+3000
+      // needlessly asks the font selector to load the complete fallback face.
+      if (glyph !== '　' && glyph !== ' ') ctx.fillText(glyph, centerX, charY);
     });
   }
 

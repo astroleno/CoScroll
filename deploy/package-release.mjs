@@ -4,6 +4,7 @@ import { spawn } from 'node:child_process';
 import { cp, mkdir, readFile, writeFile } from 'node:fs/promises';
 import { dirname, extname, join, relative, resolve, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { constants } from 'node:fs';
 import { BASE_PATH, CACHE, MIME, bases, closureHash, excluded, sha, verifyPackage, walk } from './release-lib.mjs';
 import { checkPreparedModels } from './prepare-models.mjs';
 
@@ -67,7 +68,9 @@ async function main() {
     if (!bytes.length) throw new Error(`Empty delivery file: ${path}`);
     const packagePath = `${channel === 'origin' ? 'web' : channel}/${path}`;
     await mkdir(dirname(join(output, packagePath)), { recursive: true });
-    await cp(file, join(output, packagePath));
+    // CoW cloning preserves an independent immutable snapshot on APFS/Btrfs;
+    // unsupported filesystems fall back to an ordinary copy.
+    await cp(file, join(output, packagePath), { mode: constants.COPYFILE_FICLONE });
     entries.push({ channel, packagePath, bytes: bytes.length, sha256: sha(bytes), mime,
       cacheControl: channel === 'origin' ? 'no-cache' : CACHE,
       ...(channel === 'origin' ? {} : { objectKey: `${urls.objectPrefix}${path}` }),

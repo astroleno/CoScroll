@@ -25,6 +25,9 @@ function installInstrumentation() {
   const commit = hook.onCommitFiberRoot;
   hook.onCommitFiberRoot = function(id, ...args) {if (q.commits.length < 10000) q.commits.push({id, at: performance.now()}); return commit?.call(this, id, ...args);};
   window.__REACT_DEVTOOLS_GLOBAL_HOOK__ = hook;
+  document.addEventListener('playing', () => {
+    if (!q.milestones.audioPlayingMs) q.milestones.audioPlayingMs = performance.now();
+  }, true);
   const recorded = new WeakMap();
   for (const name of ['WebGLRenderingContext', 'WebGL2RenderingContext']) {
     const proto = window[name]?.prototype;
@@ -47,10 +50,20 @@ function installInstrumentation() {
   const timer = setInterval(() => {
     const now = performance.now();
     if (!q.milestones.coverReadyMs && document.querySelector('[data-coscroll-intro]')) q.milestones.coverReadyMs = now;
+    if (!q.milestones.audioMetadataMs && document.querySelector('audio')?.readyState >= 1) q.milestones.audioMetadataMs = now;
     if (!q.milestones.audioReadyMs && document.querySelector('audio')?.readyState >= 2) q.milestones.audioReadyMs = now;
     if (!q.milestones.fontReadyMs && [...document.fonts].some(f => f.family.replace(/['"]/g, '') === 'RunZhiJiaKangXiZidian' && f.status === 'loaded') &&
         document.fonts.check('16px RunZhiJiaKangXiZidian', '心经')) q.milestones.fontReadyMs = now;
-    if (q.milestones.coverReadyMs && q.milestones.audioReadyMs && q.milestones.fontReadyMs) clearInterval(timer);
+    if (!q.milestones.sceneReadyMs && window.__renderProbe) {
+      const main = window.__renderProbe.stores.map(s => s.getState()).find(s => !s.gl.domElement.closest('[data-coscroll-background]'));
+      if (main) {
+        const meshes = [];
+        main.scene.traverse(o => {if (o.material?.isMeshPhysicalMaterial) meshes.push(o);});
+        if (meshes.length === 2 && meshes.every(o => o.material.normalMap?.image && o.material.envMap && main.gl.properties.get(o.material).currentProgram)) q.milestones.sceneReadyMs = now;
+      }
+    }
+    if (q.milestones.coverReadyMs && q.milestones.audioReadyMs && q.milestones.fontReadyMs &&
+        (!window.__renderProbe || q.milestones.sceneReadyMs)) clearInterval(timer);
   }, 100);
 }
 
@@ -100,8 +113,9 @@ export async function samplePerformance(page, duration = 6000) {
 
 export async function measurePage(page, {url, screenshotPrefix}) {
   await page.goto(url, {waitUntil: 'domcontentloaded', timeout: 45000});
+  await page.cdp('Page.bringToFront', {});
   await page.waitForFunction(() => Boolean(window.__coscrollPerf), undefined, {timeout: 10000});
-  await page.waitForFunction(() => Boolean(window.__coscrollPerf?.milestones.audioReadyMs && window.__coscrollPerf?.milestones.fontReadyMs && window.__coscrollPerf?.milestones.shaderFirstDrawMs && document.querySelectorAll('canvas').length === 2), undefined, {timeout: 90000});
+  await page.waitForFunction(() => Boolean(document.querySelector('[data-coscroll-intro]') && window.__coscrollPerf?.milestones.fontReadyMs && window.__coscrollPerf?.milestones.shaderFirstDrawMs && document.querySelectorAll('canvas').length === 2), undefined, {timeout: 90000});
   const startup = await page.evaluate(() => ({
     url: location.href, release: document.querySelector('meta[name="coscroll-release-id"]')?.content,
     navigation: performance.getEntriesByType('navigation').map(e => e.toJSON()),
@@ -112,13 +126,19 @@ export async function measurePage(page, {url, screenshotPrefix}) {
   }));
   const intro = await samplePerformance(page, 3000);
   if (screenshotPrefix) await page.screenshot({path: screenshotPrefix + '-intro.png'});
+  await page.evaluate(() => {window.__coscrollPerf.milestones.playRequestedMs = performance.now();});
   await touchTap(page, '[data-coscroll-intro]');
   await page.waitForFunction(() => !document.querySelector('audio').paused && document.querySelector('audio').currentTime > .5, undefined, {timeout: 15000});
   const reading = await samplePerformance(page);
   await touchTap(page, 'button[aria-label="Pause"]');
   await page.waitForFunction(() => document.querySelector('audio').paused, undefined, {timeout: 10000});
+  // Keep audio-start policy separate from full-quality scene readiness.
+  if (await page.evaluate(() => Boolean(window.__renderProbe))) {
+    await page.waitForFunction(() => Boolean(window.__coscrollPerf.milestones.sceneReadyMs), undefined, {timeout: 90000});
+  }
   if (screenshotPrefix) await page.screenshot({path: screenshotPrefix + '-reading.png'});
   const final = await page.evaluate(() => ({errors: window.__coscrollPerf.errors, warnings: window.__coscrollPerf.warnings,
+    milestones: window.__coscrollPerf.milestones,
     overflow: document.documentElement.scrollWidth > innerWidth, canvases: document.querySelectorAll('canvas').length,
     paused: document.querySelector('audio').paused, audioTime: document.querySelector('audio').currentTime}));
   return {startup, intro, reading, final};

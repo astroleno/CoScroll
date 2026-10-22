@@ -19,6 +19,7 @@ interface AudioEngineProps {
   enableWebAudio?: boolean;
   initialTime?: number;
   seekSignal?: number;
+  preload?: 'none' | 'metadata' | 'auto';
 }
 
 interface AudioState {
@@ -46,7 +47,8 @@ export const AudioEngine: React.FC<AudioEngineProps> = ({
   onLoopComplete,
   enableWebAudio = true,
   initialTime = 0,
-  seekSignal
+  seekSignal,
+  preload = 'auto'
 }) => {
   // Refs
   const audioRef = useRef<HTMLAudioElement>(null);
@@ -514,7 +516,7 @@ export const AudioEngine: React.FC<AudioEngineProps> = ({
         cancelAnimationLoop();
       }}
       onError={handleAudioError}
-      preload="auto"
+      preload={preload}
       playsInline
       webkit-playsinline="true"
       controls={false}

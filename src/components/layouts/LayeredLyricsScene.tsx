@@ -50,7 +50,9 @@ function LayeredLyricsScene({lyrics, inputRef, options, frontFontSize, backFontS
     if (!lyrics.length) return;
     let cancelled = false, cancel = () => {};
     const recipes: BillboardRecipe[] = [];
-    const add = (text: string, top: boolean) => recipes.push({text: text.trim() ? text : '　',
+    // A synthetic ideographic space can request the complete fallback font even
+    // though this invisible column has no ink. ASCII space is already prepared.
+    const add = (text: string, top: boolean) => recipes.push({text: text.trim() ? text : ' ',
       align: top ? 'left' : 'right', orientation: 'vertical', verticalAlign: top ? 'top' : 'bottom',
       fontFamily, fontRevision, fontSizeMultiplier: 1});
     // Upload the existing window during the cover, then prepare two columns

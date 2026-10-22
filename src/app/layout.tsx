@@ -3,7 +3,6 @@ import { assetUrl } from '@/utils/assetUrl';
 import { createEntryBootstrap } from '@/config/entryBootstrap.server';
 import { ENTRY_DATA_ID, serializeEntryData } from '@/config/entryBootstrap';
 
-const primaryFont = assetUrl('/fonts/润植家康熙字典美化体.woff2');
 const supplementFont = assetUrl('/fonts/lotus-supplement.woff2');
 
 export const metadata = {
@@ -17,7 +16,7 @@ export default function RootLayout({
 }: {
   children: React.ReactNode
 }) {
-  const {data, hints} = createEntryBootstrap();
+  const {data, hints, font} = createEntryBootstrap();
   const earlyPreparation = `(() => {
     const rootPath = ${serializeEntryData(process.env.NEXT_PUBLIC_BASE_PATH || '')};
     if (location.pathname !== rootPath && location.pathname !== rootPath + '/') return;
@@ -38,24 +37,35 @@ export default function RootLayout({
     };
     preload(hint.model, 'fetch');
     if (hint.supplement) preload(${serializeEntryData(supplementFont)}, 'font', 'font/woff2');
-    // Keep the full font and entry scripts ahead of 2.5 MB of textures on a
+    // Keep the required glyphs and entry scripts ahead of 2.5 MB of textures on a
     // constrained connection. Start texture hints before the reading scene.
     const textures = () => {
       preload(${serializeEntryData(assetUrl('/textures/qwantani_moon_noon_puresky_1k.hdr'))}, 'fetch');
       preload(${serializeEntryData(assetUrl('/textures/normal.jpg'))}, 'image');
     };
-    document.fonts.load('16px RunZhiJiaKangXiZidian', hint.supplement ? '心经栴' : '心经').then(textures, textures);
+    const afterEntry = () => {
+      if (document.readyState === 'complete') textures();
+      else window.addEventListener('load', textures, {once: true});
+    };
+    document.fonts.load('16px RunZhiJiaKangXiZidian', hint.supplement ? '心经栴' : '心经').then(afterEntry, afterEntry);
   })();`;
   return (
     <html lang="zh-Hans">
       <head>
         <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-        <link rel="preconnect" href={new URL(primaryFont, 'http://localhost').origin} crossOrigin="anonymous" />
+        <link rel="preconnect" href={new URL(font.entry, 'http://localhost').origin} crossOrigin="anonymous" />
         <link rel="preconnect" href={new URL(assetUrl('/audio/心经_2.mp3'), 'http://localhost').origin} crossOrigin="anonymous" />
-        <link rel="preload" href={primaryFont} as="font" type="font/woff2" crossOrigin="anonymous" fetchPriority="low" />
+        <link rel="preload" href={font.entry} as="font" type="font/woff2" crossOrigin="anonymous" fetchPriority="high" />
         <style dangerouslySetInnerHTML={{__html: `@font-face {
           font-family: 'RunZhiJiaKangXiZidian';
-          src: url('${primaryFont}') format('woff2');
+          src: url('${font.full}') format('woff2');
+          unicode-range: ${font.ranges.full};
+          font-display: swap;
+        }
+        @font-face {
+          font-family: 'RunZhiJiaKangXiZidian';
+          src: url('${font.entry}') format('woff2');
+          unicode-range: ${font.ranges.entry};
           font-display: swap;
         }
         @font-face {

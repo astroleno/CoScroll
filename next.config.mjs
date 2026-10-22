@@ -12,18 +12,20 @@ const config = {
   basePath,
   assetPrefix: process.env.NEXT_PUBLIC_ASSET_BASE?.replace(/\/$/, ''),
   productionBrowserSourceMaps: false,
+  experimental: { cpus: 2 },
   webpack(config, {isServer, dev}) {
     if (releaseId) config.cache = false;
-    // The asset CDN currently negotiates HTTP/1.1. Avoid several waves of tiny
-    // initial shared chunks while retaining Next's framework/library groups.
+    // A slow, small framework request can hold the entire reader behind it.
+    // Keep the home entry and its bootstrap dependencies together; unrelated
+    // experimental routes retain their own chunks and CSS stays independent.
     if (!isServer && !dev && config.optimization.splitChunks) {
       config.optimization.splitChunks.maxInitialRequests = 6;
-      config.optimization.splitChunks.cacheGroups.coscrollScene = {
-        name: 'coscroll-scene', priority: 35, enforce: true,
-        chunks: chunk => chunk.name === 'app/page',
+      config.optimization.splitChunks.cacheGroups.coscrollEntry = {
+        name: 'coscroll-entry', priority: 50, enforce: true,
+        chunks: chunk => ['app/page', 'app/layout', 'main-app'].includes(chunk.name),
         test(module) {
           const resource = module.nameForCondition?.() || '';
-          return !!resource && !/node_modules[/\\](?:next|react|react-dom|scheduler)[/\\]/.test(resource);
+          return !!resource && !/\.(?:css|scss|sass)(?:[?#]|$)/.test(resource);
         },
       };
     }

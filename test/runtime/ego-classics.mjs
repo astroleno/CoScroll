@@ -147,9 +147,11 @@ export async function verifyNativeGestures(page) {
     await page.waitForFunction(cycle=>window.__infiniteRegression.read().cycle===cycle&&Math.abs(document.querySelector('audio').currentTime-7)<.01,cycle,{timeout:10000});
     const rect=await page.evaluate(()=>{const r=document.querySelector('input[aria-label="播放进度"]').getBoundingClientRect();return{x:r.x,y:r.y+r.height/2,w:r.width};});
     await page.cdp('Input.dispatchTouchEvent',{type:'touchStart',touchPoints:[{...point(0),x:rect.x+rect.w*.2,y:rect.y}]});
-    await page.cdp('Input.dispatchTouchEvent',{type:'touchMove',touchPoints:[{...point(0),x:rect.x+rect.w*.55,y:rect.y}]});
+    // The midpoint is independent of the browser's native thumb width and
+    // integer range step; an arbitrary 55% CSS coordinate is not 55% value.
+    await page.cdp('Input.dispatchTouchEvent',{type:'touchMove',touchPoints:[{...point(0),x:rect.x+rect.w*.5,y:rect.y}]});
     await page.cdp('Input.dispatchTouchEvent',{type:'touchEnd',touchPoints:[]});
-    await page.waitForFunction(cycle=>{const s=window.__infiniteRegression.read();return s.cycle===cycle&&Math.abs(s.mediaTime-s.duration*.55)<2;},cycle,{timeout:15000});
+    await page.waitForFunction(cycle=>{const s=window.__infiniteRegression.read();return s.cycle===cycle&&Math.abs(s.mediaTime-s.duration*.5)<2;},cycle,{timeout:15000});
     results.push({touchScrub:true,...await page.evaluate(()=>window.__infiniteRegression.read())});
   }
   await page.evaluate(()=>window.__infiniteRegression.seek(0));
