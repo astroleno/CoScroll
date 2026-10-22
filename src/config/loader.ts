@@ -8,6 +8,7 @@ import type { ProjectConfig } from './types';
 import { safeValidateProjectConfig } from './schema';
 import { DEFAULT_PROJECT_CONFIG } from './defaults';
 import { assetUrl } from '@/utils/assetUrl';
+import { readEntryProject } from './entryBootstrap';
 
 /**
  * 配置加载器类
@@ -48,7 +49,7 @@ class ProjectConfigLoader {
     }
 
     // 3. 开始加载
-    const loadPromise = this._loadAndValidate(projectId, fallbackToDefault, signal);
+    const loadPromise = this._loadAndValidate(projectId, fallbackToDefault, signal, useCache);
     if (!signal) this.loadingPromises.set(projectId, loadPromise);
 
     try {
@@ -70,20 +71,25 @@ class ProjectConfigLoader {
     projectId: string,
     fallbackToDefault: boolean,
     signal?: AbortSignal,
+    useEntry = true,
   ): Promise<ProjectConfig> {
     try {
       console.log(`[ConfigLoader] 加载配置文件: /projects/${projectId}.json`);
 
       // 加载 JSON 文件
-      const response = await fetch(assetUrl(`/projects/${projectId}.json`), {signal});
+      const entry = useEntry ? readEntryProject(projectId) : null;
+      const validatedEntry = entry && safeValidateProjectConfig(entry.config);
+      let data;
+      if (validatedEntry?.success) data = validatedEntry.data;
+      else {
+        const response = await fetch(assetUrl(`/projects/${projectId}.json`), {signal});
 
-      if (!response.ok) {
-        throw new Error(
-          `配置文件加载失败: ${response.status} ${response.statusText}`
-        );
+        if (!response.ok) {
+          throw new Error(`配置文件加载失败: ${response.status} ${response.statusText}`);
+        }
+
+        data = await response.json();
       }
-
-      const data = await response.json();
 
       // Zod 验证
       const result = safeValidateProjectConfig(data);

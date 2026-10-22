@@ -2,7 +2,7 @@
 import { assetUrl } from '@/utils/assetUrl';
 
 
-import React, { Suspense, memo, useMemo, useRef } from 'react';
+import React, { Suspense, memo, useEffect, useMemo, useRef, useState } from 'react';
 import { Canvas } from '@react-three/fiber';
 import { UnifiedLayoutProps } from './types';
 import LayeredLyricsScene from './LayeredLyricsScene';
@@ -34,6 +34,8 @@ interface UnifiedLyricsAndModelProps extends UnifiedLayoutProps {
   /** Keep the warm scene mounted without rendering it behind the cover. */
   active?: boolean;
   scrollTimeRef?: { readonly current: number };
+  scrollVelocityRef?: { readonly current: number };
+  rotationVelocityRef?: { readonly current: number };
   seekRevision?: number;
   /** 可选：歌词渲染使用的字体族（需在页面注册 @font-face） */
   fontFamily?: string;
@@ -43,7 +45,7 @@ interface UnifiedLyricsAndModelProps extends UnifiedLayoutProps {
   fontRevision?: number;
 }
 
-export default function UnifiedLyricsAndModel(props: UnifiedLyricsAndModelProps) {
+function UnifiedLyricsAndModel(props: UnifiedLyricsAndModelProps) {
   const {
     scrollTime,
     duration,
@@ -57,6 +59,8 @@ export default function UnifiedLyricsAndModel(props: UnifiedLyricsAndModelProps)
     isPlaying = true,
     active = true,
     scrollTimeRef,
+    scrollVelocityRef,
+    rotationVelocityRef,
     seekRevision,
     modelPath = resolveAnchor(currentAnchor, DEFAULT_PROJECT_CONFIG).modelPath,
     palette = PALETTES['original-jade'].colors,
@@ -67,13 +71,19 @@ export default function UnifiedLyricsAndModel(props: UnifiedLyricsAndModelProps)
   const lyricData = (lyrics || []) as LyricLine[];
 
   const inputRef = useRef<LyricMotionInput>({scrollTime, scrollTimeRef, duration,
-    velocity: scrollVelocity, isPreviewMode, isPlaying, seekRevision});
-  inputRef.current = {scrollTime, scrollTimeRef, duration, velocity: scrollVelocity, isPreviewMode, isPlaying, seekRevision};
+    velocity: scrollVelocity, velocityRef: scrollVelocityRef, isPreviewMode, isPlaying, seekRevision});
+  inputRef.current = {scrollTime, scrollTimeRef, duration, velocity: scrollVelocity, velocityRef: scrollVelocityRef, isPreviewMode, isPlaying, seekRevision};
 
   const isMobile = typeof navigator !== 'undefined'
     ? /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)
     : false;
-  const isCompactMobile = isMobile && typeof window !== 'undefined' && window.innerHeight < 667;
+  const [compactHeight, setCompactHeight] = useState(() => typeof window !== 'undefined' && window.innerHeight < 667);
+  useEffect(() => {
+    const resize = () => setCompactHeight(window.innerHeight < 667);
+    window.addEventListener('resize', resize);
+    return () => window.removeEventListener('resize', resize);
+  }, []);
+  const isCompactMobile = isMobile && compactHeight;
 
   // 歌词分层配置 - 正交相机下的遮挡、竖排布局
   const lyricsConfig = useMemo(() => ({
@@ -171,11 +181,12 @@ export default function UnifiedLyricsAndModel(props: UnifiedLyricsAndModelProps)
               baseSpeed={-0.32}
               speedMultiplier={-7.5}
               externalVelocity={scrollVelocity}
-              maxAngularVelocity={1.5}
+              controlledVelocityRef={rotationVelocityRef ?? scrollVelocityRef}
+              maxAngularVelocity={8}
               enableDamping
               dampingFactor={0.92}
               velocitySmoothing={0.15}
-              maxRotationPerFrame={0.08}
+              maxRotationPerFrame={0.18}
               environmentHdrPath={assetUrl("/textures/qwantani_moon_noon_puresky_1k.hdr")}
               environmentIntensity={1.0}
               background="transparent"
@@ -215,3 +226,12 @@ export default function UnifiedLyricsAndModel(props: UnifiedLyricsAndModelProps)
     </div>
   );
 }
+
+// A live time ref already supplies each frame. Media time notifications should
+// update the player without reconciling the whole Canvas four times a second.
+export default memo(UnifiedLyricsAndModel, (previous, next) => {
+  const live = previous.scrollTimeRef && previous.scrollTimeRef === next.scrollTimeRef;
+  const keys = Object.keys(previous) as (keyof UnifiedLyricsAndModelProps)[];
+  return keys.length === Object.keys(next).length && keys.every(key =>
+    (live && (key === 'scrollTime' || key === 'currentTime')) || Object.is(previous[key], next[key]));
+});

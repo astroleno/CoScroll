@@ -21,9 +21,27 @@ const {safeValidateProjectConfig} = await compile('src/config/schema.ts', 'schem
 const {parseLRC} = await compile('src/config/lyrics.ts', 'lyrics');
 const {resolveAnchor} = await compile('src/config/resolveAnchor.ts', 'resolveAnchor', {"'@/utils/assetUrl'": "'./assetUrl.mjs'"});
 const appearance = await compile('src/config/appearance.ts', 'appearance');
+const {readEntryProject, serializeEntryData} = await compile('src/config/entryBootstrap.ts', 'entryBootstrap');
 const heart = JSON.parse(await readFile(resolve('public/projects/heart-sutra.json'), 'utf8'));
 const lotus = JSON.parse(await readFile(resolve('public/projects/lotus-sutra-zanshi.json'), 'utf8'));
 const lrc = await readFile(resolve('public/lyrics/lotus-sutra-zanshi.lrc'), 'utf8');
+
+test('entry data is release-bound, optional, and safe to embed in HTML', () => {
+  const oldDocument = globalThis.document;
+  let data = {version: 1, release: 'release-test', projects: {'heart-sutra': {config: heart, lyrics: '[00:00]心经'}}};
+  globalThis.document = {getElementById: () => ({textContent: JSON.stringify(data)}),
+    querySelector: () => ({getAttribute: () => 'release-test'})};
+  try {
+    assert.equal(readEntryProject('heart-sutra').config.project.id, 'heart-sutra');
+    assert.equal(readEntryProject('__proto__'), null);
+    assert.equal(readEntryProject('missing'), null);
+    data.release = 'old-release'; assert.equal(readEntryProject('heart-sutra'), null);
+    data.release = 'release-test'; data.projects['heart-sutra'].config = {project: {id: 'heart-sutra'}};
+    assert.equal(readEntryProject('heart-sutra'), null);
+    assert.ok(!serializeEntryData('</script>\u2028\u2029').includes('<'));
+    assert.equal(JSON.parse(serializeEntryData('</script>\u2028\u2029')), '</script>\u2028\u2029');
+  } finally {globalThis.document = oldDocument;}
+});
 
 test('both recordings validate and every timeline anchor resolves to an existing asset', async () => {
   for (const project of [heart, lotus]) {
@@ -92,24 +110,66 @@ await writeFile(join(folder, 'modelMock.mjs'), 'export default class ModelPreloa
 const {prepareAudio} = await compile('src/config/prepareProject.ts', 'prepareProject', {
   "'./loader'": "'./loaderMock.mjs'", "'./lyrics'": "'./lyrics.mjs'", "'./resolveAnchor'": "'./resolveAnchor.mjs'",
   "'@/utils/assetUrl'": "'./assetUrl.mjs'", "'@/components/jade/ModelPreloader'": "'./modelMock.mjs'",
+  "'./entryBootstrap'": "'./entryBootstrap.mjs'",
 });
 
-test('a media-preload policy cannot block the initial play gesture; failed audio objects are rejected', async () => {
+test('verified recordings use HEAD without a throwaway audio download; failed objects are rejected', async () => {
   const oldAudio = globalThis.Audio, oldFetch = globalThis.fetch;
-  let cleaned = false, requestedRange;
+  let constructed = 0, requestedMethod;
   globalThis.Audio = class {
-    load() {} removeAttribute() {cleaned = true;}
+    constructor() {constructed++;}
+    load() {} removeAttribute() {}
   };
-  globalThis.fetch = async (_, options) => {requestedRange = options.headers.Range; return {ok: true, body: {cancel: async () => {}}};};
+  globalThis.fetch = async (_, options) => {requestedMethod = options.method; return {ok: true, body: {cancel: async () => {}}};};
   try {
     assert.equal(await prepareAudio('/recording.mp3', new AbortController().signal, 241.843771), 241.843771);
-    assert.equal(requestedRange, 'bytes=0-0');
-    assert.equal(cleaned, true);
+    assert.equal(requestedMethod, 'HEAD');
+    assert.equal(constructed, 0);
     globalThis.fetch = async () => ({ok: false, status: 404});
     await assert.rejects(prepareAudio('/missing.mp3', new AbortController().signal, 242), /录音加载失败/);
   } finally {globalThis.Audio = oldAudio; globalThis.fetch = oldFetch;}
 });
+
+test('HEAD-incompatible origins fall back to one byte; unknown recordings still read native duration', async () => {
+  const oldAudio = globalThis.Audio, oldFetch = globalThis.fetch;
+  const requests = []; let cleaned = false;
+  globalThis.fetch = async (_, options) => {
+    requests.push(options);
+    return options.method === 'HEAD' ? {ok: false, status: 405} : {ok: true};
+  };
+  globalThis.Audio = class {
+    duration = 374.256327;
+    load() {if (this.src && this.onloadedmetadata) queueMicrotask(() => this.onloadedmetadata?.());}
+    removeAttribute() {this.src = ''; cleaned = true;}
+  };
+  try {
+    assert.equal(await prepareAudio('/recording.mp3', new AbortController().signal), 374.256327);
+    assert.equal(requests[1].headers.Range, 'bytes=0-0');
+    assert.equal(cleaned, true);
+    const controller = new AbortController(); controller.abort();
+    await assert.rejects(prepareAudio('/recording.mp3', controller.signal, 374), {name: 'AbortError'});
+  } finally {globalThis.Audio = oldAudio; globalThis.fetch = oldFetch;}
+});
 await compile('src/config/defaults.ts', 'defaults');
+const {projectConfigLoader: entryLoader} = await compile('src/config/loader.ts', 'entryLoader', {
+  "'./schema'": "'./schema.mjs'", "'./defaults'": "'./defaults.mjs'",
+  "'@/utils/assetUrl'": "'./assetUrl.mjs'", "'./entryBootstrap'": "'./entryBootstrap.mjs'",
+});
+test('validated HTML entries avoid a configuration round trip; corrupt hints and forced reload use HTTP', async () => {
+  const oldDocument=globalThis.document, oldFetch=globalThis.fetch;
+  let requests=0, payload={version:1,release:'entry-test',projects:{'heart-sutra':{config:heart,lyrics:'[00:00]心经'}}};
+  globalThis.document={getElementById:()=>({textContent:JSON.stringify(payload)}),querySelector:()=>({getAttribute:()=>'entry-test'})};
+  globalThis.fetch=async()=>{requests++;return {ok:true,json:async()=>heart};};
+  try {
+    entryLoader.clearCache();
+    assert.equal((await entryLoader.load('heart-sutra',{fallbackToDefault:false})).project.id,'heart-sutra');
+    assert.equal(requests,0);
+    await entryLoader.load('heart-sutra',{fallbackToDefault:false,useCache:false});assert.equal(requests,1);
+    entryLoader.clearCache();payload.projects['heart-sutra'].config={...heart,timeline:[]};
+    assert.equal((await entryLoader.load('heart-sutra',{fallbackToDefault:false})).project.id,'heart-sutra');
+    assert.equal(requests,2);
+  } finally {entryLoader.clearCache();globalThis.document=oldDocument;globalThis.fetch=oldFetch;}
+});
 const {requests} = await import(pathToFileURL(join(folder, 'prepareMock.mjs')).href);
 const {useProjectConfigStore: store} = await compile('src/stores/projectConfigStore.ts', 'store', {
   "'@/config/prepareProject'": "'./prepareMock.mjs'", "'@/config/loader'": "'./loaderMock.mjs'",

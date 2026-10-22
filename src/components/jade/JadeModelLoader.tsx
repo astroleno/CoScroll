@@ -32,6 +32,7 @@ interface JadeModelLoaderProps {
   baseSpeed?: number;
   speedMultiplier?: number;
   externalVelocity?: number;
+  controlledVelocityRef?: { readonly current: number };
 
   // 旋转控制增强参数
   maxAngularVelocity?: number;
@@ -95,6 +96,7 @@ function ScrollRotator({
   speedMultiplier,
   enabled,
   externalVelocity = 0,
+  controlledVelocityRef,
   maxAngularVelocity = 2.0,
   enableDamping = true,
   dampingFactor = 0.95,
@@ -106,6 +108,7 @@ function ScrollRotator({
   speedMultiplier: number;
   enabled: boolean;
   externalVelocity?: number;
+  controlledVelocityRef?: { readonly current: number };
   maxAngularVelocity?: number;
   enableDamping?: boolean;
   dampingFactor?: number;
@@ -153,7 +156,7 @@ function ScrollRotator({
     const velocityChange = Math.abs(externalVelocity - prevVelocity);
     const isSignificantChange = velocityChange > 0.5;
 
-    if (isSignificantChange) {
+    if (isSignificantChange && !controlledVelocityRef && document.hidden) {
       console.log('[ScrollRotator] Significant velocity change detected:', {
         prevVelocity,
         newVelocity: externalVelocity,
@@ -172,7 +175,7 @@ function ScrollRotator({
 
     externalVelocityRef.current = externalVelocity;
     updateManualTarget();
-  }, [externalVelocity, transitionControl, updateManualTarget]);
+  }, [externalVelocity, controlledVelocityRef, transitionControl, updateManualTarget]);
 
   useEffect(() => {
     const clampedBase = clampSpeed(baseSpeed + externalVelocityRef.current);
@@ -180,6 +183,11 @@ function ScrollRotator({
   }, [baseSpeed, clampSpeed, updateManualTarget]);
 
   useEffect(() => {
+    if (controlledVelocityRef) {
+      const visibility = () => { if (document.hidden) currentSpeedRef.current = baseSpeed; };
+      document.addEventListener('visibilitychange', visibility);
+      return () => document.removeEventListener('visibilitychange', visibility);
+    }
     prevScrollYRef.current = window.scrollY || 0;
     const onScroll = () => {
       const y = window.scrollY || 0;
@@ -241,10 +249,21 @@ function ScrollRotator({
       el.removeEventListener("touchstart", onTouchStart as any);
       el.removeEventListener("touchmove", onTouchMove as any);
     };
-  }, [baseSpeed, speedMultiplier, gl, maxAngularVelocity, velocitySmoothing, updateManualTarget]);
+  }, [baseSpeed, speedMultiplier, gl, maxAngularVelocity, velocitySmoothing, updateManualTarget, controlledVelocityRef]);
 
   useFrame((_, delta) => {
     if (!enabled || !groupRef.current) return;
+
+    if (controlledVelocityRef) {
+      const dt = Math.min(Math.max(delta, 0), .05);
+      const velocity = controlledVelocityRef.current;
+      const target = clampSpeed(baseSpeed + velocity * speedMultiplier);
+      const response = Math.abs(velocity) > .016 ? 28 : 2.4;
+      currentSpeedRef.current += (target - currentSpeedRef.current) * (1 - Math.exp(-response * dt));
+      const limit = maxRotationPerFrame * dt * 60;
+      groupRef.current.rotation.y += Math.max(-limit, Math.min(limit, currentSpeedRef.current * dt));
+      return;
+    }
 
     const currentTime = performance.now();
     const deltaTime = lastFrameTimeRef.current > 0 ? (currentTime - lastFrameTimeRef.current) / 1000 : delta;
@@ -307,6 +326,7 @@ function RotationController({
   baseSpeed = 0.4,
   speedMultiplier = 3.0,
   externalVelocity = 0,
+  controlledVelocityRef,
   maxAngularVelocity = 2.0,
   enableDamping = true,
   dampingFactor = 0.95,
@@ -321,6 +341,7 @@ function RotationController({
   baseSpeed?: number;
   speedMultiplier?: number;
   externalVelocity?: number;
+  controlledVelocityRef?: { readonly current: number };
   maxAngularVelocity?: number;
   enableDamping?: boolean;
   dampingFactor?: number;
@@ -348,6 +369,7 @@ function RotationController({
           speedMultiplier={speedMultiplier}
           enabled={enabled}
           externalVelocity={externalVelocity}
+          controlledVelocityRef={controlledVelocityRef}
           maxAngularVelocity={maxAngularVelocity}
           enableDamping={enableDamping}
           dampingFactor={dampingFactor}
@@ -543,6 +565,7 @@ export default function JadeModelLoader({
   externalVelocity = 0,
 
   // 旋转控制增强参数
+  controlledVelocityRef,
   maxAngularVelocity = 2.0,
   enableDamping = true,
   dampingFactor = 0.95,
@@ -869,6 +892,7 @@ export default function JadeModelLoader({
       baseSpeed={baseSpeed}
       speedMultiplier={speedMultiplier}
       externalVelocity={externalVelocity}
+      controlledVelocityRef={controlledVelocityRef}
       maxAngularVelocity={maxAngularVelocity}
       enableDamping={enableDamping}
       dampingFactor={dampingFactor}

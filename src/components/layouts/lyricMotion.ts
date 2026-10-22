@@ -5,6 +5,7 @@ export interface LyricMotionInput {
   scrollTimeRef?: { readonly current: number };
   duration: number;
   velocity: number;
+  velocityRef?: { readonly current: number };
   isPreviewMode: boolean;
   isPlaying?: boolean;
   seekRevision?: number;
@@ -22,10 +23,11 @@ export function advanceLyricMotion(previous: LyricMotionState | null, input: Lyr
   const sampledTime = input.scrollTimeRef?.current ?? input.scrollTime;
   const time = Number.isFinite(sampledTime) ? sampledTime : 0;
   const duration = Math.max(1, input.duration || 1);
+  const velocity = input.velocityRef?.current ?? input.velocity;
   const reset = !previous || input.isPreviewMode || input.isPlaying === false || previous.seekRevision !== input.seekRevision ||
     Math.abs(time - previous.profile.baseTime) > duration * .5;
   let manualHoldUntil = previous?.manualHoldUntil || 0;
-  if (input.isPreviewMode || Math.abs(input.velocity) >= .016) manualHoldUntil = now + 520;
+  if (input.isPreviewMode || Math.abs(velocity) >= .016) manualHoldUntil = now + 520;
 
   if (reset) {
     return {profile: {time, baseTime: time, timestamp: now / 1000, baseSampleTimestamp: now / 1000,
@@ -33,7 +35,7 @@ export function advanceLyricMotion(previous: LyricMotionState | null, input: Lyr
   }
 
   const manualActive = now < manualHoldUntil || Math.abs(previous.profile.manualOffset) > .4;
-  const result = getSpeedProfile({baseTime: time, duration, velocity: input.velocity, previous: previous.profile,
+  const result = getSpeedProfile({baseTime: time, duration, velocity, previous: previous.profile,
     now, manualActive, manualScale: manualActive ? .58 : .38, correctionStrength: manualActive ? 0 : .16});
   return {profile: result.state, manualHoldUntil, preview: input.isPreviewMode, seekRevision: input.seekRevision};
 }

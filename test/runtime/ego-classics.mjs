@@ -7,7 +7,7 @@ export async function selectClassic(page, id) {
     return;
   }
   if (!await page.evaluate(() => document.querySelector('dialog')?.open)) {
-    await page.click('[aria-label="曲目与配色"] button:first-child');
+    await page.click('button[aria-label^="切换经典，当前"]');
   }
   await page.click(`[data-project-option="${id}"]`);
   await page.waitForFunction(id => {
@@ -48,6 +48,11 @@ export async function verifyClassicSessions(page) {
   states.push({playingSwitch:true,...await classicState(page)});
 
   // Delay only the incoming lyric. The previous recording remains interactive.
+  // Remove this page's optional build-time hint to exercise the HTTP fallback.
+  await page.evaluate(()=>{
+    const node=document.getElementById('coscroll-entry-data');
+    if(node){window.__savedEntryNode=node;node.remove();}
+  });
   await page.evaluate(()=>{
     const original=window.fetch;window.__classicFetch=original;
     window.fetch=async function(input,...rest){
@@ -56,7 +61,7 @@ export async function verifyClassicSessions(page) {
     };
   });
   try {
-    await page.click('[aria-label="曲目与配色"] button:first-child');
+    await page.click('button[aria-label^="切换经典，当前"]');
     await page.click('[data-project-option="heart-sutra"]');
     await page.click('button[aria-label="关闭面板"]');
     await touchTap(page,'button[aria-label="Pause"]');
@@ -76,7 +81,7 @@ export async function verifyClassicSessions(page) {
     };
   });
   try {
-    await page.click('[aria-label="曲目与配色"] button:first-child');
+    await page.click('button[aria-label^="切换经典，当前"]');
     await page.click('[data-project-option="lotus-sutra-zanshi"]');
     await page.waitForFunction(()=>window.__raceStarted,undefined,{timeout:10000});
     await page.click('[data-project-option="heart-sutra"]');
@@ -101,6 +106,7 @@ export async function verifyClassicSessions(page) {
     if(state.project!=='heart-sutra'||!state.stableAudio||!state.paused)throw Error('Failed recording replaced usable content');
     expectedErrors=await page.evaluate(()=>window.__coscrollPerf.errors.slice(window.__expectedErrorStart));
   } finally {await page.evaluate(()=>{window.fetch=window.__classicFetch;delete window.__classicFetch;});}
+  await page.evaluate(()=>{if(window.__savedEntryNode){document.head.appendChild(window.__savedEntryNode);delete window.__savedEntryNode;}});
   await selectClassic(page,'lotus-sutra-zanshi');
   return {states,expectedErrors};
 }

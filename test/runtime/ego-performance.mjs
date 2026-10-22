@@ -48,7 +48,8 @@ function installInstrumentation() {
     const now = performance.now();
     if (!q.milestones.coverReadyMs && document.querySelector('[data-coscroll-intro]')) q.milestones.coverReadyMs = now;
     if (!q.milestones.audioReadyMs && document.querySelector('audio')?.readyState >= 2) q.milestones.audioReadyMs = now;
-    if (!q.milestones.fontReadyMs && [...document.fonts].some(f => f.family.replace(/['"]/g, '') === 'RunZhiJiaKangXiZidian' && f.status === 'loaded')) q.milestones.fontReadyMs = now;
+    if (!q.milestones.fontReadyMs && [...document.fonts].some(f => f.family.replace(/['"]/g, '') === 'RunZhiJiaKangXiZidian' && f.status === 'loaded') &&
+        document.fonts.check('16px RunZhiJiaKangXiZidian', '心经')) q.milestones.fontReadyMs = now;
     if (q.milestones.coverReadyMs && q.milestones.audioReadyMs && q.milestones.fontReadyMs) clearInterval(timer);
   }, 100);
 }
@@ -103,6 +104,7 @@ export async function measurePage(page, {url, screenshotPrefix}) {
   await page.waitForFunction(() => Boolean(window.__coscrollPerf?.milestones.audioReadyMs && window.__coscrollPerf?.milestones.fontReadyMs && window.__coscrollPerf?.milestones.shaderFirstDrawMs && document.querySelectorAll('canvas').length === 2), undefined, {timeout: 90000});
   const startup = await page.evaluate(() => ({
     url: location.href, release: document.querySelector('meta[name="coscroll-release-id"]')?.content,
+    navigation: performance.getEntriesByType('navigation').map(e => e.toJSON()),
     milestones: window.__coscrollPerf.milestones, paint: performance.getEntriesByType('paint').map(e => ({name: e.name, at: e.startTime})),
     resources: performance.getEntriesByType('resource').filter(e => /\.woff2|projects\/heart-sutra\.json|models\/prepared\/|\.obj(?:\?|$)/.test(e.name)).map(e => ({url: e.name, start: e.startTime, duration: e.duration, initiator: e.initiatorType, bytes: e.encodedBodySize})),
     viewport: [innerWidth, innerHeight], dpr: devicePixelRatio,

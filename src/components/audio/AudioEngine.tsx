@@ -84,7 +84,9 @@ export const AudioEngine: React.FC<AudioEngineProps> = ({
   useEffect(() => {
     const audio = audioRef.current;
     if (audio && audio.getAttribute('src') !== audioSrc) audio.src = audioSrc;
-    if (audio) { (window as any).__audioElement = audio; audio.load(); }
+    // Setting src (including React's initial DOM commit) starts native loading.
+    // Calling load again here cancels that request and downloads it a second time.
+    if (audio) { (window as any).__audioElement = audio; }
     return () => {
       playGenerationRef.current++;
       if (audio) { audio.pause(); audio.removeAttribute('src'); audio.load(); }

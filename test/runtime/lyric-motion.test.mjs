@@ -28,6 +28,14 @@ const options = {range: 6, movementAxis: 'horizontal', travelSpacing: .85,
   frontDepth: 6, backNearDepth: -2.2, backFarDepth: -3.5, topLaneY: 2.1, bottomLaneY: -2.05};
 const layoutAt = scrollTime => calculateLayeredLyrics({lyrics, scrollTime, duration: 40, options});
 
+test('the immediate gesture ref preserves the existing motion equations without waiting for React state', () => {
+  const input={scrollTime:12,duration:40,velocity:0,isPlaying:true,isPreviewMode:false};
+  const previous=advanceLyricMotion(null,input,1000);
+  const referenced=advanceLyricMotion(previous,{...input,velocityRef:{current:2}},1033);
+  const published=advanceLyricMotion(previous,{...input,velocity:2},1033);
+  assert.deepEqual(referenced,published);
+});
+
 test('continuous motion reuses a lyric window and changes it at a line boundary', () => {
   const start = layoutAt(1), end = layoutAt(9);
   assert.equal(lyricWindowKey(start), lyricWindowKey(end));

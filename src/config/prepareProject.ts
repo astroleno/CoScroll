@@ -3,15 +3,27 @@ import { parseLRC } from './lyrics';
 import { resolveAnchor } from './resolveAnchor';
 import { assetUrl } from '@/utils/assetUrl';
 import ModelPreloader from '@/components/jade/ModelPreloader';
+import { readEntryProject, readEntryAudio } from './entryBootstrap';
 
 export async function prepareAudio(src: string, signal: AbortSignal, verifiedDuration?: number): Promise<number> {
   // A policy-blocked media preload must not hide the gesture that can start it.
-  // Check the actual object over HTTP, prefer native metadata, then use the
-  // recording's offline-verified duration until AudioEngine reports its clock.
-  const response = await fetch(src, {signal, headers: {Range: 'bytes=0-0'}});
+  // Validate the object without downloading it into a throwaway media element.
+  // AudioEngine subsequently replaces the verified duration with native metadata.
+  signal.throwIfAborted();
+  let response;
+  try {response = await (readEntryAudio(src) ?? fetch(src, {signal, method: 'HEAD'}));}
+  catch (error) {
+    signal.throwIfAborted();
+    if (!readEntryAudio(src)) throw error;
+    response = await fetch(src, {signal, method: 'HEAD'});
+  }
+  if (response.status === 405 || response.status === 501) response = await fetch(src, {signal, headers: {Range: 'bytes=0-0'}});
   if (!response.ok) throw new Error(`录音加载失败（${response.status}）`);
+  const type = response.headers?.get('content-type');
+  if (type && !/^(audio\/|application\/octet-stream)/i.test(type)) throw new Error('录音资源类型错误');
   await response.body?.cancel();
   signal.throwIfAborted();
+  if (Number.isFinite(verifiedDuration) && verifiedDuration! > 0) return verifiedDuration!;
   return new Promise((resolve, reject) => {
     const audio = new Audio();
     audio.crossOrigin = 'anonymous';
@@ -55,10 +67,17 @@ export async function prepareProject(projectId: string, signal: AbortSignal, use
     if (signal.aborted) abort();
   });
   try {
+    const entry = useCache ? readEntryProject(projectId) : null;
+    const readLyrics = async () => {
+      if (entry?.config?.assets?.lyrics?.src === config.assets.lyrics.src) {
+        try {return parseLRC(entry.lyrics);} catch { /* A bad hint falls back to the release object. */ }
+      }
+      const response = await fetch(assetUrl(config.assets.lyrics.src), {signal});
+      if (!response.ok) throw new Error(`歌词加载失败（${response.status}）`);
+      return parseLRC(await response.text());
+    };
     const [lyrics, duration] = await Promise.race([aborted, Promise.all([
-      fetch(assetUrl(config.assets.lyrics.src), {signal}).then(async response => {
-        if (!response.ok) throw new Error(`歌词加载失败（${response.status}）`);
-        const lines = parseLRC(await response.text());
+      readLyrics().then(async lines => {
         if (document.fonts) {
           await document.fonts.load('16px RunZhiJiaKangXiZidian', lines.map(line => line.text).join(''));
         }

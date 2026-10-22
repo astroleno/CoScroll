@@ -123,7 +123,7 @@ export default function ReadingSession({sessionRevision, config, lyrics, mediaDu
   const absoluteTime = isPreviewMode ? previewTime : (loopCount * duration + displayTime);
 
   // 3D模型相关状态
-  const { scrollVelocity, handleScrollVelocityChange, setInternalScrollVelocity } = useScrollVelocity();
+  const { scrollVelocity, scrollVelocityRef, rotationVelocityRef, handleScrollVelocityChange, setInternalScrollVelocity } = useScrollVelocity(false);
   const [currentAnchor, setCurrentAnchor] = useState('心');
   const [modelPreloadStatus, setModelPreloadStatus] = useState({
     isPreloading: false,
@@ -155,6 +155,9 @@ export default function ReadingSession({sessionRevision, config, lyrics, mediaDu
     if (typeof document !== 'undefined' && document.fonts) {
       // 改进字体加载逻辑
       const fontSpec = `16px ${selectedFont}`;
+      // prepareProject already waited for this complete font before mounting.
+      // Do not rasterize and upload the whole visible window a second time.
+      if (document.fonts.check(fontSpec)) return;
       if (DEBUG_DEV) console.log('[FontLoader] 开始加载字体:', fontSpec);
 
       document.fonts.load(fontSpec)
@@ -228,6 +231,9 @@ export default function ReadingSession({sessionRevision, config, lyrics, mediaDu
   // 预览拖拽状态（Phase 1）
   const isPointerPreviewingRef = useRef(false);
   const isDraggingRef = useRef(false);
+  const activePointerIdRef = useRef<number | null>(null);
+  const pointerSampleRef = useRef({x: 0, stamp: 0});
+  const gestureSurfaceRef = useRef<HTMLElement | null>(null);
   const previewStartClientXRef = useRef(0);
   const previewStartTimeRef = useRef<number | null>(null);
   const lastPreviewTimeRef = useRef<number | null>(null);
@@ -357,6 +363,7 @@ export default function ReadingSession({sessionRevision, config, lyrics, mediaDu
     wheelPreviewTimeoutRef.current = null;
     isPointerPreviewingRef.current = false;
     isDraggingRef.current = false;
+    activePointerIdRef.current = null;
     lastPreviewTimeRef.current = null;
     previewStartTimeRef.current = null;
     setPreviewTime(null);
@@ -413,7 +420,7 @@ export default function ReadingSession({sessionRevision, config, lyrics, mediaDu
     lastPreviewTimeRef.current = previewStartTimeRef.current;
   }, [clearWheelPreviewTimeout]);
 
-  const handleLyricPreviewTime = useCallback((time: number) => {
+  const handleLyricPreviewTime = useCallback((time: number, inputVelocity?: number) => {
     // 设置预览时间，不 seek
     if (DEBUG_DEV) console.log('[handleLyricPreviewTime]', { time, isPlaying });
     setPreviewTime(time);
@@ -426,75 +433,123 @@ export default function ReadingSession({sessionRevision, config, lyrics, mediaDu
     if (previous !== null && Number.isFinite(previous)) {
       const deltaSeconds = time - previous;
       if (Number.isFinite(deltaSeconds) && Math.abs(deltaSeconds) > 1e-6) {
-        const velocity = deltaSeconds * PIXELS_PER_SECOND * 0.1;
+        const velocity = inputVelocity ?? deltaSeconds * PIXELS_PER_SECOND * 0.1;
         handleScrollVelocityChange(velocity);
       }
     }
     lastPreviewTimeRef.current = time;
   }, [duration, isPlaying, handleScrollVelocityChange]);
 
-  const handleLyricPreviewEnd = useCallback(() => {
+  const handleLyricPreviewEnd = useCallback((allowMomentum = true) => {
     clearWheelPreviewTimeout();
     // 预览结束：执行一次性 seek 到预览终点
     if (DEBUG_DEV) console.log('[handleLyricPreviewEnd] 预览结束并执行一次性 seek');
     const targetAbs = lastPreviewTimeRef.current ?? (isPreviewMode && previewTime != null ? previewTime : absoluteTime);
+    const releaseVelocity = allowMomentum ? scrollVelocityRef.current : 0;
     setPreviewTime(null);
     lastPreviewTimeRef.current = null;
     handleScrollVelocityChange(0);
     // 统一入口：以绝对时间 seek
     if (typeof targetAbs === 'number' && !Number.isNaN(targetAbs)) {
       handleSeek(targetAbs);
+      // A coalesced move and touchend may arrive before a single render frame.
+      // Keep that impulse for the wheel, while the lyric/media velocity is zero.
+      if (releaseVelocity) handleScrollVelocityChange(0, releaseVelocity);
     }
-  }, [clearWheelPreviewTimeout, isPreviewMode, previewTime, absoluteTime, handleSeek, handleScrollVelocityChange]);
+  }, [clearWheelPreviewTimeout, isPreviewMode, previewTime, absoluteTime, handleSeek, handleScrollVelocityChange, scrollVelocityRef]);
 
-  // Pointer 预览交互（Phase 1）
-  const handlePointerDown = useCallback((e: React.PointerEvent<HTMLDivElement>) => {
-    // 仅主键/触控
-    if (e.button !== 0 && e.pointerType === 'mouse') return;
+  const beginDrag = useCallback((x: number, stamp: number, id: number) => {
+    if (activePointerIdRef.current !== null) return;
     clearWheelPreviewTimeout();
+    activePointerIdRef.current = id;
     isPointerPreviewingRef.current = true;
     isDraggingRef.current = false;
-    previewStartClientXRef.current = e.clientX;
-    // 不立刻进入预览，等待超过阈值
+    previewStartClientXRef.current = x;
+    pointerSampleRef.current = {x, stamp};
   }, [clearWheelPreviewTimeout]);
 
-  const handlePointerMove = useCallback((event: React.PointerEvent<HTMLDivElement>) => {
+  const moveDrag = useCallback((x: number, stamp: number) => {
     if (!isPointerPreviewingRef.current) return;
     clearWheelPreviewTimeout();
-    const deltaX = event.clientX - previewStartClientXRef.current;
+    const deltaX = x - previewStartClientXRef.current;
     if (!isDraggingRef.current) {
       if (Math.abs(deltaX) < DRAG_THRESHOLD_PX) return;
-      // 超过阈值，开始预览并捕获指针
       isDraggingRef.current = true;
-      try {
-        event.currentTarget.setPointerCapture(event.pointerId);
-      } catch {}
-      event.preventDefault();
       handleLyricPreviewStart();
-    } else {
-      event.preventDefault();
     }
-
     const deltaTime = -(deltaX * DIRECTION) / Math.max(1, PIXELS_PER_SECOND);
     const base = previewStartTimeRef.current ?? absoluteTime;
-    const nextTime = base + deltaTime;
-    handleLyricPreviewTime(nextTime);
-
+    const previous = pointerSampleRef.current;
+    const velocity = -(x - previous.x) / Math.max(8, stamp - previous.stamp);
+    pointerSampleRef.current = {x, stamp};
+    handleLyricPreviewTime(base + deltaTime, velocity);
   }, [absoluteTime, clearWheelPreviewTimeout, handleLyricPreviewStart, handleLyricPreviewTime]);
 
-  const handlePointerUpOrCancel = useCallback((e: React.PointerEvent<HTMLDivElement>) => {
+  const endDrag = useCallback((x: number, stamp: number, cancelled = false) => {
     if (!isPointerPreviewingRef.current) return;
+    if (!cancelled && x !== pointerSampleRef.current.x) moveDrag(x, stamp);
     clearWheelPreviewTimeout();
-    if (isDraggingRef.current) {
-      try {
-        e.currentTarget.releasePointerCapture(e.pointerId);
-      } catch {}
-      e.preventDefault();
-      handleLyricPreviewEnd();
-    }
+    const moved = isDraggingRef.current;
     isPointerPreviewingRef.current = false;
     isDraggingRef.current = false;
-  }, [clearWheelPreviewTimeout, handleLyricPreviewEnd]);
+    activePointerIdRef.current = null;
+    if (moved) handleLyricPreviewEnd(!cancelled);
+  }, [moveDrag, clearWheelPreviewTimeout, handleLyricPreviewEnd]);
+
+  const handlePointerDown = useCallback((e: React.PointerEvent<HTMLDivElement>) => {
+    // Native touch listeners below own touch on iOS/Android. Do not double it
+    // through compatibility PointerEvents or depend on touch pointer capture.
+    if (e.pointerType === 'touch' || (e.pointerType === 'mouse' && e.button !== 0)) return;
+    beginDrag(e.clientX, e.timeStamp, e.pointerId);
+    try {e.currentTarget.setPointerCapture(e.pointerId);} catch {}
+  }, [beginDrag]);
+  const handlePointerMove = useCallback((e: React.PointerEvent<HTMLDivElement>) => {
+    if (e.pointerType === 'touch' || activePointerIdRef.current !== e.pointerId) return;
+    e.preventDefault(); moveDrag(e.clientX, e.timeStamp);
+  }, [moveDrag]);
+  const handlePointerUpOrCancel = useCallback((e: React.PointerEvent<HTMLDivElement>) => {
+    if (e.pointerType === 'touch' || activePointerIdRef.current !== e.pointerId) return;
+    if (e.type === 'pointerleave' && e.currentTarget.hasPointerCapture(e.pointerId)) return;
+    e.preventDefault(); endDrag(e.clientX, e.timeStamp, e.type !== 'pointerup');
+    try {e.currentTarget.releasePointerCapture(e.pointerId);} catch {}
+  }, [endDrag]);
+
+  const touchHandlers = useRef({beginDrag, moveDrag, endDrag});
+  touchHandlers.current = {beginDrag, moveDrag, endDrag};
+  useEffect(() => {
+    const surface = gestureSurfaceRef.current;
+    if (!surface) return;
+    let activeTouch: number | null = null;
+    const start = (event: TouchEvent) => {
+      if (event.touches.length !== 1 || activeTouch !== null) return;
+      const touch = event.changedTouches[0];
+      if (!touch) return;
+      activeTouch = touch.identifier;
+      if (event.cancelable) event.preventDefault();
+      touchHandlers.current.beginDrag(touch.clientX, event.timeStamp, touch.identifier);
+    };
+    const move = (event: TouchEvent) => {
+      const touch = Array.from(event.changedTouches).find(t => t.identifier === activeTouch);
+      if (!touch) return;
+      if (event.cancelable) event.preventDefault();
+      touchHandlers.current.moveDrag(touch.clientX, event.timeStamp);
+    };
+    const end = (event: TouchEvent) => {
+      const touch = Array.from(event.changedTouches).find(t => t.identifier === activeTouch);
+      if (!touch) return;
+      if (event.cancelable) event.preventDefault();
+      activeTouch = null;
+      touchHandlers.current.endDrag(touch.clientX, event.timeStamp, event.type === 'touchcancel');
+    };
+    surface.addEventListener('touchstart', start, {passive: false, capture: true});
+    surface.addEventListener('touchmove', move, {passive: false, capture: true});
+    surface.addEventListener('touchend', end, {passive: false, capture: true});
+    surface.addEventListener('touchcancel', end, {passive: false, capture: true});
+    return () => {
+      surface.removeEventListener('touchstart', start, true); surface.removeEventListener('touchmove', move, true);
+      surface.removeEventListener('touchend', end, true); surface.removeEventListener('touchcancel', end, true);
+    };
+  }, [sessionRevision]);
 
   // Wheel 预览交互（Phase 1）
   const handleWheel = useCallback((e: React.WheelEvent<HTMLDivElement>) => {
@@ -551,6 +606,7 @@ export default function ReadingSession({sessionRevision, config, lyrics, mediaDu
     if (rafIdRef.current !== null) cancelAnimationFrame(rafIdRef.current);
     rafIdRef.current = null;
     isPointerPreviewingRef.current = isDraggingRef.current = false;
+    activePointerIdRef.current = null;
     previewStartTimeRef.current = lastPreviewTimeRef.current = null;
     audioTimeRef.current = visualAbsoluteTimeRef.current = 0;
     lastCommittedTimeRef.current = {stamp: 0, display: 0};
@@ -775,8 +831,9 @@ export default function ReadingSession({sessionRevision, config, lyrics, mediaDu
       />}
       {/* 调试叠层（开发环境） */}
       <main
+        ref={gestureSurfaceRef}
         className="relative flex-grow w-full overflow-hidden flex items-center justify-center"
-        style={{ visibility: hasUserInteracted ? 'visible' : 'hidden' }}
+        style={{ visibility: hasUserInteracted ? 'visible' : 'hidden', touchAction: 'none', userSelect: 'none', WebkitUserSelect: 'none' }}
       >
         <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-10">
           <UnifiedLyricsAndModel
@@ -784,6 +841,8 @@ export default function ReadingSession({sessionRevision, config, lyrics, mediaDu
             currentTime={displayTime}
             scrollTime={absoluteTime}
             scrollTimeRef={visualAbsoluteTimeRef}
+            scrollVelocityRef={scrollVelocityRef}
+            rotationVelocityRef={rotationVelocityRef}
             seekRevision={seekSignal}
             active={hasUserInteracted}
             duration={duration}

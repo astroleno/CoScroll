@@ -2,21 +2,18 @@
 
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import type { CSSProperties } from 'react';
-import dynamic from 'next/dynamic';
 import { useProjectConfigStore } from '@/stores/projectConfigStore';
-import { DEFAULT_APPEARANCE, resolveAppearance, resolvePalette, saveAppearance } from '@/config/appearance';
+import { DEFAULT_APPEARANCE, resolveAppearance, resolvePalette } from '@/config/appearance';
 import type { AppearanceSettings } from '@/config/types';
 import { isCatalogProject, PROJECT_CATALOG } from '@/config/catalog';
 import ReadingSession from './ReadingSession';
 import ClassicControls from './ClassicControls';
-
-const SilkBackground = dynamic(() => import('./backgrounds/SilkR3F'), {ssr: false});
+import SilkBackground from './backgrounds/SilkR3F';
 
 export default function ClassicExperience() {
   const {config, lyrics, mediaDuration, sessionRevision, isLoading, pendingProjectId, error, loadProject, releasePreparation, cancelPendingProject} = useProjectConfigStore();
   const [entered, setEntered] = useState(false);
   const [appearance, setAppearance] = useState<AppearanceSettings>(DEFAULT_APPEARANCE);
-  const appearanceRef = useRef(appearance);
   const playingIntent = useRef(false);
   const revisionRef = useRef(sessionRevision);
   revisionRef.current = sessionRevision;
@@ -40,7 +37,6 @@ export default function ClassicExperience() {
   useLayoutEffect(() => {
     if (!config) return;
     const settings = resolveAppearance(config);
-    appearanceRef.current = settings;
     setAppearance(settings);
     document.title = `${config.project.name} · ${config.assets.audio.artist ?? ''} | CoScroll`;
     const url = new URL(location.href);
@@ -60,19 +56,6 @@ export default function ClassicExperience() {
   const selectProject = useCallback((id: string) => {
     navigationMode.current = 'push'; setEntryError(null); void loadProject(id);
   }, [loadProject]);
-  const changeAppearance = useCallback((settings: AppearanceSettings, persist = false) => {
-    appearanceRef.current = settings;
-    setAppearance(settings);
-    if (persist && config) saveAppearance(config.project.id, settings);
-  }, [config]);
-  const commitAppearance = useCallback(() => {
-    if (config) saveAppearance(config.project.id, appearanceRef.current);
-  }, [config]);
-  const resetAppearance = useCallback(() => {
-    if (!config) return;
-    saveAppearance(config.project.id, null);
-    changeAppearance(config.appearance ?? DEFAULT_APPEARANCE);
-  }, [config, changeAppearance]);
 
   return <div data-active-project={config?.project.id ?? ''} data-session-revision={sessionRevision}
     data-palette={appearance.palette} data-hue={appearance.hueOffset}
@@ -86,9 +69,9 @@ export default function ClassicExperience() {
       <ReadingSession sessionRevision={sessionRevision} config={config} lyrics={lyrics} mediaDuration={mediaDuration}
         palette={palette} entered={entered} initialPlaying={entered && playingIntent.current}
         onEnter={onEnter} onPlayingChange={onPlayingChange} />
-      <ClassicControls config={config} pendingProjectId={pendingProjectId} appearance={appearance}
+      <ClassicControls config={config} pendingProjectId={pendingProjectId}
         error={error}
-        onSelect={selectProject} onAppearance={changeAppearance} onCommitAppearance={commitAppearance} onResetAppearance={resetAppearance} />
+        onSelect={selectProject} />
     </> : <div className="fixed inset-0 flex items-center justify-center text-center p-6"
       style={{zIndex: 2147483647, color: palette.currentText}}>
       <div><p role="status">{error || entryError || '正在准备经文与声音…'}</p>
