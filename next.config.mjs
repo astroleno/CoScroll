@@ -1,3 +1,6 @@
+import {prepareThreeTransmissionRegion} from './deploy/three-transmission-region.mjs';
+
+const regionThreeModule = await prepareThreeTransmissionRegion();
 const basePath = process.env.NEXT_PUBLIC_BASE_PATH || '';
 const releaseId = process.env.COSCROLL_RELEASE_ID;
 
@@ -14,6 +17,8 @@ const config = {
   productionBrowserSourceMaps: false,
   experimental: { cpus: 2 },
   webpack(config, {isServer, dev}) {
+    // One Three instance for the app, R3F, drei and example loaders.
+    config.resolve.alias = {...config.resolve.alias, 'three$': regionThreeModule};
     if (releaseId) config.cache = false;
     // A slow, small framework request can hold the entire reader behind it.
     // Keep the home entry and its bootstrap dependencies together; unrelated

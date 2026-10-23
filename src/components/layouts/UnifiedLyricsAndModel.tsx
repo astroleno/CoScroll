@@ -13,6 +13,7 @@ import type { ScenePalette } from '@/config/appearance';
 import { PALETTES } from '@/config/appearance';
 import { DEFAULT_PROJECT_CONFIG } from '@/config/defaults';
 import { resolveAnchor } from '@/config/resolveAnchor';
+import TransmissionRegionRendering from '@/rendering/TransmissionRegionRendering';
 
 const MemoizedJadeModel = memo(JadeModelLoader);
 
@@ -146,6 +147,7 @@ function UnifiedLyricsAndModel(props: UnifiedLyricsAndModelProps) {
         }}
         style={{ background: 'transparent' }}
       >
+        <TransmissionRegionRendering />
         <Suspense fallback={null}>
           {/* 统一光照系统 */}
           <ambientLight intensity={0.4} />

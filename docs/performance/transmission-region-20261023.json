@@ -1,0 +1,3686 @@
+{
+  "date": "2026-10-23",
+  "releaseId": "coscroll-297f84199d73b55a",
+  "baseCommit": "d956ba171d25ad181659dbf5324d0dee8a45cf3c",
+  "artifactClosureSha256": "d06db4846b1e0df5df7877223cbe3d6e7a06e013e003bddf2e48addf64970283",
+  "browser": "Chrome/156.0.8078.47",
+  "browserMode": "headless",
+  "gpu": [
+    {
+      "vendorId": 4203,
+      "deviceId": 0,
+      "vendorString": "Google Inc. (Apple)",
+      "deviceString": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4, Version 15.6.1 (Build 24G90))",
+      "driverVendor": "Apple",
+      "driverVersion": "15.6.1"
+    }
+  ],
+  "sourceNotes": [
+    "Final candidate metrics are from hardware-accelerated headless Chrome on Apple M4, not a physical phone.",
+    "Long-window GPU measurements use three alternating A/B pairs, 30 seconds per window, same final build.",
+    "CPU interleaving keeps the bounds provider active in both modes. The separately measured provider cost is recorded below.",
+    "Earlier visible compositor traces belong to r2, not the final r3 candidate."
+  ],
+  "checks": {
+    "runtime": {
+      "passed": 72,
+      "failed": 0
+    },
+    "deployment": {
+      "passed": 11,
+      "failed": 0
+    },
+    "productionBuild": "passed with lint and type check in product-source snapshot"
+  },
+  "regression": {
+    "complete": true,
+    "models": [
+      "/models/10k_obj/001_空.obj",
+      "/models/10k_obj/002_心.obj",
+      "/models/10k_obj/003_道.obj",
+      "/models/10k_obj/004_善.obj",
+      "/models/10k_obj/005_和.obj",
+      "/models/10k_obj/006_静.obj",
+      "/models/10k_obj/007_明.obj",
+      "/models/10k_obj/008_悟.obj",
+      "/models/10k_obj/009_真.obj",
+      "/models/10k_obj/010_圆.obj",
+      "/models/10k_obj/011_缘.obj",
+      "/models/10k_obj/012_无.obj",
+      "/models/10k_obj/013_水.obj",
+      "/models/10k_obj/014_山.obj",
+      "/models/10k_obj/015_月.obj",
+      "/models/10k_obj/016_日.obj",
+      "/models/10k_obj/017_风.obj",
+      "/models/10k_obj/018_光.obj",
+      "/models/10k_obj/019_生.obj",
+      "/models/10k_obj/020_死.obj",
+      "/models/10k_obj/021_德.obj",
+      "/models/10k_obj/022_法.obj",
+      "/models/10k_obj/023_安.glb",
+      "/models/10k_obj/024_宁.obj",
+      "/models/10k_obj/025_觉.glb",
+      "/models/10k_obj/026_川.glb",
+      "/models/10k_obj/027_海.glb",
+      "/models/10k_obj/028_江.glb",
+      "/models/10k_obj/029_河.glb",
+      "/models/10k_obj/030_湖.glb",
+      "/models/10k_obj/031_泉.glb",
+      "/models/10k_obj/032_雨.glb",
+      "/models/10k_obj/033_云.glb",
+      "/models/10k_obj/034_雾.glb",
+      "/models/10k_obj/035_雪.glb",
+      "/models/10k_obj/036_星.glb",
+      "/models/10k_obj/037_辰.glb",
+      "/models/10k_obj/038_影.glb",
+      "/models/10k_obj/039_梦.glb",
+      "/models/10k_obj/040_幻.glb",
+      "/models/10k_obj/041_寂.glb",
+      "/models/10k_obj/042_灭.glb",
+      "/models/10k_obj/043_常.glb",
+      "/models/10k_obj/044_乐.glb",
+      "/models/10k_obj/045_苦.obj",
+      "/models/10k_obj/046_净.glb",
+      "/models/10k_obj/047_清.glb",
+      "/models/10k_obj/048_虚.glb",
+      "/models/10k_obj/049_灵.glb",
+      "/models/10k_obj/050_妙.glb",
+      "/models/10k_obj/051_仁.glb",
+      "/models/10k_obj/052_义.glb",
+      "/models/10k_obj/053_礼.glb",
+      "/models/10k_obj/054_智.glb",
+      "/models/10k_obj/055_信.glb",
+      "/models/10k_obj/056_勇.glb",
+      "/models/10k_obj/057_孝.glb",
+      "/models/10k_obj/058_悌.glb",
+      "/models/10k_obj/059_忠.glb",
+      "/models/10k_obj/060_恕.glb",
+      "/models/10k_obj/061_忍.glb",
+      "/models/10k_obj/062_宽.glb",
+      "/models/10k_obj/063_福.glb",
+      "/models/10k_obj/064_寿.glb",
+      "/models/10k_obj/065_吉.glb",
+      "/models/10k_obj/066_祥.glb",
+      "/models/10k_obj/067_康.glb",
+      "/models/10k_obj/068_泰.glb",
+      "/models/10k_obj/069_春.glb",
+      "/models/10k_obj/070_夏.glb",
+      "/models/10k_obj/071_秋.glb",
+      "/models/10k_obj/072_冬.glb",
+      "/models/10k_obj/073_竹.glb",
+      "/models/10k_obj/074_松.glb",
+      "/models/10k_obj/075_梅.glb",
+      "/models/10k_obj/076_兰.glb",
+      "/models/10k_obj/077_花.glb",
+      "/models/10k_obj/078_草.glb",
+      "/models/10k_obj/079_石.glb",
+      "/models/10k_obj/080_玉.glb",
+      "/models/10k_obj/081_金.glb",
+      "/models/10k_obj/082_木.glb",
+      "/models/10k_obj/083_土.glb",
+      "/models/10k_obj/084_火.glb",
+      "/models/10k_obj/085_雷.glb",
+      "/models/10k_obj/086_天.glb",
+      "/models/10k_obj/087_地.glb",
+      "/models/10k_obj/088_乾.glb",
+      "/models/10k_obj/089_坤.glb",
+      "/models/10k_obj/090_宇.glb",
+      "/models/10k_obj/091_宙.glb",
+      "/models/10k_obj/092_源.glb",
+      "/models/10k_obj/093_流.glb",
+      "/models/10k_obj/094_色.obj",
+      "/models/10k_obj/095_潮.glb",
+      "/models/10k_obj/096_露.glb",
+      "/models/10k_obj/097_霜.glb",
+      "/models/10k_obj/098_美.glb",
+      "/models/10k_obj/099_化.glb",
+      "/models/10k_obj/100_通.glb",
+      "/models/10k_obj/101_观.obj"
+    ],
+    "layouts": [
+      {
+        "name": "mobile",
+        "fixture": {
+          "canvases": 2,
+          "pixels": [
+            702,
+            1288
+          ],
+          "zoom": 92,
+          "ua": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/138.0.7204.119 Mobile/15E148 Safari/604.1",
+          "viewport": [
+            390,
+            844
+          ],
+          "contexts": [
+            {
+              "alpha": true,
+              "antialias": false,
+              "depth": false,
+              "desynchronized": false,
+              "failIfMajorPerformanceCaveat": false,
+              "powerPreference": "high-performance",
+              "premultipliedAlpha": true,
+              "preserveDrawingBuffer": false,
+              "stencil": false,
+              "xrCompatible": false
+            },
+            {
+              "alpha": true,
+              "antialias": true,
+              "depth": true,
+              "desynchronized": false,
+              "failIfMajorPerformanceCaveat": false,
+              "powerPreference": "high-performance",
+              "premultipliedAlpha": true,
+              "preserveDrawingBuffer": false,
+              "stencil": false,
+              "xrCompatible": false
+            }
+          ]
+        },
+        "models": 101,
+        "comparisons": 1111,
+        "changedPixels": 0,
+        "maxChannelDifference": 0,
+        "fullUpdates": 101,
+        "partialUpdates": 1111,
+        "targets": [
+          {
+            "width": 702,
+            "height": 1288,
+            "samples": 4,
+            "type": 1016,
+            "generateMipmaps": true,
+            "minFilter": 1008
+          }
+        ],
+        "glErrors": [],
+        "errors": []
+      },
+      {
+        "name": "desktop",
+        "fixture": {
+          "canvases": 2,
+          "pixels": [
+            2340,
+            1569
+          ],
+          "zoom": 100,
+          "ua": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/156.0.0.0 Safari/537.36",
+          "viewport": [
+            1300,
+            1000
+          ],
+          "contexts": [
+            {
+              "alpha": true,
+              "antialias": false,
+              "depth": false,
+              "desynchronized": false,
+              "failIfMajorPerformanceCaveat": false,
+              "powerPreference": "high-performance",
+              "premultipliedAlpha": true,
+              "preserveDrawingBuffer": false,
+              "stencil": false,
+              "xrCompatible": false
+            },
+            {
+              "alpha": true,
+              "antialias": true,
+              "depth": true,
+              "desynchronized": false,
+              "failIfMajorPerformanceCaveat": false,
+              "powerPreference": "high-performance",
+              "premultipliedAlpha": true,
+              "preserveDrawingBuffer": false,
+              "stencil": false,
+              "xrCompatible": false
+            }
+          ]
+        },
+        "models": 101,
+        "comparisons": 1111,
+        "changedPixels": 0,
+        "maxChannelDifference": 0,
+        "fullUpdates": 101,
+        "partialUpdates": 1111,
+        "targets": [
+          {
+            "width": 2340,
+            "height": 1569,
+            "samples": 4,
+            "type": 1016,
+            "generateMipmaps": true,
+            "minFilter": 1008
+          }
+        ],
+        "glErrors": [],
+        "errors": []
+      }
+    ]
+  },
+  "gpuLongWindows": [
+    {
+      "layout": "mobile",
+      "stock": {
+        "windows": 3,
+        "queries": 5400,
+        "meanMs": 6.203117927037032,
+        "disjoint": 0
+      },
+      "region": {
+        "windows": 3,
+        "queries": 5400,
+        "meanMs": 4.827570552222223,
+        "disjoint": 0
+      },
+      "reductionPercent": 22.175096314376365,
+      "windows": [
+        {
+          "index": 0,
+          "enabled": false,
+          "durationMs": 30011.60000000298,
+          "main": {
+            "background": false,
+            "cpuMs": {
+              "count": 1801,
+              "mean": 0.29533592452900664,
+              "p50": 0.19999999925494194,
+              "p95": 0.6999999992549419,
+              "max": 0.9000000022351742
+            },
+            "gpuMs": {
+              "count": 1800,
+              "mean": 5.676102970555563,
+              "p50": 5.194375,
+              "p95": 9.151375,
+              "max": 19.833791
+            },
+            "disjoint": 0,
+            "pixels": [
+              702,
+              1288
+            ],
+            "memory": {
+              "geometries": 5,
+              "textures": 12
+            },
+            "attributes": {
+              "alpha": true,
+              "antialias": true,
+              "depth": true,
+              "desynchronized": false,
+              "failIfMajorPerformanceCaveat": false,
+              "powerPreference": "high-performance",
+              "premultipliedAlpha": true,
+              "preserveDrawingBuffer": false,
+              "stencil": false,
+              "xrCompatible": false
+            }
+          },
+          "background": {
+            "background": true,
+            "cpuMs": {
+              "count": 1801,
+              "mean": 0.08722931709035048,
+              "p50": 0.09999999776482582,
+              "p95": 0.20000000298023224,
+              "max": 0.4000000022351742
+            },
+            "gpuMs": {
+              "count": 1800,
+              "mean": 0.6722074077777782,
+              "p50": 0.5565,
+              "p95": 1.233625,
+              "max": 8.357499
+            },
+            "disjoint": 0,
+            "pixels": [
+              780,
+              1688
+            ],
+            "memory": {
+              "geometries": 1,
+              "textures": 0
+            },
+            "attributes": {
+              "alpha": true,
+              "antialias": false,
+              "depth": false,
+              "desynchronized": false,
+              "failIfMajorPerformanceCaveat": false,
+              "powerPreference": "high-performance",
+              "premultipliedAlpha": true,
+              "preserveDrawingBuffer": false,
+              "stencil": false,
+              "xrCompatible": false
+            }
+          },
+          "visibility": [],
+          "errors": []
+        },
+        {
+          "index": 1,
+          "enabled": true,
+          "durationMs": 30013.20000000298,
+          "main": {
+            "background": false,
+            "cpuMs": {
+              "count": 1801,
+              "mean": 0.43592448644277987,
+              "p50": 0.5,
+              "p95": 0.7000000029802322,
+              "max": 1.1000000014901161
+            },
+            "gpuMs": {
+              "count": 1800,
+              "mean": 4.40735353222222,
+              "p50": 3.915125,
+              "p95": 7.177624,
+              "max": 21.865
+            },
+            "disjoint": 0,
+            "pixels": [
+              702,
+              1288
+            ],
+            "memory": {
+              "geometries": 5,
+              "textures": 12
+            },
+            "attributes": {
+              "alpha": true,
+              "antialias": true,
+              "depth": true,
+              "desynchronized": false,
+              "failIfMajorPerformanceCaveat": false,
+              "powerPreference": "high-performance",
+              "premultipliedAlpha": true,
+              "preserveDrawingBuffer": false,
+              "stencil": false,
+              "xrCompatible": false
+            }
+          },
+          "background": {
+            "background": true,
+            "cpuMs": {
+              "count": 1801,
+              "mean": 0.12004441981188858,
+              "p50": 0.10000000149011612,
+              "p95": 0.20000000298023224,
+              "max": 0.5
+            },
+            "gpuMs": {
+              "count": 1800,
+              "mean": 0.6887064049999997,
+              "p50": 0.554291,
+              "p95": 1.089624,
+              "max": 9.661374
+            },
+            "disjoint": 0,
+            "pixels": [
+              780,
+              1688
+            ],
+            "memory": {
+              "geometries": 1,
+              "textures": 0
+            },
+            "attributes": {
+              "alpha": true,
+              "antialias": false,
+              "depth": false,
+              "desynchronized": false,
+              "failIfMajorPerformanceCaveat": false,
+              "powerPreference": "high-performance",
+              "premultipliedAlpha": true,
+              "preserveDrawingBuffer": false,
+              "stencil": false,
+              "xrCompatible": false
+            }
+          },
+          "visibility": [],
+          "errors": []
+        },
+        {
+          "index": 2,
+          "enabled": true,
+          "durationMs": 30011.900000002235,
+          "main": {
+            "background": false,
+            "cpuMs": {
+              "count": 1801,
+              "mean": 0.3206551915747235,
+              "p50": 0.30000000074505806,
+              "p95": 0.6999999992549419,
+              "max": 0.9000000022351742
+            },
+            "gpuMs": {
+              "count": 1800,
+              "mean": 5.531357635555558,
+              "p50": 4.266333,
+              "p95": 14.574541,
+              "max": 22.98725
+            },
+            "disjoint": 0,
+            "pixels": [
+              702,
+              1288
+            ],
+            "memory": {
+              "geometries": 5,
+              "textures": 12
+            },
+            "attributes": {
+              "alpha": true,
+              "antialias": true,
+              "depth": true,
+              "desynchronized": false,
+              "failIfMajorPerformanceCaveat": false,
+              "powerPreference": "high-performance",
+              "premultipliedAlpha": true,
+              "preserveDrawingBuffer": false,
+              "stencil": false,
+              "xrCompatible": false
+            }
+          },
+          "background": {
+            "background": true,
+            "cpuMs": {
+              "count": 1801,
+              "mean": 0.08761799004112993,
+              "p50": 0.09999999776482582,
+              "p95": 0.19999999925494194,
+              "max": 0.6000000014901161
+            },
+            "gpuMs": {
+              "count": 1800,
+              "mean": 0.9718273638888879,
+              "p50": 0.572124,
+              "p95": 3.652208,
+              "max": 9.901375
+            },
+            "disjoint": 0,
+            "pixels": [
+              780,
+              1688
+            ],
+            "memory": {
+              "geometries": 1,
+              "textures": 0
+            },
+            "attributes": {
+              "alpha": true,
+              "antialias": false,
+              "depth": false,
+              "desynchronized": false,
+              "failIfMajorPerformanceCaveat": false,
+              "powerPreference": "high-performance",
+              "premultipliedAlpha": true,
+              "preserveDrawingBuffer": false,
+              "stencil": false,
+              "xrCompatible": false
+            }
+          },
+          "visibility": [],
+          "errors": []
+        },
+        {
+          "index": 3,
+          "enabled": false,
+          "durationMs": 30011.10000000149,
+          "main": {
+            "background": false,
+            "cpuMs": {
+              "count": 1801,
+              "mean": 0.5779566907906685,
+              "p50": 0.6000000014901161,
+              "p95": 0.8000000007450581,
+              "max": 1
+            },
+            "gpuMs": {
+              "count": 1800,
+              "mean": 6.393329246666658,
+              "p50": 5.943708,
+              "p95": 9.494249,
+              "max": 22.499291
+            },
+            "disjoint": 0,
+            "pixels": [
+              702,
+              1288
+            ],
+            "memory": {
+              "geometries": 5,
+              "textures": 12
+            },
+            "attributes": {
+              "alpha": true,
+              "antialias": true,
+              "depth": true,
+              "desynchronized": false,
+              "failIfMajorPerformanceCaveat": false,
+              "powerPreference": "high-performance",
+              "premultipliedAlpha": true,
+              "preserveDrawingBuffer": false,
+              "stencil": false,
+              "xrCompatible": false
+            }
+          },
+          "background": {
+            "background": true,
+            "cpuMs": {
+              "count": 1801,
+              "mean": 0.15191560238392932,
+              "p50": 0.19999999925494194,
+              "p95": 0.30000000074505806,
+              "max": 0.3999999985098839
+            },
+            "gpuMs": {
+              "count": 1800,
+              "mean": 0.77210790388889,
+              "p50": 0.673291,
+              "p95": 1.317874,
+              "max": 10.223625
+            },
+            "disjoint": 0,
+            "pixels": [
+              780,
+              1688
+            ],
+            "memory": {
+              "geometries": 1,
+              "textures": 0
+            },
+            "attributes": {
+              "alpha": true,
+              "antialias": false,
+              "depth": false,
+              "desynchronized": false,
+              "failIfMajorPerformanceCaveat": false,
+              "powerPreference": "high-performance",
+              "premultipliedAlpha": true,
+              "preserveDrawingBuffer": false,
+              "stencil": false,
+              "xrCompatible": false
+            }
+          },
+          "visibility": [],
+          "errors": []
+        },
+        {
+          "index": 4,
+          "enabled": false,
+          "durationMs": 30009.300000002986,
+          "main": {
+            "background": false,
+            "cpuMs": {
+              "count": 1801,
+              "mean": 0.49689061634412146,
+              "p50": 0.5999999977648258,
+              "p95": 0.7000000029802322,
+              "max": 1
+            },
+            "gpuMs": {
+              "count": 1800,
+              "mean": 6.539921563888871,
+              "p50": 6.191791,
+              "p95": 9.614708,
+              "max": 20.283416
+            },
+            "disjoint": 0,
+            "pixels": [
+              702,
+              1288
+            ],
+            "memory": {
+              "geometries": 5,
+              "textures": 12
+            },
+            "attributes": {
+              "alpha": true,
+              "antialias": true,
+              "depth": true,
+              "desynchronized": false,
+              "failIfMajorPerformanceCaveat": false,
+              "powerPreference": "high-performance",
+              "premultipliedAlpha": true,
+              "preserveDrawingBuffer": false,
+              "stencil": false,
+              "xrCompatible": false
+            }
+          },
+          "background": {
+            "background": true,
+            "cpuMs": {
+              "count": 1801,
+              "mean": 0.13398112158711456,
+              "p50": 0.10000000149011612,
+              "p95": 0.20000000298023224,
+              "max": 0.30000000074505806
+            },
+            "gpuMs": {
+              "count": 1800,
+              "mean": 0.7737471372222217,
+              "p50": 0.692749,
+              "p95": 1.292458,
+              "max": 12.725166
+            },
+            "disjoint": 0,
+            "pixels": [
+              780,
+              1688
+            ],
+            "memory": {
+              "geometries": 1,
+              "textures": 0
+            },
+            "attributes": {
+              "alpha": true,
+              "antialias": false,
+              "depth": false,
+              "desynchronized": false,
+              "failIfMajorPerformanceCaveat": false,
+              "powerPreference": "high-performance",
+              "premultipliedAlpha": true,
+              "preserveDrawingBuffer": false,
+              "stencil": false,
+              "xrCompatible": false
+            }
+          },
+          "visibility": [],
+          "errors": []
+        },
+        {
+          "index": 5,
+          "enabled": true,
+          "durationMs": 30009.600000000006,
+          "main": {
+            "background": false,
+            "cpuMs": {
+              "count": 1801,
+              "mean": 0.48628539706827006,
+              "p50": 0.5,
+              "p95": 0.7000000029802322,
+              "max": 1.199999999254942
+            },
+            "gpuMs": {
+              "count": 1800,
+              "mean": 4.544000488888891,
+              "p50": 4.144666,
+              "p95": 6.961541,
+              "max": 19.08825
+            },
+            "disjoint": 0,
+            "pixels": [
+              702,
+              1288
+            ],
+            "memory": {
+              "geometries": 5,
+              "textures": 12
+            },
+            "attributes": {
+              "alpha": true,
+              "antialias": true,
+              "depth": true,
+              "desynchronized": false,
+              "failIfMajorPerformanceCaveat": false,
+              "powerPreference": "high-performance",
+              "premultipliedAlpha": true,
+              "preserveDrawingBuffer": false,
+              "stencil": false,
+              "xrCompatible": false
+            }
+          },
+          "background": {
+            "background": true,
+            "cpuMs": {
+              "count": 1801,
+              "mean": 0.1310383120219718,
+              "p50": 0.10000000149011612,
+              "p95": 0.20000000298023224,
+              "max": 0.4000000022351742
+            },
+            "gpuMs": {
+              "count": 1800,
+              "mean": 0.5952177266666667,
+              "p50": 0.536125,
+              "p95": 0.924291,
+              "max": 7.5695
+            },
+            "disjoint": 0,
+            "pixels": [
+              780,
+              1688
+            ],
+            "memory": {
+              "geometries": 1,
+              "textures": 0
+            },
+            "attributes": {
+              "alpha": true,
+              "antialias": false,
+              "depth": false,
+              "desynchronized": false,
+              "failIfMajorPerformanceCaveat": false,
+              "powerPreference": "high-performance",
+              "premultipliedAlpha": true,
+              "preserveDrawingBuffer": false,
+              "stencil": false,
+              "xrCompatible": false
+            }
+          },
+          "visibility": [],
+          "errors": []
+        }
+      ]
+    },
+    {
+      "layout": "desktop",
+      "stock": {
+        "windows": 3,
+        "queries": 5400,
+        "meanMs": 13.723977508888892,
+        "disjoint": 0
+      },
+      "region": {
+        "windows": 3,
+        "queries": 5400,
+        "meanMs": 9.694689695000003,
+        "disjoint": 0
+      },
+      "reductionPercent": 29.35947549665654,
+      "windows": [
+        {
+          "index": 0,
+          "enabled": false,
+          "durationMs": 30007.4,
+          "main": {
+            "background": false,
+            "cpuMs": {
+              "count": 1801,
+              "mean": 0.4632981676693131,
+              "p50": 0.5,
+              "p95": 0.8000000007450581,
+              "max": 1
+            },
+            "gpuMs": {
+              "count": 1800,
+              "mean": 17.306389451666682,
+              "p50": 18.657,
+              "p95": 22.923833,
+              "max": 27.331708
+            },
+            "disjoint": 0,
+            "pixels": [
+              2340,
+              1569
+            ],
+            "memory": {
+              "geometries": 5,
+              "textures": 14
+            },
+            "attributes": {
+              "alpha": true,
+              "antialias": true,
+              "depth": true,
+              "desynchronized": false,
+              "failIfMajorPerformanceCaveat": false,
+              "powerPreference": "high-performance",
+              "premultipliedAlpha": true,
+              "preserveDrawingBuffer": false,
+              "stencil": false,
+              "xrCompatible": false
+            }
+          },
+          "background": {
+            "background": true,
+            "cpuMs": {
+              "count": 1801,
+              "mean": 0.12504164353716313,
+              "p50": 0.10000000149011612,
+              "p95": 0.20000000298023224,
+              "max": 0.30000000074505806
+            },
+            "gpuMs": {
+              "count": 1800,
+              "mean": 1.7500214272222177,
+              "p50": 1.602083,
+              "p95": 3.206749,
+              "max": 11.863249
+            },
+            "disjoint": 0,
+            "pixels": [
+              2600,
+              2000
+            ],
+            "memory": {
+              "geometries": 1,
+              "textures": 0
+            },
+            "attributes": {
+              "alpha": true,
+              "antialias": false,
+              "depth": false,
+              "desynchronized": false,
+              "failIfMajorPerformanceCaveat": false,
+              "powerPreference": "high-performance",
+              "premultipliedAlpha": true,
+              "preserveDrawingBuffer": false,
+              "stencil": false,
+              "xrCompatible": false
+            }
+          },
+          "visibility": [],
+          "errors": []
+        },
+        {
+          "index": 1,
+          "enabled": true,
+          "durationMs": 30009.39999999851,
+          "main": {
+            "background": false,
+            "cpuMs": {
+              "count": 1801,
+              "mean": 0.4210438644663451,
+              "p50": 0.4000000022351742,
+              "p95": 0.7000000029802322,
+              "max": 1.300000000745058
+            },
+            "gpuMs": {
+              "count": 1800,
+              "mean": 10.942262111111104,
+              "p50": 11.522125,
+              "p95": 16.891041,
+              "max": 31.526499
+            },
+            "disjoint": 0,
+            "pixels": [
+              2340,
+              1569
+            ],
+            "memory": {
+              "geometries": 5,
+              "textures": 14
+            },
+            "attributes": {
+              "alpha": true,
+              "antialias": true,
+              "depth": true,
+              "desynchronized": false,
+              "failIfMajorPerformanceCaveat": false,
+              "powerPreference": "high-performance",
+              "premultipliedAlpha": true,
+              "preserveDrawingBuffer": false,
+              "stencil": false,
+              "xrCompatible": false
+            }
+          },
+          "background": {
+            "background": true,
+            "cpuMs": {
+              "count": 1801,
+              "mean": 0.10860632986310188,
+              "p50": 0.10000000149011612,
+              "p95": 0.20000000298023224,
+              "max": 3
+            },
+            "gpuMs": {
+              "count": 1800,
+              "mean": 2.353439242777775,
+              "p50": 2.013125,
+              "p95": 5.19375,
+              "max": 13.180583
+            },
+            "disjoint": 0,
+            "pixels": [
+              2600,
+              2000
+            ],
+            "memory": {
+              "geometries": 1,
+              "textures": 0
+            },
+            "attributes": {
+              "alpha": true,
+              "antialias": false,
+              "depth": false,
+              "desynchronized": false,
+              "failIfMajorPerformanceCaveat": false,
+              "powerPreference": "high-performance",
+              "premultipliedAlpha": true,
+              "preserveDrawingBuffer": false,
+              "stencil": false,
+              "xrCompatible": false
+            }
+          },
+          "visibility": [],
+          "errors": []
+        },
+        {
+          "index": 2,
+          "enabled": true,
+          "durationMs": 30011.40000000075,
+          "main": {
+            "background": false,
+            "cpuMs": {
+              "count": 1801,
+              "mean": 0.3157690171936298,
+              "p50": 0.30000000074505806,
+              "p95": 0.5999999977648258,
+              "max": 3.300000000745058
+            },
+            "gpuMs": {
+              "count": 1800,
+              "mean": 7.423997601111111,
+              "p50": 6.613916,
+              "p95": 14.74575,
+              "max": 26.944166
+            },
+            "disjoint": 0,
+            "pixels": [
+              2340,
+              1569
+            ],
+            "memory": {
+              "geometries": 5,
+              "textures": 14
+            },
+            "attributes": {
+              "alpha": true,
+              "antialias": true,
+              "depth": true,
+              "desynchronized": false,
+              "failIfMajorPerformanceCaveat": false,
+              "powerPreference": "high-performance",
+              "premultipliedAlpha": true,
+              "preserveDrawingBuffer": false,
+              "stencil": false,
+              "xrCompatible": false
+            }
+          },
+          "background": {
+            "background": true,
+            "cpuMs": {
+              "count": 1801,
+              "mean": 0.08350916157607434,
+              "p50": 0.09999999776482582,
+              "p95": 0.19999999925494194,
+              "max": 4.199999999254942
+            },
+            "gpuMs": {
+              "count": 1800,
+              "mean": 1.6273176177777806,
+              "p50": 1.021791,
+              "p95": 5.233541,
+              "max": 10.700458
+            },
+            "disjoint": 0,
+            "pixels": [
+              2600,
+              2000
+            ],
+            "memory": {
+              "geometries": 1,
+              "textures": 0
+            },
+            "attributes": {
+              "alpha": true,
+              "antialias": false,
+              "depth": false,
+              "desynchronized": false,
+              "failIfMajorPerformanceCaveat": false,
+              "powerPreference": "high-performance",
+              "premultipliedAlpha": true,
+              "preserveDrawingBuffer": false,
+              "stencil": false,
+              "xrCompatible": false
+            }
+          },
+          "visibility": [],
+          "errors": []
+        },
+        {
+          "index": 3,
+          "enabled": false,
+          "durationMs": 30011.40000000075,
+          "main": {
+            "background": false,
+            "cpuMs": {
+              "count": 1801,
+              "mean": 0.32615213770872353,
+              "p50": 0.30000000074505806,
+              "p95": 0.6000000014901161,
+              "max": 1.300000000745058
+            },
+            "gpuMs": {
+              "count": 1800,
+              "mean": 13.204422932222212,
+              "p50": 12.327499,
+              "p95": 23.341708,
+              "max": 38.933708
+            },
+            "disjoint": 0,
+            "pixels": [
+              2340,
+              1569
+            ],
+            "memory": {
+              "geometries": 5,
+              "textures": 14
+            },
+            "attributes": {
+              "alpha": true,
+              "antialias": true,
+              "depth": true,
+              "desynchronized": false,
+              "failIfMajorPerformanceCaveat": false,
+              "powerPreference": "high-performance",
+              "premultipliedAlpha": true,
+              "preserveDrawingBuffer": false,
+              "stencil": false,
+              "xrCompatible": false
+            }
+          },
+          "background": {
+            "background": true,
+            "cpuMs": {
+              "count": 1801,
+              "mean": 0.08262076627241778,
+              "p50": 0.09999999776482582,
+              "p95": 0.19999999925494194,
+              "max": 0.3999999985098839
+            },
+            "gpuMs": {
+              "count": 1800,
+              "mean": 1.9238797577777753,
+              "p50": 1.127625,
+              "p95": 6.238125,
+              "max": 13.269916
+            },
+            "disjoint": 0,
+            "pixels": [
+              2600,
+              2000
+            ],
+            "memory": {
+              "geometries": 1,
+              "textures": 0
+            },
+            "attributes": {
+              "alpha": true,
+              "antialias": false,
+              "depth": false,
+              "desynchronized": false,
+              "failIfMajorPerformanceCaveat": false,
+              "powerPreference": "high-performance",
+              "premultipliedAlpha": true,
+              "preserveDrawingBuffer": false,
+              "stencil": false,
+              "xrCompatible": false
+            }
+          },
+          "visibility": [],
+          "errors": []
+        },
+        {
+          "index": 4,
+          "enabled": false,
+          "durationMs": 30010.09999999852,
+          "main": {
+            "background": false,
+            "cpuMs": {
+              "count": 1801,
+              "mean": 0.3674625207642626,
+              "p50": 0.3999999985098839,
+              "p95": 0.5999999977648258,
+              "max": 0.8000000007450581
+            },
+            "gpuMs": {
+              "count": 1800,
+              "mean": 10.661120142777788,
+              "p50": 10.579416,
+              "p95": 16.505041,
+              "max": 24.847874
+            },
+            "disjoint": 0,
+            "pixels": [
+              2340,
+              1569
+            ],
+            "memory": {
+              "geometries": 5,
+              "textures": 14
+            },
+            "attributes": {
+              "alpha": true,
+              "antialias": true,
+              "depth": true,
+              "desynchronized": false,
+              "failIfMajorPerformanceCaveat": false,
+              "powerPreference": "high-performance",
+              "premultipliedAlpha": true,
+              "preserveDrawingBuffer": false,
+              "stencil": false,
+              "xrCompatible": false
+            }
+          },
+          "background": {
+            "background": true,
+            "cpuMs": {
+              "count": 1801,
+              "mean": 0.08667406992886478,
+              "p50": 0.09999999776482582,
+              "p95": 0.19999999925494194,
+              "max": 0.30000000074505806
+            },
+            "gpuMs": {
+              "count": 1800,
+              "mean": 1.335683640555557,
+              "p50": 0.953124,
+              "p95": 3.662083,
+              "max": 8.855374
+            },
+            "disjoint": 0,
+            "pixels": [
+              2600,
+              2000
+            ],
+            "memory": {
+              "geometries": 1,
+              "textures": 0
+            },
+            "attributes": {
+              "alpha": true,
+              "antialias": false,
+              "depth": false,
+              "desynchronized": false,
+              "failIfMajorPerformanceCaveat": false,
+              "powerPreference": "high-performance",
+              "premultipliedAlpha": true,
+              "preserveDrawingBuffer": false,
+              "stencil": false,
+              "xrCompatible": false
+            }
+          },
+          "visibility": [],
+          "errors": []
+        },
+        {
+          "index": 5,
+          "enabled": true,
+          "durationMs": 30011.299999997776,
+          "main": {
+            "background": false,
+            "cpuMs": {
+              "count": 1801,
+              "mean": 0.426485285957213,
+              "p50": 0.5,
+              "p95": 0.7000000029802322,
+              "max": 0.8999999985098839
+            },
+            "gpuMs": {
+              "count": 1800,
+              "mean": 10.717809372777797,
+              "p50": 11.465958,
+              "p95": 16.450958,
+              "max": 24.950499
+            },
+            "disjoint": 0,
+            "pixels": [
+              2340,
+              1569
+            ],
+            "memory": {
+              "geometries": 5,
+              "textures": 14
+            },
+            "attributes": {
+              "alpha": true,
+              "antialias": true,
+              "depth": true,
+              "desynchronized": false,
+              "failIfMajorPerformanceCaveat": false,
+              "powerPreference": "high-performance",
+              "premultipliedAlpha": true,
+              "preserveDrawingBuffer": false,
+              "stencil": false,
+              "xrCompatible": false
+            }
+          },
+          "background": {
+            "background": true,
+            "cpuMs": {
+              "count": 1801,
+              "mean": 0.11299278180858018,
+              "p50": 0.10000000149011612,
+              "p95": 0.20000000298023224,
+              "max": 0.30000000074505806
+            },
+            "gpuMs": {
+              "count": 1800,
+              "mean": 2.099752094444443,
+              "p50": 2.054583,
+              "p95": 3.658874,
+              "max": 11.3555
+            },
+            "disjoint": 0,
+            "pixels": [
+              2600,
+              2000
+            ],
+            "memory": {
+              "geometries": 1,
+              "textures": 0
+            },
+            "attributes": {
+              "alpha": true,
+              "antialias": false,
+              "depth": false,
+              "desynchronized": false,
+              "failIfMajorPerformanceCaveat": false,
+              "powerPreference": "high-performance",
+              "premultipliedAlpha": true,
+              "preserveDrawingBuffer": false,
+              "stencil": false,
+              "xrCompatible": false
+            }
+          },
+          "visibility": [],
+          "errors": []
+        }
+      ]
+    }
+  ],
+  "gpuInterleaved": [
+    {
+      "name": "mobile",
+      "durationMs": 30026.5,
+      "stats": {
+        "stock": {
+          "count": 894,
+          "mean": 5.184020795302015,
+          "p50": 4.430708,
+          "p95": 10.624958,
+          "max": 26.891666
+        },
+        "region": {
+          "count": 894,
+          "mean": 3.6129423310961952,
+          "p50": 3.028374,
+          "p95": 8.14125,
+          "max": 17.557916
+        }
+      },
+      "skipped": 0,
+      "disjoint": 0,
+      "visibility": [],
+      "release": "coscroll-297f84199d73b55a",
+      "pixels": [
+        702,
+        1288
+      ],
+      "mode": "headless",
+      "canvases": 2
+    },
+    {
+      "name": "desktop",
+      "durationMs": 30029.10000000149,
+      "stats": {
+        "stock": {
+          "count": 894,
+          "mean": 14.07681553691275,
+          "p50": 12.990583,
+          "p95": 24.515541,
+          "max": 37.871875
+        },
+        "region": {
+          "count": 894,
+          "mean": 7.366440491051444,
+          "p50": 6.816333,
+          "p95": 12.841874,
+          "max": 33.34125
+        }
+      },
+      "skipped": 0,
+      "disjoint": 0,
+      "visibility": [],
+      "release": "coscroll-297f84199d73b55a",
+      "pixels": [
+        2340,
+        1569
+      ],
+      "mode": "headless",
+      "canvases": 2
+    }
+  ],
+  "cpu": {
+    "mode": "headless",
+    "stats": {
+      "stock": {
+        "count": 600,
+        "mean": 0.3654999999329448,
+        "p50": 0.3999999985098839,
+        "p95": 0.6999999992549419,
+        "max": 1.1000000014901161
+      },
+      "region": {
+        "count": 600,
+        "mean": 0.36633333321039874,
+        "p50": 0.3999999985098839,
+        "p95": 0.6999999992549419,
+        "max": 1
+      },
+      "clear-only": {
+        "count": 600,
+        "mean": 0.37650000005339584,
+        "p50": 0.3999999985098839,
+        "p95": 0.6999999992549419,
+        "max": 0.8999999985098839
+      }
+    },
+    "visibility": [],
+    "differenceMs": 0.0008333332774539404,
+    "boundsProviderBenchmark": {
+      "count": 100000,
+      "totalMs": 21.300000000745058,
+      "glStateReads": 0,
+      "revision": "r2 (unchanged bounds controller)",
+      "meanMs": 0.00021300000000745058
+    }
+  },
+  "functional": {
+    "complete": true,
+    "errors": [],
+    "resizesAndRestore": [
+      {
+        "label": "initial",
+        "viewport": [
+          390,
+          844
+        ],
+        "comparisons": 11,
+        "changedPixels": 0,
+        "scissorEnabledAfter": false
+      },
+      {
+        "label": "resize-360x600",
+        "viewport": [
+          360,
+          600
+        ],
+        "comparisons": 11,
+        "changedPixels": 0,
+        "scissorEnabledAfter": false
+      },
+      {
+        "label": "resize-844x390",
+        "viewport": [
+          844,
+          390
+        ],
+        "comparisons": 11,
+        "changedPixels": 0,
+        "scissorEnabledAfter": false
+      },
+      {
+        "label": "resize-390x844",
+        "viewport": [
+          390,
+          844
+        ],
+        "comparisons": 11,
+        "changedPixels": 0,
+        "scissorEnabledAfter": false
+      },
+      {
+        "label": "after-context-restore",
+        "viewport": [
+          390,
+          844
+        ],
+        "comparisons": 11,
+        "changedPixels": 0,
+        "scissorEnabledAfter": false
+      }
+    ],
+    "colors": [
+      {
+        "name": "green",
+        "comparisons": 11,
+        "changedPixels": 0
+      },
+      {
+        "name": "gold",
+        "comparisons": 11,
+        "changedPixels": 0
+      },
+      {
+        "name": "violet",
+        "comparisons": 11,
+        "changedPixels": 0
+      }
+    ],
+    "contextRestore": {
+      "visual": [
+        {
+          "name": "background",
+          "width": 780,
+          "height": 1688,
+          "meanChannelDifference": 0,
+          "maxChannelDifference": 0,
+          "p99PixelDifference": 0,
+          "changedPixelPercent": 0,
+          "overTwoPixelPercent": 0
+        },
+        {
+          "name": "main-0.000",
+          "width": 702,
+          "height": 1288,
+          "meanChannelDifference": 0.23818261046521916,
+          "maxChannelDifference": 79,
+          "p99PixelDifference": 14,
+          "changedPixelPercent": 1.344317920404877,
+          "overTwoPixelPercent": 1.3423271575445488
+        },
+        {
+          "name": "main-1.571",
+          "width": 702,
+          "height": 1288,
+          "meanChannelDifference": 0.5250216771955902,
+          "maxChannelDifference": 68,
+          "p99PixelDifference": 22,
+          "changedPixelPercent": 4.56636760984587,
+          "overTwoPixelPercent": 4.4628479411088104
+        },
+        {
+          "name": "main-3.142",
+          "width": 702,
+          "height": 1288,
+          "meanChannelDifference": 0.16750527552157987,
+          "maxChannelDifference": 74,
+          "p99PixelDifference": 11,
+          "changedPixelPercent": 1.3582532604271735,
+          "overTwoPixelPercent": 1.3549353223266267
+        }
+      ],
+      "state": {
+        "lost": 1,
+        "restored": 1,
+        "canvases": 2
+      },
+      "stockEquivalence": [
+        {
+          "name": "background",
+          "width": 780,
+          "height": 1688,
+          "meanChannelDifference": 0,
+          "maxChannelDifference": 0,
+          "p99PixelDifference": 0,
+          "changedPixelPercent": 0,
+          "overTwoPixelPercent": 0
+        },
+        {
+          "name": "main-0.000",
+          "width": 702,
+          "height": 1288,
+          "meanChannelDifference": 0,
+          "maxChannelDifference": 0,
+          "p99PixelDifference": 0,
+          "changedPixelPercent": 0,
+          "overTwoPixelPercent": 0
+        },
+        {
+          "name": "main-1.571",
+          "width": 702,
+          "height": 1288,
+          "meanChannelDifference": 0,
+          "maxChannelDifference": 0,
+          "p99PixelDifference": 0,
+          "changedPixelPercent": 0,
+          "overTwoPixelPercent": 0
+        },
+        {
+          "name": "main-3.142",
+          "width": 702,
+          "height": 1288,
+          "meanChannelDifference": 0,
+          "maxChannelDifference": 0,
+          "p99PixelDifference": 0,
+          "changedPixelPercent": 0,
+          "overTwoPixelPercent": 0
+        }
+      ],
+      "preExistingColorChange": true
+    },
+    "stockContextRestoreAudit": {
+      "stockBeforeAfter": [
+        {
+          "name": "background",
+          "width": 780,
+          "height": 1688,
+          "meanChannelDifference": 0,
+          "maxChannelDifference": 0,
+          "p99PixelDifference": 0,
+          "changedPixelPercent": 0,
+          "overTwoPixelPercent": 0
+        },
+        {
+          "name": "main-0.000",
+          "width": 702,
+          "height": 1288,
+          "meanChannelDifference": 0.23818288696006087,
+          "maxChannelDifference": 79,
+          "p99PixelDifference": 14,
+          "changedPixelPercent": 1.344317920404877,
+          "overTwoPixelPercent": 1.3423271575445488
+        },
+        {
+          "name": "main-1.571",
+          "width": 702,
+          "height": 1288,
+          "meanChannelDifference": 0.5250222301852736,
+          "maxChannelDifference": 68,
+          "p99PixelDifference": 22,
+          "changedPixelPercent": 4.56636760984587,
+          "overTwoPixelPercent": 4.4628479411088104
+        },
+        {
+          "name": "main-3.142",
+          "width": 702,
+          "height": 1288,
+          "meanChannelDifference": 0.16750527552157987,
+          "maxChannelDifference": 74,
+          "p99PixelDifference": 11,
+          "changedPixelPercent": 1.3582532604271735,
+          "overTwoPixelPercent": 1.3549353223266267
+        }
+      ],
+      "restoredStockVsRegion": [
+        {
+          "name": "background",
+          "width": 780,
+          "height": 1688,
+          "meanChannelDifference": 0,
+          "maxChannelDifference": 0,
+          "p99PixelDifference": 0,
+          "changedPixelPercent": 0,
+          "overTwoPixelPercent": 0
+        },
+        {
+          "name": "main-0.000",
+          "width": 702,
+          "height": 1288,
+          "meanChannelDifference": 0,
+          "maxChannelDifference": 0,
+          "p99PixelDifference": 0,
+          "changedPixelPercent": 0,
+          "overTwoPixelPercent": 0
+        },
+        {
+          "name": "main-1.571",
+          "width": 702,
+          "height": 1288,
+          "meanChannelDifference": 0,
+          "maxChannelDifference": 0,
+          "p99PixelDifference": 0,
+          "changedPixelPercent": 0,
+          "overTwoPixelPercent": 0
+        },
+        {
+          "name": "main-3.142",
+          "width": 702,
+          "height": 1288,
+          "meanChannelDifference": 0,
+          "maxChannelDifference": 0,
+          "p99PixelDifference": 0,
+          "changedPixelPercent": 0,
+          "overTwoPixelPercent": 0
+        }
+      ],
+      "materials": {
+        "before": [
+          {
+            "key": "inner",
+            "color": 3568730,
+            "roughness": 1,
+            "metalness": 1,
+            "transmission": 0,
+            "thickness": 0,
+            "ior": 1.5,
+            "emissive": 1060387,
+            "emissiveIntensity": 12,
+            "normalScale": [
+              0.3,
+              0.3
+            ],
+            "vertices": 18003
+          },
+          {
+            "key": "outer",
+            "color": 16777215,
+            "roughness": 0.82,
+            "metalness": 0,
+            "transmission": 1,
+            "thickness": 0.24,
+            "ior": 1.272727272727273,
+            "emissive": 0,
+            "emissiveIntensity": 1,
+            "normalScale": [
+              0.3,
+              0.3
+            ],
+            "vertices": 31166
+          }
+        ],
+        "after": [
+          {
+            "key": "inner",
+            "color": 3568730,
+            "roughness": 1,
+            "metalness": 1,
+            "transmission": 0,
+            "thickness": 0,
+            "ior": 1.5,
+            "emissive": 1060387,
+            "emissiveIntensity": 12,
+            "normalScale": [
+              0.3,
+              0.3
+            ],
+            "vertices": 18003
+          },
+          {
+            "key": "outer",
+            "color": 16777215,
+            "roughness": 0.82,
+            "metalness": 0,
+            "transmission": 1,
+            "thickness": 0.24,
+            "ior": 1.272727272727273,
+            "emissive": 0,
+            "emissiveIntensity": 1,
+            "normalScale": [
+              0.3,
+              0.3
+            ],
+            "vertices": 31166
+          }
+        ]
+      },
+      "complete": true
+    },
+    "sceneLifetime": [
+      {
+        "project": "heart-sutra",
+        "envReused": true,
+        "normalReused": true,
+        "materialsReused": true,
+        "resetAngle": 0,
+        "textures": 11,
+        "textureRequests": []
+      },
+      {
+        "project": "lotus-sutra-zanshi",
+        "envReused": true,
+        "normalReused": true,
+        "materialsReused": true,
+        "resetAngle": 0,
+        "textures": 11,
+        "textureRequests": []
+      },
+      {
+        "project": "heart-sutra",
+        "envReused": true,
+        "normalReused": true,
+        "materialsReused": true,
+        "resetAngle": 0,
+        "textures": 11,
+        "textureRequests": []
+      },
+      {
+        "project": "lotus-sutra-zanshi",
+        "envReused": true,
+        "normalReused": true,
+        "materialsReused": true,
+        "resetAngle": 0,
+        "textures": 10,
+        "textureRequests": []
+      }
+    ],
+    "projects": [
+      {
+        "id": "lotus-sutra-zanshi",
+        "touch": {
+          "gestures": [
+            {
+              "start": {
+                "at": 19196.39999999851,
+                "absolute": 60
+              },
+              "end": {
+                "absolute": 81.25,
+                "propAbsolute": 81.25,
+                "phase": 81.25,
+                "cycle": 0,
+                "duration": 241.843771,
+                "mediaTime": 81.25,
+                "paused": true,
+                "rate": 1,
+                "velocity": 0,
+                "memory": [
+                  {
+                    "background": true,
+                    "geometries": 1,
+                    "textures": 0
+                  },
+                  {
+                    "background": false,
+                    "geometries": 19,
+                    "textures": 11
+                  }
+                ]
+              },
+              "expected": 81.25,
+              "events": [
+                {
+                  "type": "touchstart",
+                  "at": 19259.5,
+                  "x": 310,
+                  "prevented": true
+                },
+                {
+                  "type": "touchmove",
+                  "at": 19275.300000000745,
+                  "x": 273.4163513183594,
+                  "prevented": true
+                },
+                {
+                  "type": "touchmove",
+                  "at": 19292,
+                  "x": 236.37167358398438,
+                  "prevented": true
+                },
+                {
+                  "type": "touchmove",
+                  "at": 19309.199999999255,
+                  "x": 193.12945556640625,
+                  "prevented": true
+                },
+                {
+                  "type": "touchmove",
+                  "at": 19325.300000000745,
+                  "x": 151.79188537597656,
+                  "prevented": true
+                },
+                {
+                  "type": "touchmove",
+                  "at": 19341.39999999851,
+                  "x": 111.42402648925781,
+                  "prevented": true
+                },
+                {
+                  "type": "touchmove",
+                  "at": 19358.39999999851,
+                  "x": 75.52008056640625,
+                  "prevented": true
+                },
+                {
+                  "type": "touchmove",
+                  "at": 19375.300000000745,
+                  "x": 55,
+                  "prevented": true
+                },
+                {
+                  "type": "touchend",
+                  "at": 19467.599999997765,
+                  "x": 55,
+                  "prevented": true
+                }
+              ],
+              "peakRadiansPerSecond": 8.271910575561758,
+              "rotation": -3.7805525862170155
+            },
+            {
+              "start": {
+                "at": 21331.800000000745,
+                "absolute": 81.25
+              },
+              "end": {
+                "absolute": 60,
+                "propAbsolute": 60,
+                "phase": 60,
+                "cycle": 0,
+                "duration": 241.843771,
+                "mediaTime": 60,
+                "paused": true,
+                "rate": 1,
+                "velocity": 0,
+                "memory": [
+                  {
+                    "background": true,
+                    "geometries": 1,
+                    "textures": 0
+                  },
+                  {
+                    "background": false,
+                    "geometries": 19,
+                    "textures": 9
+                  }
+                ]
+              },
+              "expected": 60,
+              "events": [
+                {
+                  "type": "touchstart",
+                  "at": 21339.599999997765,
+                  "x": 70,
+                  "prevented": true
+                },
+                {
+                  "type": "touchmove",
+                  "at": 21357.800000000745,
+                  "x": 110.04716491699219,
+                  "prevented": true
+                },
+                {
+                  "type": "touchmove",
+                  "at": 21375.300000000745,
+                  "x": 149.12489318847656,
+                  "prevented": true
+                },
+                {
+                  "type": "touchmove",
+                  "at": 21392,
+                  "x": 190.84869384765625,
+                  "prevented": true
+                },
+                {
+                  "type": "touchmove",
+                  "at": 21408.599999997765,
+                  "x": 232.111328125,
+                  "prevented": true
+                },
+                {
+                  "type": "touchmove",
+                  "at": 21425.300000000745,
+                  "x": 272.098876953125,
+                  "prevented": true
+                },
+                {
+                  "type": "touchmove",
+                  "at": 21442.099999997765,
+                  "x": 312.1081848144531,
+                  "prevented": true
+                },
+                {
+                  "type": "touchmove",
+                  "at": 21458.699999999255,
+                  "x": 325,
+                  "prevented": true
+                },
+                {
+                  "type": "touchend",
+                  "at": 21551,
+                  "x": 325,
+                  "prevented": true
+                }
+              ],
+              "peakRadiansPerSecond": 7.968811063158045,
+              "rotation": 2.103598842228139
+            },
+            {
+              "start": {
+                "at": 23412.89999999851,
+                "absolute": 60
+              },
+              "end": {
+                "absolute": 81.25,
+                "propAbsolute": 81.25,
+                "phase": 81.25,
+                "cycle": 0,
+                "duration": 241.843771,
+                "mediaTime": 81.25,
+                "paused": true,
+                "rate": 1,
+                "velocity": 0,
+                "memory": [
+                  {
+                    "background": true,
+                    "geometries": 1,
+                    "textures": 0
+                  },
+                  {
+                    "background": false,
+                    "geometries": 19,
+                    "textures": 11
+                  }
+                ]
+              },
+              "expected": 81.25,
+              "events": [
+                {
+                  "type": "touchstart",
+                  "at": 23423.39999999851,
+                  "x": 310,
+                  "prevented": true
+                },
+                {
+                  "type": "touchmove",
+                  "at": 23441.300000000745,
+                  "x": 270.2337951660156,
+                  "prevented": true
+                },
+                {
+                  "type": "touchmove",
+                  "at": 23457.800000000745,
+                  "x": 230.06436157226562,
+                  "prevented": true
+                },
+                {
+                  "type": "touchmove",
+                  "at": 23475.199999999255,
+                  "x": 192.77474975585938,
+                  "prevented": true
+                },
+                {
+                  "type": "touchmove",
+                  "at": 23491.599999997765,
+                  "x": 148.92935180664062,
+                  "prevented": true
+                },
+                {
+                  "type": "touchmove",
+                  "at": 23508.39999999851,
+                  "x": 108.44340515136719,
+                  "prevented": true
+                },
+                {
+                  "type": "touchmove",
+                  "at": 23525.199999999255,
+                  "x": 69.48529052734375,
+                  "prevented": true
+                },
+                {
+                  "type": "touchmove",
+                  "at": 23541.599999997765,
+                  "x": 55,
+                  "prevented": true
+                },
+                {
+                  "type": "touchend",
+                  "at": 23633.599999997765,
+                  "x": 55,
+                  "prevented": true
+                }
+              ],
+              "peakRadiansPerSecond": 8.003448656014845,
+              "rotation": -3.456161285166803
+            },
+            {
+              "start": {
+                "at": 25492.300000000745,
+                "absolute": 81.25
+              },
+              "end": {
+                "absolute": 60,
+                "propAbsolute": 60,
+                "phase": 60,
+                "cycle": 0,
+                "duration": 241.843771,
+                "mediaTime": 60,
+                "paused": true,
+                "rate": 1,
+                "velocity": 0,
+                "memory": [
+                  {
+                    "background": true,
+                    "geometries": 1,
+                    "textures": 0
+                  },
+                  {
+                    "background": false,
+                    "geometries": 19,
+                    "textures": 9
+                  }
+                ]
+              },
+              "expected": 60,
+              "events": [
+                {
+                  "type": "touchstart",
+                  "at": 25506.699999999255,
+                  "x": 70,
+                  "prevented": true
+                },
+                {
+                  "type": "touchmove",
+                  "at": 25523.89999999851,
+                  "x": 107.54390716552734,
+                  "prevented": true
+                },
+                {
+                  "type": "touchmove",
+                  "at": 25540.099999997765,
+                  "x": 144.2412109375,
+                  "prevented": true
+                },
+                {
+                  "type": "touchmove",
+                  "at": 25557.599999997765,
+                  "x": 188.01544189453125,
+                  "prevented": true
+                },
+                {
+                  "type": "touchmove",
+                  "at": 25574.199999999255,
+                  "x": 228.88612365722656,
+                  "prevented": true
+                },
+                {
+                  "type": "touchmove",
+                  "at": 25590.800000000745,
+                  "x": 269.33294677734375,
+                  "prevented": true
+                },
+                {
+                  "type": "touchmove",
+                  "at": 25607.5,
+                  "x": 308.9941101074219,
+                  "prevented": true
+                },
+                {
+                  "type": "touchmove",
+                  "at": 25624.099999997765,
+                  "x": 325,
+                  "prevented": true
+                },
+                {
+                  "type": "touchend",
+                  "at": 25715.5,
+                  "x": 325,
+                  "prevented": true
+                }
+              ],
+              "peakRadiansPerSecond": 7.9999494020869575,
+              "rotation": 2.394073717238517
+            }
+          ],
+          "finalOnly": {
+            "before": 60,
+            "expected": 70
+          },
+          "cancellation": {
+            "before": 70,
+            "expected": 80
+          },
+          "playing": {
+            "absolute": 97.243358,
+            "propAbsolute": 96.988014,
+            "phase": 96.988014,
+            "cycle": 0,
+            "duration": 241.843771,
+            "mediaTime": 97.246432,
+            "paused": false,
+            "rate": 1,
+            "velocity": 0,
+            "memory": [
+              {
+                "background": true,
+                "geometries": 1,
+                "textures": 0
+              },
+              {
+                "background": false,
+                "geometries": 19,
+                "textures": 10
+              }
+            ]
+          },
+          "pointerIndependent": true
+        },
+        "infinite": [
+          {
+            "absolute": 7,
+            "propAbsolute": 7,
+            "phase": 7,
+            "cycle": 0,
+            "duration": 241.843771,
+            "mediaTime": 7,
+            "paused": true,
+            "rate": 1,
+            "velocity": 0,
+            "memory": [
+              {
+                "background": true,
+                "geometries": 1,
+                "textures": 0
+              },
+              {
+                "background": false,
+                "geometries": 17,
+                "textures": 12
+              }
+            ]
+          },
+          {
+            "absolute": -234.843771,
+            "propAbsolute": -234.843771,
+            "phase": 7,
+            "cycle": -1,
+            "duration": 241.843771,
+            "mediaTime": 7,
+            "paused": true,
+            "rate": 1,
+            "velocity": 0,
+            "memory": [
+              {
+                "background": true,
+                "geometries": 1,
+                "textures": 0
+              },
+              {
+                "background": false,
+                "geometries": 17,
+                "textures": 12
+              }
+            ]
+          },
+          {
+            "absolute": -960.375084,
+            "propAbsolute": -960.375084,
+            "phase": 7,
+            "cycle": -4,
+            "duration": 241.843771,
+            "mediaTime": 7,
+            "paused": true,
+            "rate": 1,
+            "velocity": 0,
+            "memory": [
+              {
+                "background": true,
+                "geometries": 1,
+                "textures": 0
+              },
+              {
+                "background": false,
+                "geometries": 17,
+                "textures": 12
+              }
+            ]
+          },
+          {
+            "absolute": 974.375084,
+            "propAbsolute": 974.375084,
+            "phase": 7,
+            "cycle": 4,
+            "duration": 241.843771,
+            "mediaTime": 7,
+            "paused": true,
+            "rate": 1,
+            "velocity": 0,
+            "memory": [
+              {
+                "background": true,
+                "geometries": 1,
+                "textures": 0
+              },
+              {
+                "background": false,
+                "geometries": 17,
+                "textures": 12
+              }
+            ]
+          },
+          {
+            "absolute": 2418444.71,
+            "propAbsolute": 2418444.71,
+            "phase": 6.999999999924512,
+            "cycle": 10000,
+            "duration": 241.843771,
+            "mediaTime": 7,
+            "paused": true,
+            "rate": 1,
+            "velocity": 0,
+            "memory": [
+              {
+                "background": true,
+                "geometries": 1,
+                "textures": 0
+              },
+              {
+                "background": false,
+                "geometries": 17,
+                "textures": 12
+              }
+            ]
+          },
+          {
+            "absolute": -2418430.71,
+            "propAbsolute": -2418430.71,
+            "phase": 7.000000000075488,
+            "cycle": -10000,
+            "duration": 241.843771,
+            "mediaTime": 7,
+            "paused": true,
+            "rate": 1,
+            "velocity": 0,
+            "memory": [
+              {
+                "background": true,
+                "geometries": 1,
+                "textures": 0
+              },
+              {
+                "background": false,
+                "geometries": 17,
+                "textures": 12
+              }
+            ]
+          },
+          {
+            "absolute": 241843778,
+            "propAbsolute": 241843778,
+            "phase": 6.999999996176484,
+            "cycle": 1000000,
+            "duration": 241.843771,
+            "mediaTime": 7,
+            "paused": true,
+            "rate": 1,
+            "velocity": 0,
+            "memory": [
+              {
+                "background": true,
+                "geometries": 1,
+                "textures": 0
+              },
+              {
+                "background": false,
+                "geometries": 17,
+                "textures": 12
+              }
+            ]
+          },
+          {
+            "absolute": -241843764,
+            "propAbsolute": -241843764,
+            "phase": 7.000000003823516,
+            "cycle": -1000000,
+            "duration": 241.843771,
+            "mediaTime": 7,
+            "paused": true,
+            "rate": 1,
+            "velocity": 0,
+            "memory": [
+              {
+                "background": true,
+                "geometries": 1,
+                "textures": 0
+              },
+              {
+                "background": false,
+                "geometries": 17,
+                "textures": 12
+              }
+            ]
+          },
+          {
+            "absolute": 7,
+            "propAbsolute": 7,
+            "phase": 7,
+            "cycle": 0,
+            "duration": 241.843771,
+            "mediaTime": 7,
+            "paused": true,
+            "rate": 1,
+            "velocity": 0,
+            "memory": [
+              {
+                "background": true,
+                "geometries": 1,
+                "textures": 0
+              },
+              {
+                "background": false,
+                "geometries": 17,
+                "textures": 12
+              }
+            ]
+          },
+          {
+            "wheel": 11728.501008,
+            "native": {
+              "x": 3909.5003255208335,
+              "y": 0,
+              "mode": 0
+            },
+            "absolute": 332.79169379340277,
+            "propAbsolute": 332.79169379340277,
+            "phase": 90.94792279340277,
+            "cycle": 1,
+            "duration": 241.843771,
+            "mediaTime": 90.947922,
+            "paused": true,
+            "rate": 1,
+            "velocity": 0,
+            "memory": [
+              {
+                "background": true,
+                "geometries": 1,
+                "textures": 0
+              },
+              {
+                "background": false,
+                "geometries": 17,
+                "textures": 9
+              }
+            ]
+          },
+          {
+            "wheel": -20554.876764,
+            "native": {
+              "x": -6851.625651041667,
+              "y": 0,
+              "mode": 0
+            },
+            "absolute": -238.1771104600695,
+            "propAbsolute": -238.1771104600695,
+            "phase": 3.66666053993049,
+            "cycle": -1,
+            "duration": 241.843771,
+            "mediaTime": 3.66666,
+            "paused": true,
+            "rate": 1,
+            "velocity": 0,
+            "memory": [
+              {
+                "background": true,
+                "geometries": 1,
+                "textures": 0
+              },
+              {
+                "background": false,
+                "geometries": 17,
+                "textures": 8
+              }
+            ]
+          },
+          {
+            "wheel": 8826.375756,
+            "native": {
+              "x": 2942.1253255208335,
+              "y": 0,
+              "mode": 0
+            },
+            "absolute": 6.999999999999943,
+            "propAbsolute": 6.999999999999943,
+            "phase": 6.999999999999943,
+            "cycle": 0,
+            "duration": 241.843771,
+            "mediaTime": 6.999999,
+            "paused": true,
+            "rate": 1,
+            "velocity": 0,
+            "memory": [
+              {
+                "background": true,
+                "geometries": 1,
+                "textures": 0
+              },
+              {
+                "background": false,
+                "geometries": 17,
+                "textures": 8
+              }
+            ]
+          },
+          {
+            "negativeScrub": true,
+            "absolute": -700.531313,
+            "propAbsolute": -700.531313,
+            "phase": 25.000000000000057,
+            "cycle": -3,
+            "duration": 241.843771,
+            "mediaTime": 25,
+            "paused": true,
+            "rate": 1,
+            "velocity": 0,
+            "memory": [
+              {
+                "background": true,
+                "geometries": 1,
+                "textures": 0
+              },
+              {
+                "background": false,
+                "geometries": 17,
+                "textures": 8
+              }
+            ]
+          }
+        ],
+        "latestGesture": {
+          "absolute": -700.531313,
+          "propAbsolute": -700.531313,
+          "phase": 25.000000000000057,
+          "cycle": -3,
+          "duration": 241.843771,
+          "mediaTime": 25,
+          "paused": true,
+          "rate": 1,
+          "velocity": 0,
+          "memory": [
+            {
+              "background": true,
+              "geometries": 1,
+              "textures": 0
+            },
+            {
+              "background": false,
+              "geometries": 17,
+              "textures": 8
+            }
+          ],
+          "range": "25",
+          "preview": false
+        },
+        "controlledVisibility": {
+          "mode": "controlled-document-visibility",
+          "before": {
+            "absolute": 100.001861,
+            "propAbsolute": 100,
+            "phase": 100,
+            "cycle": 0,
+            "duration": 241.843771,
+            "mediaTime": 100.006142,
+            "paused": false,
+            "rate": 1,
+            "velocity": 0,
+            "memory": [
+              {
+                "background": true,
+                "geometries": 1,
+                "textures": 0
+              },
+              {
+                "background": false,
+                "geometries": 17,
+                "textures": 5
+              }
+            ]
+          },
+          "hidden": {
+            "hidden": true,
+            "absolute": 102.079334,
+            "propAbsolute": 102.063689,
+            "phase": 102.063689,
+            "cycle": 0,
+            "duration": 241.843771,
+            "mediaTime": 102.085891,
+            "paused": false,
+            "rate": 1,
+            "velocity": 0,
+            "memory": [
+              {
+                "background": true,
+                "geometries": 1,
+                "textures": 0
+              },
+              {
+                "background": false,
+                "geometries": 17,
+                "textures": 10
+              }
+            ]
+          },
+          "resumed": {
+            "hidden": false,
+            "absolute": 102.427964,
+            "propAbsolute": 102.333255,
+            "phase": 102.333255,
+            "cycle": 0,
+            "duration": 241.843771,
+            "mediaTime": 102.443523,
+            "paused": false,
+            "rate": 1,
+            "velocity": 0,
+            "memory": [
+              {
+                "background": true,
+                "geometries": 1,
+                "textures": 0
+              },
+              {
+                "background": false,
+                "geometries": 17,
+                "textures": 10
+              }
+            ]
+          }
+        },
+        "loops": {
+          "rate": 16,
+          "naturalWraps": 3,
+          "assignmentsDuringNaturalLoops": 0,
+          "oneTimesBoundaries": [
+            {
+              "cycle": 0,
+              "phase": 0.191255
+            },
+            {
+              "cycle": 1,
+              "phase": 0.187507
+            }
+          ]
+        }
+      },
+      {
+        "id": "heart-sutra",
+        "touch": {
+          "gestures": [
+            {
+              "start": {
+                "at": 86570.80000000075,
+                "absolute": 60
+              },
+              "end": {
+                "absolute": 81.25,
+                "propAbsolute": 81.25,
+                "phase": 81.25,
+                "cycle": 0,
+                "duration": 374.256327,
+                "mediaTime": 81.25,
+                "paused": true,
+                "rate": 1,
+                "velocity": 0,
+                "memory": [
+                  {
+                    "background": true,
+                    "geometries": 1,
+                    "textures": 0
+                  },
+                  {
+                    "background": false,
+                    "geometries": 17,
+                    "textures": 15
+                  }
+                ]
+              },
+              "expected": 81.25,
+              "events": [
+                {
+                  "type": "touchstart",
+                  "at": 86578.39999999851,
+                  "x": 310,
+                  "prevented": true
+                },
+                {
+                  "type": "touchmove",
+                  "at": 86588.30000000075,
+                  "x": 288.833740234375,
+                  "prevented": true
+                },
+                {
+                  "type": "touchmove",
+                  "at": 86605.19999999925,
+                  "x": 249.59884643554688,
+                  "prevented": true
+                },
+                {
+                  "type": "touchmove",
+                  "at": 86621.80000000075,
+                  "x": 209.19415283203125,
+                  "prevented": true
+                },
+                {
+                  "type": "touchmove",
+                  "at": 86637.80000000075,
+                  "x": 168.5024871826172,
+                  "prevented": true
+                },
+                {
+                  "type": "touchmove",
+                  "at": 86655.09999999776,
+                  "x": 127.84852600097656,
+                  "prevented": true
+                },
+                {
+                  "type": "touchmove",
+                  "at": 86671.89999999851,
+                  "x": 87.94775390625,
+                  "prevented": true
+                },
+                {
+                  "type": "touchmove",
+                  "at": 86688.5,
+                  "x": 55,
+                  "prevented": true
+                },
+                {
+                  "type": "touchend",
+                  "at": 86787.80000000075,
+                  "x": 55,
+                  "prevented": true
+                }
+              ],
+              "peakRadiansPerSecond": 8.049206439105136,
+              "rotation": -3.7651133087320474
+            },
+            {
+              "start": {
+                "at": 88656.89999999851,
+                "absolute": 81.25
+              },
+              "end": {
+                "absolute": 60,
+                "propAbsolute": 60,
+                "phase": 60,
+                "cycle": 0,
+                "duration": 374.256327,
+                "mediaTime": 60,
+                "paused": true,
+                "rate": 1,
+                "velocity": 0,
+                "memory": [
+                  {
+                    "background": true,
+                    "geometries": 1,
+                    "textures": 0
+                  },
+                  {
+                    "background": false,
+                    "geometries": 17,
+                    "textures": 16
+                  }
+                ]
+              },
+              "expected": 60,
+              "events": [
+                {
+                  "type": "touchstart",
+                  "at": 88669.30000000075,
+                  "x": 70,
+                  "prevented": true
+                },
+                {
+                  "type": "touchmove",
+                  "at": 88688.09999999776,
+                  "x": 109.09963989257812,
+                  "prevented": true
+                },
+                {
+                  "type": "touchmove",
+                  "at": 88704.80000000075,
+                  "x": 149.11276245117188,
+                  "prevented": true
+                },
+                {
+                  "type": "touchmove",
+                  "at": 88721.69999999925,
+                  "x": 189.78680419921875,
+                  "prevented": true
+                },
+                {
+                  "type": "touchmove",
+                  "at": 88738.39999999851,
+                  "x": 230.85372924804688,
+                  "prevented": true
+                },
+                {
+                  "type": "touchmove",
+                  "at": 88754.19999999925,
+                  "x": 270.9349365234375,
+                  "prevented": true
+                },
+                {
+                  "type": "touchmove",
+                  "at": 88771.59999999776,
+                  "x": 310.5544738769531,
+                  "prevented": true
+                },
+                {
+                  "type": "touchmove",
+                  "at": 88788.39999999851,
+                  "x": 325,
+                  "prevented": true
+                },
+                {
+                  "type": "touchend",
+                  "at": 88877.89999999851,
+                  "x": 325,
+                  "prevented": true
+                }
+              ],
+              "peakRadiansPerSecond": 7.949705985990444,
+              "rotation": 2.2503308102222346
+            },
+            {
+              "start": {
+                "at": 90739.39999999851,
+                "absolute": 60
+              },
+              "end": {
+                "absolute": 81.25,
+                "propAbsolute": 81.25,
+                "phase": 81.25,
+                "cycle": 0,
+                "duration": 374.256327,
+                "mediaTime": 81.25,
+                "paused": true,
+                "rate": 1,
+                "velocity": 0,
+                "memory": [
+                  {
+                    "background": true,
+                    "geometries": 1,
+                    "textures": 0
+                  },
+                  {
+                    "background": false,
+                    "geometries": 17,
+                    "textures": 15
+                  }
+                ]
+              },
+              "expected": 81.25,
+              "events": [
+                {
+                  "type": "touchstart",
+                  "at": 90754.59999999776,
+                  "x": 310,
+                  "prevented": true
+                },
+                {
+                  "type": "touchmove",
+                  "at": 90771.39999999851,
+                  "x": 274.4615173339844,
+                  "prevented": true
+                },
+                {
+                  "type": "touchmove",
+                  "at": 90788.39999999851,
+                  "x": 234.486572265625,
+                  "prevented": true
+                },
+                {
+                  "type": "touchmove",
+                  "at": 90805.09999999776,
+                  "x": 192.57904052734375,
+                  "prevented": true
+                },
+                {
+                  "type": "touchmove",
+                  "at": 90821.30000000075,
+                  "x": 153.03353881835938,
+                  "prevented": true
+                },
+                {
+                  "type": "touchmove",
+                  "at": 90837.69999999925,
+                  "x": 112.73443603515625,
+                  "prevented": true
+                },
+                {
+                  "type": "touchmove",
+                  "at": 90854.80000000075,
+                  "x": 73.1097412109375,
+                  "prevented": true
+                },
+                {
+                  "type": "touchmove",
+                  "at": 90871,
+                  "x": 55,
+                  "prevented": true
+                },
+                {
+                  "type": "touchend",
+                  "at": 90970,
+                  "x": 55,
+                  "prevented": true
+                }
+              ],
+              "peakRadiansPerSecond": 8.153724339032387,
+              "rotation": -3.730925795369577
+            },
+            {
+              "start": {
+                "at": 92839.39999999851,
+                "absolute": 81.25
+              },
+              "end": {
+                "absolute": 60,
+                "propAbsolute": 60,
+                "phase": 60,
+                "cycle": 0,
+                "duration": 374.256327,
+                "mediaTime": 60,
+                "paused": true,
+                "rate": 1,
+                "velocity": 0,
+                "memory": [
+                  {
+                    "background": true,
+                    "geometries": 1,
+                    "textures": 0
+                  },
+                  {
+                    "background": false,
+                    "geometries": 17,
+                    "textures": 16
+                  }
+                ]
+              },
+              "expected": 60,
+              "events": [
+                {
+                  "type": "touchstart",
+                  "at": 92852.69999999925,
+                  "x": 70,
+                  "prevented": true
+                },
+                {
+                  "type": "touchmove",
+                  "at": 92871.5,
+                  "x": 109.0829849243164,
+                  "prevented": true
+                },
+                {
+                  "type": "touchmove",
+                  "at": 92888.69999999925,
+                  "x": 149.16372680664062,
+                  "prevented": true
+                },
+                {
+                  "type": "touchmove",
+                  "at": 92904.5,
+                  "x": 189.84796142578125,
+                  "prevented": true
+                },
+                {
+                  "type": "touchmove",
+                  "at": 92922.30000000075,
+                  "x": 230.6367645263672,
+                  "prevented": true
+                },
+                {
+                  "type": "touchmove",
+                  "at": 92937.89999999851,
+                  "x": 270.9541015625,
+                  "prevented": true
+                },
+                {
+                  "type": "touchmove",
+                  "at": 92955.19999999925,
+                  "x": 311.97039794921875,
+                  "prevented": true
+                },
+                {
+                  "type": "touchmove",
+                  "at": 92971.39999999851,
+                  "x": 325,
+                  "prevented": true
+                },
+                {
+                  "type": "touchend",
+                  "at": 93061.39999999851,
+                  "x": 325,
+                  "prevented": true
+                }
+              ],
+              "peakRadiansPerSecond": 7.924058138320194,
+              "rotation": 2.1140390894110697
+            }
+          ],
+          "finalOnly": {
+            "before": 60,
+            "expected": 70
+          },
+          "cancellation": {
+            "before": 70,
+            "expected": 80
+          },
+          "playing": {
+            "absolute": 97.256864,
+            "propAbsolute": 97.251261,
+            "phase": 97.251261,
+            "cycle": 0,
+            "duration": 374.256327,
+            "mediaTime": 97.258956,
+            "paused": false,
+            "rate": 1,
+            "velocity": 0,
+            "memory": [
+              {
+                "background": true,
+                "geometries": 1,
+                "textures": 0
+              },
+              {
+                "background": false,
+                "geometries": 19,
+                "textures": 16
+              }
+            ]
+          },
+          "pointerIndependent": true
+        },
+        "infinite": [
+          {
+            "absolute": 7,
+            "propAbsolute": 7,
+            "phase": 7,
+            "cycle": 0,
+            "duration": 374.256327,
+            "mediaTime": 7,
+            "paused": true,
+            "rate": 1,
+            "velocity": 0,
+            "memory": [
+              {
+                "background": true,
+                "geometries": 1,
+                "textures": 0
+              },
+              {
+                "background": false,
+                "geometries": 17,
+                "textures": 11
+              }
+            ]
+          },
+          {
+            "absolute": -367.256327,
+            "propAbsolute": -367.256327,
+            "phase": 7,
+            "cycle": -1,
+            "duration": 374.256327,
+            "mediaTime": 7,
+            "paused": true,
+            "rate": 1,
+            "velocity": 0,
+            "memory": [
+              {
+                "background": true,
+                "geometries": 1,
+                "textures": 0
+              },
+              {
+                "background": false,
+                "geometries": 17,
+                "textures": 11
+              }
+            ]
+          },
+          {
+            "absolute": -1490.025308,
+            "propAbsolute": -1490.025308,
+            "phase": 7,
+            "cycle": -4,
+            "duration": 374.256327,
+            "mediaTime": 7,
+            "paused": true,
+            "rate": 1,
+            "velocity": 0,
+            "memory": [
+              {
+                "background": true,
+                "geometries": 1,
+                "textures": 0
+              },
+              {
+                "background": false,
+                "geometries": 17,
+                "textures": 11
+              }
+            ]
+          },
+          {
+            "absolute": 1504.025308,
+            "propAbsolute": 1504.025308,
+            "phase": 7,
+            "cycle": 4,
+            "duration": 374.256327,
+            "mediaTime": 7,
+            "paused": true,
+            "rate": 1,
+            "velocity": 0,
+            "memory": [
+              {
+                "background": true,
+                "geometries": 1,
+                "textures": 0
+              },
+              {
+                "background": false,
+                "geometries": 17,
+                "textures": 11
+              }
+            ]
+          },
+          {
+            "absolute": 3742570.27,
+            "propAbsolute": 3742570.27,
+            "phase": 7.000000000030013,
+            "cycle": 10000,
+            "duration": 374.256327,
+            "mediaTime": 7,
+            "paused": true,
+            "rate": 1,
+            "velocity": 0,
+            "memory": [
+              {
+                "background": true,
+                "geometries": 1,
+                "textures": 0
+              },
+              {
+                "background": false,
+                "geometries": 17,
+                "textures": 11
+              }
+            ]
+          },
+          {
+            "absolute": -3742556.27,
+            "propAbsolute": -3742556.27,
+            "phase": 6.999999999969987,
+            "cycle": -10000,
+            "duration": 374.256327,
+            "mediaTime": 7,
+            "paused": true,
+            "rate": 1,
+            "velocity": 0,
+            "memory": [
+              {
+                "background": true,
+                "geometries": 1,
+                "textures": 0
+              },
+              {
+                "background": false,
+                "geometries": 17,
+                "textures": 11
+              }
+            ]
+          },
+          {
+            "absolute": 374256334,
+            "propAbsolute": 374256334,
+            "phase": 7.000000001138687,
+            "cycle": 1000000,
+            "duration": 374.256327,
+            "mediaTime": 7,
+            "paused": true,
+            "rate": 1,
+            "velocity": 0,
+            "memory": [
+              {
+                "background": true,
+                "geometries": 1,
+                "textures": 0
+              },
+              {
+                "background": false,
+                "geometries": 17,
+                "textures": 11
+              }
+            ]
+          },
+          {
+            "absolute": -374256320,
+            "propAbsolute": -374256320,
+            "phase": 6.999999998861313,
+            "cycle": -1000000,
+            "duration": 374.256327,
+            "mediaTime": 7,
+            "paused": true,
+            "rate": 1,
+            "velocity": 0,
+            "memory": [
+              {
+                "background": true,
+                "geometries": 1,
+                "textures": 0
+              },
+              {
+                "background": false,
+                "geometries": 17,
+                "textures": 11
+              }
+            ]
+          },
+          {
+            "absolute": 7,
+            "propAbsolute": 7,
+            "phase": 7,
+            "cycle": 0,
+            "duration": 374.256327,
+            "mediaTime": 7,
+            "paused": true,
+            "rate": 1,
+            "velocity": 0,
+            "memory": [
+              {
+                "background": true,
+                "geometries": 1,
+                "textures": 0
+              },
+              {
+                "background": false,
+                "geometries": 17,
+                "textures": 12
+              }
+            ]
+          },
+          {
+            "wheel": 18084.303696,
+            "native": {
+              "x": 6028.100911458333,
+              "y": 0,
+              "mode": 0
+            },
+            "absolute": 509.34174262152777,
+            "propAbsolute": 509.34174262152777,
+            "phase": 135.08541562152777,
+            "cycle": 1,
+            "duration": 374.256327,
+            "mediaTime": 135.085415,
+            "paused": true,
+            "rate": 1,
+            "velocity": 0,
+            "memory": [
+              {
+                "background": true,
+                "geometries": 1,
+                "textures": 0
+              },
+              {
+                "background": false,
+                "geometries": 17,
+                "textures": 10
+              }
+            ]
+          },
+          {
+            "wheel": -31677.531467999997,
+            "native": {
+              "x": -10559.177083333334,
+              "y": 0,
+              "mode": 0
+            },
+            "absolute": -370.5896809895834,
+            "propAbsolute": -370.5896809895834,
+            "phase": 3.666646010416571,
+            "cycle": -1,
+            "duration": 374.256327,
+            "mediaTime": 3.666646,
+            "paused": true,
+            "rate": 1,
+            "velocity": 0,
+            "memory": [
+              {
+                "background": true,
+                "geometries": 1,
+                "textures": 0
+              },
+              {
+                "background": false,
+                "geometries": 17,
+                "textures": 9
+              }
+            ]
+          },
+          {
+            "wheel": 13593.227771999998,
+            "native": {
+              "x": 4531.075846354167,
+              "y": 0,
+              "mode": 0
+            },
+            "absolute": 6.9999728732638005,
+            "propAbsolute": 6.9999728732638005,
+            "phase": 6.9999728732638005,
+            "cycle": 0,
+            "duration": 374.256327,
+            "mediaTime": 6.999972,
+            "paused": true,
+            "rate": 1,
+            "velocity": 0,
+            "memory": [
+              {
+                "background": true,
+                "geometries": 1,
+                "textures": 0
+              },
+              {
+                "background": false,
+                "geometries": 17,
+                "textures": 9
+              }
+            ]
+          },
+          {
+            "negativeScrub": true,
+            "absolute": -1097.768981,
+            "propAbsolute": -1097.768981,
+            "phase": 25.000000000000057,
+            "cycle": -3,
+            "duration": 374.256327,
+            "mediaTime": 25,
+            "paused": true,
+            "rate": 1,
+            "velocity": 0,
+            "memory": [
+              {
+                "background": true,
+                "geometries": 1,
+                "textures": 0
+              },
+              {
+                "background": false,
+                "geometries": 17,
+                "textures": 9
+              }
+            ]
+          }
+        ],
+        "latestGesture": {
+          "absolute": -1097.768981,
+          "propAbsolute": -1097.768981,
+          "phase": 25.000000000000057,
+          "cycle": -3,
+          "duration": 374.256327,
+          "mediaTime": 25,
+          "paused": true,
+          "rate": 1,
+          "velocity": 0,
+          "memory": [
+            {
+              "background": true,
+              "geometries": 1,
+              "textures": 0
+            },
+            {
+              "background": false,
+              "geometries": 17,
+              "textures": 11
+            }
+          ],
+          "range": "25",
+          "preview": false
+        },
+        "controlledVisibility": {
+          "mode": "controlled-document-visibility",
+          "before": {
+            "absolute": 100,
+            "propAbsolute": 100,
+            "phase": 100,
+            "cycle": 0,
+            "duration": 374.256327,
+            "mediaTime": 100,
+            "paused": false,
+            "rate": 1,
+            "velocity": 0,
+            "memory": [
+              {
+                "background": true,
+                "geometries": 1,
+                "textures": 0
+              },
+              {
+                "background": false,
+                "geometries": 17,
+                "textures": 11
+              }
+            ]
+          },
+          "hidden": {
+            "hidden": true,
+            "absolute": 102.059157,
+            "propAbsolute": 101.804202,
+            "phase": 101.804202,
+            "cycle": 0,
+            "duration": 374.256327,
+            "mediaTime": 102.063206,
+            "paused": false,
+            "rate": 1,
+            "velocity": 0,
+            "memory": [
+              {
+                "background": true,
+                "geometries": 1,
+                "textures": 0
+              },
+              {
+                "background": false,
+                "geometries": 17,
+                "textures": 16
+              }
+            ]
+          },
+          "resumed": {
+            "hidden": false,
+            "absolute": 102.41613,
+            "propAbsolute": 102.336404,
+            "phase": 102.336404,
+            "cycle": 0,
+            "duration": 374.256327,
+            "mediaTime": 102.42194,
+            "paused": false,
+            "rate": 1,
+            "velocity": 0,
+            "memory": [
+              {
+                "background": true,
+                "geometries": 1,
+                "textures": 0
+              },
+              {
+                "background": false,
+                "geometries": 17,
+                "textures": 16
+              }
+            ]
+          }
+        },
+        "loops": {
+          "rate": 16,
+          "naturalWraps": 3,
+          "assignmentsDuringNaturalLoops": 0,
+          "oneTimesBoundaries": [
+            {
+              "cycle": 0,
+              "phase": 0.189455
+            },
+            {
+              "cycle": 1,
+              "phase": 0.453602
+            }
+          ]
+        }
+      }
+    ],
+    "final": {
+      "canvases": 2,
+      "stableCanvases": true,
+      "stableAudio": true
+    }
+  },
+  "presentation": {
+    "finalCandidate": {
+      "status": "incomplete",
+      "reason": "Error: CDP timeout: Runtime.evaluate"
+    },
+    "earlierCandidate": {
+      "releaseId": "coscroll-80579723b89736f5",
+      "traces": [
+        {
+          "mode": "playback",
+          "enabled": false,
+          "rafFps": 60.00616558768882,
+          "displayFps": 60.01688070576919,
+          "displayGaps": {
+            "count": 3602,
+            "mean": 16.661978900611572,
+            "p50": 16.667,
+            "p95": 16.667,
+            "max": 33.333
+          },
+          "longTasks": 0,
+          "longFrames": 0,
+          "errors": []
+        },
+        {
+          "mode": "playback",
+          "enabled": true,
+          "rafFps": 60.01336593153969,
+          "displayFps": 60.01689573115204,
+          "displayGaps": {
+            "count": 3601,
+            "mean": 16.661974729242687,
+            "p50": 16.667,
+            "p95": 16.667,
+            "max": 33.332
+          },
+          "longTasks": 0,
+          "longFrames": 0,
+          "errors": []
+        },
+        {
+          "mode": "fast-touch",
+          "enabled": false,
+          "rafFps": 60.00636557390831,
+          "displayFps": 60.016774903758815,
+          "displayGaps": {
+            "count": 3626,
+            "mean": 16.662008273580465,
+            "p50": 16.667,
+            "p95": 16.667,
+            "max": 33.334
+          },
+          "longTasks": 0,
+          "longFrames": 0,
+          "errors": []
+        },
+        {
+          "mode": "fast-touch",
+          "enabled": true,
+          "rafFps": 60.011565683586554,
+          "displayFps": 60.01689575643703,
+          "displayGaps": {
+            "count": 3600,
+            "mean": 16.66197472222294,
+            "p50": 16.667,
+            "p95": 16.667,
+            "max": 33.334
+          },
+          "longTasks": 0,
+          "longFrames": 0,
+          "errors": []
+        }
+      ]
+    }
+  },
+  "limitations": [
+    "No physical iPhone/Safari or Android/Chrome validation.",
+    "Final candidate visible compositor trace timed out; no final screen FPS claim.",
+    "Stock renderer already changes color after forced context restoration; final region path matches restored stock pixel for pixel.",
+    "Unrelated pre-existing untracked src/utils/performanceDiagnostics.ts has an undefined slowResources reference; excluded from the product-source build snapshot."
+  ],
+  "sourceHashes": {
+    "next.config.mjs": "b9e804720242ecbc93ad86d78e7e79396023d3ffe8008286ad31536f38a14566",
+    "deploy/three-transmission-region.mjs": "715c3b7e7399cdb615a386960c4f4126f9346dcc78b2cf2527c44562ed85377d",
+    "src/rendering/transmissionUpdateRegion.ts": "083f366cb8b2bcce0563bbdde44ee962d7d293d38d394ffcc554975861b17f08",
+    "src/rendering/TransmissionRegionRendering.tsx": "8899178a48493532be059581a69b6f0533b7f4708363b541f95b8e8ac45eee3c",
+    "src/components/jade/JadeModelLoader.tsx": "44d3bbaba88346ee66da6ec0bc482e6d7a297ee3ddcd2f2e638249e7839b26c6",
+    "src/components/layouts/UnifiedLyricsAndModel.tsx": "674151b7a04fbf11fae8533db113cc8c7386535a44f2a663a8bc468c0e8d109b"
+  },
+  "cleanup": {
+    "status": "complete",
+    "removed": [
+      {
+        "path": ".cache/transmission-region-20261023/chrome-mac-arm64",
+        "allocatedKiB": 375648
+      },
+      {
+        "path": ".cache/transmission-region-20261023/profile",
+        "allocatedKiB": 43212
+      },
+      {
+        "path": ".cache/transmission-region-20261023/headless-profile",
+        "allocatedKiB": 181244
+      },
+      {
+        "path": ".cache/transmission-region-20261023/build-source",
+        "allocatedKiB": 686728
+      },
+      {
+        "path": ".cache/releases/transmission-region-20261023-r3",
+        "allocatedKiB": 252116
+      },
+      {
+        "path": ".cache/three-transmission-region",
+        "allocatedKiB": 2496
+      },
+      {
+        "path": ".cache/transmission-region-20261023/context-before-background.png",
+        "allocatedKiB": 2604
+      },
+      {
+        "path": ".cache/transmission-region-20261023/context-before-main-0.000.png",
+        "allocatedKiB": 252
+      },
+      {
+        "path": ".cache/transmission-region-20261023/context-before-main-1.571.png",
+        "allocatedKiB": 304
+      },
+      {
+        "path": ".cache/transmission-region-20261023/context-before-main-3.142.png",
+        "allocatedKiB": 260
+      },
+      {
+        "path": ".cache/transmission-region-20261023/context-stock-after-background.png",
+        "allocatedKiB": 2048
+      },
+      {
+        "path": ".cache/transmission-region-20261023/desktop-after.png",
+        "allocatedKiB": 7644
+      },
+      {
+        "path": ".cache/transmission-region-20261023/desktop-before.png",
+        "allocatedKiB": 7760
+      },
+      {
+        "path": ".cache/transmission-region-20261023/final-mobile.png",
+        "allocatedKiB": 3352
+      },
+      {
+        "path": ".cache/transmission-region-20261023/mobile-after.png",
+        "allocatedKiB": 3340
+      },
+      {
+        "path": ".cache/transmission-region-20261023/mobile-before.png",
+        "allocatedKiB": 3360
+      },
+      {
+        "path": ".cache/transmission-region-20261023/regression-failure.png",
+        "allocatedKiB": 3560
+      },
+      {
+        "path": ".cache/transmission-region-20261023/trace-0-playback-stock.json.gz",
+        "allocatedKiB": 1184
+      },
+      {
+        "path": ".cache/transmission-region-20261023/trace-1-playback-region.json.gz",
+        "allocatedKiB": 6188
+      },
+      {
+        "path": ".cache/transmission-region-20261023/trace-2-fast-touch-region.json.gz",
+        "allocatedKiB": 6908
+      },
+      {
+        "path": ".cache/transmission-region-20261023/trace-3-fast-touch-stock.json.gz",
+        "allocatedKiB": 6524
+      },
+      {
+        "path": ".cache/transmission-region-20261023/trace-foreground-0-playback-stock.json.gz",
+        "allocatedKiB": 6596
+      },
+      {
+        "path": ".cache/transmission-region-20261023/trace-foreground-1-playback-region.json.gz",
+        "allocatedKiB": 6716
+      },
+      {
+        "path": ".cache/transmission-region-20261023/trace-foreground-2-fast-touch-stock.json.gz",
+        "allocatedKiB": 7460
+      },
+      {
+        "path": ".cache/chrome-isolation-20261023/baseline-failure.png",
+        "allocatedKiB": 40
+      },
+      {
+        "path": ".cache/chrome-isolation-20261023/components-mobile-restored.png",
+        "allocatedKiB": 3584
+      },
+      {
+        "path": ".cache/chrome-isolation-20261023/components-restored.png",
+        "allocatedKiB": 5912
+      },
+      {
+        "path": ".cache/chrome-isolation-20261023/depth-color-only.json",
+        "allocatedKiB": 4656
+      },
+      {
+        "path": ".cache/chrome-isolation-20261023/depth-reference.json",
+        "allocatedKiB": 4656
+      },
+      {
+        "path": ".cache/chrome-isolation-20261023/final-mobile-restored.png",
+        "allocatedKiB": 3600
+      },
+      {
+        "path": ".cache/chrome-isolation-20261023/final-restored.png",
+        "allocatedKiB": 3624
+      },
+      {
+        "path": ".cache/chrome-isolation-20261023/production-mobile.png",
+        "allocatedKiB": 3528
+      },
+      {
+        "path": ".cache/chrome-isolation-20261023/region-bounded.json",
+        "allocatedKiB": 4656
+      },
+      {
+        "path": ".cache/chrome-isolation-20261023/region-reference.json",
+        "allocatedKiB": 4656
+      },
+      {
+        "path": ".cache/chrome-isolation-20261023/trace-0-baseline.json",
+        "allocatedKiB": 32432
+      },
+      {
+        "path": ".cache/chrome-isolation-20261023/trace-1-mask-off.json",
+        "allocatedKiB": 31540
+      },
+      {
+        "path": ".cache/chrome-isolation-20261023/trace-2-mask-off.json",
+        "allocatedKiB": 31616
+      },
+      {
+        "path": ".cache/chrome-isolation-20261023/trace-3-baseline.json",
+        "allocatedKiB": 34040
+      },
+      {
+        "path": ".cache/chrome-isolation-20261023/trace-4-baseline.json",
+        "allocatedKiB": 33968
+      },
+      {
+        "path": ".cache/chrome-isolation-20261023/trace-5-mask-off.json",
+        "allocatedKiB": 31272
+      },
+      {
+        "path": ".cache/chrome-isolation-20261023/visual-after.json",
+        "allocatedKiB": 11840
+      },
+      {
+        "path": ".cache/chrome-isolation-20261023/visual-before.json",
+        "allocatedKiB": 11840
+      },
+      {
+        "path": ".cache/chrome-isolation-20261023/visual-mobile-after.json",
+        "allocatedKiB": 4656
+      },
+      {
+        "path": ".cache/chrome-isolation-20261023/visual-mobile-before.json",
+        "allocatedKiB": 4656
+      }
+    ],
+    "allocatedKiBRemoved": 1884276,
+    "freeBytesBefore": 259887104,
+    "freeBytesAfter": 2199826432,
+    "retained": "Small JSON results, logs and scripts; source, regression helpers and reports.",
+    "testedSourceMatchesWorkingTree": true
+  }
+}

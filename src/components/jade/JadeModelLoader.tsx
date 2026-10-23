@@ -11,6 +11,7 @@ import { useTransitionControl } from "@/hooks/useTransitionControl";
 import { RGBELoader } from "three/examples/jsm/loaders/RGBELoader.js";
 import ModelPreloader from "./ModelPreloader";
 import { specializePhysicalMaterial } from './specializePhysicalMaterial';
+import { prepareTransmissionBounds, TRANSMISSION_BOUNDS_USER_DATA } from '@/rendering/transmissionUpdateRegion';
 
 const IS_DEV = process.env.NODE_ENV === 'development';
 
@@ -444,6 +445,7 @@ function DualLayerModelLoader({
 
         const loadedGeometry = await preloader.loadModel(modelPath);
         if (disposed) return;
+        prepareTransmissionBounds(loadedGeometry);
         let outer: THREE.BufferGeometry | null = null;
         try {
           outer = preloader.getOffsetGeometry(modelPath, {outerOffset, maxEdge, subdivisions,
@@ -537,7 +539,7 @@ function DualLayerModelLoader({
   return (
     <group>
       {showInnerLayer && (
-        <mesh ref={meshRef} geometry={geometry} material={material} dispose={null} />
+        <mesh ref={meshRef} geometry={geometry} material={material} userData={TRANSMISSION_BOUNDS_USER_DATA} dispose={null} />
       )}
       
       {showOuterLayer && (
