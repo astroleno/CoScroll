@@ -6,9 +6,10 @@ JS、CSS、字体、OBJ/GLB、HDR、图片、歌词和项目 JSON 使用 `assets
 对象全部位于 `releases/aitoshuu-me/coscroll-<source-digest>/`，不覆盖已有对象。
 发布脚本启用静态导出；普通 `npm run build` / `npm run start` 保留 Next 的本地生产预览方式。
 
-当前线上版本为 `coscroll-3af0ef67bcd237e9`，两个入口为 `aitoshuu.me/coscroll/` 和
+当前线上版本为 `coscroll-05555b01d53bcb46`，两个入口为 `aitoshuu.me/coscroll/` 和
 `tongye.me/coscroll/`。最新复测、发布身份与回滚记录见
-[手机首载、无损压缩交付与长帧验收](MOBILE_BOOT_STALL_RELEASE_20261023.md)。
+[手机首载、帧调度与播放器节点生命周期验收](MOBILE_FRAME_STARTUP_RELEASE_20261023.md)。
+[此前手机首载、无损压缩交付与长帧验收](MOBILE_BOOT_STALL_RELEASE_20261023.md)、
 [此前七字模型接入与双站验收](PRIORITY7_MODEL_INTEGRATION_20261022.md)、
 [此前 iPhone 加载与长帧验收](IPHONE_PERFORMANCE_RELEASE_20261022.md)、
 [此前手机加载与触摸验收](MOBILE_LOADING_TOUCH_RELEASE_20261022.md)、

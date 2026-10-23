@@ -20,6 +20,8 @@ const IS_DEV = process.env.NODE_ENV === 'development';
  */
 interface JadeModelLoaderProps {
   modelPath: string;
+  /** Reset the new recording's motion while retaining renderer-owned textures. */
+  rotationRevision?: number;
   onModelDisplayed?: (path: string) => void;
   onModelError?: (path: string) => void;
   rotationDurationSec?: number;
@@ -552,6 +554,7 @@ function DualLayerModelLoader({
 
 export default function JadeModelLoader({
   modelPath = assetUrl("/models/10k_obj/001_空.obj"),
+  rotationRevision = 0,
   onModelDisplayed,
   onModelError,
   rotationDurationSec = 8,
@@ -612,8 +615,9 @@ export default function JadeModelLoader({
   innerSmoothShading = true,
   outerSmoothShading = true,
 }: JadeModelLoaderProps) {
-  const { scene, gl } = useThree();
-  const [envMap, setEnvMap] = useState<THREE.Texture | null>(null);
+  const { scene, gl, camera, get } = useThree();
+  const [environmentTarget, setEnvironmentTarget] = useState<THREE.WebGLRenderTarget | null>(null);
+  const envMap = environmentTarget?.texture ?? null;
   const [normalMap, setNormalMap] = useState<THREE.Texture | null>(null);
 
   const innerMaterial = useMemo(() => {
@@ -689,9 +693,10 @@ export default function JadeModelLoader({
 
   useEffect(() => {
     let disposed = false;
+    let target: THREE.WebGLRenderTarget | null = null;
 
     if (!environmentHdrPath) {
-      setEnvMap(null);
+      setEnvironmentTarget(null);
       scene.environment = null;
       return () => {
         disposed = true;
@@ -718,13 +723,15 @@ export default function JadeModelLoader({
           texture.mapping = THREE.EquirectangularReflectionMapping;
           texture.colorSpace = THREE.SRGBColorSpace;
 
-          const envTexture = pmremGenerator.fromEquirectangular(texture).texture;
+          target = pmremGenerator.fromEquirectangular(texture);
+          const envTexture = target.texture;
           pmremGenerator.dispose();
           texture.dispose();
 
           scene.environment = envTexture;
-          (scene as any).environmentIntensity = environmentIntensity;
-          setEnvMap(envTexture);
+          setEnvironmentTarget(target);
+          // The committed target owns its framebuffer and texture together.
+          target = null;
 
           if (IS_DEV) {
             console.log('[JadeModelLoader] HDR 环境贴图加载成功:', environmentHdrPath);
@@ -734,6 +741,9 @@ export default function JadeModelLoader({
             console.error('[JadeModelLoader] HDR 环境贴图处理失败:', err);
           }
           pmremGenerator.dispose();
+          texture.dispose();
+          target?.dispose();
+          target = null;
         }
       },
       undefined,
@@ -743,7 +753,7 @@ export default function JadeModelLoader({
         }
         pmremGenerator.dispose();
         if (!disposed) {
-          setEnvMap(null);
+          setEnvironmentTarget(null);
         }
       }
     );
@@ -751,8 +761,16 @@ export default function JadeModelLoader({
     return () => {
       disposed = true;
       pmremGenerator.dispose();
+      target?.dispose();
     };
-  }, [environmentHdrPath, environmentIntensity, gl, scene]);
+  }, [environmentHdrPath, gl, scene]);
+
+  useEffect(() => () => {
+    if (environmentTarget) {
+      if (scene.environment === environmentTarget.texture) scene.environment = null;
+      environmentTarget.dispose();
+    }
+  }, [environmentTarget, scene]);
 
   useEffect(() => {
     if (!envMap) {
@@ -799,6 +817,19 @@ export default function JadeModelLoader({
     showHdrBackground,
     background
   ]);
+
+  // HDR can finish after the model and normal map. Prepare that final program
+  // as well: changing envMap does not replace either memoized material object.
+  useEffect(() => {
+    if (!envMap || !normalMap) return;
+    let cancelled = false;
+    const cancel = scheduleIdle(() => {
+      void prepareMaterialPrograms(gl, scene, camera).then(() => {
+        if (!cancelled && get().frameloop === 'never') gl.render(scene, camera);
+      }).catch(error => console.warn('[JadeModelLoader] Texture material preparation failed', error));
+    });
+    return () => { cancelled = true; cancel(); };
+  }, [envMap, normalMap, innerMaterial, outerMaterial, gl, scene, camera, get]);
 
   useEffect(() => {
     try {
@@ -875,16 +906,9 @@ export default function JadeModelLoader({
     };
   }, [normalMap]);
 
-  useEffect(() => {
-    return () => {
-      if (envMap) {
-        envMap.dispose();
-      }
-    };
-  }, [envMap]);
-
   return (
     <RotationController
+      key={rotationRevision}
       enabled={enableRotation}
       durationSec={rotationDurationSec}
       direction={direction}

@@ -55,27 +55,36 @@ export async function verifyClassicSessions(page) {
   });
   await page.evaluate(()=>{
     const original=window.fetch;window.__classicFetch=original;
+    window.__classicLoadStarted=false;
     window.fetch=async function(input,...rest){
-      if(decodeURIComponent(String(input)).includes('/lyrics/心经.lrc'))await new Promise(resolve=>setTimeout(resolve,700));
+      if(decodeURIComponent(String(input)).includes('/lyrics/心经.lrc')){
+        window.__classicLoadStarted=true;
+        await new Promise(resolve=>{window.__releaseClassicLoad=resolve;});
+      }
       return original.call(this,input,...rest);
     };
   });
   try {
     await page.click('button[aria-label^="切换经典，当前"]');
     await page.click('[data-project-option="heart-sutra"]');
+    await page.waitForFunction(()=>window.__classicLoadStarted,undefined,{timeout:10000});
     await page.click('button[aria-label="关闭面板"]');
     await touchTap(page,'button[aria-label="Pause"]');
+    await page.evaluate(()=>window.__releaseClassicLoad());
     await page.waitForFunction(()=>document.querySelector('[data-active-project]').getAttribute('data-active-project')==='heart-sutra'&&document.querySelector('audio').readyState>=3,undefined,{timeout:15000});
     const state=await classicState(page);states.push({pauseDuringLoad:true,...state});
     if(!state.paused||state.time>1)throw Error('Loading ignored a newer pause');
-  } finally {await page.evaluate(()=>{window.fetch=window.__classicFetch;delete window.__classicFetch;});}
+  } finally {await page.evaluate(()=>{
+    window.__releaseClassicLoad?.();delete window.__releaseClassicLoad;delete window.__classicLoadStarted;
+    window.fetch=window.__classicFetch;delete window.__classicFetch;
+  });}
 
   await page.evaluate(()=>{
     const original=window.fetch;window.__classicFetch=original;window.__raceStarted=false;window.__raceFinished=false;
     window.fetch=async function(input,...rest){
       if(String(input).includes('/lyrics/lotus-sutra-zanshi.lrc')){
         window.__raceStarted=true;
-        await new Promise(resolve=>setTimeout(resolve,800));window.__raceFinished=true;
+        await new Promise(resolve=>{window.__releaseClassicRace=resolve;});window.__raceFinished=true;
       }
       return original.call(this,input,...rest);
     };
@@ -85,10 +94,14 @@ export async function verifyClassicSessions(page) {
     await page.click('[data-project-option="lotus-sutra-zanshi"]');
     await page.waitForFunction(()=>window.__raceStarted,undefined,{timeout:10000});
     await page.click('[data-project-option="heart-sutra"]');
+    await page.evaluate(()=>window.__releaseClassicRace());
     await page.waitForFunction(()=>window.__raceFinished,undefined,{timeout:10000});
     const state=await classicState(page);states.push({canceledSwitch:true,...state});
     if(state.project!=='heart-sutra'||!state.paused)throw Error('Canceled recording overwrote the old session');
-  } finally {await page.evaluate(()=>{window.fetch=window.__classicFetch;delete window.__classicFetch;});}
+  } finally {await page.evaluate(()=>{
+    window.__releaseClassicRace?.();delete window.__releaseClassicRace;
+    window.fetch=window.__classicFetch;delete window.__classicFetch;
+  });}
 
   await page.evaluate(()=>{
     const original=window.fetch;window.__classicFetch=original;

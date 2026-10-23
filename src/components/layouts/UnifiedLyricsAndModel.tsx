@@ -169,7 +169,7 @@ function UnifiedLyricsAndModel(props: UnifiedLyricsAndModelProps) {
           {/* 3D模型 - 中间层，Z轴在0，遮挡后层歌词 */}
           <group renderOrder={2000} position={[0, modelYOffset, 0]} scale={[modelScale, modelScale, modelScale]}>
             <MemoizedJadeModel
-              key={sceneKey}
+              rotationRevision={sceneKey}
               modelPath={modelPath}
               onModelDisplayed={onModelDisplayed}
               onModelError={onModelError}

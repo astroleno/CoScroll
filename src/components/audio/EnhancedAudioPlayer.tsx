@@ -18,6 +18,26 @@ const formatTime = (timeInSeconds: number): string => {
   return `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
 };
 
+// Keep the pressed SVG node mounted while playback time updates the player.
+// Recreating component types during a press can prevent the browser's click.
+const PlayIcon = () => (
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-8 h-8">
+    <path fillRule="evenodd" d="M4.5 5.653c0-1.426 1.529-2.33 2.779-1.643l11.54 6.647c1.295.742 1.295 2.545 0 3.286L7.279 20.99c-1.25.717-2.779-.217-2.779-1.643V5.653Z" clipRule="evenodd" />
+  </svg>
+);
+
+const PauseIcon = () => (
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-8 h-8">
+    <path fillRule="evenodd" d="M6.75 5.25a.75.75 0 0 1 .75.75v12a.75.75 0 0 1-1.5 0V6a.75.75 0 0 1 .75-.75Zm9 0a.75.75 0 0 1 .75.75v12a.75.75 0 0 1-1.5 0V6a.75.75 0 0 1 .75-.75Z" clipRule="evenodd" />
+  </svg>
+);
+
+const BufferingIcon = ({accent}: {accent: string}) => (
+  <div className="w-8 h-8 flex items-center justify-center">
+    <div className="w-6 h-6 border-2 rounded-full animate-spin" style={{borderColor: accent, borderTopColor: 'transparent'}}></div>
+  </div>
+);
+
 const EnhancedAudioPlayer: React.FC<EnhancedAudioPlayerProps> = ({
   isPlaying,
   isReady,
@@ -140,24 +160,6 @@ const EnhancedAudioPlayer: React.FC<EnhancedAudioPlayerProps> = ({
     };
   }, []);
 
-  const PlayIcon = () => (
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-8 h-8">
-      <path fillRule="evenodd" d="M4.5 5.653c0-1.426 1.529-2.33 2.779-1.643l11.54 6.647c1.295.742 1.295 2.545 0 3.286L7.279 20.99c-1.25.717-2.779-.217-2.779-1.643V5.653Z" clipRule="evenodd" />
-    </svg>
-  );
-
-  const PauseIcon = () => (
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-8 h-8">
-      <path fillRule="evenodd" d="M6.75 5.25a.75.75 0 0 1 .75.75v12a.75.75 0 0 1-1.5 0V6a.75.75 0 0 1 .75-.75Zm9 0a.75.75 0 0 1 .75.75v12a.75.75 0 0 1-1.5 0V6a.75.75 0 0 1 .75-.75Z" clipRule="evenodd" />
-    </svg>
-  );
-
-  const BufferingIcon = () => (
-    <div className="w-8 h-8 flex items-center justify-center">
-      <div className="w-6 h-6 border-2 rounded-full animate-spin" style={{borderColor: accent, borderTopColor: 'transparent'}}></div>
-    </div>
-  );
-
   return (
     <div className="w-full max-w-2xl p-4" style={{'--player-accent': accent, '--player-focus': `rgba(${accentRgb},0.3)`} as React.CSSProperties}>
       <div className="flex items-center gap-4">
@@ -169,7 +171,7 @@ const EnhancedAudioPlayer: React.FC<EnhancedAudioPlayerProps> = ({
           style={{color: accent}}
           aria-label={isPlaying ? 'Pause' : 'Play'}
         >
-          {isBuffering ? <BufferingIcon /> : isPlaying ? <PauseIcon /> : <PlayIcon />}
+          {isBuffering ? <BufferingIcon accent={accent} /> : isPlaying ? <PauseIcon /> : <PlayIcon />}
         </button>
 
         {/* Time Display and Progress Bar */}

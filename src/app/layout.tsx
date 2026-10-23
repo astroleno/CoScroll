@@ -39,17 +39,13 @@ export default function RootLayout({
     };
     preload(hint.model, 'fetch');
     if (hint.supplement) preload(${serializeEntryData(supplementFont)}, 'font', 'font/woff2');
-    // Keep the required glyphs and entry scripts ahead of 2.5 MB of textures on a
-    // constrained connection. Start texture hints before the reading scene.
-    const textures = () => {
+    // Let the small reading font finish before large texture transfers compete
+    // for a slow connection. Do not wait for every script via window.load.
+    const warmTextures = () => {
       preload(${serializeEntryData(assetUrl('/textures/qwantani_moon_noon_puresky_1k.hdr'))}, 'fetch');
       preload(${serializeEntryData(assetUrl('/textures/normal.jpg'))}, 'image');
     };
-    const afterEntry = () => {
-      if (document.readyState === 'complete') textures();
-      else window.addEventListener('load', textures, {once: true});
-    };
-    document.fonts.load('16px RunZhiJiaKangXiZidian', hint.supplement ? '心经栴' : '心经').then(afterEntry, afterEntry);
+    document.fonts.load('16px RunZhiJiaKangXiZidian', '心经').then(warmTextures, warmTextures);
   })();`;
   return (
     <html lang="zh-Hans">
@@ -77,7 +73,9 @@ export default function RootLayout({
           font-display: swap;
         }`}} />
         <script id={ENTRY_DATA_ID} type="application/json" dangerouslySetInnerHTML={{__html: serializeEntryData(data)}} />
-        <script dangerouslySetInnerHTML={{__html: earlyPreparation}} />
+        {/* An async classic script does not wait for the preceding stylesheet.
+            The data URL keeps these build-validated hints inside this HTML. */}
+        <script id="coscroll-entry-preparation" async src={`data:text/javascript;charset=utf-8,${encodeURIComponent(earlyPreparation)}`} />
       </head>
       <body className="bg-night text-slateText">
         {children}
