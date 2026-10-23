@@ -103,6 +103,7 @@ def matches(entry: dict, data: dict | None, release_id: str) -> bool:
         header(data, "Cache-Control") == entry["cacheControl"],
         header(data, "x-cos-meta-sha256") == entry["sha256"],
         header(data, "x-cos-meta-release-id") == release_id,
+        header(data, "Content-Encoding") == entry.get("contentEncoding"),
     ])
 
 
@@ -137,6 +138,7 @@ def upload(root: Path, release_id: str, plan: list[dict]) -> dict:
                 client.put_object(
                     Bucket=BUCKET, Key=key, Body=stream,
                     ContentType=entry["mime"], CacheControl=entry["cacheControl"],
+                    **({"ContentEncoding": entry["contentEncoding"]} if entry.get("contentEncoding") else {}),
                     Metadata={"x-cos-forbid-overwrite": "true",
                               "x-cos-meta-sha256": entry["sha256"],
                               "x-cos-meta-release-id": release_id},

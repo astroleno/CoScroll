@@ -10,6 +10,20 @@ const arrayTypes = {
   Int32Array, Int16Array, Int8Array, Uint8ClampedArray,
 };
 
+// Bound synchronous restoration work on the UI thread. This changes scheduling,
+// not the format or any floating point bits. Offline preparation stays immediate.
+function decodeBudget() {
+  let deadline = typeof window === 'undefined' ? Infinity : performance.now() + 4;
+  return {
+    expired: () => performance.now() >= deadline,
+    async yield() {
+      await new Promise<void>(resolve => setTimeout(resolve, 0));
+      deadline = performance.now() + 4;
+    },
+  };
+}
+type DecodeBudget = ReturnType<typeof decodeBudget>;
+
 interface EncodedAttribute {
   type: keyof typeof arrayTypes;
   itemSize: number;
@@ -71,7 +85,7 @@ async function encodeAttribute(attribute: THREE.BufferAttribute): Promise<Encode
     usage: attribute.usage, gpuType: attribute.gpuType, encoding: 'gzip-xor-byte-planes', byteLength: bytes.length, bytes: btoa(binary)};
 }
 
-async function decodeAttribute(value: EncodedAttribute): Promise<THREE.BufferAttribute> {
+async function decodeAttribute(value: EncodedAttribute, budget: DecodeBudget): Promise<THREE.BufferAttribute> {
   if (!value || !Object.prototype.hasOwnProperty.call(arrayTypes, value.type) ||
       !Number.isSafeInteger(value.itemSize) || value.itemSize < 1 || value.itemSize > 16 ||
       typeof value.normalized !== 'boolean' || typeof value.bytes !== 'string' ||
@@ -81,7 +95,11 @@ async function decodeAttribute(value: EncodedAttribute): Promise<THREE.BufferAtt
   const ArrayType = arrayTypes[value.type];
   const binary = atob(value.bytes);
   const compressed = new Uint8Array(binary.length);
-  for (let i = 0; i < binary.length; i++) compressed[i] = binary.charCodeAt(i);
+  for (let start = 0; start < binary.length; start += 16384) {
+    const end = Math.min(start + 16384, binary.length);
+    for (let i = start; i < end; i++) compressed[i] = binary.charCodeAt(i);
+    if (budget.expired()) await budget.yield();
+  }
   const predicted = await transformBytes(compressed, new DecompressionStream('gzip'));
   const width = ArrayType.BYTES_PER_ELEMENT, count = predicted.length / width;
   if (predicted.length !== value.byteLength || predicted.length % (width * value.itemSize)) {
@@ -89,9 +107,13 @@ async function decodeAttribute(value: EncodedAttribute): Promise<THREE.BufferAtt
   }
   const bytes = new Uint8Array(predicted.length);
   for (let lane = 0; lane < width; lane++) {
-    for (let i = 0; i < count; i++) {
-      bytes[i * width + lane] = predicted[lane * count + i] ^
-        (i >= value.itemSize ? bytes[(i - value.itemSize) * width + lane] : 0);
+    for (let start = 0; start < count; start += 16384) {
+      const end = Math.min(start + 16384, count);
+      for (let i = start; i < end; i++) {
+        bytes[i * width + lane] = predicted[lane * count + i] ^
+          (i >= value.itemSize ? bytes[(i - value.itemSize) * width + lane] : 0);
+      }
+      if (budget.expired()) await budget.yield();
     }
   }
   const attribute = new THREE.BufferAttribute(new ArrayType(bytes.buffer), value.itemSize, value.normalized);
@@ -123,13 +145,13 @@ export async function encodeGeometry(geometry: THREE.BufferGeometry): Promise<En
   };
 }
 
-export async function decodeGeometry(value: EncodedGeometry): Promise<THREE.BufferGeometry> {
+export async function decodeGeometry(value: EncodedGeometry, budget = decodeBudget()): Promise<THREE.BufferGeometry> {
   if (!value?.attributes || !value.attributes.position || !Array.isArray(value.groups) || !value.drawRange) {
     throw new Error('Invalid prepared geometry');
   }
   const geometry = new THREE.BufferGeometry();
   try {
-    for (const [name, attribute] of Object.entries(value.attributes)) geometry.setAttribute(name, await decodeAttribute(attribute));
+    for (const [name, attribute] of Object.entries(value.attributes)) geometry.setAttribute(name, await decodeAttribute(attribute, budget));
     const count = geometry.getAttribute('position').count;
     if (geometry.getAttribute('position').itemSize !== 3 || Object.values(geometry.attributes).some(attribute => attribute.count !== count)) {
       throw new Error('Mismatched prepared geometry attributes');
@@ -138,18 +160,18 @@ export async function decodeGeometry(value: EncodedGeometry): Promise<THREE.Buff
       if (!['Uint16Array', 'Uint32Array', 'Uint8Array'].includes(value.index.type) || value.index.itemSize !== 1) {
         throw new Error('Invalid prepared geometry index');
       }
-      geometry.setIndex(await decodeAttribute(value.index));
+      geometry.setIndex(await decodeAttribute(value.index, budget));
     }
     geometry.name = value.name;
     geometry.groups = value.groups.map(group => ({...group}));
     geometry.setDrawRange(value.drawRange.start, value.drawRange.count === null ? Infinity : value.drawRange.count);
     if (value.boundingBox) {
-      const box = await decodeAttribute(value.boundingBox);
+      const box = await decodeAttribute(value.boundingBox, budget);
       if (box.itemSize !== 3 || box.count !== 2) throw new Error('Invalid prepared bounding box');
       geometry.boundingBox = new THREE.Box3(new THREE.Vector3().fromArray(box.array), new THREE.Vector3().fromArray(box.array, 3));
     }
     if (value.boundingSphere) {
-      const sphere = await decodeAttribute(value.boundingSphere);
+      const sphere = await decodeAttribute(value.boundingSphere, budget);
       if (sphere.itemSize !== 4 || sphere.count !== 1) throw new Error('Invalid prepared bounding sphere');
       geometry.boundingSphere = new THREE.Sphere(new THREE.Vector3().fromArray(sphere.array), sphere.array[3]);
     }
@@ -167,9 +189,10 @@ export async function decodePreparedModel(value: PreparedModel, expected: {gener
         .some(([key, setting]) => value.preset?.[key] !== setting)) {
     throw new Error('Prepared model version, source or preset mismatch');
   }
-  const base = await decodeGeometry(value.base);
+  const budget = decodeBudget();
+  const base = await decodeGeometry(value.base, budget);
   try {
-    return {base, outer: await decodeGeometry(value.outer)};
+    return {base, outer: await decodeGeometry(value.outer, budget)};
   } catch (error) {
     base.dispose();
     throw error;

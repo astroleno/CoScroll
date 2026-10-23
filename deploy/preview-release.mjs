@@ -25,7 +25,7 @@ for (const [channel, port] of [['origin', 4318], ['assets', 4319], ['media', 432
       }
       const entry = routes.get(decodeURIComponent(url.pathname));
       const headers = { 'Access-Control-Allow-Origin': '*',
-        'Access-Control-Expose-Headers': 'Content-Length, Content-Range, Accept-Ranges, ETag',
+        'Access-Control-Expose-Headers': 'Content-Length, Content-Encoding, Content-Range, Accept-Ranges, ETag',
         'Access-Control-Allow-Methods': 'GET, HEAD, OPTIONS', 'Access-Control-Allow-Headers': 'Range',
         'X-Content-Type-Options': 'nosniff' };
       if (request.method === 'OPTIONS') { response.writeHead(204, headers); response.end(); return; }
@@ -34,6 +34,7 @@ for (const [channel, port] of [['origin', 4318], ['assets', 4319], ['media', 432
       const bytes = await readFile(join(root, entry.packagePath));
       Object.assign(headers, { 'Content-Type': entry.mime, 'Cache-Control': entry.cacheControl,
         'Accept-Ranges': 'bytes', ETag: `"${entry.sha256}"` });
+      if (entry.contentEncoding) headers['Content-Encoding'] = entry.contentEncoding;
       let body = bytes, status = 200;
       if (request.headers.range) {
         const match = /^bytes=(\d+)-(\d*)$/.exec(request.headers.range);

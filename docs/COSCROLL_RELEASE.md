@@ -6,9 +6,10 @@ JS、CSS、字体、OBJ/GLB、HDR、图片、歌词和项目 JSON 使用 `assets
 对象全部位于 `releases/aitoshuu-me/coscroll-<source-digest>/`，不覆盖已有对象。
 发布脚本启用静态导出；普通 `npm run build` / `npm run start` 保留 Next 的本地生产预览方式。
 
-当前线上版本为 `coscroll-24d69d971564297f`，两个入口为 `aitoshuu.me/coscroll/` 和
+当前线上版本为 `coscroll-3af0ef67bcd237e9`，两个入口为 `aitoshuu.me/coscroll/` 和
 `tongye.me/coscroll/`。最新复测、发布身份与回滚记录见
-[七字模型接入与双站验收](PRIORITY7_MODEL_INTEGRATION_20261022.md)。
+[手机首载、无损压缩交付与长帧验收](MOBILE_BOOT_STALL_RELEASE_20261023.md)。
+[此前七字模型接入与双站验收](PRIORITY7_MODEL_INTEGRATION_20261022.md)、
 [此前 iPhone 加载与长帧验收](IPHONE_PERFORMANCE_RELEASE_20261022.md)、
 [此前手机加载与触摸验收](MOBILE_LOADING_TOUCH_RELEASE_20261022.md)、
 [此前妙法莲华经接入](LOTUS_SUTRA_RELEASE_20261022.md)、
@@ -45,6 +46,10 @@ npm run release:plan -- .cache/releases/cdn-1
 这些命令只在本机生成文件和检查计划，不上传 COS、不读取凭据、不修改源站。
 发布身份包含源文件、锁文件、构建与部署配置、精确 Node/Next 版本和交付模式；
 构建期间输入发生变化会失败。所有交付文件记录 SHA-256、大小、MIME、缓存规则和 channel。
+可压缩的静态资源使用 gzip HTTP 表示；manifest 中 `bytes/sha256` 对应包内和 COS 存储字节，
+可选 `contentEncoding`、`decodedBytes/decodedSha256` 对应解码后的原始内容。校验同时覆盖两组摘要，
+预览与上传必须发送正确的 Content-Encoding；不能只压文件却遗漏编码头。旧 manifest 仍可验证。
+音频、图片和字体不额外压缩，音频的 Range 与总长度继续描述原文件。
 备份、source map 和系统垃圾文件不进入交付包。Inter 已随应用打包，许可证在 `public/fonts/OFL-Inter.txt`。
 
 主页面使用原字体完整字库的 WOFF2，旧实验页仍可引用 TTF。重新生成时使用隔离依赖：

@@ -69,12 +69,13 @@ function installInstrumentation() {
 
 // CDP overrides and startup scripts are scoped to the current Ego round/session.
 // Reapply them at the beginning of every round that navigates and measures.
-export async function prepareMobilePerformance(page) {
+export async function prepareMobilePerformance(page, {deviceScaleFactor = 2,
+  userAgent = 'Mozilla/5.0 (Linux; Android 13; Pixel 7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Mobile Safari/537.36'} = {}) {
   await page.cdp('Network.enable', {});
   await page.cdp('Network.setCacheDisabled', {cacheDisabled: true});
-  await page.cdp('Emulation.setDeviceMetricsOverride', {width: 390, height: 844, screenWidth: 390, screenHeight: 844, deviceScaleFactor: 2, mobile: true});
+  await page.cdp('Emulation.setDeviceMetricsOverride', {width: 390, height: 844, screenWidth: 390, screenHeight: 844, deviceScaleFactor, mobile: true});
   await page.cdp('Emulation.setTouchEmulationEnabled', {enabled: true, maxTouchPoints: 5});
-  await page.cdp('Network.setUserAgentOverride', {userAgent: 'Mozilla/5.0 (Linux; Android 13; Pixel 7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Mobile Safari/537.36'});
+  await page.cdp('Network.setUserAgentOverride', {userAgent});
   await page.cdp('Emulation.setFocusEmulationEnabled', {enabled: true});
   await page.cdp('Emulation.setCPUThrottlingRate', {rate: 1});
   await page.cdp('Network.emulateNetworkConditions', {offline: false, latency: 0, downloadThroughput: -1, uploadThroughput: -1});

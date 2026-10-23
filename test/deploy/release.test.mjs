@@ -6,7 +6,7 @@ import { test } from 'node:test';
 import vm from 'node:vm';
 import { execFileSync } from 'node:child_process';
 import ts from 'typescript';
-import { BASE_PATH, CACHE, MIME, bases, closureHash, sameCachePolicy, sha, validateManifest, verifyPackage } from '../../deploy/release-lib.mjs';
+import { BASE_PATH, CACHE, MIME, bases, closureHash, decodeDelivery, encodeDelivery, sameCachePolicy, sha, validateManifest, verifyPackage } from '../../deploy/release-lib.mjs';
 
 test('CDN cache directives may reorder while stale, private or incomplete policies fail', () => {
   assert.ok(sameCachePolicy('public, immutable, max-age=31536000', CACHE));
@@ -123,4 +123,60 @@ test('package symlinks cannot expose files outside the candidate', async t => {
   const path = join(root, 'assets/_next/static/app.js');
   await rm(path); await symlink('/etc/hosts', path);
   await assert.rejects(verifyPackage(root), /escaped its root/);
+});
+
+test('gzip delivery preserves content bits and keeps audio, fonts and images unencoded', () => {
+  const original = Buffer.from('const scripture = "妙法莲华经";\n'.repeat(1000));
+  for (const name of ['_next/static/app.js', 'models/prepared/妙.json', 'lyrics/妙.lrc', 'models/妙.obj', 'textures/sky.hdr']) {
+    const {bytes, metadata} = encodeDelivery('assets', name, original);
+    assert.equal(metadata.contentEncoding, 'gzip');
+    assert.ok(bytes.length < original.length * .9);
+    assert.deepEqual(decodeDelivery({...metadata, packagePath: name}, bytes), original);
+    assert.deepEqual(encodeDelivery('assets', name, original).bytes, bytes, 'deterministic stored representation');
+    assert.throws(() => decodeDelivery({...metadata, decodedSha256: '0'.repeat(64)}, bytes), /Decoded content hash/);
+    assert.throws(() => decodeDelivery({...metadata, decodedBytes: original.length - 1}, bytes));
+  }
+  for (const [channel, name] of [['media', 'audio/经.mp3'], ['origin', 'index.html'],
+    ['assets', 'fonts/full.woff2'], ['assets', 'images/a.jpg'], ['assets', 'textures/normal.png']]) {
+    const delivered = encodeDelivery(channel, name, original);
+    assert.equal(delivered.bytes, original);
+    assert.deepEqual(delivered.metadata, {});
+  }
+});
+
+test('gzip package verification checks both stored and decoded hashes; old packages remain valid', async t => {
+  const {root, manifest} = await fixture(t);
+  const entry = manifest.entries.find(e => e.channel === 'assets');
+  const original = Buffer.from('console.log("心经 妙法莲华经");\n'.repeat(1000));
+  const {bytes, metadata} = encodeDelivery('assets', entry.packagePath, original);
+  Object.assign(entry, metadata, {bytes: bytes.length, sha256: sha(bytes)});
+  await writeFile(join(root, entry.packagePath), bytes);
+  const save = async () => {
+    manifest.artifactClosureSha256 = closureHash(manifest.entries);
+    await writeFile(join(root, 'manifests/release-manifest.json'), JSON.stringify(manifest));
+  };
+  await save(); await verifyPackage(root, {production: true});
+  entry.decodedSha256 = '0'.repeat(64);
+  await save(); await assert.rejects(verifyPackage(root), /Decoded content hash/);
+  entry.decodedSha256 = metadata.decodedSha256;
+  for (const mutate of [e => {e.contentEncoding = 'br';}, e => {e.decodedBytes = e.bytes;},
+    e => {delete e.contentEncoding;}, e => {e.channel = 'media'; e.packagePath = 'media/audio/经.mp3';}]) {
+    const changed = structuredClone(manifest); mutate(changed.entries.find(e => e.channel === 'assets'));
+    changed.artifactClosureSha256 = closureHash(changed.entries);
+    assert.throws(() => validateManifest(changed));
+  }
+});
+
+test('COS immutable-object matching requires the stored content encoding as well as hash and length', () => {
+  const script = `import importlib.util, json
+s=importlib.util.spec_from_file_location('upload','deploy/upload-cos-release.py')
+m=importlib.util.module_from_spec(s);s.loader.exec_module(m)
+e={'bytes':17,'mime':'text/javascript; charset=utf-8','cacheControl':m.CACHE,'sha256':'a'*64,'contentEncoding':'gzip'}
+h={'Content-Length':'17','Content-Type':e['mime'],'Cache-Control':m.CACHE,'x-cos-meta-sha256':e['sha256'],'x-cos-meta-release-id':'rid','Content-Encoding':'gzip'}
+assert m.matches(e,h,'rid')
+assert not m.matches(e,{k:v for k,v in h.items() if k!='Content-Encoding'},'rid')
+assert not m.matches(e,{**h,'Content-Encoding':'br'},'rid')
+assert not m.matches({k:v for k,v in e.items() if k!='contentEncoding'},h,'rid')
+print('passed')`;
+  assert.equal(execFileSync('python3', ['-B', '-c', script], {cwd: new URL('../../', import.meta.url), encoding: 'utf8'}).trim(), 'passed');
 });

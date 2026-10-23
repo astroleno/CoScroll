@@ -11,13 +11,14 @@ export async function prepareAudio(src: string, signal: AbortSignal, verifiedDur
   // AudioEngine subsequently replaces the verified duration with native metadata.
   signal.throwIfAborted();
   let response;
-  try {response = await (readEntryAudio(src) ?? fetch(src, {signal, method: 'HEAD'}));}
+  const probe = () => fetch(src, {signal, headers: {Range: 'bytes=0-0'}});
+  try {response = await (readEntryAudio(src) ?? probe());}
   catch (error) {
     signal.throwIfAborted();
     if (!readEntryAudio(src)) throw error;
-    response = await fetch(src, {signal, method: 'HEAD'});
+    response = await probe();
   }
-  if (response.status === 405 || response.status === 501) response = await fetch(src, {signal, headers: {Range: 'bytes=0-0'}});
+  if (response.status === 405 || response.status === 501) response = await fetch(src, {signal, method: 'HEAD'});
   if (!response.ok) throw new Error(`录音加载失败（${response.status}）`);
   const type = response.headers?.get('content-type');
   if (type && !/^(audio\/|application\/octet-stream)/i.test(type)) throw new Error('录音资源类型错误');

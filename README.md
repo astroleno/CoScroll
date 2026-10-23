@@ -7,6 +7,7 @@
 - [工程经验与多经典接入规范](docs/CLASSICS_INTEGRATION_SPEC.md)：现有能力、视觉约束、百字模型入库、配置与切换要求、验收及发布。
 - [曲目切换、画面设置与模型占位方案](docs/PLAYBACK_APPEARANCE_MODEL_PLAN.md)：已实现心经/赞诗切换、明确占位与按曲目调色；保留原丝绸背景。
 - [妙法莲华经内容核对](docs/LOTUS_SUTRA_CONTENT_REVIEW_20261022.md)：音源指纹、33 句歌词、重复段、时间点与补字依据。
+- [手机首载与长帧验收](docs/MOBILE_BOOT_STALL_RELEASE_20261023.md)：无损压缩交付、音频探测、完整模型分片恢复、画面对照和两站实测。
 - [七字模型接入记录](docs/PRIORITY7_MODEL_INTEGRATION_20261022.md)：妙、化、竹、海、土、雨、天的正式替换、手机回归、两站发布与性能限制。
 - [iPhone 字形分包、加载与长帧验收](docs/IPHONE_PERFORMANCE_RELEASE_20261022.md)：同源字形、完整字体回退、慢网对照与实际性能边界。
 - [妙法莲华经接入与公网验收](docs/LOTUS_SUTRA_RELEASE_20261022.md)、[此前无限滚动验收](docs/CONTINUOUS_SCROLL_RELEASE_20261021.md)与 [COS/CDN 发布流程](docs/COSCROLL_RELEASE.md)。

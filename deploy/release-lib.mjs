@@ -1,6 +1,7 @@
 import { createHash } from 'node:crypto';
 import { lstat, readdir, readFile, realpath } from 'node:fs/promises';
 import { extname, join, relative, resolve, sep } from 'node:path';
+import { gzipSync, gunzipSync } from 'node:zlib';
 
 export const OBJECT_ROOT = 'releases/aitoshuu-me/';
 export const CACHE = 'public, max-age=31536000, immutable';
@@ -18,6 +19,27 @@ export const MIME = {
   '.ico': 'image/x-icon', '.glb': 'model/gltf-binary', '.gltf': 'model/gltf+json',
 };
 export const sha = bytes => createHash('sha256').update(bytes).digest('hex');
+const compressible = new Set(['.js', '.css', '.json', '.lrc', '.srt', '.obj', '.gltf', '.glb', '.hdr', '.svg']);
+
+/** Store one HTTP representation; browsers recover the exact original bytes. */
+export function encodeDelivery(channel, path, original) {
+  if (channel !== 'assets' || !compressible.has(extname(path).toLowerCase()) || original.length < 1024) {
+    return {bytes: original, metadata: {}};
+  }
+  const bytes = gzipSync(original, {level: 9});
+  if (bytes.length > original.length * .9) return {bytes: original, metadata: {}};
+  return {bytes, metadata: {contentEncoding: 'gzip', decodedBytes: original.length, decodedSha256: sha(original)}};
+}
+
+export function decodeDelivery(entry, bytes) {
+  if (!entry.contentEncoding) return bytes;
+  if (entry.contentEncoding !== 'gzip') throw new Error('Unsupported content encoding');
+  const decoded = gunzipSync(bytes, {maxOutputLength: entry.decodedBytes});
+  if (decoded.length !== entry.decodedBytes || sha(decoded) !== entry.decodedSha256) {
+    throw new Error(`Decoded content hash mismatch: ${entry.packagePath}`);
+  }
+  return decoded;
+}
 export function sameCachePolicy(actual, expected) {
   // CDN edges may reorder directives without changing the cache contract.
   const normalize = value => value.split(',').map(part => part.trim().toLowerCase()).sort().join(',');
@@ -77,6 +99,13 @@ export function validateManifest(manifest, { production = false } = {}) {
     if (entry.mime !== MIME[extension] || !entry.mime || !Number.isSafeInteger(entry.bytes) || entry.bytes <= 0 ||
         !/^[0-9a-f]{64}$/.test(entry.sha256 || '') || paths.has(entry.packagePath)) throw new Error('Invalid release metadata or duplicate path');
     paths.add(entry.packagePath);
+    if (entry.contentEncoding !== undefined) {
+      if (entry.channel !== 'assets' || entry.contentEncoding !== 'gzip' || !compressible.has(extension) ||
+          !Number.isSafeInteger(entry.decodedBytes) || entry.decodedBytes <= entry.bytes ||
+          !/^[0-9a-f]{64}$/.test(entry.decodedSha256 || '')) throw new Error('Invalid encoded delivery metadata');
+    } else if (entry.decodedBytes !== undefined || entry.decodedSha256 !== undefined) {
+      throw new Error('Decoded metadata requires content encoding');
+    }
     if (entry.channel === 'origin') {
       if ((!['.html', '.txt'].includes(extension) && logical !== 'release-health.json') || entry.objectKey ||
           entry.cacheControl !== (logical === 'release-health.json' ? 'no-store' : 'no-cache')) throw new Error('Invalid origin entry');
@@ -106,6 +135,7 @@ export async function verifyPackage(root, options) {
   for (const entry of manifest.entries) {
     const bytes = await readFile(await checkedFile(root, entry.packagePath));
     if (bytes.length !== entry.bytes || sha(bytes) !== entry.sha256) throw new Error(`Package hash mismatch: ${entry.packagePath}`);
+    decodeDelivery(entry, bytes);
   }
   for (const directory of ['web', 'assets', 'media']) {
     for (const file of await walk(join(root, directory))) {

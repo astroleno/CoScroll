@@ -25,7 +25,9 @@ export default function RootLayout({
     if (!hint) return;
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), 10000);
-    const request = fetch(hint.audio, {method: 'HEAD', signal: controller.signal}).finally(() => clearTimeout(timeout));
+    // A one-byte GET follows the CDN's cached media path. Some edges leave HEAD
+    // waiting until the timeout even when ordinary media ranges are available.
+    const request = fetch(hint.audio, {headers: {Range: 'bytes=0-0'}, signal: controller.signal}).finally(() => clearTimeout(timeout));
     request.catch(() => {});
     window.__coscrollEntryAudio = {release: ${serializeEntryData(data.release)}, src: hint.audio, request};
     const preload = (href, as, type, priority = 'low') => {

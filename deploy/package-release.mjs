@@ -5,7 +5,7 @@ import { cp, mkdir, readFile, writeFile } from 'node:fs/promises';
 import { dirname, extname, join, relative, resolve, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { constants } from 'node:fs';
-import { BASE_PATH, CACHE, MIME, bases, closureHash, excluded, sha, verifyPackage, walk } from './release-lib.mjs';
+import { BASE_PATH, CACHE, MIME, bases, closureHash, encodeDelivery, excluded, sha, verifyPackage, walk } from './release-lib.mjs';
 import { checkPreparedModels } from './prepare-models.mjs';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
@@ -64,14 +64,17 @@ async function main() {
     else throw new Error(`Unexpected static export: ${path}`);
     const mime = MIME[extname(path).toLowerCase()];
     if (!mime) throw new Error(`Unsupported delivery MIME: ${path}`);
-    const bytes = await readFile(file);
-    if (!bytes.length) throw new Error(`Empty delivery file: ${path}`);
+    const original = await readFile(file);
+    if (!original.length) throw new Error(`Empty delivery file: ${path}`);
+    const {bytes, metadata} = encodeDelivery(channel, path, original);
     const packagePath = `${channel === 'origin' ? 'web' : channel}/${path}`;
     await mkdir(dirname(join(output, packagePath)), { recursive: true });
     // CoW cloning preserves an independent immutable snapshot on APFS/Btrfs;
     // unsupported filesystems fall back to an ordinary copy.
-    await cp(file, join(output, packagePath), { mode: constants.COPYFILE_FICLONE });
+    if (metadata.contentEncoding) await writeFile(join(output, packagePath), bytes);
+    else await cp(file, join(output, packagePath), { mode: constants.COPYFILE_FICLONE });
     entries.push({ channel, packagePath, bytes: bytes.length, sha256: sha(bytes), mime,
+      ...metadata,
       cacheControl: channel === 'origin' ? 'no-cache' : CACHE,
       ...(channel === 'origin' ? {} : { objectKey: `${urls.objectPrefix}${path}` }),
     });

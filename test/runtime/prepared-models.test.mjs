@@ -138,6 +138,23 @@ test('lossless codec preserves negative zero, array types and geometry metadata'
   geometry.dispose(); decoded.dispose();
 });
 
+test('cooperative restoration allows queued UI work between chunks without altering complete geometry', async () => {
+  const entry = registry.models.find(entry => entry.sourcePath === delivery.models[0].modelPath);
+  let turns = 0, queuedWork = 0;
+  const stored = await payload(entry);
+  const budget = {expired: () => true, yield: () => new Promise(resolve => {
+    turns++;
+    setImmediate(() => {queuedWork++; resolve();});
+  })};
+  const decoded = await pipeline.decodeGeometry(stored.base, budget);
+  const immediate = await pipeline.decodeGeometry(stored.base);
+  try {
+    assert.ok(turns > 10, 'a full model does not restore in one uninterrupted task');
+    assert.equal(queuedWork, turns);
+    assert.deepEqual(fingerprint(decoded), fingerprint(immediate));
+  } finally {decoded.dispose(); immediate.dispose();}
+});
+
 test('wrong versions, presets, source identity, array types and truncated buffers are rejected', async () => {
   const entry = registry.models[0], original = await payload(entry), expected = registryEntryIdentity(entry);
   for (const change of [value => value.version++, value => value.sourceSha256 = 'wrong',

@@ -120,29 +120,30 @@ const {prepareAudio} = await compile('src/config/prepareProject.ts', 'preparePro
   "'./entryBootstrap'": "'./entryBootstrap.mjs'",
 });
 
-test('verified recordings use HEAD without a throwaway audio download; failed objects are rejected', async () => {
+test('verified recordings use one cached byte without a throwaway audio download; failed objects are rejected', async () => {
   const oldAudio = globalThis.Audio, oldFetch = globalThis.fetch;
-  let constructed = 0, requestedMethod;
+  let constructed = 0, requestedRange, cancelled = false;
   globalThis.Audio = class {
     constructor() {constructed++;}
     load() {} removeAttribute() {}
   };
-  globalThis.fetch = async (_, options) => {requestedMethod = options.method; return {ok: true, body: {cancel: async () => {}}};};
+  globalThis.fetch = async (_, options) => {requestedRange = options.headers.Range; return {ok: true, body: {cancel: async () => {cancelled = true;}}};};
   try {
     assert.equal(await prepareAudio('/recording.mp3', new AbortController().signal, 241.843771), 241.843771);
-    assert.equal(requestedMethod, 'HEAD');
+    assert.equal(requestedRange, 'bytes=0-0');
+    assert.equal(cancelled, true);
     assert.equal(constructed, 0);
     globalThis.fetch = async () => ({ok: false, status: 404});
     await assert.rejects(prepareAudio('/missing.mp3', new AbortController().signal, 242), /录音加载失败/);
   } finally {globalThis.Audio = oldAudio; globalThis.fetch = oldFetch;}
 });
 
-test('HEAD-incompatible origins fall back to one byte; unknown recordings still read native duration', async () => {
+test('GET-incompatible origins retain HEAD fallback; unknown recordings still read native duration', async () => {
   const oldAudio = globalThis.Audio, oldFetch = globalThis.fetch;
   const requests = []; let cleaned = false;
   globalThis.fetch = async (_, options) => {
     requests.push(options);
-    return options.method === 'HEAD' ? {ok: false, status: 405} : {ok: true};
+    return options.method === 'HEAD' ? {ok: true} : {ok: false, status: 405};
   };
   globalThis.Audio = class {
     duration = 374.256327;
@@ -151,7 +152,8 @@ test('HEAD-incompatible origins fall back to one byte; unknown recordings still 
   };
   try {
     assert.equal(await prepareAudio('/recording.mp3', new AbortController().signal), 374.256327);
-    assert.equal(requests[1].headers.Range, 'bytes=0-0');
+    assert.equal(requests[0].headers.Range, 'bytes=0-0');
+    assert.equal(requests[1].method, 'HEAD');
     assert.equal(cleaned, true);
     const controller = new AbortController(); controller.abort();
     await assert.rejects(prepareAudio('/recording.mp3', controller.signal, 374), {name: 'AbortError'});

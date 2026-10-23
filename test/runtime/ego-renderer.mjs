@@ -38,9 +38,17 @@ export async function measureGpu(page,duration=6000){return await page.evaluate(
 },duration);}
 
 export async function captureFixedFrames(page,fixture){
+  // Model publication and the lyric-window React commit can finish on adjacent
+  // frames after seek. Observe the expected window before freezing either loop.
+  await page.evaluate(()=>new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(()=>resolve(null)))));
+  if(fixture)await page.waitForFunction(fixture=>{
+    const main=window.__renderProbe.stores.map(s=>s.getState()).find(s=>!s.gl.domElement.closest('[data-coscroll-background]'));
+    if(!main)return false;const keys=[];
+    main.scene.traverse(o=>{if(o.isMesh)keys.push(o.material.isMeshPhysicalMaterial?(o.material.transmission>0?'outer':'inner'):'lyric:'+o.renderOrder);});
+    return keys.length===fixture.meshes.length&&fixture.meshes.every(item=>keys.includes(item.key));
+  },fixture,{timeout:15000});
   return await page.evaluate(fixture=>{
     const states=window.__renderProbe.stores.map(s=>s.getState()),saved=states.map(s=>s.frameloop);
-    for(const s of states)s.setFrameloop('never');
     const main=states.find(s=>!s.gl.domElement.closest('[data-coscroll-background]'));
     const background=states.find(s=>s.gl.domElement.closest('[data-coscroll-background]'));
     const meshes=[];main.scene.traverse(o=>{if(o.isMesh)meshes.push(o);});
@@ -49,10 +57,14 @@ export async function captureFixedFrames(page,fixture){
     const originalRotation=rotator.rotation.y;
     let backgroundMesh;background.scene.traverse(o=>{if(o.isMesh)backgroundMesh=o;});
     const originalTime=backgroundMesh.material.uniforms.uTime.value;
-    const current=meshes.map(o=>({key:key(o),visible:o.visible,position:o.position.toArray(),scale:o.scale.toArray(),rotation:o.rotation.toArray(),color:o.material.color?.getHex(),opacity:o.material.opacity,feather:main.gl.properties.get(o.material).uniforms?.uLyricFeather?.value}));
-    if(fixture){for(const item of fixture.meshes){const o=meshes.find(o=>key(o)===item.key);if(!o)throw Error('Fixture mesh missing '+item.key);o.visible=item.visible;o.position.fromArray(item.position);o.scale.fromArray(item.scale);o.rotation.fromArray(item.rotation);if(!o.material.isMeshPhysicalMaterial){o.material.color.setHex(item.color);o.material.opacity=item.opacity;const u=main.gl.properties.get(o.material).uniforms?.uLyricFeather;if(u)u.value=item.feather;}}}
     const images=[];
     try{
+      for(const s of states)s.setFrameloop('never');
+      // First-use uniforms must exist before recording a reference. Assigning
+      // an uninitialized feather value would change the test's own glyphs.
+      main.gl.render(main.scene,main.camera);
+      const current=meshes.map(o=>({key:key(o),visible:o.visible,position:o.position.toArray(),scale:o.scale.toArray(),rotation:o.rotation.toArray(),color:o.material.color?.getHex(),opacity:o.material.opacity,feather:main.gl.properties.get(o.material).uniforms?.uLyricFeather?.value,raster:o.material.map?.image?[o.material.map.image.width,o.material.map.image.height]:null}));
+      if(fixture){for(const item of fixture.meshes){const o=meshes.find(o=>key(o)===item.key);if(!o)throw Error('Fixture mesh missing '+item.key);const raster=o.material.map?.image;if(item.raster&&(!raster||raster.width!==item.raster[0]||raster.height!==item.raster[1]))throw Error('Fixture glyph raster resolution differs '+item.key);o.visible=item.visible;o.position.fromArray(item.position);o.scale.fromArray(item.scale);o.rotation.fromArray(item.rotation);if(!o.material.isMeshPhysicalMaterial){o.material.color.setHex(item.color);o.material.opacity=item.opacity;const u=main.gl.properties.get(o.material).uniforms?.uLyricFeather;if(u&&Number.isFinite(item.feather))u.value=item.feather;}}}
       backgroundMesh.material.uniforms.uTime.value=1.25;
       background.gl.render(background.scene,background.camera);
       images.push({name:'background',data:background.gl.domElement.toDataURL('image/png')});

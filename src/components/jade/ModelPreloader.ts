@@ -1,6 +1,4 @@
 import * as THREE from "three";
-import { OBJLoader } from "three/examples/jsm/loaders/OBJLoader.js";
-import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 import { assetUrl } from '@/utils/assetUrl';
 import { createOffsetGeometry, normalizeModelGeometry } from './modelGeometry';
 import { decodePreparedModel, PREPARED_MODEL_PRESET } from './preparedModelGeometry';
@@ -242,6 +240,7 @@ class ModelPreloader {
     let loadedGeometry: THREE.BufferGeometry | null = null;
 
     if (modelPath.endsWith('.obj')) {
+      const { OBJLoader } = await import('three/examples/jsm/loaders/OBJLoader.js');
       const loader = new OBJLoader();
       const obj = await new Promise<THREE.Group>((resolve, reject) => {
         loader.load(modelPath, resolve, undefined, reject);
@@ -254,6 +253,7 @@ class ModelPreloader {
         }
       });
     } else if (modelPath.endsWith('.glb') || modelPath.endsWith('.gltf')) {
+      const { GLTFLoader } = await import('three/examples/jsm/loaders/GLTFLoader.js');
       const loader = new GLTFLoader();
       const gltf = await new Promise<any>((resolve, reject) => {
         loader.load(modelPath, resolve, undefined, reject);
