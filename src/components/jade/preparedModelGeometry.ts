@@ -183,13 +183,19 @@ export async function decodeGeometry(value: EncodedGeometry, budget = decodeBudg
   }
 }
 
-export async function decodePreparedModel(value: PreparedModel, expected: {generation: string; sourceSha256: string}) {
+export async function decodePreparedModel(value: PreparedModel, expected: {generation: string; sourceSha256: string},
+  options: {signal?: AbortSignal} = {}) {
   if (value?.version !== PREPARED_MODEL_VERSION || value.generation !== expected.generation ||
       value.sourceSha256 !== expected.sourceSha256 || Object.entries(PREPARED_MODEL_PRESET)
         .some(([key, setting]) => value.preset?.[key] !== setting)) {
     throw new Error('Prepared model version, source or preset mismatch');
   }
-  const budget = decodeBudget();
+  const clock = decodeBudget();
+  const budget = {
+    expired() {options.signal?.throwIfAborted(); return clock.expired();},
+    async yield() {options.signal?.throwIfAborted(); await clock.yield(); options.signal?.throwIfAborted();},
+  };
+  options.signal?.throwIfAborted();
   const base = await decodeGeometry(value.base, budget);
   try {
     return {base, outer: await decodeGeometry(value.outer, budget)};

@@ -127,7 +127,7 @@ test('package symlinks cannot expose files outside the candidate', async t => {
 
 test('gzip delivery preserves content bits and keeps audio, fonts and images unencoded', () => {
   const original = Buffer.from('const scripture = "妙法莲华经";\n'.repeat(1000));
-  for (const name of ['_next/static/app.js', 'models/prepared/妙.json', 'lyrics/妙.lrc', 'models/妙.obj', 'textures/sky.hdr']) {
+  for (const name of ['_next/static/app.js', 'models/prepared/妙.json', 'models/prepared/妙.bin', 'lyrics/妙.lrc', 'models/妙.obj', 'textures/sky.hdr']) {
     const {bytes, metadata} = encodeDelivery('assets', name, original);
     assert.equal(metadata.contentEncoding, 'gzip');
     assert.ok(bytes.length < original.length * .9);

@@ -1,0 +1,3318 @@
+{
+  "version": 1,
+  "date": "2026-10-24",
+  "status": "verified-local",
+  "scope": "75 GLB glyphs: lossless delivery, sequential decoding and byte-budget cache; preserves canonical geometry and jade appearance. Source commit and push authorized separately; no external deployment.",
+  "baselineCommit": "ac872e82eb04ce10632335b3f6e03c7146874116",
+  "executor": {
+    "provider": "SiliconFlow",
+    "model": "deepseek-ai/DeepSeek-V4.1-Flash",
+    "tool": "DSH",
+    "tasks": [
+      "six-glyph lossless pilot",
+      "cache budget and geometry ownership"
+    ],
+    "independentAcceptance": "Codex numerical, rendered, lifecycle and release checks"
+  },
+  "generations": {
+    "geometry": "1d70264a8617ff614bb3f5f799a578e18ceec65a1fdeaff96c9eae70e7c78357",
+    "encoding": "e7056623244806c839324960cc1611c3f604d35f94e6436120a6237baf988ade",
+    "legacy": "b38cf2c3dcdd7280c3e39f40824cb5d794a4c54d923817270e1a904ef2176cfa"
+  },
+  "geometry": {
+    "models": 75,
+    "allExpandedAttributesAndRawGeometryBitExact": true,
+    "duplicateVertices": 0,
+    "geometryBytesUnchanged": true,
+    "baselineFixtureSha256": "7c11ea93859862c379ab2a7500445973492d9cd7ec6af8579d605c7b7b6498bc"
+  },
+  "protectedInputs": {
+    "sourceModels": 101,
+    "legacyPayloads": 26,
+    "checkedFiles": 138,
+    "allUnchanged": true,
+    "legacyGeneration": "b38cf2c3dcdd7280c3e39f40824cb5d794a4c54d923817270e1a904ef2176cfa"
+  },
+  "transport": {
+    "actualRelease": {
+      "methodology": "Original Git payloads vs actual verified release representation, both using the release packager Node26 gzip9/90% selector. Original SHAs match the immutable pre-change baseline. Binary bytes match release manifest.",
+      "node": "v26.7.0",
+      "zlib": "1.2.12",
+      "oldWireBytes": 125848046,
+      "newWireBytes": 119026900,
+      "savedBytes": 6821146,
+      "reductionPercent": 5.420144544794914,
+      "allModelsSmaller": true,
+      "rows": [
+        {
+          "sourcePath": "/models/10k_obj/023_安.glb",
+          "oldWireBytes": 1779588,
+          "newWireBytes": 1702014,
+          "oldPreparedSha256": "f317e8187eed3c9a75bfc6123b93d0b8817e0d6f90935bbdb277dafe857e243d",
+          "newWireSha256": "a837b5e4f1dff26bc959180a80c628f54f9ab53e9794fbdf62bf9e9f685b1d2a"
+        },
+        {
+          "sourcePath": "/models/10k_obj/025_觉.glb",
+          "oldWireBytes": 1632085,
+          "newWireBytes": 1546087,
+          "oldPreparedSha256": "9d88fa35a039d84efc7dddb3b16cc592d8b79c9f46da8fe6425314acf2b59274",
+          "newWireSha256": "3dd782e5d7f222f4b659a956414a926d20326009e51631f618dd882694baf1d8"
+        },
+        {
+          "sourcePath": "/models/10k_obj/026_川.glb",
+          "oldWireBytes": 1867506,
+          "newWireBytes": 1799187,
+          "oldPreparedSha256": "02512b59e5f484a1a318663fc0b1b57b11bc53453a08a1f1a92eb07e8742328d",
+          "newWireSha256": "03061169a6e55655487c39b0839ebd4babbe04beba53aed42ad98cbf0595613c"
+        },
+        {
+          "sourcePath": "/models/10k_obj/027_海.glb",
+          "oldWireBytes": 1696687,
+          "newWireBytes": 1611944,
+          "oldPreparedSha256": "8b45e20442ed99a227305ae69b8f8807bab052720e7c6f4fa1646020e71e6a12",
+          "newWireSha256": "713b0098b943592b429ed2c067fda9939524b5cf938fdca1dca3932d408394a0"
+        },
+        {
+          "sourcePath": "/models/10k_obj/028_江.glb",
+          "oldWireBytes": 1468071,
+          "newWireBytes": 1333191,
+          "oldPreparedSha256": "c7aa444e1cbf64d586968970d85217fc211df7e3b71c343dfbedabb6f8843c09",
+          "newWireSha256": "82da7d1e12271b87539871ea5dfa712653ff0a55e074a3c80766d5577e2cbc6b"
+        },
+        {
+          "sourcePath": "/models/10k_obj/029_河.glb",
+          "oldWireBytes": 1692192,
+          "newWireBytes": 1599724,
+          "oldPreparedSha256": "a6d262ebfe8c4a925569ac1fa37d19947b01ca19fca0cb67cb14b18159e5dca8",
+          "newWireSha256": "6d7b5307567ce53578679072021405940c54295987bc606e48b861401ac3a8ac"
+        },
+        {
+          "sourcePath": "/models/10k_obj/030_湖.glb",
+          "oldWireBytes": 1798720,
+          "newWireBytes": 1718675,
+          "oldPreparedSha256": "cbf1652ab66ec0b0997617eca3e218c4377380d75c5c11e7f4717ab452306f71",
+          "newWireSha256": "1cac52046d8089e334b7aeb26d822726476da5586b4c2ca210adbc60d2628c4c"
+        },
+        {
+          "sourcePath": "/models/10k_obj/031_泉.glb",
+          "oldWireBytes": 1814154,
+          "newWireBytes": 1740301,
+          "oldPreparedSha256": "db2e186d4ffe3953a39d43ef5a46cf0a726555c640624454533e6bc13c974eca",
+          "newWireSha256": "125be03741a10b2d115503e2784fb3157e07ee48e5951bdeadc16a21ec7238a8"
+        },
+        {
+          "sourcePath": "/models/10k_obj/032_雨.glb",
+          "oldWireBytes": 1646463,
+          "newWireBytes": 1560970,
+          "oldPreparedSha256": "59d92c4fc7fc5aac1a35929f43ad363c8d3b89fd8a8fb3096793d1f7131ff6d1",
+          "newWireSha256": "ffe3f9e745c50eb944ed8e9b2ee37df7510be33cab4bc868ca2d40b4eda3f18c"
+        },
+        {
+          "sourcePath": "/models/10k_obj/033_云.glb",
+          "oldWireBytes": 1398562,
+          "newWireBytes": 1234317,
+          "oldPreparedSha256": "6d27d83b9351d6f1945267658c603300e36a142b9296c18ee3b940ab2265b7ab",
+          "newWireSha256": "c6a809f1610310e34cb81326bfd573e0dde092dd8b8e2eab6a105a8ce9cee8b3"
+        },
+        {
+          "sourcePath": "/models/10k_obj/034_雾.glb",
+          "oldWireBytes": 1936426,
+          "newWireBytes": 1859801,
+          "oldPreparedSha256": "a80e15b982c4a6381ff24ab4af1a070ff413f7f63b5dfee774578ce6d3a1512e",
+          "newWireSha256": "b39b4ab521b79cc973cc946e27f376578372df499dc5b39a78daeaaa1eebce32"
+        },
+        {
+          "sourcePath": "/models/10k_obj/035_雪.glb",
+          "oldWireBytes": 1837761,
+          "newWireBytes": 1761600,
+          "oldPreparedSha256": "3e5396dee11c75e125c0e989ec29b9e34cf9fbf51f99048d527ffd64ba2587a7",
+          "newWireSha256": "bbe755bddce3f9d517275f654211480c647925ed69b80c028bfb74e1e93ee016"
+        },
+        {
+          "sourcePath": "/models/10k_obj/036_星.glb",
+          "oldWireBytes": 1753744,
+          "newWireBytes": 1673580,
+          "oldPreparedSha256": "77f4ce2e7f99cdeb2489f7eafca4fa0ff64f81aa55c25f5abda3f5149f8ea6dc",
+          "newWireSha256": "1191f5d5ced7be78c2a3e63032e10c90ee5c460a5d50dd48806df12de161a02d"
+        },
+        {
+          "sourcePath": "/models/10k_obj/037_辰.glb",
+          "oldWireBytes": 1635122,
+          "newWireBytes": 1549266,
+          "oldPreparedSha256": "e470d9cbb3f0e9b198dc30a2f8468a4bb782006967edaf2cd5b010e009d2a86b",
+          "newWireSha256": "63d24a490223b6318f350cd41d6490cae78355ad377e1fda6e7c85a4b965982d"
+        },
+        {
+          "sourcePath": "/models/10k_obj/038_影.glb",
+          "oldWireBytes": 1810748,
+          "newWireBytes": 1734806,
+          "oldPreparedSha256": "efbfcc06598c187438127f9412422179a82ec522c59ba0dea3d26dd5341dfb6a",
+          "newWireSha256": "a0713f0d8fb9166c5d1d4775ce5fc6321b690723335e1c8de0cfdb1ade49c990"
+        },
+        {
+          "sourcePath": "/models/10k_obj/039_梦.glb",
+          "oldWireBytes": 1866887,
+          "newWireBytes": 1792373,
+          "oldPreparedSha256": "53d2b7f662c0a30166c7942be2522a1aa8a9bf9f291de8f6a29c13bfe316f944",
+          "newWireSha256": "5dd1e0dff33a93cadc65d82ce1a98e1c57007b3993da13a9cf4eeb835b85ddba"
+        },
+        {
+          "sourcePath": "/models/10k_obj/040_幻.glb",
+          "oldWireBytes": 1418496,
+          "newWireBytes": 1272203,
+          "oldPreparedSha256": "5c096b522441a2564b561415891a88b876b85018c32d27cdbdccf3b24c9ca14e",
+          "newWireSha256": "b8a44a6602e82429519a4de836531742b3544b1741f095a5f1c1bc7e48fa5a82"
+        },
+        {
+          "sourcePath": "/models/10k_obj/041_寂.glb",
+          "oldWireBytes": 1720322,
+          "newWireBytes": 1635957,
+          "oldPreparedSha256": "1c7ceccde2c083193e315c9e415016afd2efbae18bc83f9e790f794722581362",
+          "newWireSha256": "af04a48a11e385575b5c474b567ae5d8647c8aa1393859fb5eb9a1dcb55111fa"
+        },
+        {
+          "sourcePath": "/models/10k_obj/042_灭.glb",
+          "oldWireBytes": 1536983,
+          "newWireBytes": 1426813,
+          "oldPreparedSha256": "ce4d9d98f4f63918cfddd8e9351425780bb740c928c73d57ada79b8e01b2b194",
+          "newWireSha256": "23f592bbb5c9ddec55b86a36074ae42aa4034c4c35eac2577556f5eb908ab554"
+        },
+        {
+          "sourcePath": "/models/10k_obj/043_常.glb",
+          "oldWireBytes": 1803394,
+          "newWireBytes": 1729313,
+          "oldPreparedSha256": "82855639c7937d3aad651874a702b266170ba89892cca607e79d00464ae98285",
+          "newWireSha256": "2a04e3bdd22d8affc9cde9bdad8f5fbfc9251785e8654960666bceed21e25fb4"
+        },
+        {
+          "sourcePath": "/models/10k_obj/044_乐.glb",
+          "oldWireBytes": 1505099,
+          "newWireBytes": 1394138,
+          "oldPreparedSha256": "3d6c5394c0e07e1a3939f8b922e96ad0d3079e5ae2f9d59dfdab3630303aaa87",
+          "newWireSha256": "81b545b49a94f17de76b494db35116d03ef87aaf609430810544d74161a7f24f"
+        },
+        {
+          "sourcePath": "/models/10k_obj/046_净.glb",
+          "oldWireBytes": 1628301,
+          "newWireBytes": 1541105,
+          "oldPreparedSha256": "93ab3a5ac1cb2bdc1d8636c8e93f9fe70f8bf23a57a9979ad87caa8574dbb265",
+          "newWireSha256": "2d6e506e0f55dc10db053b95a2f08ce01c7369cca5c09f47d01a539d9a604fb8"
+        },
+        {
+          "sourcePath": "/models/10k_obj/047_清.glb",
+          "oldWireBytes": 1775937,
+          "newWireBytes": 1698952,
+          "oldPreparedSha256": "93940ded4e5d75821d2a23caf565d1768a9ee969954f72986fe16b41c2d7b0d4",
+          "newWireSha256": "0b346d0e43ce9da892d5ac0377dc59a5d304de715377117f928843e800aa5320"
+        },
+        {
+          "sourcePath": "/models/10k_obj/048_虚.glb",
+          "oldWireBytes": 1816713,
+          "newWireBytes": 1744922,
+          "oldPreparedSha256": "23ed1fc313d0705b448ae76d3845846f95758368609f8e189accd7b23937dd64",
+          "newWireSha256": "06d426b621e12f0bfdd9ca8f19a593d37513134b6a5418a7ee3d3ef61c2e4283"
+        },
+        {
+          "sourcePath": "/models/10k_obj/049_灵.glb",
+          "oldWireBytes": 1771816,
+          "newWireBytes": 1697457,
+          "oldPreparedSha256": "2e5ac0a128a807e059678052fb8c8a3fa95ca68487f1463e289dfc0d3583142e",
+          "newWireSha256": "64056268a6eb1f6bafe5c92a2e472cf5d5c8df704869e464a467ef6c13d3344b"
+        },
+        {
+          "sourcePath": "/models/10k_obj/050_妙.glb",
+          "oldWireBytes": 1750954,
+          "newWireBytes": 1681224,
+          "oldPreparedSha256": "b5f1fa5d9db5ea80c38f8fbc267d75f7f43e5a74cfb9a73d2608e1c6296f9846",
+          "newWireSha256": "6bbbfdcf9e73f9dd8ae0376df9f99bb80da0b1c7792428978b7d99894c69e2da"
+        },
+        {
+          "sourcePath": "/models/10k_obj/051_仁.glb",
+          "oldWireBytes": 1383127,
+          "newWireBytes": 1212454,
+          "oldPreparedSha256": "c41c235f5a1a207f7867c50a9782cca89bb2cf361e9a3c8b43dabe1e4414f9e8",
+          "newWireSha256": "20ff17969a0daac5021adcbebe79d0f42d27bc2aeb01fd291e247af31e1d6ab2"
+        },
+        {
+          "sourcePath": "/models/10k_obj/052_义.glb",
+          "oldWireBytes": 1439887,
+          "newWireBytes": 1311336,
+          "oldPreparedSha256": "2a5d0820d712070be2e5f87d47acb004302d4aeac5e2da00308b5dbefbc79332",
+          "newWireSha256": "3dddc8bf2ad1cb7e6d6ccf3c1776b9c8fc7678568b908392ef76b6249b3e2b89"
+        },
+        {
+          "sourcePath": "/models/10k_obj/053_礼.glb",
+          "oldWireBytes": 1576042,
+          "newWireBytes": 1459940,
+          "oldPreparedSha256": "fa809414525a0a9c84d7b9eb0cba29a34175693f00d333d205fa04c8081aafa6",
+          "newWireSha256": "22e1faab487cdaf9a9821f02046bfc35c890246fa3c201e2bee00f0d6cf20490"
+        },
+        {
+          "sourcePath": "/models/10k_obj/054_智.glb",
+          "oldWireBytes": 1829807,
+          "newWireBytes": 1758364,
+          "oldPreparedSha256": "a840d5cb707580e0dd942b95e28a3416afa3369167fbc2570eae908463d0e34e",
+          "newWireSha256": "a363c84d4daa07f00d9473bd525a89b00ada1f50020d93720bf401b7306fdcc1"
+        },
+        {
+          "sourcePath": "/models/10k_obj/055_信.glb",
+          "oldWireBytes": 1720735,
+          "newWireBytes": 1640155,
+          "oldPreparedSha256": "12e0d472491353b52243f01a4fcf8b1400bbedc836ef80c5bf63468a5bf41666",
+          "newWireSha256": "39024298babd6c6994ed2e12dbdf52b927517e7adde3c60db0bc113a9f6882ec"
+        },
+        {
+          "sourcePath": "/models/10k_obj/056_勇.glb",
+          "oldWireBytes": 1735553,
+          "newWireBytes": 1651934,
+          "oldPreparedSha256": "5036633058c3f9276aa4f217c7e6cb6b4b18a4bde14edecdae9ade0429c00e47",
+          "newWireSha256": "86832cc24408808cc10d74ebb0b836d3033899749987e703d03389d6af9e728a"
+        },
+        {
+          "sourcePath": "/models/10k_obj/057_孝.glb",
+          "oldWireBytes": 1646199,
+          "newWireBytes": 1561921,
+          "oldPreparedSha256": "6d9b2bb2d9641f4f2f9d32b1545e13692367f9757df1da4bfdf38881cf4d6650",
+          "newWireSha256": "3d67a6a2036cd35b26151c3464ae76fa4a1dfc3584a3526ee23b17256e490750"
+        },
+        {
+          "sourcePath": "/models/10k_obj/058_悌.glb",
+          "oldWireBytes": 1699843,
+          "newWireBytes": 1613427,
+          "oldPreparedSha256": "bae3dd3054af5a009a1aba7554d324640fc691cbd357afcd73f9ef349a7491e4",
+          "newWireSha256": "f72771f0c5cb7e271e5b14589186e89676f693a342bb866ba14b6675839f8d97"
+        },
+        {
+          "sourcePath": "/models/10k_obj/059_忠.glb",
+          "oldWireBytes": 1555758,
+          "newWireBytes": 1456755,
+          "oldPreparedSha256": "8cb31b5092c02d42adde5ecf08fab80a1f4daae51cb1aa730b26aec974b1ee18",
+          "newWireSha256": "982e223abb14292d4eecd2a63d7f3cba6267e41b8ea8819b7a743582f2ea87b6"
+        },
+        {
+          "sourcePath": "/models/10k_obj/060_恕.glb",
+          "oldWireBytes": 1805870,
+          "newWireBytes": 1734904,
+          "oldPreparedSha256": "c82fa898724f62907874e9b5f980236cbc8fdaf851c62d0458a494e1a58a8a07",
+          "newWireSha256": "4d42768cbe7f3f446e6e57f6088e38a84c7efea0853805a27a0a98e000e28021"
+        },
+        {
+          "sourcePath": "/models/10k_obj/061_忍.glb",
+          "oldWireBytes": 1520561,
+          "newWireBytes": 1410946,
+          "oldPreparedSha256": "e721f6c46a1402cf13f79d242f80c18ed8a12dcad012ebf9d6398215fd9c4ca0",
+          "newWireSha256": "6f9b3284baf71bac8b8124c66609268f01c8dae84e1b20c71214cc3f279c4014"
+        },
+        {
+          "sourcePath": "/models/10k_obj/062_宽.glb",
+          "oldWireBytes": 1760229,
+          "newWireBytes": 1686019,
+          "oldPreparedSha256": "73e2542a0633cc09a7c85b0cc53580a4c04da81c711490296912bf7459698e87",
+          "newWireSha256": "a558ad816ac3e27001ab8952871c14b90f6859f864436b6029cde9160da127eb"
+        },
+        {
+          "sourcePath": "/models/10k_obj/063_福.glb",
+          "oldWireBytes": 1718183,
+          "newWireBytes": 1631703,
+          "oldPreparedSha256": "b51a88bee8a1a42968286f92daf59f019c096cf8af4e0b668b43e27d1c92be98",
+          "newWireSha256": "ebd566820bd60898f6e542659de00fe7cf89ff759c567ea42792c500262a4dad"
+        },
+        {
+          "sourcePath": "/models/10k_obj/064_寿.glb",
+          "oldWireBytes": 1783190,
+          "newWireBytes": 1705005,
+          "oldPreparedSha256": "70893bf1fe3e627fc9510247cbe0513b51be90626abd92cd23ceea0b69d41d48",
+          "newWireSha256": "ec8444a7b7c87296936c11bce0139c38f0eaa8caef0bba79bdc43daddee9c0f8"
+        },
+        {
+          "sourcePath": "/models/10k_obj/065_吉.glb",
+          "oldWireBytes": 1687459,
+          "newWireBytes": 1605096,
+          "oldPreparedSha256": "21aab372213252cae207a178ab4d1da7fd4b218313fd20cb7eb7eb3add1212d6",
+          "newWireSha256": "a3ee0ec575b6cf6aa342b06399f9c19ec1b31cbfb67c665a684a85f045ff0bdd"
+        },
+        {
+          "sourcePath": "/models/10k_obj/066_祥.glb",
+          "oldWireBytes": 1915908,
+          "newWireBytes": 1840024,
+          "oldPreparedSha256": "15b50ee97c9ad9925cc59d23958ba427c7e3d947b8297105479ea50ea71ed845",
+          "newWireSha256": "0a653efcfa493b3aecebd2442b33d5cc0d57daec29e22382634a0705908d0a40"
+        },
+        {
+          "sourcePath": "/models/10k_obj/067_康.glb",
+          "oldWireBytes": 1641277,
+          "newWireBytes": 1550664,
+          "oldPreparedSha256": "32ae08cc146e7625353e13c8b577cb275e509905f9ba91c70573bd80f86f037d",
+          "newWireSha256": "b14fca504476d5c96e592789fdd8a028b4ff8defb95da1be061db26e390ed2df"
+        },
+        {
+          "sourcePath": "/models/10k_obj/068_泰.glb",
+          "oldWireBytes": 1985015,
+          "newWireBytes": 1904407,
+          "oldPreparedSha256": "15c4d196f951509f9c11a83bc7b166c13d0677b4a363bd066e66d1d64c1a70ea",
+          "newWireSha256": "02a1d0132859ca2709b56e059b9588ea2f7047a3c1db93385610b04654c4ecd5"
+        },
+        {
+          "sourcePath": "/models/10k_obj/069_春.glb",
+          "oldWireBytes": 1716093,
+          "newWireBytes": 1635890,
+          "oldPreparedSha256": "0ef4433b9577c6268aea0ad1c3de44878908f6ae9d984be4bd11bc6a6284a2f3",
+          "newWireSha256": "a12350fe40ca70d8fbc0714e32f5f46dd2a1c025eb5a484e20b8028212286d7e"
+        },
+        {
+          "sourcePath": "/models/10k_obj/070_夏.glb",
+          "oldWireBytes": 1610484,
+          "newWireBytes": 1521921,
+          "oldPreparedSha256": "787658db0715e380842413d948c3b38970ef613d19957cf602919ac552692507",
+          "newWireSha256": "0678a40b29227924de6b83828935385ae1d738b256dc4b2beb90c48675e65cdd"
+        },
+        {
+          "sourcePath": "/models/10k_obj/071_秋.glb",
+          "oldWireBytes": 1672859,
+          "newWireBytes": 1582968,
+          "oldPreparedSha256": "51c07ecbf890dd9ed5f06a29a5cab817aa6557c0b4b02f1ac1f9e3c9bdd10332",
+          "newWireSha256": "327b741dcb9cc06c2e0f7d6d7c714b62d4d02b6528b08ec585b1ea6445f2a11e"
+        },
+        {
+          "sourcePath": "/models/10k_obj/072_冬.glb",
+          "oldWireBytes": 1538402,
+          "newWireBytes": 1431929,
+          "oldPreparedSha256": "cf898b7e878a1420cecb560bd7bd53110e7c13e50f5892853f88adfd2aecae47",
+          "newWireSha256": "4abb42835711e2d5503b6961260fea60b0e0cd10bbda9fadc32f542e59ed8daa"
+        },
+        {
+          "sourcePath": "/models/10k_obj/073_竹.glb",
+          "oldWireBytes": 1602470,
+          "newWireBytes": 1512476,
+          "oldPreparedSha256": "ad2788505b66a089f15e8a71d82aa95ee2fd721b92c2a7a27aeee3fbb22782d2",
+          "newWireSha256": "529b21e1a44014323bf43a8bf2b2fbd6027dce5db9c9cf1fd353ce88c0d6ac1a"
+        },
+        {
+          "sourcePath": "/models/10k_obj/074_松.glb",
+          "oldWireBytes": 1637793,
+          "newWireBytes": 1541798,
+          "oldPreparedSha256": "83d43222b63b7365954e6d66f96cb20adf36cfd40dc7957eb34e727fe890d468",
+          "newWireSha256": "82886b48598ae00b21c1cdc215ce23beaec1e5d69382481ef483e27fdb181e3c"
+        },
+        {
+          "sourcePath": "/models/10k_obj/075_梅.glb",
+          "oldWireBytes": 1764709,
+          "newWireBytes": 1680922,
+          "oldPreparedSha256": "866aae36fb01efbf56b1c3ac8a9c5fbe5bb6a61b0d9f3165e086647dc89bf3c3",
+          "newWireSha256": "e8444df4a4e2644ee8d6771f455775c8ab5499ec613cf3b55b846f299928b902"
+        },
+        {
+          "sourcePath": "/models/10k_obj/076_兰.glb",
+          "oldWireBytes": 1502622,
+          "newWireBytes": 1383496,
+          "oldPreparedSha256": "1af3209a626453a9a0ab2cc75dbf3fc1e575a8cd5b28cd3e91e50385b329d163",
+          "newWireSha256": "18cd115b481b6cc0d7e39f8142cb2f542e8b7facc322dbb8d1ab1a22435cb5fc"
+        },
+        {
+          "sourcePath": "/models/10k_obj/077_花.glb",
+          "oldWireBytes": 1668138,
+          "newWireBytes": 1582762,
+          "oldPreparedSha256": "4dc6b96cde4934ff8c3f4e607971e74268869d164520fd300bdeb108e3ab3882",
+          "newWireSha256": "45260e6fa2b2d358ac9bbf7190a66fb52bbdb03d91768244758cefeb261986e5"
+        },
+        {
+          "sourcePath": "/models/10k_obj/078_草.glb",
+          "oldWireBytes": 1837351,
+          "newWireBytes": 1768528,
+          "oldPreparedSha256": "36cd27b47f011265b07878494b2efc0510ed497c08ce417f117360fa6c175de9",
+          "newWireSha256": "00ea797fb3e58889e24a291c50da8985040eee74b7c1e54a0c04047aaf5785b6"
+        },
+        {
+          "sourcePath": "/models/10k_obj/079_石.glb",
+          "oldWireBytes": 1475607,
+          "newWireBytes": 1345544,
+          "oldPreparedSha256": "ddef86765af7b2806cf2f9d01c31c931ee61bc688cbecb4679457648a8df5065",
+          "newWireSha256": "67d764a4b6575bca50d5c4686cfb367b088c7356bf64487cf00ff18672274933"
+        },
+        {
+          "sourcePath": "/models/10k_obj/080_玉.glb",
+          "oldWireBytes": 1491979,
+          "newWireBytes": 1374008,
+          "oldPreparedSha256": "2c77c838fe41c7b385bf340308d61ac0248804a54bcaccaa5419223075982081",
+          "newWireSha256": "c3653b6ad8ce52cae6734d0fb6f18ca295fdafe63b2d2c67a043ebbfe22f7806"
+        },
+        {
+          "sourcePath": "/models/10k_obj/081_金.glb",
+          "oldWireBytes": 1680680,
+          "newWireBytes": 1597998,
+          "oldPreparedSha256": "617ac8b80e1463bc7b7943884569fd213f3ffc8b334fa56c0de02922e458edc8",
+          "newWireSha256": "ad9f0d26201699ef434a718049c07c78fb8439183aea7c4cb1fd86b538ac6d6c"
+        },
+        {
+          "sourcePath": "/models/10k_obj/082_木.glb",
+          "oldWireBytes": 1500391,
+          "newWireBytes": 1384989,
+          "oldPreparedSha256": "21605d1a8edea94fd6cdcc235a1b4623f77943e7859246a66ea553af667f4b14",
+          "newWireSha256": "9c97041947b23f165e5b26bd3d28ebdac9460efce3763410f337cb6450de0811"
+        },
+        {
+          "sourcePath": "/models/10k_obj/083_土.glb",
+          "oldWireBytes": 1564824,
+          "newWireBytes": 1460508,
+          "oldPreparedSha256": "0ba909927ec7a5b5a3ab162b2421a9efa9bc1f639d362569a4052e6dde99302e",
+          "newWireSha256": "f56b2a156947f23de9aa7e2078b373fc7b9a9d46b349a168bbc97777fb83c6f5"
+        },
+        {
+          "sourcePath": "/models/10k_obj/084_火.glb",
+          "oldWireBytes": 1473617,
+          "newWireBytes": 1362958,
+          "oldPreparedSha256": "a8e6b6d6608e10190636e77d8f08f0740803ee4a235a34a06950a3298594309e",
+          "newWireSha256": "56ec12d442ebc1d61e5fcf13dabe47d5c1b591307916db7d794ea4dff893a02f"
+        },
+        {
+          "sourcePath": "/models/10k_obj/085_雷.glb",
+          "oldWireBytes": 1789002,
+          "newWireBytes": 1711665,
+          "oldPreparedSha256": "12013bf5b26f8c206e19fb68d84cc3d457a2dfaa03ea1fc9fb5ccc53eb1d7d87",
+          "newWireSha256": "1ec576bed0018f0c95692ecac4053864d106702b8e2f41f74ac968022883c40e"
+        },
+        {
+          "sourcePath": "/models/10k_obj/086_天.glb",
+          "oldWireBytes": 1494889,
+          "newWireBytes": 1372068,
+          "oldPreparedSha256": "327c39dfdb448e72467304e746135b8d10b603635260c265062f443c35b83574",
+          "newWireSha256": "4f94b845725b1c5743bad6069c82df624acd28e497923ea173dfa39d03d22082"
+        },
+        {
+          "sourcePath": "/models/10k_obj/087_地.glb",
+          "oldWireBytes": 1716322,
+          "newWireBytes": 1632830,
+          "oldPreparedSha256": "bd41ab3d121cd415797f8b2cfffa272e677a9205dd4c81161b462bde05819160",
+          "newWireSha256": "7bcfa9c29f1c4c0793032cfc187f636d17118fc0c809f29b753a23e04932ddc8"
+        },
+        {
+          "sourcePath": "/models/10k_obj/088_乾.glb",
+          "oldWireBytes": 1704929,
+          "newWireBytes": 1619731,
+          "oldPreparedSha256": "bfd83bf59bdf9ff60e42554406c0d9f9fc45a701c65af3da7b3a2d3f482d47e9",
+          "newWireSha256": "887e0de2c170741492b716435a936fe70081b88c321a9f12c1da1f0bfd42c46a"
+        },
+        {
+          "sourcePath": "/models/10k_obj/089_坤.glb",
+          "oldWireBytes": 1705452,
+          "newWireBytes": 1621159,
+          "oldPreparedSha256": "1d5a19910517dc14cdf03bb442334d2352280def6be6161e273db703c0c951fe",
+          "newWireSha256": "edcf6afa6cee214939ac3b57cc1939a405c00380edcde481e0fb738d45de1587"
+        },
+        {
+          "sourcePath": "/models/10k_obj/090_宇.glb",
+          "oldWireBytes": 1651679,
+          "newWireBytes": 1558192,
+          "oldPreparedSha256": "13e4e5e7d6b89126d3bb4ffad2e8751c053e3fd4dd2cef02a983dd14c0c86e36",
+          "newWireSha256": "4aad43a18f219b35fb9234fa7ffdcf4c3ad04edc8f7ec3e78e062f33ad054bb3"
+        },
+        {
+          "sourcePath": "/models/10k_obj/091_宙.glb",
+          "oldWireBytes": 1578927,
+          "newWireBytes": 1474271,
+          "oldPreparedSha256": "7824a6c056c41b386e8f080084c4301296140504ea4243013153ae909bfc7a1f",
+          "newWireSha256": "001af157cc929b00502be86d2972a42d6bb044ad16622995f809269027bdb530"
+        },
+        {
+          "sourcePath": "/models/10k_obj/092_源.glb",
+          "oldWireBytes": 1638174,
+          "newWireBytes": 1548658,
+          "oldPreparedSha256": "71e2b5474e02957307ff11fee4e22b49f29a1598b16bd0fddcf420ea619b6da7",
+          "newWireSha256": "e7ffe20b28a3dea0a7f3131ffce51e373d67f5fcc322f2935dd79c5946b48141"
+        },
+        {
+          "sourcePath": "/models/10k_obj/093_流.glb",
+          "oldWireBytes": 1841629,
+          "newWireBytes": 1770042,
+          "oldPreparedSha256": "411231f9a33c38f0ec550cb8c709c813f65afc2d39b7162ca48613c34fe7486e",
+          "newWireSha256": "d26f5ca25b940ff9080058f039ee0d27c973613c455b6c930a6bfacb9fb1e7cf"
+        },
+        {
+          "sourcePath": "/models/10k_obj/095_潮.glb",
+          "oldWireBytes": 1802048,
+          "newWireBytes": 1722673,
+          "oldPreparedSha256": "117f49be985d2da54c7752cc8519a2eea9bd873a5159444be261ba4368fd704a",
+          "newWireSha256": "ffddce3a6b59077b2e803a86844026780d4fc478417173acf8086f0290f06603"
+        },
+        {
+          "sourcePath": "/models/10k_obj/096_露.glb",
+          "oldWireBytes": 1867778,
+          "newWireBytes": 1793295,
+          "oldPreparedSha256": "fbab9a5e1f8b7059fab75a0be4f0d4aea58dd70554745072c0c43c599c2e25f7",
+          "newWireSha256": "12ab28332d0137c2b19c646c28a9f374993e4fa25ddd911e3cf7e9ab00c84a42"
+        },
+        {
+          "sourcePath": "/models/10k_obj/097_霜.glb",
+          "oldWireBytes": 1851848,
+          "newWireBytes": 1779752,
+          "oldPreparedSha256": "49e31ac650eed03069ffb858947ebbc85d73f68c4d4e83610a24e35a239c34b3",
+          "newWireSha256": "56ac17972e4f6377fe4bcfe5d17c01c14afa4e9b105660098ecfa13694fbb61d"
+        },
+        {
+          "sourcePath": "/models/10k_obj/098_美.glb",
+          "oldWireBytes": 1885839,
+          "newWireBytes": 1810556,
+          "oldPreparedSha256": "1059072d9c7f33d1f819f95b48acf3966ec53983ed986324fea0f0f7163ffc77",
+          "newWireSha256": "ec8f4b0933efe74273aba4552b5b00ac659cb3ee33964022ddaf517a38477121"
+        },
+        {
+          "sourcePath": "/models/10k_obj/099_化.glb",
+          "oldWireBytes": 1070357,
+          "newWireBytes": 999725,
+          "oldPreparedSha256": "d837009bb15eccca431ba988ca7f07224f10f9fbf10f592182bbaa176f668a17",
+          "newWireSha256": "fa396f1d75dc9db5cfa12fa674bd6a02e7c99720d46803d7636dea9cb5cb9e4d"
+        },
+        {
+          "sourcePath": "/models/10k_obj/100_通.glb",
+          "oldWireBytes": 1743780,
+          "newWireBytes": 1668614,
+          "oldPreparedSha256": "68628a7a2e08c2be44079605182dc418b4b7c0addbaa8086a27c0ddc0753e1aa",
+          "newWireSha256": "c210c42116c3d93c3353d50bdff076d070ba1e7aa30a34b9c4c90f4f6baca020"
+        }
+      ]
+    },
+    "frozenNode22Comparison": {
+      "oldWireBytes": 125145861,
+      "selectedWireBytes": 119026900,
+      "binaryModels": 75,
+      "reductionPercent": 4.889463343897571,
+      "explanation": "Preserved immutable planning/generator baseline, Node22 zlib1.3.1. Actual package comparison above normalizes both versions to the Node26 zlib1.2.12 release packager."
+    },
+    "initialProductionJavaScript": {
+      "methodology": "Actual Next production JS chunks in the union of app-build-manifest /layout and /page, encoded using the release gzip9 selector. Same Node26/dependencies/configuration/release id; six runtime/registry inputs restored from the original commit for baseline. AudioEngine and EnhancedAudioPlayer also pinned to that commit to match the fixed optimized UI snapshot, excluding concurrent audio edits. Optimized bytes are read from the verified immutable release manifest and package. The baseline public snapshot contains only fonts/projects/lyrics needed to compile; model bodies do not affect these compiled JS chunks.",
+      "node": "v26.7.0",
+      "zlib": "1.2.12",
+      "baselineCommit": "ac872e82eb04ce10632335b3f6e03c7146874116",
+      "releaseId": "coscroll-13c23dbbba7efeb4",
+      "baseline": {
+        "wireBytes": 361024,
+        "files": 5,
+        "rows": [
+          {
+            "path": "static/chunks/webpack-dc7ab2a67bb14ea9.js",
+            "decodedBytes": 4109,
+            "wireBytes": 1969,
+            "sha256": "065e96bcc4a2577bf051aada0144cb1987cbf39e4e8fdcb92ce6b24562b2278a",
+            "contentEncoding": "gzip",
+            "decodedSha256": "9fadf0aa9751ca96213ec3408d1d089daa6c209b7a41d930f7d451bd2481892c"
+          },
+          {
+            "path": "static/chunks/coscroll-entry-977f9531a5253a2f.js",
+            "decodedBytes": 1303982,
+            "wireBytes": 358168,
+            "sha256": "2a4a355791cc90948e96e2e33133bf7b61e8b218e8cc63a2c27eeed2ba654765",
+            "contentEncoding": "gzip",
+            "decodedSha256": "c6b3fd1edcb81aaea2e2e19fdd78e06fac2fb614cdc3aac3165309eb971056c1"
+          },
+          {
+            "path": "static/chunks/main-app-29608355720e9454.js",
+            "decodedBytes": 460,
+            "wireBytes": 460,
+            "sha256": "51fa1def5f541445758fd125c1210cb93e77adeb931207f443d862ba7ec747ec"
+          },
+          {
+            "path": "static/chunks/app/layout-d40b35390d07e412.js",
+            "decodedBytes": 225,
+            "wireBytes": 225,
+            "sha256": "0476ac48819a70693ab2894438e4191af53b3629caefd4814de53d11e4518dcc"
+          },
+          {
+            "path": "static/chunks/app/page-8c2eac9a5c3aa74d.js",
+            "decodedBytes": 202,
+            "wireBytes": 202,
+            "sha256": "e9db95d5b70108dff28dc8423b966b3910b86d52b5da0630ac1593bd9d3bb92b"
+          }
+        ]
+      },
+      "current": {
+        "wireBytes": 370110,
+        "files": 5,
+        "rows": [
+          {
+            "path": "static/chunks/webpack-dc7ab2a67bb14ea9.js",
+            "decodedBytes": 4109,
+            "wireBytes": 1969,
+            "sha256": "065e96bcc4a2577bf051aada0144cb1987cbf39e4e8fdcb92ce6b24562b2278a",
+            "contentEncoding": "gzip",
+            "decodedSha256": "9fadf0aa9751ca96213ec3408d1d089daa6c209b7a41d930f7d451bd2481892c"
+          },
+          {
+            "path": "static/chunks/coscroll-entry-d8288e54f5c0bb11.js",
+            "decodedBytes": 1347662,
+            "wireBytes": 367254,
+            "sha256": "189285f90d8f1cb500a2be1eec0e036747a8434224c1164da0714274203321a4",
+            "contentEncoding": "gzip",
+            "decodedSha256": "fa8aa1dbba83c274daba08522273d50ef030af0d84f4bd4dfc58059246255855"
+          },
+          {
+            "path": "static/chunks/main-app-29608355720e9454.js",
+            "decodedBytes": 460,
+            "wireBytes": 460,
+            "sha256": "51fa1def5f541445758fd125c1210cb93e77adeb931207f443d862ba7ec747ec"
+          },
+          {
+            "path": "static/chunks/app/layout-189dfbbd0eb6b395.js",
+            "decodedBytes": 225,
+            "wireBytes": 225,
+            "sha256": "7ced1fc046bbbbd3163d24b781d88cfa9013eded1b7fde24915d7059d5781dee"
+          },
+          {
+            "path": "static/chunks/app/page-663a714f8014162b.js",
+            "decodedBytes": 202,
+            "wireBytes": 202,
+            "sha256": "a2f5810d6f7a03a9924aba305ab6b7cd208b3c68a0b6b9958a20f3fc157c66d2"
+          }
+        ]
+      },
+      "addedInitialJsWireBytes": 9086
+    },
+    "netPayloadSavingsAfterInitialJsBytes": 6812060,
+    "combinedInitialJsAndAll75ReductionPercent": 5.397440928770014,
+    "localPayloadFiles": {
+      "oldBytes": 166214996,
+      "newBytes": 119026900
+    }
+  },
+  "modelResidency": {
+    "scope": "Actual decoded geometry buffers; same 75-glyph sequential traversal, current plus next ownership; old eight-idle LRU compared with real new cache. Excludes textures, render targets and process heap.",
+    "rows": [
+      {
+        "sourcePath": "/models/10k_obj/023_安.glb",
+        "oldResidentBytes": 6392560,
+        "total": 2,
+        "loaded": 2,
+        "loading": 0,
+        "pending": 0,
+        "error": 0,
+        "priority": 0,
+        "idleModels": 0,
+        "idleBytes": 0,
+        "residentBytes": 6392560
+      },
+      {
+        "sourcePath": "/models/10k_obj/025_觉.glb",
+        "oldResidentBytes": 11150072,
+        "total": 3,
+        "loaded": 3,
+        "loading": 0,
+        "pending": 0,
+        "error": 0,
+        "priority": 0,
+        "idleModels": 1,
+        "idleBytes": 2681688,
+        "residentBytes": 11150072
+      },
+      {
+        "sourcePath": "/models/10k_obj/026_川.glb",
+        "oldResidentBytes": 13672688,
+        "total": 4,
+        "loaded": 4,
+        "loading": 0,
+        "pending": 0,
+        "error": 0,
+        "priority": 0,
+        "idleModels": 2,
+        "idleBytes": 6392560,
+        "residentBytes": 13672688
+      },
+      {
+        "sourcePath": "/models/10k_obj/027_海.glb",
+        "oldResidentBytes": 15908264,
+        "total": 3,
+        "loaded": 3,
+        "loading": 0,
+        "pending": 0,
+        "error": 0,
+        "priority": 0,
+        "idleModels": 1,
+        "idleBytes": 4757512,
+        "residentBytes": 9515704
+      },
+      {
+        "sourcePath": "/models/10k_obj/028_江.glb",
+        "oldResidentBytes": 19797632,
+        "total": 4,
+        "loaded": 4,
+        "loading": 0,
+        "pending": 0,
+        "error": 0,
+        "priority": 0,
+        "idleModels": 2,
+        "idleBytes": 7280128,
+        "residentBytes": 13405072
+      },
+      {
+        "sourcePath": "/models/10k_obj/029_河.glb",
+        "oldResidentBytes": 22508384,
+        "total": 4,
+        "loaded": 4,
+        "loading": 0,
+        "pending": 0,
+        "error": 0,
+        "priority": 0,
+        "idleModels": 2,
+        "idleBytes": 4758192,
+        "residentBytes": 11358312
+      },
+      {
+        "sourcePath": "/models/10k_obj/030_湖.glb",
+        "oldResidentBytes": 25262120,
+        "total": 4,
+        "loaded": 4,
+        "loading": 0,
+        "pending": 0,
+        "error": 0,
+        "priority": 0,
+        "idleModels": 2,
+        "idleBytes": 6124944,
+        "residentBytes": 11589432
+      },
+      {
+        "sourcePath": "/models/10k_obj/031_泉.glb",
+        "oldResidentBytes": 28951176,
+        "total": 4,
+        "loaded": 4,
+        "loading": 0,
+        "pending": 0,
+        "error": 0,
+        "priority": 0,
+        "idleModels": 2,
+        "idleBytes": 6600120,
+        "residentBytes": 13042912
+      },
+      {
+        "sourcePath": "/models/10k_obj/032_雨.glb",
+        "oldResidentBytes": 31078200,
+        "total": 4,
+        "loaded": 4,
+        "loading": 0,
+        "pending": 0,
+        "error": 0,
+        "priority": 0,
+        "idleModels": 2,
+        "idleBytes": 5464488,
+        "residentBytes": 11280568
+      },
+      {
+        "sourcePath": "/models/10k_obj/033_云.glb",
+        "oldResidentBytes": 31626456,
+        "total": 4,
+        "loaded": 4,
+        "loading": 0,
+        "pending": 0,
+        "error": 0,
+        "priority": 0,
+        "idleModels": 2,
+        "idleBytes": 6442792,
+        "residentBytes": 11799760
+      },
+      {
+        "sourcePath": "/models/10k_obj/034_雾.glb",
+        "oldResidentBytes": 30696680,
+        "total": 4,
+        "loaded": 4,
+        "loading": 0,
+        "pending": 0,
+        "error": 0,
+        "priority": 0,
+        "idleModels": 2,
+        "idleBytes": 5816080,
+        "residentBytes": 11827120
+      },
+      {
+        "sourcePath": "/models/10k_obj/035_雪.glb",
+        "oldResidentBytes": 28567336,
+        "total": 4,
+        "loaded": 4,
+        "loading": 0,
+        "pending": 0,
+        "error": 0,
+        "priority": 0,
+        "idleModels": 2,
+        "idleBytes": 5356968,
+        "residentBytes": 10766232
+      },
+      {
+        "sourcePath": "/models/10k_obj/036_星.glb",
+        "oldResidentBytes": 28515736,
+        "total": 5,
+        "loaded": 5,
+        "loading": 0,
+        "pending": 0,
+        "error": 0,
+        "priority": 0,
+        "idleModels": 3,
+        "idleBytes": 8138064,
+        "residentBytes": 13237248
+      },
+      {
+        "sourcePath": "/models/10k_obj/037_辰.glb",
+        "oldResidentBytes": 29027920,
+        "total": 4,
+        "loaded": 4,
+        "loading": 0,
+        "pending": 0,
+        "error": 0,
+        "priority": 0,
+        "idleModels": 2,
+        "idleBytes": 5409264,
+        "residentBytes": 10628040
+      },
+      {
+        "sourcePath": "/models/10k_obj/038_影.glb",
+        "oldResidentBytes": 27931048,
+        "total": 5,
+        "loaded": 5,
+        "loading": 0,
+        "pending": 0,
+        "error": 0,
+        "priority": 0,
+        "idleModels": 3,
+        "idleBytes": 7880280,
+        "residentBytes": 13420536
+      },
+      {
+        "sourcePath": "/models/10k_obj/039_梦.glb",
+        "oldResidentBytes": 28426464,
+        "total": 5,
+        "loaded": 5,
+        "loading": 0,
+        "pending": 0,
+        "error": 0,
+        "priority": 0,
+        "idleModels": 3,
+        "idleBytes": 7846944,
+        "residentBytes": 13845608
+      },
+      {
+        "sourcePath": "/models/10k_obj/040_幻.glb",
+        "oldResidentBytes": 28252296,
+        "total": 5,
+        "loaded": 5,
+        "loading": 0,
+        "pending": 0,
+        "error": 0,
+        "priority": 0,
+        "idleModels": 3,
+        "idleBytes": 8011272,
+        "residentBytes": 13797008
+      },
+      {
+        "sourcePath": "/models/10k_obj/041_寂.glb",
+        "oldResidentBytes": 28048336,
+        "total": 4,
+        "loaded": 4,
+        "loading": 0,
+        "pending": 0,
+        "error": 0,
+        "priority": 0,
+        "idleModels": 2,
+        "idleBytes": 5998664,
+        "residentBytes": 12063328
+      },
+      {
+        "sourcePath": "/models/10k_obj/042_灭.glb",
+        "oldResidentBytes": 28615648,
+        "total": 4,
+        "loaded": 4,
+        "loading": 0,
+        "pending": 0,
+        "error": 0,
+        "priority": 0,
+        "idleModels": 2,
+        "idleBytes": 5785736,
+        "residentBytes": 11965168
+      },
+      {
+        "sourcePath": "/models/10k_obj/043_常.glb",
+        "oldResidentBytes": 27682600,
+        "total": 4,
+        "loaded": 4,
+        "loading": 0,
+        "pending": 0,
+        "error": 0,
+        "priority": 0,
+        "idleModels": 2,
+        "idleBytes": 6064664,
+        "residentBytes": 11055896
+      },
+      {
+        "sourcePath": "/models/10k_obj/044_乐.glb",
+        "oldResidentBytes": 27346240,
+        "total": 4,
+        "loaded": 4,
+        "loading": 0,
+        "pending": 0,
+        "error": 0,
+        "priority": 0,
+        "idleModels": 2,
+        "idleBytes": 6179432,
+        "residentBytes": 10921064
+      },
+      {
+        "sourcePath": "/models/10k_obj/046_净.glb",
+        "oldResidentBytes": 27372496,
+        "total": 4,
+        "loaded": 4,
+        "loading": 0,
+        "pending": 0,
+        "error": 0,
+        "priority": 0,
+        "idleModels": 2,
+        "idleBytes": 4991232,
+        "residentBytes": 10090392
+      },
+      {
+        "sourcePath": "/models/10k_obj/047_清.glb",
+        "oldResidentBytes": 27612304,
+        "total": 5,
+        "loaded": 5,
+        "loading": 0,
+        "pending": 0,
+        "error": 0,
+        "priority": 0,
+        "idleModels": 3,
+        "idleBytes": 7435968,
+        "residentBytes": 12801216
+      },
+      {
+        "sourcePath": "/models/10k_obj/048_虚.glb",
+        "oldResidentBytes": 28880080,
+        "total": 5,
+        "loaded": 5,
+        "loading": 0,
+        "pending": 0,
+        "error": 0,
+        "priority": 0,
+        "idleModels": 3,
+        "idleBytes": 7396056,
+        "residentBytes": 14122416
+      },
+      {
+        "sourcePath": "/models/10k_obj/049_灵.glb",
+        "oldResidentBytes": 30153272,
+        "total": 5,
+        "loaded": 5,
+        "loading": 0,
+        "pending": 0,
+        "error": 0,
+        "priority": 0,
+        "idleModels": 3,
+        "idleBytes": 7809984,
+        "residentBytes": 15891208
+      },
+      {
+        "sourcePath": "/models/10k_obj/050_妙.glb",
+        "oldResidentBytes": 29068440,
+        "total": 4,
+        "loaded": 4,
+        "loading": 0,
+        "pending": 0,
+        "error": 0,
+        "priority": 0,
+        "idleModels": 2,
+        "idleBytes": 6726360,
+        "residentBytes": 12913384
+      },
+      {
+        "sourcePath": "/models/10k_obj/051_仁.glb",
+        "oldResidentBytes": 29741688,
+        "total": 4,
+        "loaded": 4,
+        "loading": 0,
+        "pending": 0,
+        "error": 0,
+        "priority": 0,
+        "idleModels": 2,
+        "idleBytes": 8081224,
+        "residentBytes": 13455376
+      },
+      {
+        "sourcePath": "/models/10k_obj/052_义.glb",
+        "oldResidentBytes": 28672888,
+        "total": 4,
+        "loaded": 4,
+        "loading": 0,
+        "pending": 0,
+        "error": 0,
+        "priority": 0,
+        "idleModels": 2,
+        "idleBytes": 6187024,
+        "residentBytes": 11856136
+      },
+      {
+        "sourcePath": "/models/10k_obj/053_礼.glb",
+        "oldResidentBytes": 28762048,
+        "total": 4,
+        "loaded": 4,
+        "loading": 0,
+        "pending": 0,
+        "error": 0,
+        "priority": 0,
+        "idleModels": 2,
+        "idleBytes": 5374152,
+        "residentBytes": 10573944
+      },
+      {
+        "sourcePath": "/models/10k_obj/054_智.glb",
+        "oldResidentBytes": 30408616,
+        "total": 5,
+        "loaded": 5,
+        "loading": 0,
+        "pending": 0,
+        "error": 0,
+        "priority": 0,
+        "idleModels": 3,
+        "idleBytes": 7790448,
+        "residentBytes": 14517408
+      },
+      {
+        "sourcePath": "/models/10k_obj/055_信.glb",
+        "oldResidentBytes": 30555808,
+        "total": 4,
+        "loaded": 4,
+        "loading": 0,
+        "pending": 0,
+        "error": 0,
+        "priority": 0,
+        "idleModels": 2,
+        "idleBytes": 5199792,
+        "residentBytes": 11735184
+      },
+      {
+        "sourcePath": "/models/10k_obj/056_勇.glb",
+        "oldResidentBytes": 30381664,
+        "total": 4,
+        "loaded": 4,
+        "loading": 0,
+        "pending": 0,
+        "error": 0,
+        "priority": 0,
+        "idleModels": 2,
+        "idleBytes": 6726960,
+        "residentBytes": 11799168
+      },
+      {
+        "sourcePath": "/models/10k_obj/057_孝.glb",
+        "oldResidentBytes": 30217768,
+        "total": 4,
+        "loaded": 4,
+        "loading": 0,
+        "pending": 0,
+        "error": 0,
+        "priority": 0,
+        "idleModels": 2,
+        "idleBytes": 6535392,
+        "residentBytes": 11562600
+      },
+      {
+        "sourcePath": "/models/10k_obj/058_悌.glb",
+        "oldResidentBytes": 28555000,
+        "total": 4,
+        "loaded": 4,
+        "loading": 0,
+        "pending": 0,
+        "error": 0,
+        "priority": 0,
+        "idleModels": 2,
+        "idleBytes": 5072208,
+        "residentBytes": 9971904
+      },
+      {
+        "sourcePath": "/models/10k_obj/059_忠.glb",
+        "oldResidentBytes": 28588648,
+        "total": 5,
+        "loaded": 5,
+        "loading": 0,
+        "pending": 0,
+        "error": 0,
+        "priority": 0,
+        "idleModels": 3,
+        "idleBytes": 7619136,
+        "residentBytes": 14071240
+      },
+      {
+        "sourcePath": "/models/10k_obj/060_恕.glb",
+        "oldResidentBytes": 28776328,
+        "total": 5,
+        "loaded": 5,
+        "loading": 0,
+        "pending": 0,
+        "error": 0,
+        "priority": 0,
+        "idleModels": 3,
+        "idleBytes": 7379976,
+        "residentBytes": 13788328
+      },
+      {
+        "sourcePath": "/models/10k_obj/061_忍.glb",
+        "oldResidentBytes": 28154896,
+        "total": 4,
+        "loaded": 4,
+        "loading": 0,
+        "pending": 0,
+        "error": 0,
+        "priority": 0,
+        "idleModels": 2,
+        "idleBytes": 6452104,
+        "residentBytes": 11392504
+      },
+      {
+        "sourcePath": "/models/10k_obj/062_宽.glb",
+        "oldResidentBytes": 28322488,
+        "total": 4,
+        "loaded": 4,
+        "loading": 0,
+        "pending": 0,
+        "error": 0,
+        "priority": 0,
+        "idleModels": 2,
+        "idleBytes": 6408352,
+        "residentBytes": 11623624
+      },
+      {
+        "sourcePath": "/models/10k_obj/063_福.glb",
+        "oldResidentBytes": 28230592,
+        "total": 4,
+        "loaded": 4,
+        "loading": 0,
+        "pending": 0,
+        "error": 0,
+        "priority": 0,
+        "idleModels": 2,
+        "idleBytes": 4940400,
+        "residentBytes": 10215888
+      },
+      {
+        "sourcePath": "/models/10k_obj/064_寿.glb",
+        "oldResidentBytes": 26834368,
+        "total": 5,
+        "loaded": 5,
+        "loading": 0,
+        "pending": 0,
+        "error": 0,
+        "priority": 0,
+        "idleModels": 3,
+        "idleBytes": 7524288,
+        "residentBytes": 12763128
+      },
+      {
+        "sourcePath": "/models/10k_obj/065_吉.glb",
+        "oldResidentBytes": 27458860,
+        "total": 5,
+        "loaded": 5,
+        "loading": 0,
+        "pending": 0,
+        "error": 0,
+        "priority": 0,
+        "idleModels": 3,
+        "idleBytes": 7906872,
+        "residentBytes": 13670532
+      },
+      {
+        "sourcePath": "/models/10k_obj/066_祥.glb",
+        "oldResidentBytes": 28614764,
+        "total": 5,
+        "loaded": 5,
+        "loading": 0,
+        "pending": 0,
+        "error": 0,
+        "priority": 0,
+        "idleModels": 3,
+        "idleBytes": 7822728,
+        "residentBytes": 14675332
+      },
+      {
+        "sourcePath": "/models/10k_obj/067_康.glb",
+        "oldResidentBytes": 29333612,
+        "total": 4,
+        "loaded": 4,
+        "loading": 0,
+        "pending": 0,
+        "error": 0,
+        "priority": 0,
+        "idleModels": 2,
+        "idleBytes": 5763660,
+        "residentBytes": 12665620
+      },
+      {
+        "sourcePath": "/models/10k_obj/068_泰.glb",
+        "oldResidentBytes": 29540732,
+        "total": 4,
+        "loaded": 4,
+        "loading": 0,
+        "pending": 0,
+        "error": 0,
+        "priority": 0,
+        "idleModels": 2,
+        "idleBytes": 6852604,
+        "residentBytes": 12678268
+      },
+      {
+        "sourcePath": "/models/10k_obj/069_春.glb",
+        "oldResidentBytes": 27809548,
+        "total": 4,
+        "loaded": 4,
+        "loading": 0,
+        "pending": 0,
+        "error": 0,
+        "priority": 0,
+        "idleModels": 2,
+        "idleBytes": 6901960,
+        "residentBytes": 11830000
+      },
+      {
+        "sourcePath": "/models/10k_obj/070_夏.glb",
+        "oldResidentBytes": 28010020,
+        "total": 4,
+        "loaded": 4,
+        "loading": 0,
+        "pending": 0,
+        "error": 0,
+        "priority": 0,
+        "idleModels": 2,
+        "idleBytes": 5825664,
+        "residentBytes": 10703304
+      },
+      {
+        "sourcePath": "/models/10k_obj/071_秋.glb",
+        "oldResidentBytes": 28865612,
+        "total": 5,
+        "loaded": 5,
+        "loading": 0,
+        "pending": 0,
+        "error": 0,
+        "priority": 0,
+        "idleModels": 3,
+        "idleBytes": 8193816,
+        "residentBytes": 14190280
+      },
+      {
+        "sourcePath": "/models/10k_obj/072_冬.glb",
+        "oldResidentBytes": 28701740,
+        "total": 5,
+        "loaded": 5,
+        "loading": 0,
+        "pending": 0,
+        "error": 0,
+        "priority": 0,
+        "idleModels": 3,
+        "idleBytes": 7437528,
+        "residentBytes": 13344520
+      },
+      {
+        "sourcePath": "/models/10k_obj/073_竹.glb",
+        "oldResidentBytes": 28484228,
+        "total": 5,
+        "loaded": 5,
+        "loading": 0,
+        "pending": 0,
+        "error": 0,
+        "priority": 0,
+        "idleModels": 3,
+        "idleBytes": 8364616,
+        "residentBytes": 13258720
+      },
+      {
+        "sourcePath": "/models/10k_obj/074_松.glb",
+        "oldResidentBytes": 28556516,
+        "total": 4,
+        "loaded": 4,
+        "loading": 0,
+        "pending": 0,
+        "error": 0,
+        "priority": 0,
+        "idleModels": 2,
+        "idleBytes": 5906992,
+        "residentBytes": 11000608
+      },
+      {
+        "sourcePath": "/models/10k_obj/075_梅.glb",
+        "oldResidentBytes": 27648824,
+        "total": 5,
+        "loaded": 5,
+        "loading": 0,
+        "pending": 0,
+        "error": 0,
+        "priority": 0,
+        "idleModels": 3,
+        "idleBytes": 8381080,
+        "residentBytes": 13309336
+      },
+      {
+        "sourcePath": "/models/10k_obj/076_兰.glb",
+        "oldResidentBytes": 26534368,
+        "total": 5,
+        "loaded": 5,
+        "loading": 0,
+        "pending": 0,
+        "error": 0,
+        "priority": 0,
+        "idleModels": 3,
+        "idleBytes": 7513632,
+        "residentBytes": 12344088
+      },
+      {
+        "sourcePath": "/models/10k_obj/077_花.glb",
+        "oldResidentBytes": 26050528,
+        "total": 5,
+        "loaded": 5,
+        "loading": 0,
+        "pending": 0,
+        "error": 0,
+        "priority": 0,
+        "idleModels": 3,
+        "idleBytes": 7402344,
+        "residentBytes": 12706008
+      },
+      {
+        "sourcePath": "/models/10k_obj/078_草.glb",
+        "oldResidentBytes": 25728328,
+        "total": 5,
+        "loaded": 5,
+        "loading": 0,
+        "pending": 0,
+        "error": 0,
+        "priority": 0,
+        "idleModels": 3,
+        "idleBytes": 7449984,
+        "residentBytes": 12469608
+      },
+      {
+        "sourcePath": "/models/10k_obj/079_石.glb",
+        "oldResidentBytes": 25609624,
+        "total": 5,
+        "loaded": 5,
+        "loading": 0,
+        "pending": 0,
+        "error": 0,
+        "priority": 0,
+        "idleModels": 3,
+        "idleBytes": 7612392,
+        "residentBytes": 12099528
+      },
+      {
+        "sourcePath": "/models/10k_obj/080_玉.glb",
+        "oldResidentBytes": 25649632,
+        "total": 5,
+        "loaded": 5,
+        "loading": 0,
+        "pending": 0,
+        "error": 0,
+        "priority": 0,
+        "idleModels": 3,
+        "idleBytes": 7541352,
+        "residentBytes": 12340296
+      },
+      {
+        "sourcePath": "/models/10k_obj/081_金.glb",
+        "oldResidentBytes": 24440832,
+        "total": 5,
+        "loaded": 5,
+        "loading": 0,
+        "pending": 0,
+        "error": 0,
+        "priority": 0,
+        "idleModels": 3,
+        "idleBytes": 7269072,
+        "residentBytes": 12096744
+      },
+      {
+        "sourcePath": "/models/10k_obj/082_木.glb",
+        "oldResidentBytes": 25586336,
+        "total": 5,
+        "loaded": 5,
+        "loading": 0,
+        "pending": 0,
+        "error": 0,
+        "priority": 0,
+        "idleModels": 3,
+        "idleBytes": 7036632,
+        "residentBytes": 12880328
+      },
+      {
+        "sourcePath": "/models/10k_obj/083_土.glb",
+        "oldResidentBytes": 25378472,
+        "total": 5,
+        "loaded": 5,
+        "loading": 0,
+        "pending": 0,
+        "error": 0,
+        "priority": 0,
+        "idleModels": 3,
+        "idleBytes": 7077120,
+        "residentBytes": 12908864
+      },
+      {
+        "sourcePath": "/models/10k_obj/084_火.glb",
+        "oldResidentBytes": 25452512,
+        "total": 4,
+        "loaded": 4,
+        "loading": 0,
+        "pending": 0,
+        "error": 0,
+        "priority": 0,
+        "idleModels": 2,
+        "idleBytes": 5843696,
+        "residentBytes": 10803488
+      },
+      {
+        "sourcePath": "/models/10k_obj/085_雷.glb",
+        "oldResidentBytes": 25435976,
+        "total": 5,
+        "loaded": 5,
+        "loading": 0,
+        "pending": 0,
+        "error": 0,
+        "priority": 0,
+        "idleModels": 3,
+        "idleBytes": 8109920,
+        "residentBytes": 13095680
+      },
+      {
+        "sourcePath": "/models/10k_obj/086_天.glb",
+        "oldResidentBytes": 25482248,
+        "total": 4,
+        "loaded": 4,
+        "loading": 0,
+        "pending": 0,
+        "error": 0,
+        "priority": 0,
+        "idleModels": 2,
+        "idleBytes": 4959792,
+        "residentBytes": 9819984
+      },
+      {
+        "sourcePath": "/models/10k_obj/087_地.glb",
+        "oldResidentBytes": 25256744,
+        "total": 5,
+        "loaded": 5,
+        "loading": 0,
+        "pending": 0,
+        "error": 0,
+        "priority": 0,
+        "idleModels": 3,
+        "idleBytes": 7251984,
+        "residentBytes": 12376416
+      },
+      {
+        "sourcePath": "/models/10k_obj/088_乾.glb",
+        "oldResidentBytes": 25612136,
+        "total": 5,
+        "loaded": 5,
+        "loading": 0,
+        "pending": 0,
+        "error": 0,
+        "priority": 0,
+        "idleModels": 3,
+        "idleBytes": 7553760,
+        "residentBytes": 12703272
+      },
+      {
+        "sourcePath": "/models/10k_obj/089_坤.glb",
+        "oldResidentBytes": 25885184,
+        "total": 5,
+        "loaded": 5,
+        "loading": 0,
+        "pending": 0,
+        "error": 0,
+        "priority": 0,
+        "idleModels": 3,
+        "idleBytes": 7416624,
+        "residentBytes": 12532200
+      },
+      {
+        "sourcePath": "/models/10k_obj/090_宇.glb",
+        "oldResidentBytes": 25695296,
+        "total": 5,
+        "loaded": 5,
+        "loading": 0,
+        "pending": 0,
+        "error": 0,
+        "priority": 0,
+        "idleModels": 3,
+        "idleBytes": 7717512,
+        "residentBytes": 12599616
+      },
+      {
+        "sourcePath": "/models/10k_obj/091_宙.glb",
+        "oldResidentBytes": 27154352,
+        "total": 5,
+        "loaded": 5,
+        "loading": 0,
+        "pending": 0,
+        "error": 0,
+        "priority": 0,
+        "idleModels": 3,
+        "idleBytes": 7672008,
+        "residentBytes": 13768848
+      },
+      {
+        "sourcePath": "/models/10k_obj/092_源.glb",
+        "oldResidentBytes": 27856792,
+        "total": 5,
+        "loaded": 5,
+        "loading": 0,
+        "pending": 0,
+        "error": 0,
+        "priority": 0,
+        "idleModels": 3,
+        "idleBytes": 7475184,
+        "residentBytes": 15480376
+      },
+      {
+        "sourcePath": "/models/10k_obj/093_流.glb",
+        "oldResidentBytes": 28288384,
+        "total": 4,
+        "loaded": 4,
+        "loading": 0,
+        "pending": 0,
+        "error": 0,
+        "priority": 0,
+        "idleModels": 2,
+        "idleBytes": 6096840,
+        "residentBytes": 13062616
+      },
+      {
+        "sourcePath": "/models/10k_obj/095_潮.glb",
+        "oldResidentBytes": 28391752,
+        "total": 4,
+        "loaded": 4,
+        "loading": 0,
+        "pending": 0,
+        "error": 0,
+        "priority": 0,
+        "idleModels": 2,
+        "idleBytes": 8005192,
+        "residentBytes": 13499944
+      },
+      {
+        "sourcePath": "/models/10k_obj/096_露.glb",
+        "oldResidentBytes": 28844008,
+        "total": 4,
+        "loaded": 4,
+        "loading": 0,
+        "pending": 0,
+        "error": 0,
+        "priority": 0,
+        "idleModels": 2,
+        "idleBytes": 6965776,
+        "residentBytes": 12507160
+      },
+      {
+        "sourcePath": "/models/10k_obj/097_霜.glb",
+        "oldResidentBytes": 29455228,
+        "total": 4,
+        "loaded": 4,
+        "loading": 0,
+        "pending": 0,
+        "error": 0,
+        "priority": 0,
+        "idleModels": 2,
+        "idleBytes": 5494752,
+        "residentBytes": 11418420
+      },
+      {
+        "sourcePath": "/models/10k_obj/098_美.glb",
+        "oldResidentBytes": 29297532,
+        "total": 5,
+        "loaded": 5,
+        "loading": 0,
+        "pending": 0,
+        "error": 0,
+        "priority": 0,
+        "idleModels": 3,
+        "idleBytes": 8239200,
+        "residentBytes": 13817156
+      },
+      {
+        "sourcePath": "/models/10k_obj/099_化.glb",
+        "oldResidentBytes": 29313612,
+        "total": 4,
+        "loaded": 4,
+        "loading": 0,
+        "pending": 0,
+        "error": 0,
+        "priority": 0,
+        "idleModels": 2,
+        "idleBytes": 5923668,
+        "residentBytes": 10931564
+      },
+      {
+        "sourcePath": "/models/10k_obj/100_通.glb",
+        "oldResidentBytes": 26791116,
+        "total": 4,
+        "loaded": 4,
+        "loading": 0,
+        "pending": 0,
+        "error": 0,
+        "priority": 0,
+        "idleModels": 3,
+        "idleBytes": 8322404,
+        "residentBytes": 10931564
+      }
+    ],
+    "warmOldResidentMean": 27917156.06153846,
+    "warmNewResidentMean": 12449116.676923078,
+    "maxIdleBytes": 8381080,
+    "warmReductionPercent": 55.40693095857906
+  },
+  "decodeObservedExtraMemory": {
+    "scope": "Node22 fresh child per format/glyph/run, three alternating rounds, 1ms observed heapUsed+arrayBuffers growth including input and output; reported extra subtracts identical canonical output. No forced GC. Sampling can miss short synchronous peaks; excludes browser/GPU/phone memory.",
+    "rows": [
+      {
+        "id": "050_妙",
+        "kind": "old",
+        "samples": 26,
+        "inputBytes": 2314232,
+        "outputBytes": 4065688,
+        "observedCombinedGrowth": 31298202,
+        "observedHeapGrowth": 11018896,
+        "observedArrayBufferGrowth": 20279306,
+        "observedExtraOverOutput": 27232514,
+        "round": 0
+      },
+      {
+        "id": "050_妙",
+        "kind": "binary",
+        "samples": 31,
+        "inputBytes": 1681224,
+        "outputBytes": 4065688,
+        "observedCombinedGrowth": 22335876,
+        "observedHeapGrowth": 4192944,
+        "observedArrayBufferGrowth": 18142932,
+        "observedExtraOverOutput": 18270188,
+        "round": 0
+      },
+      {
+        "id": "099_化",
+        "kind": "old",
+        "samples": 84,
+        "inputBytes": 1414852,
+        "outputBytes": 2398736,
+        "observedCombinedGrowth": 26971223,
+        "observedHeapGrowth": 9148880,
+        "observedArrayBufferGrowth": 17822343,
+        "observedExtraOverOutput": 24572487,
+        "round": 0
+      },
+      {
+        "id": "099_化",
+        "kind": "binary",
+        "samples": 56,
+        "inputBytes": 999725,
+        "outputBytes": 2398736,
+        "observedCombinedGrowth": 16828027,
+        "observedHeapGrowth": 3701344,
+        "observedArrayBufferGrowth": 13126683,
+        "observedExtraOverOutput": 14429291,
+        "round": 0
+      },
+      {
+        "id": "023_安",
+        "kind": "old",
+        "samples": 35,
+        "inputBytes": 2349802,
+        "outputBytes": 2681688,
+        "observedCombinedGrowth": 33963386,
+        "observedHeapGrowth": 11004936,
+        "observedArrayBufferGrowth": 22958450,
+        "observedExtraOverOutput": 31281698,
+        "round": 0
+      },
+      {
+        "id": "023_安",
+        "kind": "binary",
+        "samples": 43,
+        "inputBytes": 1702014,
+        "outputBytes": 2681688,
+        "observedCombinedGrowth": 21574310,
+        "observedHeapGrowth": 3843640,
+        "observedArrayBufferGrowth": 17730670,
+        "observedExtraOverOutput": 18892622,
+        "round": 0
+      },
+      {
+        "id": "046_净",
+        "kind": "old",
+        "samples": 39,
+        "inputBytes": 2150010,
+        "outputBytes": 2444736,
+        "observedCombinedGrowth": 31388014,
+        "observedHeapGrowth": 10405928,
+        "observedArrayBufferGrowth": 20982086,
+        "observedExtraOverOutput": 28943278,
+        "round": 0
+      },
+      {
+        "id": "046_净",
+        "kind": "binary",
+        "samples": 37,
+        "inputBytes": 1541105,
+        "outputBytes": 2444736,
+        "observedCombinedGrowth": 19807499,
+        "observedHeapGrowth": 3537552,
+        "observedArrayBufferGrowth": 16269947,
+        "observedExtraOverOutput": 17362763,
+        "round": 0
+      },
+      {
+        "id": "068_泰",
+        "kind": "old",
+        "samples": 44,
+        "inputBytes": 2621930,
+        "outputBytes": 3265776,
+        "observedCombinedGrowth": 36415484,
+        "observedHeapGrowth": 11862752,
+        "observedArrayBufferGrowth": 24552732,
+        "observedExtraOverOutput": 33149708,
+        "round": 0
+      },
+      {
+        "id": "068_泰",
+        "kind": "binary",
+        "samples": 36,
+        "inputBytes": 1904407,
+        "outputBytes": 3265776,
+        "observedCombinedGrowth": 23190345,
+        "observedHeapGrowth": 4041296,
+        "observedArrayBufferGrowth": 19149049,
+        "observedExtraOverOutput": 19924569,
+        "round": 0
+      },
+      {
+        "id": "034_雾",
+        "kind": "old",
+        "samples": 37,
+        "inputBytes": 2557886,
+        "outputBytes": 3229944,
+        "observedCombinedGrowth": 34979916,
+        "observedHeapGrowth": 11573840,
+        "observedArrayBufferGrowth": 23406076,
+        "observedExtraOverOutput": 31749972,
+        "round": 0
+      },
+      {
+        "id": "034_雾",
+        "kind": "binary",
+        "samples": 33,
+        "inputBytes": 1859801,
+        "outputBytes": 3229944,
+        "observedCombinedGrowth": 22862719,
+        "observedHeapGrowth": 3993040,
+        "observedArrayBufferGrowth": 18869679,
+        "observedExtraOverOutput": 19632775,
+        "round": 0
+      },
+      {
+        "id": "050_妙",
+        "kind": "binary",
+        "samples": 43,
+        "inputBytes": 1681224,
+        "outputBytes": 4065688,
+        "observedCombinedGrowth": 23189268,
+        "observedHeapGrowth": 4244328,
+        "observedArrayBufferGrowth": 18944940,
+        "observedExtraOverOutput": 19123580,
+        "round": 1
+      },
+      {
+        "id": "050_妙",
+        "kind": "old",
+        "samples": 34,
+        "inputBytes": 2314232,
+        "outputBytes": 4065688,
+        "observedCombinedGrowth": 31772974,
+        "observedHeapGrowth": 11117240,
+        "observedArrayBufferGrowth": 20655734,
+        "observedExtraOverOutput": 27707286,
+        "round": 1
+      },
+      {
+        "id": "099_化",
+        "kind": "binary",
+        "samples": 25,
+        "inputBytes": 999725,
+        "outputBytes": 2398736,
+        "observedCombinedGrowth": 16804267,
+        "observedHeapGrowth": 3677584,
+        "observedArrayBufferGrowth": 13126683,
+        "observedExtraOverOutput": 14405531,
+        "round": 1
+      },
+      {
+        "id": "099_化",
+        "kind": "old",
+        "samples": 25,
+        "inputBytes": 1414852,
+        "outputBytes": 2398736,
+        "observedCombinedGrowth": 26943607,
+        "observedHeapGrowth": 9121264,
+        "observedArrayBufferGrowth": 17822343,
+        "observedExtraOverOutput": 24544871,
+        "round": 1
+      },
+      {
+        "id": "023_安",
+        "kind": "binary",
+        "samples": 28,
+        "inputBytes": 1702014,
+        "outputBytes": 2681688,
+        "observedCombinedGrowth": 21519046,
+        "observedHeapGrowth": 3788376,
+        "observedArrayBufferGrowth": 17730670,
+        "observedExtraOverOutput": 18837358,
+        "round": 1
+      },
+      {
+        "id": "023_安",
+        "kind": "old",
+        "samples": 27,
+        "inputBytes": 2349802,
+        "outputBytes": 2681688,
+        "observedCombinedGrowth": 33953738,
+        "observedHeapGrowth": 10995288,
+        "observedArrayBufferGrowth": 22958450,
+        "observedExtraOverOutput": 31272050,
+        "round": 1
+      },
+      {
+        "id": "046_净",
+        "kind": "binary",
+        "samples": 28,
+        "inputBytes": 1541105,
+        "outputBytes": 2444736,
+        "observedCombinedGrowth": 19823579,
+        "observedHeapGrowth": 3553632,
+        "observedArrayBufferGrowth": 16269947,
+        "observedExtraOverOutput": 17378843,
+        "round": 1
+      },
+      {
+        "id": "046_净",
+        "kind": "old",
+        "samples": 31,
+        "inputBytes": 2150010,
+        "outputBytes": 2444736,
+        "observedCombinedGrowth": 31421886,
+        "observedHeapGrowth": 10439800,
+        "observedArrayBufferGrowth": 20982086,
+        "observedExtraOverOutput": 28977150,
+        "round": 1
+      },
+      {
+        "id": "068_泰",
+        "kind": "binary",
+        "samples": 43,
+        "inputBytes": 1904407,
+        "outputBytes": 3265776,
+        "observedCombinedGrowth": 23170761,
+        "observedHeapGrowth": 4021712,
+        "observedArrayBufferGrowth": 19149049,
+        "observedExtraOverOutput": 19904985,
+        "round": 1
+      },
+      {
+        "id": "068_泰",
+        "kind": "old",
+        "samples": 39,
+        "inputBytes": 2621930,
+        "outputBytes": 3265776,
+        "observedCombinedGrowth": 35581652,
+        "observedHeapGrowth": 11749816,
+        "observedArrayBufferGrowth": 23831836,
+        "observedExtraOverOutput": 32315876,
+        "round": 1
+      },
+      {
+        "id": "034_雾",
+        "kind": "binary",
+        "samples": 35,
+        "inputBytes": 1859801,
+        "outputBytes": 3229944,
+        "observedCombinedGrowth": 22870111,
+        "observedHeapGrowth": 4000432,
+        "observedArrayBufferGrowth": 18869679,
+        "observedExtraOverOutput": 19640167,
+        "round": 1
+      },
+      {
+        "id": "034_雾",
+        "kind": "old",
+        "samples": 25,
+        "inputBytes": 2557886,
+        "outputBytes": 3229944,
+        "observedCombinedGrowth": 35349908,
+        "observedHeapGrowth": 11616152,
+        "observedArrayBufferGrowth": 23733756,
+        "observedExtraOverOutput": 32119964,
+        "round": 1
+      },
+      {
+        "id": "050_妙",
+        "kind": "old",
+        "samples": 35,
+        "inputBytes": 2314232,
+        "outputBytes": 4065688,
+        "observedCombinedGrowth": 31725646,
+        "observedHeapGrowth": 11069912,
+        "observedArrayBufferGrowth": 20655734,
+        "observedExtraOverOutput": 27659958,
+        "round": 2
+      },
+      {
+        "id": "050_妙",
+        "kind": "binary",
+        "samples": 45,
+        "inputBytes": 1681224,
+        "outputBytes": 4065688,
+        "observedCombinedGrowth": 26460252,
+        "observedHeapGrowth": 4608944,
+        "observedArrayBufferGrowth": 21851308,
+        "observedExtraOverOutput": 22394564,
+        "round": 2
+      },
+      {
+        "id": "099_化",
+        "kind": "old",
+        "samples": 31,
+        "inputBytes": 1414852,
+        "outputBytes": 2398736,
+        "observedCombinedGrowth": 26891415,
+        "observedHeapGrowth": 9069072,
+        "observedArrayBufferGrowth": 17822343,
+        "observedExtraOverOutput": 24492679,
+        "round": 2
+      },
+      {
+        "id": "099_化",
+        "kind": "binary",
+        "samples": 33,
+        "inputBytes": 999725,
+        "outputBytes": 2398736,
+        "observedCombinedGrowth": 16785835,
+        "observedHeapGrowth": 3659152,
+        "observedArrayBufferGrowth": 13126683,
+        "observedExtraOverOutput": 14387099,
+        "round": 2
+      },
+      {
+        "id": "023_安",
+        "kind": "old",
+        "samples": 34,
+        "inputBytes": 2349802,
+        "outputBytes": 2681688,
+        "observedCombinedGrowth": 33979810,
+        "observedHeapGrowth": 11021360,
+        "observedArrayBufferGrowth": 22958450,
+        "observedExtraOverOutput": 31298122,
+        "round": 2
+      },
+      {
+        "id": "023_安",
+        "kind": "binary",
+        "samples": 34,
+        "inputBytes": 1702014,
+        "outputBytes": 2681688,
+        "observedCombinedGrowth": 21497902,
+        "observedHeapGrowth": 3767232,
+        "observedArrayBufferGrowth": 17730670,
+        "observedExtraOverOutput": 18816214,
+        "round": 2
+      },
+      {
+        "id": "046_净",
+        "kind": "old",
+        "samples": 24,
+        "inputBytes": 2150010,
+        "outputBytes": 2444736,
+        "observedCombinedGrowth": 31378662,
+        "observedHeapGrowth": 10396576,
+        "observedArrayBufferGrowth": 20982086,
+        "observedExtraOverOutput": 28933926,
+        "round": 2
+      },
+      {
+        "id": "046_净",
+        "kind": "binary",
+        "samples": 35,
+        "inputBytes": 1541105,
+        "outputBytes": 2444736,
+        "observedCombinedGrowth": 19827971,
+        "observedHeapGrowth": 3558024,
+        "observedArrayBufferGrowth": 16269947,
+        "observedExtraOverOutput": 17383235,
+        "round": 2
+      },
+      {
+        "id": "068_泰",
+        "kind": "old",
+        "samples": 29,
+        "inputBytes": 2621930,
+        "outputBytes": 3265776,
+        "observedCombinedGrowth": 32208612,
+        "observedHeapGrowth": 11514696,
+        "observedArrayBufferGrowth": 20693916,
+        "observedExtraOverOutput": 28942836,
+        "round": 2
+      },
+      {
+        "id": "068_泰",
+        "kind": "binary",
+        "samples": 32,
+        "inputBytes": 1904407,
+        "outputBytes": 3265776,
+        "observedCombinedGrowth": 23193297,
+        "observedHeapGrowth": 4044248,
+        "observedArrayBufferGrowth": 19149049,
+        "observedExtraOverOutput": 19927521,
+        "round": 2
+      },
+      {
+        "id": "034_雾",
+        "kind": "old",
+        "samples": 31,
+        "inputBytes": 2557886,
+        "outputBytes": 3229944,
+        "observedCombinedGrowth": 34951700,
+        "observedHeapGrowth": 11545624,
+        "observedArrayBufferGrowth": 23406076,
+        "observedExtraOverOutput": 31721756,
+        "round": 2
+      },
+      {
+        "id": "034_雾",
+        "kind": "binary",
+        "samples": 31,
+        "inputBytes": 1859801,
+        "outputBytes": 3229944,
+        "observedCombinedGrowth": 22843207,
+        "observedHeapGrowth": 3973528,
+        "observedArrayBufferGrowth": 18869679,
+        "observedExtraOverOutput": 19613263,
+        "round": 2
+      }
+    ],
+    "models": [
+      {
+        "id": "050_妙",
+        "old": 27659958,
+        "binary": 19123580
+      },
+      {
+        "id": "099_化",
+        "old": 24544871,
+        "binary": 14405531
+      },
+      {
+        "id": "023_安",
+        "old": 31281698,
+        "binary": 18837358
+      },
+      {
+        "id": "046_净",
+        "old": 28943278,
+        "binary": 17378843
+      },
+      {
+        "id": "068_泰",
+        "old": 32315876,
+        "binary": 19924569
+      },
+      {
+        "id": "034_雾",
+        "old": 31749972,
+        "binary": 19632775
+      }
+    ],
+    "oldMean": 29415942.166666668,
+    "binaryMean": 18217109.333333332,
+    "observedReductionPercent": 38.07062432296846
+  },
+  "browserDecodeTiming": {
+    "browser": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+    "results": [
+      {
+        "id": "050_妙",
+        "samples": {
+          "old": [
+            77.09999999776483,
+            101.20000000298023,
+            86.90000000223517,
+            99.89999999850988,
+            57.100000001490116
+          ],
+          "binary": [
+            59.400000002235174,
+            74.79999999701977,
+            72.80000000074506,
+            75.5,
+            118.69999999925494
+          ]
+        },
+        "oldMedian": 86.90000000223517,
+        "binaryMedian": 74.79999999701977
+      },
+      {
+        "id": "099_化",
+        "samples": {
+          "old": [
+            51.100000001490116,
+            75.30000000074506,
+            39.80000000074506,
+            44.5,
+            34.80000000074506
+          ],
+          "binary": [
+            39.099999997764826,
+            63.29999999701977,
+            39.900000002235174,
+            35,
+            38
+          ]
+        },
+        "oldMedian": 44.5,
+        "binaryMedian": 39.099999997764826
+      },
+      {
+        "id": "023_安",
+        "samples": {
+          "old": [
+            39.70000000298023,
+            42.69999999925494,
+            63.900000002235174,
+            43.69999999925494,
+            60.5
+          ],
+          "binary": [
+            47,
+            41.600000001490116,
+            50.899999998509884,
+            50.100000001490116,
+            50.19999999925494
+          ]
+        },
+        "oldMedian": 43.69999999925494,
+        "binaryMedian": 50.100000001490116
+      },
+      {
+        "id": "046_净",
+        "samples": {
+          "old": [
+            45,
+            63.19999999925494,
+            34.5,
+            40.29999999701977,
+            34.5
+          ],
+          "binary": [
+            47.099999997764826,
+            100,
+            37.600000001490116,
+            38.400000002235174,
+            36.69999999925494
+          ]
+        },
+        "oldMedian": 40.29999999701977,
+        "binaryMedian": 38.400000002235174
+      },
+      {
+        "id": "068_泰",
+        "samples": {
+          "old": [
+            41.400000002235174,
+            51.79999999701977,
+            66.39999999850988,
+            40.600000001490116,
+            43.899999998509884
+          ],
+          "binary": [
+            45.5,
+            41,
+            38.100000001490116,
+            38,
+            40.100000001490116
+          ]
+        },
+        "oldMedian": 43.899999998509884,
+        "binaryMedian": 40.100000001490116
+      },
+      {
+        "id": "034_雾",
+        "samples": {
+          "old": [
+            33.100000001490116,
+            29.699999999254942,
+            33.30000000074506,
+            36.80000000074506,
+            38.79999999701977
+          ],
+          "binary": [
+            36.19999999925494,
+            28.699999999254942,
+            30,
+            32.5,
+            36
+          ]
+        },
+        "oldMedian": 33.30000000074506,
+        "binaryMedian": 32.5
+      }
+    ]
+  },
+  "visual": {
+    "models": 75,
+    "views": 1200,
+    "maxChannelDifference": 0,
+    "baselineSelfComparisonNoise": 0,
+    "rows": [
+      {
+        "sourcePath": "/models/10k_obj/023_安.glb",
+        "views": 16,
+        "maxChannelDifference": 0,
+        "oldSelfComparisonNoise": 0,
+        "pixels": [
+          2610,
+          1053
+        ],
+        "rotation": {
+          "radians": 17.333366218867212,
+          "frames": 66,
+          "stable": true
+        }
+      },
+      {
+        "sourcePath": "/models/10k_obj/025_觉.glb",
+        "views": 16,
+        "maxChannelDifference": 0,
+        "oldSelfComparisonNoise": 0,
+        "pixels": [
+          2610,
+          1053
+        ]
+      },
+      {
+        "sourcePath": "/models/10k_obj/026_川.glb",
+        "views": 16,
+        "maxChannelDifference": 0,
+        "oldSelfComparisonNoise": 0,
+        "pixels": [
+          2610,
+          1053
+        ]
+      },
+      {
+        "sourcePath": "/models/10k_obj/027_海.glb",
+        "views": 16,
+        "maxChannelDifference": 0,
+        "oldSelfComparisonNoise": 0,
+        "pixels": [
+          2610,
+          1053
+        ]
+      },
+      {
+        "sourcePath": "/models/10k_obj/028_江.glb",
+        "views": 16,
+        "maxChannelDifference": 0,
+        "oldSelfComparisonNoise": 0,
+        "pixels": [
+          2610,
+          1053
+        ]
+      },
+      {
+        "sourcePath": "/models/10k_obj/029_河.glb",
+        "views": 16,
+        "maxChannelDifference": 0,
+        "oldSelfComparisonNoise": 0,
+        "pixels": [
+          2610,
+          1053
+        ]
+      },
+      {
+        "sourcePath": "/models/10k_obj/030_湖.glb",
+        "views": 16,
+        "maxChannelDifference": 0,
+        "oldSelfComparisonNoise": 0,
+        "pixels": [
+          2610,
+          1053
+        ]
+      },
+      {
+        "sourcePath": "/models/10k_obj/031_泉.glb",
+        "views": 16,
+        "maxChannelDifference": 0,
+        "oldSelfComparisonNoise": 0,
+        "pixels": [
+          2610,
+          1053
+        ]
+      },
+      {
+        "sourcePath": "/models/10k_obj/032_雨.glb",
+        "views": 16,
+        "maxChannelDifference": 0,
+        "oldSelfComparisonNoise": 0,
+        "pixels": [
+          2610,
+          1053
+        ]
+      },
+      {
+        "sourcePath": "/models/10k_obj/033_云.glb",
+        "views": 16,
+        "maxChannelDifference": 0,
+        "oldSelfComparisonNoise": 0,
+        "pixels": [
+          2610,
+          1053
+        ]
+      },
+      {
+        "sourcePath": "/models/10k_obj/034_雾.glb",
+        "views": 16,
+        "maxChannelDifference": 0,
+        "oldSelfComparisonNoise": 0,
+        "pixels": [
+          2610,
+          1053
+        ],
+        "rotation": {
+          "radians": 17.142466902592663,
+          "frames": 64,
+          "stable": true
+        }
+      },
+      {
+        "sourcePath": "/models/10k_obj/035_雪.glb",
+        "views": 16,
+        "maxChannelDifference": 0,
+        "oldSelfComparisonNoise": 0,
+        "pixels": [
+          2610,
+          1053
+        ]
+      },
+      {
+        "sourcePath": "/models/10k_obj/036_星.glb",
+        "views": 16,
+        "maxChannelDifference": 0,
+        "oldSelfComparisonNoise": 0,
+        "pixels": [
+          2610,
+          1053
+        ]
+      },
+      {
+        "sourcePath": "/models/10k_obj/037_辰.glb",
+        "views": 16,
+        "maxChannelDifference": 0,
+        "oldSelfComparisonNoise": 0,
+        "pixels": [
+          2610,
+          1053
+        ]
+      },
+      {
+        "sourcePath": "/models/10k_obj/038_影.glb",
+        "views": 16,
+        "maxChannelDifference": 0,
+        "oldSelfComparisonNoise": 0,
+        "pixels": [
+          2610,
+          1053
+        ]
+      },
+      {
+        "sourcePath": "/models/10k_obj/039_梦.glb",
+        "views": 16,
+        "maxChannelDifference": 0,
+        "oldSelfComparisonNoise": 0,
+        "pixels": [
+          2610,
+          1053
+        ]
+      },
+      {
+        "sourcePath": "/models/10k_obj/040_幻.glb",
+        "views": 16,
+        "maxChannelDifference": 0,
+        "oldSelfComparisonNoise": 0,
+        "pixels": [
+          2610,
+          1053
+        ]
+      },
+      {
+        "sourcePath": "/models/10k_obj/041_寂.glb",
+        "views": 16,
+        "maxChannelDifference": 0,
+        "oldSelfComparisonNoise": 0,
+        "pixels": [
+          2610,
+          1053
+        ]
+      },
+      {
+        "sourcePath": "/models/10k_obj/042_灭.glb",
+        "views": 16,
+        "maxChannelDifference": 0,
+        "oldSelfComparisonNoise": 0,
+        "pixels": [
+          2610,
+          1053
+        ]
+      },
+      {
+        "sourcePath": "/models/10k_obj/043_常.glb",
+        "views": 16,
+        "maxChannelDifference": 0,
+        "oldSelfComparisonNoise": 0,
+        "pixels": [
+          2610,
+          1053
+        ]
+      },
+      {
+        "sourcePath": "/models/10k_obj/044_乐.glb",
+        "views": 16,
+        "maxChannelDifference": 0,
+        "oldSelfComparisonNoise": 0,
+        "pixels": [
+          2610,
+          1053
+        ]
+      },
+      {
+        "sourcePath": "/models/10k_obj/046_净.glb",
+        "views": 16,
+        "maxChannelDifference": 0,
+        "oldSelfComparisonNoise": 0,
+        "pixels": [
+          2610,
+          1053
+        ],
+        "rotation": {
+          "radians": 13.290077492551491,
+          "frames": 50,
+          "stable": true
+        }
+      },
+      {
+        "sourcePath": "/models/10k_obj/047_清.glb",
+        "views": 16,
+        "maxChannelDifference": 0,
+        "oldSelfComparisonNoise": 0,
+        "pixels": [
+          2610,
+          1053
+        ]
+      },
+      {
+        "sourcePath": "/models/10k_obj/048_虚.glb",
+        "views": 16,
+        "maxChannelDifference": 0,
+        "oldSelfComparisonNoise": 0,
+        "pixels": [
+          2610,
+          1053
+        ]
+      },
+      {
+        "sourcePath": "/models/10k_obj/049_灵.glb",
+        "views": 16,
+        "maxChannelDifference": 0,
+        "oldSelfComparisonNoise": 0,
+        "pixels": [
+          2610,
+          1053
+        ]
+      },
+      {
+        "sourcePath": "/models/10k_obj/050_妙.glb",
+        "views": 16,
+        "maxChannelDifference": 0,
+        "oldSelfComparisonNoise": 0,
+        "pixels": [
+          2610,
+          1053
+        ],
+        "rotation": {
+          "radians": 15.326942556304642,
+          "frames": 58,
+          "stable": true
+        }
+      },
+      {
+        "sourcePath": "/models/10k_obj/051_仁.glb",
+        "views": 16,
+        "maxChannelDifference": 0,
+        "oldSelfComparisonNoise": 0,
+        "pixels": [
+          2610,
+          1053
+        ]
+      },
+      {
+        "sourcePath": "/models/10k_obj/052_义.glb",
+        "views": 16,
+        "maxChannelDifference": 0,
+        "oldSelfComparisonNoise": 0,
+        "pixels": [
+          2610,
+          1053
+        ]
+      },
+      {
+        "sourcePath": "/models/10k_obj/053_礼.glb",
+        "views": 16,
+        "maxChannelDifference": 0,
+        "oldSelfComparisonNoise": 0,
+        "pixels": [
+          2610,
+          1053
+        ]
+      },
+      {
+        "sourcePath": "/models/10k_obj/054_智.glb",
+        "views": 16,
+        "maxChannelDifference": 0,
+        "oldSelfComparisonNoise": 0,
+        "pixels": [
+          2610,
+          1053
+        ]
+      },
+      {
+        "sourcePath": "/models/10k_obj/055_信.glb",
+        "views": 16,
+        "maxChannelDifference": 0,
+        "oldSelfComparisonNoise": 0,
+        "pixels": [
+          2610,
+          1053
+        ]
+      },
+      {
+        "sourcePath": "/models/10k_obj/056_勇.glb",
+        "views": 16,
+        "maxChannelDifference": 0,
+        "oldSelfComparisonNoise": 0,
+        "pixels": [
+          2610,
+          1053
+        ]
+      },
+      {
+        "sourcePath": "/models/10k_obj/057_孝.glb",
+        "views": 16,
+        "maxChannelDifference": 0,
+        "oldSelfComparisonNoise": 0,
+        "pixels": [
+          2610,
+          1053
+        ]
+      },
+      {
+        "sourcePath": "/models/10k_obj/058_悌.glb",
+        "views": 16,
+        "maxChannelDifference": 0,
+        "oldSelfComparisonNoise": 0,
+        "pixels": [
+          2610,
+          1053
+        ]
+      },
+      {
+        "sourcePath": "/models/10k_obj/059_忠.glb",
+        "views": 16,
+        "maxChannelDifference": 0,
+        "oldSelfComparisonNoise": 0,
+        "pixels": [
+          2610,
+          1053
+        ]
+      },
+      {
+        "sourcePath": "/models/10k_obj/060_恕.glb",
+        "views": 16,
+        "maxChannelDifference": 0,
+        "oldSelfComparisonNoise": 0,
+        "pixels": [
+          2610,
+          1053
+        ]
+      },
+      {
+        "sourcePath": "/models/10k_obj/061_忍.glb",
+        "views": 16,
+        "maxChannelDifference": 0,
+        "oldSelfComparisonNoise": 0,
+        "pixels": [
+          2610,
+          1053
+        ]
+      },
+      {
+        "sourcePath": "/models/10k_obj/062_宽.glb",
+        "views": 16,
+        "maxChannelDifference": 0,
+        "oldSelfComparisonNoise": 0,
+        "pixels": [
+          2610,
+          1053
+        ]
+      },
+      {
+        "sourcePath": "/models/10k_obj/063_福.glb",
+        "views": 16,
+        "maxChannelDifference": 0,
+        "oldSelfComparisonNoise": 0,
+        "pixels": [
+          2610,
+          1053
+        ]
+      },
+      {
+        "sourcePath": "/models/10k_obj/064_寿.glb",
+        "views": 16,
+        "maxChannelDifference": 0,
+        "oldSelfComparisonNoise": 0,
+        "pixels": [
+          2610,
+          1053
+        ]
+      },
+      {
+        "sourcePath": "/models/10k_obj/065_吉.glb",
+        "views": 16,
+        "maxChannelDifference": 0,
+        "oldSelfComparisonNoise": 0,
+        "pixels": [
+          2610,
+          1053
+        ]
+      },
+      {
+        "sourcePath": "/models/10k_obj/066_祥.glb",
+        "views": 16,
+        "maxChannelDifference": 0,
+        "oldSelfComparisonNoise": 0,
+        "pixels": [
+          2610,
+          1053
+        ]
+      },
+      {
+        "sourcePath": "/models/10k_obj/067_康.glb",
+        "views": 16,
+        "maxChannelDifference": 0,
+        "oldSelfComparisonNoise": 0,
+        "pixels": [
+          2610,
+          1053
+        ]
+      },
+      {
+        "sourcePath": "/models/10k_obj/068_泰.glb",
+        "views": 16,
+        "maxChannelDifference": 0,
+        "oldSelfComparisonNoise": 0,
+        "pixels": [
+          2610,
+          1053
+        ],
+        "rotation": {
+          "radians": 16.926764309006245,
+          "frames": 64,
+          "stable": true
+        }
+      },
+      {
+        "sourcePath": "/models/10k_obj/069_春.glb",
+        "views": 16,
+        "maxChannelDifference": 0,
+        "oldSelfComparisonNoise": 0,
+        "pixels": [
+          2610,
+          1053
+        ]
+      },
+      {
+        "sourcePath": "/models/10k_obj/070_夏.glb",
+        "views": 16,
+        "maxChannelDifference": 0,
+        "oldSelfComparisonNoise": 0,
+        "pixels": [
+          2610,
+          1053
+        ]
+      },
+      {
+        "sourcePath": "/models/10k_obj/071_秋.glb",
+        "views": 16,
+        "maxChannelDifference": 0,
+        "oldSelfComparisonNoise": 0,
+        "pixels": [
+          2610,
+          1053
+        ]
+      },
+      {
+        "sourcePath": "/models/10k_obj/072_冬.glb",
+        "views": 16,
+        "maxChannelDifference": 0,
+        "oldSelfComparisonNoise": 0,
+        "pixels": [
+          2610,
+          1053
+        ]
+      },
+      {
+        "sourcePath": "/models/10k_obj/073_竹.glb",
+        "views": 16,
+        "maxChannelDifference": 0,
+        "oldSelfComparisonNoise": 0,
+        "pixels": [
+          2610,
+          1053
+        ]
+      },
+      {
+        "sourcePath": "/models/10k_obj/074_松.glb",
+        "views": 16,
+        "maxChannelDifference": 0,
+        "oldSelfComparisonNoise": 0,
+        "pixels": [
+          2610,
+          1053
+        ]
+      },
+      {
+        "sourcePath": "/models/10k_obj/075_梅.glb",
+        "views": 16,
+        "maxChannelDifference": 0,
+        "oldSelfComparisonNoise": 0,
+        "pixels": [
+          2610,
+          1053
+        ]
+      },
+      {
+        "sourcePath": "/models/10k_obj/076_兰.glb",
+        "views": 16,
+        "maxChannelDifference": 0,
+        "oldSelfComparisonNoise": 0,
+        "pixels": [
+          2610,
+          1053
+        ]
+      },
+      {
+        "sourcePath": "/models/10k_obj/077_花.glb",
+        "views": 16,
+        "maxChannelDifference": 0,
+        "oldSelfComparisonNoise": 0,
+        "pixels": [
+          2610,
+          1053
+        ]
+      },
+      {
+        "sourcePath": "/models/10k_obj/078_草.glb",
+        "views": 16,
+        "maxChannelDifference": 0,
+        "oldSelfComparisonNoise": 0,
+        "pixels": [
+          2610,
+          1053
+        ]
+      },
+      {
+        "sourcePath": "/models/10k_obj/079_石.glb",
+        "views": 16,
+        "maxChannelDifference": 0,
+        "oldSelfComparisonNoise": 0,
+        "pixels": [
+          2610,
+          1053
+        ]
+      },
+      {
+        "sourcePath": "/models/10k_obj/080_玉.glb",
+        "views": 16,
+        "maxChannelDifference": 0,
+        "oldSelfComparisonNoise": 0,
+        "pixels": [
+          2610,
+          1053
+        ]
+      },
+      {
+        "sourcePath": "/models/10k_obj/081_金.glb",
+        "views": 16,
+        "maxChannelDifference": 0,
+        "oldSelfComparisonNoise": 0,
+        "pixels": [
+          2610,
+          1053
+        ]
+      },
+      {
+        "sourcePath": "/models/10k_obj/082_木.glb",
+        "views": 16,
+        "maxChannelDifference": 0,
+        "oldSelfComparisonNoise": 0,
+        "pixels": [
+          2610,
+          1053
+        ]
+      },
+      {
+        "sourcePath": "/models/10k_obj/083_土.glb",
+        "views": 16,
+        "maxChannelDifference": 0,
+        "oldSelfComparisonNoise": 0,
+        "pixels": [
+          2610,
+          1053
+        ]
+      },
+      {
+        "sourcePath": "/models/10k_obj/084_火.glb",
+        "views": 16,
+        "maxChannelDifference": 0,
+        "oldSelfComparisonNoise": 0,
+        "pixels": [
+          2610,
+          1053
+        ]
+      },
+      {
+        "sourcePath": "/models/10k_obj/085_雷.glb",
+        "views": 16,
+        "maxChannelDifference": 0,
+        "oldSelfComparisonNoise": 0,
+        "pixels": [
+          2610,
+          1053
+        ]
+      },
+      {
+        "sourcePath": "/models/10k_obj/086_天.glb",
+        "views": 16,
+        "maxChannelDifference": 0,
+        "oldSelfComparisonNoise": 0,
+        "pixels": [
+          2610,
+          1053
+        ]
+      },
+      {
+        "sourcePath": "/models/10k_obj/087_地.glb",
+        "views": 16,
+        "maxChannelDifference": 0,
+        "oldSelfComparisonNoise": 0,
+        "pixels": [
+          2610,
+          1053
+        ]
+      },
+      {
+        "sourcePath": "/models/10k_obj/088_乾.glb",
+        "views": 16,
+        "maxChannelDifference": 0,
+        "oldSelfComparisonNoise": 0,
+        "pixels": [
+          2610,
+          1053
+        ]
+      },
+      {
+        "sourcePath": "/models/10k_obj/089_坤.glb",
+        "views": 16,
+        "maxChannelDifference": 0,
+        "oldSelfComparisonNoise": 0,
+        "pixels": [
+          2610,
+          1053
+        ]
+      },
+      {
+        "sourcePath": "/models/10k_obj/090_宇.glb",
+        "views": 16,
+        "maxChannelDifference": 0,
+        "oldSelfComparisonNoise": 0,
+        "pixels": [
+          2610,
+          1053
+        ]
+      },
+      {
+        "sourcePath": "/models/10k_obj/091_宙.glb",
+        "views": 16,
+        "maxChannelDifference": 0,
+        "oldSelfComparisonNoise": 0,
+        "pixels": [
+          2610,
+          1053
+        ]
+      },
+      {
+        "sourcePath": "/models/10k_obj/092_源.glb",
+        "views": 16,
+        "maxChannelDifference": 0,
+        "oldSelfComparisonNoise": 0,
+        "pixels": [
+          2610,
+          1053
+        ]
+      },
+      {
+        "sourcePath": "/models/10k_obj/093_流.glb",
+        "views": 16,
+        "maxChannelDifference": 0,
+        "oldSelfComparisonNoise": 0,
+        "pixels": [
+          2610,
+          1053
+        ]
+      },
+      {
+        "sourcePath": "/models/10k_obj/095_潮.glb",
+        "views": 16,
+        "maxChannelDifference": 0,
+        "oldSelfComparisonNoise": 0,
+        "pixels": [
+          2610,
+          1053
+        ]
+      },
+      {
+        "sourcePath": "/models/10k_obj/096_露.glb",
+        "views": 16,
+        "maxChannelDifference": 0,
+        "oldSelfComparisonNoise": 0,
+        "pixels": [
+          2610,
+          1053
+        ]
+      },
+      {
+        "sourcePath": "/models/10k_obj/097_霜.glb",
+        "views": 16,
+        "maxChannelDifference": 0,
+        "oldSelfComparisonNoise": 0,
+        "pixels": [
+          2610,
+          1053
+        ]
+      },
+      {
+        "sourcePath": "/models/10k_obj/098_美.glb",
+        "views": 16,
+        "maxChannelDifference": 0,
+        "oldSelfComparisonNoise": 0,
+        "pixels": [
+          2610,
+          1053
+        ]
+      },
+      {
+        "sourcePath": "/models/10k_obj/099_化.glb",
+        "views": 16,
+        "maxChannelDifference": 0,
+        "oldSelfComparisonNoise": 0,
+        "pixels": [
+          2610,
+          1053
+        ],
+        "rotation": {
+          "radians": 16.123092754785688,
+          "frames": 61,
+          "stable": true
+        }
+      },
+      {
+        "sourcePath": "/models/10k_obj/100_通.glb",
+        "views": 16,
+        "maxChannelDifference": 0,
+        "oldSelfComparisonNoise": 0,
+        "pixels": [
+          2610,
+          1053
+        ]
+      }
+    ]
+  },
+  "ui": {
+    "productionRelease": "coscroll-13c23dbbba7efeb4",
+    "lotusAnchorChecks": 15,
+    "rapidSeeks": 27,
+    "seekOwnership": {
+      "frames": 89,
+      "emptyFrames": 0,
+      "incompleteFrames": 0,
+      "displayedDisposed": 0,
+      "repeatedDisposals": 0
+    },
+    "mouse": [
+      {
+        "sameButton": true,
+        "sameIcon": true,
+        "pressedNodeConnected": true,
+        "mediaAdvanced": 0.586171,
+        "paused": true,
+        "clicks": [
+          {
+            "trusted": true,
+            "button": true
+          }
+        ]
+      },
+      {
+        "sameButton": true,
+        "sameIcon": true,
+        "pressedNodeConnected": true,
+        "mediaAdvanced": 0.5531100000000001,
+        "paused": true,
+        "clicks": [
+          {
+            "trusted": true,
+            "button": true
+          }
+        ]
+      }
+    ],
+    "sceneSwitches": [
+      {
+        "project": "heart-sutra",
+        "envReused": true,
+        "normalReused": true,
+        "materialsReused": true,
+        "resetAngle": 0,
+        "textures": 14,
+        "textureRequests": []
+      },
+      {
+        "project": "lotus-sutra-zanshi",
+        "envReused": true,
+        "normalReused": true,
+        "materialsReused": true,
+        "resetAngle": 0,
+        "textures": 13,
+        "textureRequests": []
+      },
+      {
+        "project": "heart-sutra",
+        "envReused": true,
+        "normalReused": true,
+        "materialsReused": true,
+        "resetAngle": 0,
+        "textures": 13,
+        "textureRequests": []
+      },
+      {
+        "project": "lotus-sutra-zanshi",
+        "envReused": true,
+        "normalReused": true,
+        "materialsReused": true,
+        "resetAngle": 0,
+        "textures": 13,
+        "textureRequests": []
+      }
+    ],
+    "final": {
+      "frames": 196,
+      "emptyFrames": 0,
+      "incompleteFrames": 0,
+      "displayedDisposed": 0,
+      "repeatedDisposals": 0,
+      "errors": [],
+      "memory": {
+        "geometries": 9,
+        "textures": 13
+      },
+      "character": "妙"
+    },
+    "standalone": {
+      "release": "coscroll-13c23dbbba7efeb4",
+      "switches": [
+        [
+          {
+            "base": true,
+            "uuid": "a8b91591-13da-44ef-8748-f42a050a7c55",
+            "vertices": 10277
+          },
+          {
+            "base": false,
+            "uuid": "0198cb51-3b3f-4490-8e4d-273cdac96b8c",
+            "vertices": 16518
+          }
+        ],
+        [
+          {
+            "base": true,
+            "uuid": "05cce947-b9e5-44bd-89bf-9872a89ee3d1",
+            "vertices": 14699
+          },
+          {
+            "base": false,
+            "uuid": "6ef8bda9-804a-43f5-90d0-3f144d4f02de",
+            "vertices": 31796
+          }
+        ],
+        [
+          {
+            "base": true,
+            "uuid": "23886465-638b-4b77-8967-1210b453c3c6",
+            "vertices": 9229
+          },
+          {
+            "base": false,
+            "uuid": "f10e8bd1-52d7-4374-9ad2-972989a0f1ba",
+            "vertices": 14817
+          }
+        ]
+      ],
+      "parameter": {
+        "sameBase": true,
+        "oldOuterDisposals": 1,
+        "offset": "0.002"
+      },
+      "beforeUnmount": {
+        "frames": 13,
+        "emptyFrames": 0,
+        "incompleteFrames": 0,
+        "displayedDisposed": 0,
+        "repeatedDisposals": 0
+      },
+      "mode": "actual JadeV6 controls and same-document AppRouter navigation",
+      "unmount": {
+        "latestLocalOuterDisposals": 1,
+        "sharedBaseDisposals": 0,
+        "repeatedDisposals": 0,
+        "errors": [],
+        "sameDocument": true
+      }
+    }
+  },
+  "validation": {
+    "tests": [
+      {
+        "suite": "runtime",
+        "passed": 89,
+        "failed": 0,
+        "receiptSha256": "8e74d40b8af808273a6b58476d8ce408b3546248c8be67b87b50be6d16f64ed4"
+      },
+      {
+        "suite": "deployment",
+        "passed": 11,
+        "failed": 0,
+        "receiptSha256": "84ba04f1aaf46228c6d1c9389ad4d2dd4c8d05a78b5190a1ac6d9cc9fc4dc012"
+      }
+    ],
+    "typecheck": "passed",
+    "fullNextBuild": "passed",
+    "modelRegistryAndPayloadCheck": "passed",
+    "diffWhitespace": "Tracked diff passed; one trailing blank line in the encoding source is retained to preserve the validated encoding-generation identity. No runtime impact.",
+    "localPackage": {
+      "releaseId": "coscroll-13c23dbbba7efeb4",
+      "sourceDigest": "13c23dbbba7efeb4ed061e952d125a01eb92467fe375b2c0c76b4d0dd3d93f90",
+      "artifactClosureSha256": "5fce3f6eb96fb723e4bf5cf1ace10c7b9d08a0f57d66bfec0cf24389f9e28673",
+      "files": 376,
+      "bytes": 250432512,
+      "http": {
+        "releaseId": "coscroll-13c23dbbba7efeb4",
+        "mode": "local",
+        "origin": "http://127.0.0.1:4318",
+        "cdnOnly": false,
+        "checked": 376,
+        "encoded": 208,
+        "audioRanges": 4,
+        "hashes": "passed",
+        "decodedHashes": "passed",
+        "mime": "passed",
+        "cache": "passed",
+        "cors": "passed"
+      }
+    },
+    "currentWorkspaceBuild": {
+      "releaseId": "coscroll-ff2efa3716c6ab66",
+      "sourceDigest": "ff2efa3716c6ab66966cdf006fd91d3f68d4fd56b2c76ee0e24b1d0b8d920aca",
+      "artifactClosureSha256": "35f97892dad25ec6dc2ce7ecf5f44e811f47266f3578276d55a21f7a528b5b79",
+      "files": 376,
+      "bytes": 250433395,
+      "typecheck": "passed",
+      "fullNextBuild": "passed",
+      "builtSourceMatchesWorkspace": false,
+      "modelSourcesUnchanged": true,
+      "sourceFilesCompared": 204,
+      "matchedSourceFiles": 202,
+      "postBuildChanges": [
+        {
+          "path": "src/components/ReadingSession.tsx",
+          "currentSha256": "3b6fe171acc3f109f372a2e86c29488d64e440d7368dff73f6dd3a0373018c5e",
+          "builtSha256": "6c76024ed5abcdc1319e4545f989767a0b0ca18dba53f6b27fe7aff0ca4855d9"
+        },
+        {
+          "path": "src/components/audio/EnhancedAudioPlayer.tsx",
+          "currentSha256": "c817516496d16dafdc41180d0918abf462adffeef68b7897a9653258cbcba4b0",
+          "builtSha256": "e1b60cb7904bb08ad6da65c6a1fd5f40bab198c806aaf9da05df1f2600549b94"
+        }
+      ],
+      "http": {
+        "releaseId": "coscroll-ff2efa3716c6ab66",
+        "mode": "local",
+        "origin": "http://127.0.0.1:4318",
+        "cdnOnly": false,
+        "checked": 376,
+        "encoded": 208,
+        "audioRanges": 4,
+        "hashes": "passed",
+        "decodedHashes": "passed",
+        "mime": "passed",
+        "cache": "passed",
+        "cors": "passed"
+      },
+      "concurrentEditsPreserved": [
+        "src/components/ReadingSession.tsx (audio status/retry sections)",
+        "src/components/audio/AudioEngine.tsx",
+        "src/components/audio/EnhancedAudioPlayer.tsx",
+        "package.json test:visual"
+      ],
+      "acceptanceBoundary": "Model performance/render/lifecycle measurements use the fixed coscroll-13c23dbbba7efeb4 snapshot, isolating this task. This later package also includes concurrent audio edits and passes a fresh full build and complete HTTP/package checks; its changed audio flow was not re-run through the earlier browser sequence. Additional concurrent player styles changed after that build; postBuildChanges lists their exact source hashes. They are preserved and excluded from the built snapshot."
+    }
+  },
+  "limitations": [
+    "Residency counts actual geometry ArrayBuffer storage only, excluding textures, render targets and full process/GPU memory.",
+    "Offline decode extra peak is 1ms sampled Node22 heapUsed plus arrayBuffers growth minus identical output, without forced GC; short synchronous peaks can be missed.",
+    "Desktop browser decode medians vary by glyph. No real-phone FPS, total-phone-memory or universal per-glyph speedup claim.",
+    "Single active glyph geometry remains full precision and unchanged; exact duplicate audit found zero removable vertices.",
+    "Original 20% wire-reduction trial target was not achieved. Quality constraints were preserved; actual release saving is reported instead."
+  ],
+  "cleanup": {
+    "date": "2026-10-24",
+    "authorizedByUser": true,
+    "removed": [
+      ".cache/lossless75-20261024/",
+      "docs/plans/2026-10-24-001-refactor-lossless-model-loading-plan.md"
+    ],
+    "retained": [
+      "runtime code and selected model payloads",
+      "immutable geometry and transport test fixtures",
+      "per-glyph delivery and full validation reports"
+    ],
+    "temporaryBuildPackagesRetained": false
+  },
+  "commitValidation": {
+    "exactStagedSourceTypecheck": "passed",
+    "sourceFilesChecked": 199,
+    "modelIntegrityChecked": 101,
+    "targetedTestsPassed": 28,
+    "targetedTestsFailed": 0
+  }
+}

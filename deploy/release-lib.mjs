@@ -11,7 +11,7 @@ export const MIME = {
   '.js': 'text/javascript; charset=utf-8', '.css': 'text/css; charset=utf-8',
   '.json': 'application/json; charset=utf-8', '.lrc': 'text/plain; charset=utf-8',
   '.srt': 'text/plain; charset=utf-8', '.obj': 'text/plain; charset=utf-8',
-  '.hdr': 'application/octet-stream', '.ttf': 'font/ttf', '.otf': 'font/otf',
+  '.hdr': 'application/octet-stream', '.bin': 'application/octet-stream', '.ttf': 'font/ttf', '.otf': 'font/otf',
   '.woff': 'font/woff', '.woff2': 'font/woff2', '.mp3': 'audio/mpeg',
   '.wav': 'audio/wav', '.ogg': 'audio/ogg', '.flac': 'audio/flac',
   '.jpg': 'image/jpeg', '.jpeg': 'image/jpeg', '.png': 'image/png',
@@ -19,7 +19,7 @@ export const MIME = {
   '.ico': 'image/x-icon', '.glb': 'model/gltf-binary', '.gltf': 'model/gltf+json',
 };
 export const sha = bytes => createHash('sha256').update(bytes).digest('hex');
-const compressible = new Set(['.js', '.css', '.json', '.lrc', '.srt', '.obj', '.gltf', '.glb', '.hdr', '.svg']);
+const compressible = new Set(['.js', '.css', '.json', '.lrc', '.srt', '.obj', '.gltf', '.glb', '.hdr', '.svg', '.bin']);
 
 /** Store one HTTP representation; browsers recover the exact original bytes. */
 export function encodeDelivery(channel, path, original) {

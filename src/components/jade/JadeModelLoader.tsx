@@ -427,15 +427,30 @@ function DualLayerModelLoader({
   const meshRef = useRef<THREE.Mesh>(null);
   const refractionMeshRef = useRef<THREE.Mesh>(null);
   const ownedOffsets = useRef(new WeakSet<THREE.BufferGeometry>());
+  const targetReleaseRef = useRef<(() => void) | null>(null);
+  const displayedReleaseRef = useRef<(() => void) | null>(null);
+  const pendingDisplayedReleaseRef = useRef<(() => void) | null>(null);
+  const onModelDisplayedRef = useRef(onModelDisplayed);
+  const onModelErrorRef = useRef(onModelError);
   const { camera, scene, gl, get } = useThree();
   const preloader = ModelPreloader.getInstance();
   const [resolvedPath, setResolvedPath] = useState('');
-  useEffect(() => { if (resolvedPath) onModelDisplayed?.(resolvedPath); }, [resolvedPath, onModelDisplayed]);
+  useEffect(() => {
+    onModelDisplayedRef.current = onModelDisplayed;
+    onModelErrorRef.current = onModelError;
+  }, [onModelDisplayed, onModelError]);
+  useEffect(() => { if (resolvedPath) onModelDisplayedRef.current?.(resolvedPath); }, [resolvedPath]);
 
   useEffect(() => {
     let disposed = false;
     setLoading(true);
     setError(null);
+
+    // Pin the target before the first await, so an idle-budget trim cannot evict
+    // the entry while it is being prepared. The prior displayed owner stays
+    // pinned independently until this pair is actually committed.
+    const releaseTarget = preloader.retainPaths([modelPath]);
+    targetReleaseRef.current = releaseTarget;
 
     const loadModel = async () => {
       try {
@@ -458,6 +473,17 @@ function DualLayerModelLoader({
           outer.computeVertexNormals();
           ownedOffsets.current.add(outer);
         }
+        if (disposed) {
+          if (outer && ownedOffsets.current.has(outer)) outer.dispose();
+          return;
+        }
+        // Promote the target owner to the displayed owner before publishing the
+        // pair. The old displayed owner is released after React commits it.
+        if (targetReleaseRef.current === releaseTarget) {
+          targetReleaseRef.current = null;
+          pendingDisplayedReleaseRef.current = displayedReleaseRef.current;
+          displayedReleaseRef.current = releaseTarget;
+        }
         // Publish the matching pair together. Keep the preceding pair visible
         // during a load, without cloning its geometry under the next path.
         setGeometry(loadedGeometry);
@@ -470,9 +496,13 @@ function DualLayerModelLoader({
         }
       } catch (err) {
         if (disposed) return;
+        if (targetReleaseRef.current === releaseTarget) {
+          targetReleaseRef.current = null;
+          releaseTarget();
+        }
         console.error('[JadeModelLoader] 模型加载失败:', err);
         setError(err instanceof Error ? err.message : '未知错误');
-        onModelError?.(modelPath);
+        onModelErrorRef.current?.(modelPath);
         setLoading(false);
       }
     };
@@ -481,8 +511,30 @@ function DualLayerModelLoader({
 
     return () => {
       disposed = true;
+      if (targetReleaseRef.current === releaseTarget) {
+        targetReleaseRef.current = null;
+        releaseTarget();
+      }
     };
-  }, [modelPath, preloader, outerOffset, maxEdge, subdivisions, creaseAngle, outerSmoothShading, onModelError]);
+  }, [modelPath, preloader, outerOffset, maxEdge, subdivisions, creaseAngle, outerSmoothShading]);
+
+  // Release the preceding visible owner only after the replacement pair has
+  // committed. Until then, its cache entry and GPU geometry stay untouched.
+  useLayoutEffect(() => {
+    if (!geometry || !offsetGeometry || !resolvedPath) return;
+    const release = pendingDisplayedReleaseRef.current;
+    pendingDisplayedReleaseRef.current = null;
+    if (release && release !== displayedReleaseRef.current) release();
+  }, [geometry, offsetGeometry, resolvedPath]);
+
+  useEffect(() => () => {
+    targetReleaseRef.current?.();
+    targetReleaseRef.current = null;
+    pendingDisplayedReleaseRef.current?.();
+    pendingDisplayedReleaseRef.current = null;
+    displayedReleaseRef.current?.();
+    displayedReleaseRef.current = null;
+  }, []);
 
   useEffect(() => () => {
     if (offsetGeometry && ownedOffsets.current.has(offsetGeometry)) offsetGeometry.dispose();

@@ -21,10 +21,11 @@ export async function loadModelPipeline() {
   const directory = await mkdtemp(join(root, '.cache/model-pipeline-'));
   try {
     const modules = {};
-    for (const name of ['modelGeometry', 'preparedModelGeometry']) {
+    for (const name of ['modelGeometry', 'preparedModelGeometry', 'preparedModelDelivery', 'modelDecodeScheduler']) {
       const source = await readFile(join(root, 'src/components/jade', name + '.ts'), 'utf8');
       const compiled = ts.transpileModule(source, {compilerOptions:{module:ts.ModuleKind.ESNext,
-        target:ts.ScriptTarget.ES2020}}).outputText;
+        target:ts.ScriptTarget.ES2020}}).outputText
+        .replaceAll("'./preparedModelGeometry'", "'./preparedModelGeometry.mjs'");
       const path = join(directory, name + '.mjs');
       await writeFile(path, compiled);
       Object.assign(modules, await import(pathToFileURL(path).href));
@@ -50,7 +51,7 @@ async function sourceModels() {
 
 function preparedName(name) { return name.replace(/\.(obj|glb)$/, '.json'); }
 
-async function readSourceGeometry(name, bytes) {
+export async function readSourceGeometry(name, bytes) {
   let extracted;
   if (name.endsWith('.obj')) {
     new OBJLoader().parse(bytes.toString('utf8')).traverse(child => {
@@ -77,6 +78,10 @@ async function readSourceGeometry(name, bytes) {
 
 export async function checkPreparedModels() {
   const registry = JSON.parse(await readFile(registryPath, 'utf8'));
+  if (registry.version === 2) {
+    const {checkDeliveryRegistry} = await import('./prepare-model-delivery.mjs');
+    return checkDeliveryRegistry(registry);
+  }
   const names = await sourceModels();
   if (registry.version !== 1 || registry.generation !== await generationIdentity() ||
       registry.models.length !== names.length || names.some((name, i) => registry.models[i].sourcePath !== '/models/10k_obj/' + name)) {
@@ -104,34 +109,8 @@ export async function checkPreparedModels() {
 }
 
 async function generatePreparedModels() {
-  const pipeline = await loadModelPipeline();
-  try {
-    const generation = await generationIdentity();
-    const preset = pipeline.PREPARED_MODEL_PRESET;
-    const registry = {version:pipeline.PREPARED_MODEL_VERSION, generation, preset, models:[]};
-    await mkdir(preparedDirectory, {recursive:true});
-    for (const name of await sourceModels()) {
-      const bytes = await readFile(join(modelDirectory, name));
-      const sourceSha256 = sha(bytes);
-      const extracted = await readSourceGeometry(name, bytes);
-      const base = pipeline.normalizeModelGeometry(extracted);
-      const outer = pipeline.createOffsetGeometry(base, preset.outerOffset, preset);
-      const payload = {version:pipeline.PREPARED_MODEL_VERSION, generation, sourceSha256, preset,
-        base:await pipeline.encodeGeometry(base), outer:await pipeline.encodeGeometry(outer)};
-      const preparedPath = '/models/prepared/' + preparedName(name);
-      const encoded = JSON.stringify(payload) + '\n';
-      await writeFile(join(root, 'public', preparedPath), encoded);
-      registry.models.push({sourcePath:'/models/10k_obj/' + name, sourceSha256,
-        preparedPath, preparedSha256:sha(encoded), bytes:Buffer.byteLength(encoded)});
-      extracted.dispose(); base.dispose(); outer.dispose();
-      console.log(name, Buffer.byteLength(encoded));
-    }
-    // A removed source must not leave a deliverable that bypasses freshness checks.
-    const expected = new Set(registry.models.map(entry => entry.preparedPath.split('/').at(-1)));
-    for (const name of await readdir(preparedDirectory)) if (!expected.has(name)) await rm(join(preparedDirectory, name));
-    await writeFile(registryPath, JSON.stringify(registry, null, 2) + '\n');
-    return await checkPreparedModels();
-  } finally { await pipeline.dispose(); }
+  const {generateModelDelivery} = await import('./prepare-model-delivery.mjs');
+  return generateModelDelivery();
 }
 
 if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {

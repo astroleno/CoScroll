@@ -4,11 +4,9 @@ import { assetUrl } from '@/utils/assetUrl';
 
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import * as THREE from "three";
-import { Suspense, useEffect, useMemo, useRef, useState } from "react";
+import { Suspense, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import timelineStore from "@/stores/timelineStore";
 import { RGBELoader } from "three/examples/jsm/loaders/RGBELoader.js";
-import { OBJLoader } from "three/examples/jsm/loaders/OBJLoader.js";
-import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 import { mergeVertices } from "three/examples/jsm/utils/BufferGeometryUtils.js";
 import { TessellateModifier } from 'three-stdlib';
 import { toCreasedNormals } from 'three-stdlib';
@@ -278,102 +276,90 @@ function DualLayerModelLoader({
   outerSmoothShading?: boolean;
   enablePreloading?: boolean;
 }) {
-  const [geometry, setGeometry] = useState<THREE.BufferGeometry | null>(null);
-  const [offsetGeometry, setOffsetGeometry] = useState<THREE.BufferGeometry | null>(null);
+  type DisplayedPair = {
+    path: string;
+    base: THREE.BufferGeometry;
+    outer: THREE.BufferGeometry;
+    ownedOuter: boolean;
+  };
+
+  const [pair, setPair] = useState<DisplayedPair | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const meshRef = useRef<THREE.Mesh>(null);
   const refractionMeshRef = useRef<THREE.Mesh>(null);
+  const displayedPairRef = useRef<DisplayedPair | null>(null);
+  const targetReleaseRef = useRef<(() => void) | null>(null);
+  const displayedReleaseRef = useRef<(() => void) | null>(null);
+  const pendingDisplayedReleaseRef = useRef<(() => void) | null>(null);
+  const pendingOwnedOuterRef = useRef<THREE.BufferGeometry | null>(null);
+  const disposedLocalGeometries = useRef(new WeakSet<THREE.BufferGeometry>());
   const { camera, scene } = useThree();
   const preloader = ModelPreloader.getInstance();
 
-  // 模型加载逻辑（使用预加载系统）
+  const disposeLocal = (geometry: THREE.BufferGeometry | null | undefined) => {
+    if (!geometry || disposedLocalGeometries.current.has(geometry)) return;
+    disposedLocalGeometries.current.add(geometry);
+    geometry.dispose();
+  };
+
+  // Model loading and outer construction are one transaction: a new path,
+  // parameter set and locally generated offset publish as a complete pair.
   useEffect(() => {
     let disposed = false;
     setLoading(true);
     setError(null);
 
+    // Pin the target before any await. The previous pair keeps its own owner
+    // until the replacement pair has committed to the scene.
+    const releaseTarget = preloader.retainPaths([modelPath]);
+    targetReleaseRef.current = releaseTarget;
+
     const loadModel = async () => {
       try {
         console.log('[JadeV6] 开始加载模型:', modelPath);
-        
-        // 首先尝试从预加载缓存获取
-        let loadedGeometry = preloader.getModel(modelPath);
-        
-        if (loadedGeometry) {
-          console.log('[JadeV6] 使用预加载模型:', modelPath);
-          if (disposed) return;
-          setGeometry(loadedGeometry);
-          setLoading(false);
+
+        const previousPairForReuse = displayedPairRef.current;
+        const loadedGeometry = previousPairForReuse?.path === modelPath
+          ? previousPairForReuse.base : await preloader.loadModel(modelPath);
+        if (disposed) return;
+
+        let outer: THREE.BufferGeometry;
+        try {
+          outer = createOffsetGeometry(loadedGeometry, outerOffset,
+            {maxEdge, subdivisions, creaseAngle, smoothShading: outerSmoothShading});
+        } catch (offsetError) {
+          console.warn('[JadeV6] Offset 几何体生成失败，使用基础几何克隆:', offsetError);
+          outer = loadedGeometry.clone();
+          outer.computeVertexNormals();
+        }
+        if (disposed) {
+          disposeLocal(outer);
           return;
         }
 
-        // 如果预加载缓存中没有，检查是否正在加载
-        if (preloader.isModelLoading(modelPath)) {
-          console.log('[JadeV6] 等待预加载完成:', modelPath);
-          // 等待预加载完成
-          while (preloader.isModelLoading(modelPath)) {
-            await new Promise(resolve => setTimeout(resolve, 50));
-            if (disposed) return;
-          }
-          
-          loadedGeometry = preloader.getModel(modelPath);
-          if (loadedGeometry) {
-            console.log('[JadeV6] 预加载完成，使用模型:', modelPath);
-            if (disposed) return;
-            setGeometry(loadedGeometry);
-            setLoading(false);
-            return;
-          }
-        }
+        const previousPair = displayedPairRef.current;
+        pendingDisplayedReleaseRef.current = displayedReleaseRef.current;
+        pendingOwnedOuterRef.current = previousPair?.ownedOuter ? previousPair.outer : null;
+        displayedReleaseRef.current = releaseTarget;
+        targetReleaseRef.current = null;
 
-        // 如果预加载系统没有该模型，直接加载
-        console.log('[JadeV6] 直接加载模型:', modelPath);
-        if (modelPath.endsWith('.obj')) {
-          const loader = new OBJLoader();
-          const obj = await new Promise<THREE.Group>((resolve, reject) => {
-            loader.load(modelPath, resolve, undefined, reject);
-          });
-          
-          if (disposed) return;
-          
-          // 提取第一个几何体
-          obj.traverse((child) => {
-            if (child instanceof THREE.Mesh && child.geometry) {
-              loadedGeometry = child.geometry;
-            }
-          });
-        } else if (modelPath.endsWith('.glb') || modelPath.endsWith('.gltf')) {
-          const loader = new GLTFLoader();
-          const gltf = await new Promise<any>((resolve, reject) => {
-            loader.load(modelPath, resolve, undefined, reject);
-          });
-          
-          if (disposed) return;
-          
-          // 提取第一个几何体
-          gltf.scene.traverse((child: any) => {
-            if (child instanceof THREE.Mesh && child.geometry) {
-              loadedGeometry = child.geometry;
-            }
-          });
-        }
-
-        if (!loadedGeometry) {
-          throw new Error('未找到有效的几何体');
-        }
-
-        if (disposed) return;
-
-        // 几何体优化
-        loadedGeometry = mergeVertices(loadedGeometry);
-        loadedGeometry.computeVertexNormals();
-        
-        setGeometry(loadedGeometry);
+        const nextPair: DisplayedPair = {
+          path: modelPath,
+          base: loadedGeometry,
+          outer,
+          ownedOuter: true,
+        };
+        displayedPairRef.current = nextPair;
+        setPair(nextPair);
         setLoading(false);
-        
         console.log('[JadeV6] 模型加载成功:', modelPath);
       } catch (err) {
+        if (disposed) return;
+        if (targetReleaseRef.current === releaseTarget) {
+          targetReleaseRef.current = null;
+          releaseTarget();
+        }
         console.error('[JadeV6] 模型加载失败:', err);
         setError(err instanceof Error ? err.message : '未知错误');
         setLoading(false);
@@ -384,22 +370,43 @@ function DualLayerModelLoader({
 
     return () => {
       disposed = true;
+      if (targetReleaseRef.current === releaseTarget) {
+        targetReleaseRef.current = null;
+        releaseTarget();
+      }
     };
-  }, [modelPath, preloader]);
+  }, [modelPath, preloader, outerOffset, maxEdge, subdivisions, creaseAngle, outerSmoothShading]);
 
-  // 当 outerOffset 或细分参数变化时，重新创建 offset 几何体
-  useEffect(() => {
-    if (!geometry) return;
-    
-    const offset = createOffsetGeometry(geometry, outerOffset, { maxEdge, subdivisions, creaseAngle, smoothShading: outerSmoothShading });
-    setOffsetGeometry(offset);
-    
-    console.log('[JadeV6] Offset 几何体重新创建，偏移距离:', outerOffset, '细分参数:', { maxEdge, subdivisions, creaseAngle, smoothShading: outerSmoothShading });
-  }, [geometry, outerOffset, maxEdge, subdivisions, creaseAngle, outerSmoothShading]);
+  // The replacement is now on screen; release the prior owner and dispose only
+  // locally generated geometry, never a preloader cache-owned geometry.
+  useLayoutEffect(() => {
+    if (!pair) return;
+    displayedPairRef.current = pair;
+    const release = pendingDisplayedReleaseRef.current;
+    pendingDisplayedReleaseRef.current = null;
+    if (release && release !== displayedReleaseRef.current) release();
+    const outer = pendingOwnedOuterRef.current;
+    pendingOwnedOuterRef.current = null;
+    if (outer !== pair.outer) disposeLocal(outer);
+  }, [pair]);
+
+  useEffect(() => () => {
+    targetReleaseRef.current?.();
+    targetReleaseRef.current = null;
+    pendingDisplayedReleaseRef.current?.();
+    pendingDisplayedReleaseRef.current = null;
+    displayedReleaseRef.current?.();
+    displayedReleaseRef.current = null;
+    const current = displayedPairRef.current;
+    const pendingOuter = pendingOwnedOuterRef.current;
+    pendingOwnedOuterRef.current = null;
+    if (pendingOuter && pendingOuter !== current?.outer) disposeLocal(pendingOuter);
+    if (current?.ownedOuter) disposeLocal(current.outer);
+  }, []);
 
   // 自动适配视图 - 等待几何体完全准备好
   useEffect(() => {
-    if (!geometry || !offsetGeometry || !fitToView || !meshRef.current) return;
+    if (!pair || !fitToView || !meshRef.current) return;
 
     try {
       const box = new THREE.Box3().setFromObject(meshRef.current);
@@ -416,32 +423,33 @@ function DualLayerModelLoader({
     } catch (err) {
       console.warn('[JadeV6] 视图适配失败:', err);
     }
-  }, [geometry, offsetGeometry, fitToView, camera]);
+  }, [pair, fitToView, camera]);
 
 
-  if (loading) {
-    return null; // 加载期间不显示任何内容
+  if (loading && !pair) {
+    return null; // 首次加载期间不显示任何内容
   }
 
-  if (error) {
-    return null; // 错误时也不显示占位立方体
+  if (error && !pair) {
+    return null; // 首次失败时也不显示占位立方体
   }
 
-  if (!geometry || !offsetGeometry) return null;
+  if (!pair) return null;
 
   return (
     <group>
       {/* 自发光层：原始模型（内部） */}
       {showInnerLayer && (
-        <mesh ref={meshRef} geometry={geometry} material={material} />
+        <mesh ref={meshRef} geometry={pair.base} material={material} dispose={null} />
       )}
       
       {/* 折射层：offset 几何体（外壳） */}
       {showOuterLayer && (
         <mesh 
           ref={refractionMeshRef} 
-          geometry={offsetGeometry} 
+          geometry={pair.outer}
           material={refractionMaterial}
+          dispose={null}
         />
       )}
     </group>

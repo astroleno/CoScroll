@@ -6,6 +6,7 @@ import {after, test} from 'node:test';
 import {gunzipSync} from 'node:zlib';
 import * as THREE from 'three';
 import {checkPreparedModels, loadModelPipeline} from '../../deploy/prepare-models.mjs';
+import {readDeliveryPair} from '../../deploy/prepare-model-delivery.mjs';
 import {loadPreloaderModule} from './model-modules.mjs';
 
 const root = resolve('.');
@@ -69,7 +70,7 @@ test('all 26 complete prepared models match independently recorded legacy geomet
   }
 });
 
-function registryEntryIdentity(entry) {return {generation:registry.generation, sourceSha256:entry.sourceSha256};}
+function registryEntryIdentity(entry) {return {generation:entry.generation ?? registry.generation, sourceSha256:entry.sourceSha256};}
 
 function expandedAttribute(geometry, name) {
   const values = geometry.getAttribute(name), index = geometry.index;
@@ -110,7 +111,7 @@ test('75 approved V2 GLBs retain every delivered triangle, winding, stroke compo
     assert.ok(source.length < 1_000_000);
     assert.equal(model.sourceReview, 'APPROVED');
     assert.equal(entry.sourceSha256, model.sha256);
-    const decoded = await pipeline.decodePreparedModel(await payload(entry), registryEntryIdentity(entry));
+    const decoded = await readDeliveryPair(entry, registry, pipeline);
     try {
       // This hash was read directly from the supplied GLB accessors, without
       // GLTFLoader or the project's geometry preparation implementation.
@@ -169,7 +170,9 @@ test('lossless codec preserves negative zero, array types and geometry metadata'
 test('cooperative restoration allows queued UI work between chunks without altering complete geometry', async () => {
   const entry = registry.models.find(entry => entry.sourcePath === delivery.models[0].modelPath);
   let turns = 0, queuedWork = 0;
-  const stored = await payload(entry);
+  const source = await readDeliveryPair(entry, registry, pipeline);
+  const stored = {base: await pipeline.encodeGeometry(source.base)};
+  source.base.dispose(); source.outer.dispose();
   const budget = {expired: () => true, yield: () => new Promise(resolve => {
     turns++;
     setImmediate(() => {queuedWork++; resolve();});
@@ -199,9 +202,14 @@ async function withLoaderIO(options, run) {
   const fetches = [], objLoads = [];
   preloader.clearCache();
   globalThis.fetch = async url => {
-    fetches.push(url);
     const entry = registry.models.find(entry => assetUrl(entry.preparedPath) === url);
-    assert.ok(entry, 'only the mapped release URL is requested');
+    if (!entry) {
+      objLoads.push(url);
+      const original = options.objSource || registry.models.find(entry => assetUrl(entry.sourcePath) === url)?.sourcePath;
+      assert.ok(original, 'fallback source is explicit');
+      return new Response(await readFile(join(root, 'public', original)));
+    }
+    fetches.push(url);
     let bytes = await readFile(join(root, 'public', entry.preparedPath));
     if (options.corrupt) bytes = Buffer.from(bytes.toString().replace('Float32Array', 'Float64Array'));
     return new Response(bytes, {status:options.status || 200});
@@ -255,7 +263,7 @@ test('all delivered GLBs use prepared pairs and retain matching full source fall
       await withLoaderIO(options, async ({fetches, objLoads}) => {
         for (const model of delivery.models) {
           const entry = registry.models.find(entry => entry.sourcePath === model.modelPath);
-          const expected = await pipeline.decodePreparedModel(await payload(entry), registryEntryIdentity(entry));
+          const expected = await readDeliveryPair(entry, registry, pipeline);
           globalThis.DecompressionStream = options.nativeDecompression === false ? undefined : saved;
           try {
             const path = assetUrl(model.modelPath);
@@ -300,18 +308,18 @@ test('visiting all 101 prepared models retains the active pair and disposes both
       assert.equal(objLoads.length, 0);
     } finally { release(); }
     preloader.trimCache();
-    assert.equal(preloader.getCacheStatus().loaded, 8);
+    assert.ok(preloader.getCacheStatus().loaded > 0 && preloader.getCacheStatus().loaded <= 8);
     assert.equal(disposalCounts.size, registry.models.length * 2);
     const retained = new Set([...preloader.cache.values(),
       ...[...preloader.offsetGeometryCache.values()].flatMap(entries => [...entries.values()])]);
-    assert.equal(retained.size, 16);
-    assert.equal(disposalCounts.get(activeBase), 1, 'the released old active pair is now evictable');
+    assert.equal(retained.size, preloader.getCacheStatus().loaded * 2);
+    assert.ok(preloader.getCacheStatus().idleBytes <= 8 * 1024 * 1024);
+    assert.equal(disposalCounts.get(activeBase), retained.has(activeBase) ? 0 : 1,
+      'released entries remain usable when they still fit the byte budget');
     for (const [geometry, count] of disposalCounts) {
       assert.equal(count, retained.has(geometry) ? 0 : 1, 'only evicted geometry is disposed, exactly once');
     }
-    // The eight retained pairs remain usable. Dispose them explicitly when
-    // tearing down this test; legacy clearCache() only drops its lookup maps.
-    for (const geometry of retained) geometry.dispose();
+    // Teardown clears the remaining idle pairs through the same owner-aware cache.
   });
 });
 

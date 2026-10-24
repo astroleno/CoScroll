@@ -12,6 +12,8 @@ export async function loadPreloaderModule(directory) {
       .replaceAll("'@/utils/assetUrl'", "'./assetUrl.mjs'")
       .replaceAll("'./modelGeometry'", "'./modelGeometry.mjs'")
       .replaceAll("'./preparedModelGeometry'", "'./preparedModelGeometry.mjs'")
+      .replaceAll("'./preparedModelDelivery'", "'./preparedModelDelivery.mjs'")
+      .replaceAll("'./modelDecodeScheduler'", "'./modelDecodeScheduler.mjs'")
       .replaceAll("'./prepared-models.json'", "'./prepared-registry.mjs'");
     await writeFile(join(directory, name + '.mjs'), compiled);
   }

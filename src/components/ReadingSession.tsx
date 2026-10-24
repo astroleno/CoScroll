@@ -693,7 +693,7 @@ export default function ReadingSession({sessionRevision, config, lyrics, mediaDu
       .finally(() => {
         if (!canceled) refreshPreloadStatus();
       }), 400);
-    return () => { canceled = true; clearTimeout(timer); };
+    return () => { canceled = true; clearTimeout(timer); preloader.cancelPreloadNext(); };
   }, [anchorChar, config, timeline, anchorMappings, refreshPreloadStatus, duration, entered]);
 
   // 调试信息：显示当前锚字状态
