@@ -6,6 +6,8 @@ interface EnhancedAudioPlayerProps {
   duration: number;
   currentTime: number;
   isBuffering?: boolean;
+  errorMessage?: string;
+  onRetry?: () => void;
   onPlayPause: () => void;
   onSeek: (time: number) => void;
   showDebugInfo?: boolean;
@@ -32,18 +34,14 @@ const PauseIcon = () => (
   </svg>
 );
 
-const BufferingIcon = ({accent}: {accent: string}) => (
-  <div className="w-8 h-8 flex items-center justify-center">
-    <div className="w-6 h-6 border-2 rounded-full animate-spin" style={{borderColor: accent, borderTopColor: 'transparent'}}></div>
-  </div>
-);
-
 const EnhancedAudioPlayer: React.FC<EnhancedAudioPlayerProps> = ({
   isPlaying,
   isReady,
   duration,
   currentTime,
   isBuffering = false,
+  errorMessage,
+  onRetry,
   onPlayPause,
   onSeek,
   showDebugInfo = false,
@@ -161,17 +159,19 @@ const EnhancedAudioPlayer: React.FC<EnhancedAudioPlayerProps> = ({
   }, []);
 
   return (
-    <div className="w-full max-w-2xl p-4" style={{'--player-accent': accent, '--player-focus': `rgba(${accentRgb},0.3)`} as React.CSSProperties}>
+    <div className="relative w-full max-w-2xl p-4" data-audio-status={errorMessage ? 'error' : isBuffering ? 'buffering' : isReady ? 'ready' : 'loading'}
+      style={{'--player-accent': accent, '--player-focus': `rgba(${accentRgb},0.3)`} as React.CSSProperties}>
       <div className="flex items-center gap-4">
         {/* Play/Pause Button */}
         <button
+          type="button"
           onClick={onPlayPause}
-          disabled={(!isReady && !isPlaying) || isBuffering}
+          disabled={!isReady && !isPlaying}
           className="hover:text-white transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed transform hover:scale-105 active:scale-95"
           style={{color: accent}}
           aria-label={isPlaying ? 'Pause' : 'Play'}
         >
-          {isBuffering ? <BufferingIcon accent={accent} /> : isPlaying ? <PauseIcon /> : <PlayIcon />}
+          {isPlaying ? <PauseIcon /> : <PlayIcon />}
         </button>
 
         {/* Time Display and Progress Bar */}
@@ -219,7 +219,7 @@ const EnhancedAudioPlayer: React.FC<EnhancedAudioPlayerProps> = ({
               }}
               onMouseMove={handleMouseMove}
               onKeyDown={handleKeyDown}
-              disabled={!isReady || isBuffering}
+              disabled={!isReady}
               className="w-full h-1.5 bg-gray-600/40 rounded-lg appearance-none cursor-pointer range-lg disabled:cursor-not-allowed transition-all duration-150"
               style={{
                 background: `linear-gradient(to right, ${accent} ${displayProgress}%, rgba(74,85,104,0.4) ${displayProgress}%)`,
@@ -251,6 +251,19 @@ const EnhancedAudioPlayer: React.FC<EnhancedAudioPlayerProps> = ({
           </div>
         )}
       </div>
+
+      {errorMessage ? (
+        <div className="mt-3 flex items-center justify-center gap-3 text-xs">
+          <p role="alert" className="text-gray-300">{errorMessage}</p>
+          {onRetry && <button type="button" onClick={onRetry}
+            className="shrink-0 min-h-11 px-3 underline underline-offset-4 rounded focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+            style={{color: accent}}>重试</button>}
+        </div>
+      ) : (
+        <p role="status" className="absolute left-4 right-4 bottom-full mb-2 text-center text-xs text-gray-400">
+          {isBuffering ? '正在缓冲，可暂停或调整进度…' : !isReady ? '录音加载中…' : ''}
+        </p>
+      )}
 
       {/* Styles */}
       <style jsx>{`

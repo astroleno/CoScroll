@@ -2,6 +2,8 @@ import React, { useRef, useCallback, useEffect } from 'react';
 import timelineStore from '@/stores/timelineStore';
 import { loopCycle, loopDuration, loopPhase, playbackCycle } from '@/utils/loopTimeline';
 
+export type AudioLoadState = {status: 'loading' | 'ready' | 'buffering'} | {status: 'error'; message: string};
+
 interface AudioEngineProps {
   sessionRevision?: number;
   audioElementRef?: React.MutableRefObject<HTMLAudioElement | null>;
@@ -16,6 +18,8 @@ interface AudioEngineProps {
   onReady: () => void;
   onPlayStateChange: (isPlaying: boolean) => void;
   onLoopComplete: (loopCount: number) => void;
+  onStatusChange?: (state: AudioLoadState) => void;
+  retrySignal?: number;
   enableWebAudio?: boolean;
   initialTime?: number;
   seekSignal?: number;
@@ -28,7 +32,6 @@ interface AudioState {
   duration: number;
   currentTime: number;
   loopCount: number;
-  isBuffering: boolean;
 }
 
 export const AudioEngine: React.FC<AudioEngineProps> = ({
@@ -45,6 +48,8 @@ export const AudioEngine: React.FC<AudioEngineProps> = ({
   onReady,
   onPlayStateChange,
   onLoopComplete,
+  onStatusChange,
+  retrySignal = 0,
   enableWebAudio = true,
   initialTime = 0,
   seekSignal,
@@ -64,6 +69,23 @@ export const AudioEngine: React.FC<AudioEngineProps> = ({
   const startupRetryTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const sessionRef = useRef(sessionRevision);
   const transitioningRef = useRef(true);
+  const statusRef = useRef<AudioLoadState | null>(null);
+  const statusCallbackRef = useRef(onStatusChange);
+  statusCallbackRef.current = onStatusChange;
+  const lastRetrySignalRef = useRef(retrySignal);
+  const retryTargetRef = useRef<number | null>(null);
+
+  const reportStatus = useCallback((next: AudioLoadState) => {
+    const previous = statusRef.current;
+    if (previous?.status === next.status &&
+        (next.status !== 'error' || (previous.status === 'error' && previous.message === next.message))) return;
+    statusRef.current = next;
+    statusCallbackRef.current?.(next);
+  }, []);
+
+  const isCurrentMedia = useCallback((audio: HTMLAudioElement) => audio === audioRef.current &&
+    sourceRef.current === audioSrc && sessionRef.current === sessionRevision &&
+    audio.getAttribute('src') === audioSrc, [audioSrc, sessionRevision]);
 
   if (playingIntentRef.current !== desiredPlayingState || sourceRef.current !== audioSrc || sessionRef.current !== sessionRevision) {
     if (sourceRef.current !== audioSrc || sessionRef.current !== sessionRevision) transitioningRef.current = true;
@@ -102,8 +124,7 @@ export const AudioEngine: React.FC<AudioEngineProps> = ({
     isReady: false,
     duration: 0,
     currentTime: 0,
-    loopCount: 0,
-    isBuffering: false
+    loopCount: 0
   });
 
   useEffect(() => {
@@ -115,6 +136,10 @@ export const AudioEngine: React.FC<AudioEngineProps> = ({
     timelineStore.pendingAudioSeek = null;
     timelineStore.setAudioTime(0, 0);
     startupRetriesRef.current = 0;
+    lastRetrySignalRef.current = retrySignal;
+    retryTargetRef.current = null;
+    statusRef.current = null;
+    reportStatus({status: 'loading'});
     isSeekingRef.current = false;
     pendingSeekRef.current = null;
     lastSeekTimeRef.current = 0;
@@ -125,7 +150,7 @@ export const AudioEngine: React.FC<AudioEngineProps> = ({
       if (startupRetryTimerRef.current) clearTimeout(startupRetryTimerRef.current);
       startupRetryTimerRef.current = null;
     };
-  }, [audioSrc, sessionRevision]);
+  }, [audioSrc, sessionRevision, reportStatus]);
 
   // Seek management
   const isSeekingRef = useRef(false);
@@ -140,7 +165,7 @@ export const AudioEngine: React.FC<AudioEngineProps> = ({
     if (timelineStore.pendingAudioSeek !== null) {
       return {display: timelineStore.audioDisplayTime, absolute: timelineStore.pendingAudioSeek};
     }
-    if (!audio || isSeekingRef.current) {
+    if (!audio || !stateRef.current.isReady || isSeekingRef.current) {
       return {display: stateRef.current.currentTime,
         absolute: stateRef.current.loopCount * base + stateRef.current.currentTime};
     }
@@ -288,35 +313,25 @@ export const AudioEngine: React.FC<AudioEngineProps> = ({
     animationFrameRef.current = requestAnimationFrame(animationStep);
   }, [animationStep, enableWebAudio]);
 
-  // Handle time updates with buffering detection
+  // Buffering is reported by native waiting/playing events, not buffer estimates.
   const handleTimeUpdate = useCallback((event: React.SyntheticEvent<HTMLAudioElement>) => {
     const audio = event.currentTarget;
-    if (!audio || isSeekingRef.current || transitioningRef.current) return;
+    if (!isCurrentMedia(audio) || isSeekingRef.current || transitioningRef.current) return;
 
     const sample = sampleNativeClock();
     const newTime = sample.display;
 
-    const buffered = audio.buffered;
-
-    let isBuffering = false;
-    if (buffered.length > 0) {
-      const currentBufferEnd = buffered.end(buffered.length - 1);
-      const bufferThreshold = 2;
-      isBuffering = currentBufferEnd - newTime < bufferThreshold;
-    }
-
     stateRef.current.currentTime = newTime;
-    stateRef.current.isBuffering = isBuffering;
 
     if (animationFrameRef.current === null) {
       onTimeUpdate(newTime, sample.absolute);
     }
-  }, [sampleNativeClock, onTimeUpdate]);
+  }, [sampleNativeClock, onTimeUpdate, isCurrentMedia]);
 
   // Handle audio metadata loaded
   const handleLoadedMetadata = useCallback(() => {
     const audio = audioRef.current;
-    if (!audio || audio.readyState < 1) return;
+    if (!audio || !isCurrentMedia(audio) || audio.error || audio.readyState < 1) return;
 
     const realDuration = Math.max(1, audio.duration);
     stateRef.current.duration = realDuration;
@@ -324,14 +339,19 @@ export const AudioEngine: React.FC<AudioEngineProps> = ({
     lastPlaybackTimeRef.current = audio.currentTime || 0;
 
     // Apply initial seek if specified
-    if (initialTime > 0) {
+    const target = timelineStore.pendingAudioSeek ?? retryTargetRef.current;
+    if (target !== null) {
+      retryTargetRef.current = null;
+      performSeek(target);
+    } else if (initialTime > 0) {
       performSeek(initialTime);
     }
-  }, [initialTime, onDurationChange, performSeek]);
+  }, [initialTime, onDurationChange, performSeek, isCurrentMedia]);
 
   // Handle audio ready to play
   const handleCanPlay = useCallback(() => {
-    if (!audioRef.current || audioRef.current.readyState < 3) return;
+    const readyAudio = audioRef.current;
+    if (!readyAudio || !isCurrentMedia(readyAudio) || readyAudio.error || readyAudio.readyState < 3) return;
     transitioningRef.current = false;
     if (startupRetryTimerRef.current) {
       clearTimeout(startupRetryTimerRef.current);
@@ -341,6 +361,8 @@ export const AudioEngine: React.FC<AudioEngineProps> = ({
       stateRef.current.isReady = true;
       onReady();
     }
+    if (timelineStore.pendingAudioSeek !== null) performSeek(timelineStore.pendingAudioSeek);
+    reportStatus({status: 'ready'});
 
       if (playingIntentRef.current) {
         const audio = audioRef.current;
@@ -366,7 +388,40 @@ export const AudioEngine: React.FC<AudioEngineProps> = ({
             });
         }
       }
-  }, [initAudioContext, resumeAudioContext, onPlayStateChange, onReady]);
+  }, [initAudioContext, resumeAudioContext, onPlayStateChange, onReady, isCurrentMedia, performSeek, reportStatus]);
+
+  useEffect(() => {
+    if (lastRetrySignalRef.current === retrySignal) return;
+    lastRetrySignalRef.current = retrySignal;
+    const audio = audioRef.current;
+    if (!audio || !isCurrentMedia(audio)) return;
+    const base = loopDuration(duration || audio.duration || 1);
+    const target = timelineStore.pendingAudioSeek ?? desiredLoopCount * base + desiredTime;
+    retryTargetRef.current = target;
+    timelineStore.requestAudioTime(loopPhase(target, base), target);
+    stateRef.current.isReady = stateRef.current.isPlaying = false;
+    transitioningRef.current = true;
+    playingIntentRef.current = false;
+    playGenerationRef.current++;
+    startupRetriesRef.current = 0;
+    if (startupRetryTimerRef.current) clearTimeout(startupRetryTimerRef.current);
+    startupRetryTimerRef.current = null;
+    if (seekThrottleTimeoutRef.current) clearTimeout(seekThrottleTimeoutRef.current);
+    seekThrottleTimeoutRef.current = null;
+    pendingSeekRef.current = null;
+    lastSeekTimeRef.current = 0;
+    isSeekingRef.current = false;
+    audio.pause();
+    cancelAnimationLoop();
+    reportStatus({status: 'loading'});
+    audio.load();
+  }, [retrySignal, audioSrc, sessionRevision, isCurrentMedia, reportStatus, cancelAnimationLoop, duration, desiredLoopCount, desiredTime]);
+
+  const handleWaiting = useCallback((event: React.SyntheticEvent<HTMLAudioElement>) => {
+    const audio = event.currentTarget;
+    if (!isCurrentMedia(audio) || audio.error || !playingIntentRef.current || audio.readyState >= 3) return;
+    reportStatus({status: stateRef.current.isReady ? 'buffering' : 'loading'});
+  }, [isCurrentMedia, reportStatus]);
 
   // Sync with desired playing state
   useEffect(() => {
@@ -375,6 +430,7 @@ export const AudioEngine: React.FC<AudioEngineProps> = ({
     // Pause also cancels a pending play(), before its native play event arrives.
     if (!desiredPlayingState) {
       audio.pause();
+      if (statusRef.current?.status === 'buffering') reportStatus({status: 'ready'});
       if (stateRef.current.isPlaying) {
         stateRef.current.isPlaying = false;
         onPlayStateChange(false);
@@ -410,26 +466,43 @@ export const AudioEngine: React.FC<AudioEngineProps> = ({
           });
       }
     }
-  }, [desiredPlayingState, initAudioContext, resumeAudioContext, onPlayStateChange]);
+  }, [desiredPlayingState, initAudioContext, resumeAudioContext, onPlayStateChange, reportStatus]);
 
   const handleAudioError = useCallback((event: React.SyntheticEvent<HTMLAudioElement>) => {
     const audio = event.currentTarget;
-    if (!audio.error) return;
+    if (!isCurrentMedia(audio) || !audio.error || statusRef.current?.status === 'error') return;
+    if (startupRetryTimerRef.current) return;
     // Retry only startup failures. Never restart a track that has already played.
     if (!stateRef.current.isReady && startupRetriesRef.current < 2) {
-      if (startupRetryTimerRef.current) return;
       const attempt = ++startupRetriesRef.current;
       console.warn(`[AudioEngine] Initial audio request failed; retry ${attempt}/2`);
       startupRetryTimerRef.current = setTimeout(() => {
         startupRetryTimerRef.current = null;
-        if (audio !== audioRef.current || sourceRef.current !== audioSrc || stateRef.current.isReady) return;
+        if (!isCurrentMedia(audio) || stateRef.current.isReady) return;
         playGenerationRef.current++;
         audio.load();
       }, attempt * 1000);
       return;
     }
-    console.error('[AudioEngine] Audio error:', audio.error);
-  }, [audioSrc]);
+    // Keep the signed timeline fixed even if load() resets the native clock.
+    const base = loopDuration(duration || audio.duration || 1);
+    const target = timelineStore.pendingAudioSeek ?? stateRef.current.loopCount * base + stateRef.current.currentTime;
+    timelineStore.requestAudioTime(loopPhase(target, base), target);
+    stateRef.current.isReady = stateRef.current.isPlaying = false;
+    transitioningRef.current = true;
+    playingIntentRef.current = false;
+    playGenerationRef.current++;
+    if (seekThrottleTimeoutRef.current) clearTimeout(seekThrottleTimeoutRef.current);
+    seekThrottleTimeoutRef.current = null;
+    pendingSeekRef.current = null;
+    audio.pause();
+    cancelAnimationLoop();
+    onPlayStateChange(false);
+    const message = audio.error.code === 3 ? '录音无法解码，请重试或切换经文。'
+      : audio.error.code === 4 ? '录音暂时无法播放，请重试或切换经文。'
+      : '录音加载失败，请检查网络后重试。';
+    reportStatus({status: 'error', message});
+  }, [isCurrentMedia, duration, cancelAnimationLoop, onPlayStateChange, reportStatus]);
 
   // Sync external loopCount to internal state
   useEffect(() => {
@@ -494,10 +567,21 @@ export const AudioEngine: React.FC<AudioEngineProps> = ({
       ref={audioRef}
       src={audioSrc}
       onTimeUpdate={handleTimeUpdate}
-      onSeeked={() => { isSeekingRef.current = false; sampleNativeClock(); }}
+      onSeeked={(event) => {
+        if (!isCurrentMedia(event.currentTarget) || event.currentTarget.error) return;
+        isSeekingRef.current = false; sampleNativeClock();
+      }}
       onLoadedMetadata={handleLoadedMetadata}
       onCanPlay={handleCanPlay}
+      onWaiting={handleWaiting}
+      onStalled={handleWaiting}
+      onPlaying={(event) => {
+        if (!isCurrentMedia(event.currentTarget) || event.currentTarget.error) return;
+        if (!playingIntentRef.current) { event.currentTarget.pause(); return; }
+        reportStatus({status: 'ready'});
+      }}
       onPlay={(event) => {
+        if (!isCurrentMedia(event.currentTarget) || event.currentTarget.error) return;
         if (!playingIntentRef.current) {
           event.currentTarget.pause();
           return;
@@ -509,6 +593,7 @@ export const AudioEngine: React.FC<AudioEngineProps> = ({
       startAnimationLoop();
       }}
       onPause={(event) => {
+        if (!isCurrentMedia(event.currentTarget)) return;
         if (!event.currentTarget.paused || (playingIntentRef.current &&
           (transitioningRef.current || !stateRef.current.isPlaying))) return;
         stateRef.current.isPlaying = false;

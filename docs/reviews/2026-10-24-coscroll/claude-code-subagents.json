@@ -1,0 +1,311 @@
+{
+  "provider": "claude-code",
+  "cliVersion": "2.1.201",
+  "reportedModel": "claude-opus-5[1m]",
+  "sourceCommit": "ac872e82eb04ce10632335b3f6e03c7146874116",
+  "actualSubagentsCompleted": 3,
+  "note": "Original independent child findings; not endorsed by main-thread triage. Priority/confidence fields are preserved as returned. No custom subagent_type was present in the observed Agent call arguments.",
+  "children": [
+    {
+      "description": "Correctness review - audio & config",
+      "callId": "tooluse_FWBjzlfu8zqwWuloiRv5a5",
+      "agentId": "a7c531d4e405498d5",
+      "result": {
+        "reviewer": "correctness",
+        "commit": "ac872e82eb04ce10632335b3f6e03c7146874116",
+        "findings": [
+          {
+            "id": "CORR-001",
+            "severity": "MEDIUM",
+            "category": "async_cleanup",
+            "title": "Missing abort controller in useLyricsFromConfig hook",
+            "files": [
+              "src/hooks/useLyricsFromConfig.ts"
+            ],
+            "lines": [
+              62,
+              101
+            ],
+            "trigger_condition": "Component unmounts while lyrics fetch is in progress, or config.assets.lyrics.src changes before previous fetch completes",
+            "evidence": "The useEffect starting at line 62 initiates fetch(assetUrl(config.assets.lyrics.src)) without creating an AbortController. The cleanup function (line 100) only clears the error timer, leaving the fetch request and parseLRC parsing to complete even after unmount. If the component remounts with different lyrics or unmounts permanently, stale responses can update React state on an unmounted component.",
+            "observable_impact": "Console warning 'Can't perform a React state update on an unmounted component' when navigation occurs during lyrics loading. In race conditions where config changes rapidly, stale lyrics from an old config could briefly replace newer lyrics.",
+            "confidence": 0.95,
+            "verification_method": "Navigate away from ReadingSession during initial project load. Check browser console for React state update warnings. Add console.log in the fetch.then callback to observe it completing after unmount.",
+            "suggested_fix": "Create AbortController at useEffect start. Pass signal to fetch(). In cleanup function, call controller.abort() and guard setLyrics/setError calls with if (!signal.aborted) check. Pattern from prepareProject.ts lines 65-68 demonstrates correct usage."
+          },
+          {
+            "id": "CORR-002",
+            "severity": "LOW",
+            "category": "error_propagation",
+            "title": "Silent fallback on parseLRC error masks data corruption",
+            "files": [
+              "src/config/prepareProject.ts"
+            ],
+            "lines": [
+              72,
+              74
+            ],
+            "trigger_condition": "Cached entry exists with corrupt lyrics data that fails parseLRC validation (e.g., malformed timestamps, seconds >= 60)",
+            "evidence": "Line 73-74: if (entry?.config?.assets?.lyrics?.src === config.assets.lyrics.src) { try {return parseLRC(entry.lyrics);} catch { /* A bad hint falls back to the release object. */ } }. The catch block silently swallows parseLRC errors and falls through to network fetch. If cache corruption is systematic (e.g., persisted IndexedDB with bad schema migration), this creates a fetch-on-every-load performance regression without visibility.",
+            "observable_impact": "Performance: Users experience slower load times when cache contains corrupt data, with no diagnostic signal. The app works correctly but bypasses cache benefits. No user-visible error unless the network fetch also fails.",
+            "confidence": 0.7,
+            "verification_method": "Manually corrupt entry.lyrics in browser DevTools (set a timestamp to '99:99.99'). Reload project. Verify network request occurs despite cache hit. Check that no warning appears in console about cache corruption.",
+            "suggested_fix": "Log cache validation failures: console.warn('[prepareProject] Cached lyrics failed validation, refetching:', error.message). Consider cache invalidation: if parseLRC fails, clear that entry from cache to prevent repeated fetch-on-load cycles."
+          },
+          {
+            "id": "CORR-003",
+            "severity": "MEDIUM",
+            "category": "timeline_sync",
+            "title": "seekSignal undefined handling allows stale position updates",
+            "files": [
+              "src/components/audio/AudioEngine.tsx"
+            ],
+            "lines": [
+              454,
+              462,
+              468
+            ],
+            "trigger_condition": "Component uses AudioEngine without seekSignal prop (legacy caller pattern). During natural playback, desiredTime and desiredLoopCount props update from parent onTimeUpdate callbacks, creating circular seek commands.",
+            "evidence": "Lines 454-462: if (seekSignal !== undefined && seekSignal !== lastAppliedSeekSignalRef.current) triggers explicit seek. Line 462: if (seekSignal !== undefined) return; exits early for callers with seekSignal. Lines 463-474: Legacy branch allows seeks when |desiredTime - currentTime| > 0.1s. For callers without seekSignal (ReadingSession.tsx), parent's commitTimeUpdate at line 246 calls onTimeUpdate(displayTime, absoluteTime), which updates ReadingSession state, which flows back as desiredTime prop. Line 468 condition diff > 0 allows forward time corrections but can trigger during rapid state updates.",
+            "observable_impact": "During drag-based seeking in ReadingSession, the AudioEngine may receive desiredTime updates from its own timeUpdate callbacks via parent state, causing redundant performSeek calls. Observable as microstutters during seek or doubled seek operations in console logs (line 231 logs each performSeek).",
+            "confidence": 0.65,
+            "verification_method": "Add console.log at line 472 showing trigger source. Perform rapid slider drag in EnhancedAudioPlayer. Count performSeek invocations vs expected user gestures. Check if seeks occur during onTimeUpdate without user interaction.",
+            "suggested_fix": "Deprecate legacy seekSignal===undefined path. Require all AudioEngine callers to provide seekSignal prop. Document migration: parents should increment seekSignal only for user-initiated seeks, never from onTimeUpdate callbacks. This breaks the circular dependency."
+          },
+          {
+            "id": "CORR-004",
+            "severity": "LOW",
+            "category": "race_condition",
+            "title": "EnhancedAudioPlayer debounce timer not canceled on unmount",
+            "files": [
+              "src/components/audio/EnhancedAudioPlayer.tsx"
+            ],
+            "lines": [
+              89,
+              155
+            ],
+            "trigger_condition": "User initiates non-drag seek (keyboard arrow keys, progress bar click without drag), then component unmounts before 100ms debounce timer fires",
+            "evidence": "Line 89-92: seekTimeoutRef.current = setTimeout(() => { lastSeekTimeRef.current = Date.now(); onSeek(time); }, 100 - timeSinceLastSeek);. Line 155-160 useEffect cleanup: return () => { if (seekTimeoutRef.current) { clearTimeout(seekTimeoutRef.current); } };. The cleanup does cancel the timer, preventing the callback execution. However, the onSeek prop is called with a captured time value. If parent component has already unmounted or changed state, this could invoke stale callbacks.",
+            "observable_impact": "Minimal - the clearTimeout at line 157 prevents the callback. This finding has low confidence because the cleanup is present. The risk is if onSeek itself has side effects that assume the player is still mounted, but typically onSeek is a stable callback.",
+            "confidence": 0.4,
+            "verification_method": "Trigger keyboard seek (ArrowRight), immediately unmount EnhancedAudioPlayer before 100ms. Verify onSeek is not called. Check parent component doesn't receive seek command after unmount.",
+            "suggested_fix": "Current implementation is correct. If onSeek can trigger React state updates, parent should use useCallback with stable dependencies. No code change needed; this is defensive verification."
+          }
+        ],
+        "residual_risks": [
+          {
+            "area": "Loop boundary synchronization",
+            "description": "AudioEngine's playbackCycle detection (line 149) relies on lastPlaybackTimeRef to detect backward time jumps indicating loop boundaries. If audio.currentTime jumps backward by exactly loopDuration due to the loop attribute (line 524), the cycle increments correctly. However, if the browser's loop implementation has timing jitter (e.g., currentTime jumps from 363.98 to 0.05 instead of exactly duration to 0), the cycle detection may increment at the wrong frame. This is mitigated by the loopPhase arithmetic (loopTimeline.ts) which uses modulo, but visual artifacts could occur during the single-frame window where cycle hasn't updated yet.",
+            "severity": "LOW",
+            "mitigation": "Monitor for user reports of visual discontinuity at loop boundaries. Add telemetry logging cycle increments with delta measurements to detect jitter patterns across browsers."
+          },
+          {
+            "area": "Font loading race with Canvas rendering",
+            "description": "UnifiedLyricsAndModel renders lyrics in Canvas with fontFamily prop. ReadingSession line 155-177 loads font via document.fonts.load() after mount. If Canvas renders before font completes, glyphs may render with fallback font, then switch when font loads (causing layout shift or texture regeneration). The prepareProject.ts line 83 awaits document.fonts.load() before resolving, so font should be ready before session starts. However, fontRevision prop (line 46, incremented at line 166) triggers texture regeneration. If font loading fails (line 168 catch), fontRevision still increments, causing unnecessary re-render with unchanged font.",
+            "severity": "LOW",
+            "mitigation": "Current implementation has defensive fontRevision bump on both success and failure (line 166, 171). The prepareProject guard should prevent this path. Risk is low; monitor for cumulative layout shift metrics in production."
+          },
+          {
+            "area": "projectConfigStore abort/revision counter synchronization",
+            "description": "projectConfigStore.ts uses both AbortController (line 101-102) and requestRevision counter (line 103) to cancel stale requests. Line 120 checks both signal.aborted and revision !== requestRevision. If two rapid project switches occur (loadProject('A'), loadProject('B')), the first abort() is called at line 100, but promise callbacks (line 120) may not execute immediately. There's a narrow window where prepareProject for 'A' could complete after 'B' has started, and the revision check (line 120) correctly rejects it, but the prepared.release() call in the catch block is missing. Line 122 release() only happens on success path.",
+            "severity": "LOW",
+            "mitigation": "Line 96 catch block should call prepared.release() if prepareProject succeeded but was rejected due to abort/revision. Current code at line 137 aborts the controller, which should trigger AbortError in prepareProject line 66-68, preventing resource leak. Risk is low; verify with rapid project switching test."
+          }
+        ],
+        "testing_gaps": [
+          {
+            "area": "Abort signal propagation in useLyricsFromConfig",
+            "test_type": "integration",
+            "description": "No test verifies that fetch is canceled when component unmounts during lyrics load. Test should mount component with slow-responding lyrics URL, unmount before fetch completes, verify fetch aborted and no state updates occur.",
+            "priority": "HIGH"
+          },
+          {
+            "area": "Loop boundary cycle increment timing",
+            "test_type": "unit",
+            "description": "No test for AudioEngine's playbackCycle detection with browser loop timing variations. Mock audio element with currentTime jumping from duration-0.01 to 0.02 (simulating jitter). Verify cycle increments exactly once and timeline store receives correct absolute time.",
+            "priority": "MEDIUM"
+          },
+          {
+            "area": "Seek command race with pendingAudioSeek",
+            "test_type": "unit",
+            "description": "No test verifying that stale throttled seeks are dropped when newer seek command arrives. Test should queue rapid seeks (100ms, 200ms, 300ms targets) and verify only latest seek executes, intermediate throttled seeks are canceled.",
+            "priority": "MEDIUM"
+          },
+          {
+            "area": "Generation counter invalidation in AudioEngine",
+            "test_type": "unit",
+            "description": "Verify that play() promises from stale generations (before source change) don't update state. Mock audio element returning delayed play() promise after sessionRevision has incremented. Verify onPlayStateChange not called for stale generation.",
+            "priority": "LOW"
+          },
+          {
+            "area": "projectConfigStore revision vs abort coordination",
+            "test_type": "integration",
+            "description": "Test rapid project switching (A -> B -> C) with varying prepareProject completion times. Verify only project C commits to state, earlier requests release resources without side effects, and no stale project config appears.",
+            "priority": "MEDIUM"
+          }
+        ]
+      },
+      "resultBodySha256": "f3b433a52376c318158249f70d64a34a52ce2ad92a11f747644eab33d0ebd559"
+    },
+    {
+      "description": "Rendering review - transmission region",
+      "callId": "tooluse_hV3DXmbxQHlLYoQIXkZPYX",
+      "agentId": "a5e2a515f6531500e",
+      "result": {
+        "findings": [],
+        "residual_risks": [
+          {
+            "area": "Context restoration timing",
+            "description": "The webglcontextrestored event listener is attached to gl.domElement at TransmissionRegionRendering mount time. If the WebGL context is restored after React unmounts this component but before the canvas is destroyed, the region.reset() handler will execute but the transmission region provider will have already been uninstalled (line 17 checks if it's still the active provider before removing). This means context restoration after unmount is safe but the reset() will be a no-op.",
+            "mitigation": "The current implementation is safe. The line 17 check (if (renderer.transmissionUpdateRegion === region.update)) prevents stale handlers from interfering. Context restoration after unmount simply means the next mount will start with an invalid transmission region, triggering a full update as intended."
+          },
+          {
+            "area": "Geometry disposal during active render",
+            "description": "ModelPreloader.trimCache() disposes geometries that are no longer pinned by active React components. However, if trimCache() executes during a frame where the geometry is being used for rendering (between scene.updateMatrixWorld() and the actual draw calls), Three.js could reference disposed BufferAttributes. The retainPaths() ownership mechanism relies on React components calling the cleanup function synchronously during unmount.",
+            "mitigation": "React 18's useLayoutEffect cleanup runs synchronously during unmount before the next paint, so geometry disposal happens between frames rather than during a frame. The trimCache() method is scheduled with setTimeout(..., 0) which queues it for the next event loop tick, further reducing the risk of mid-frame disposal. No evidence of actual timing issues found in the codebase."
+          }
+        ],
+        "testing_gaps": [
+          {
+            "area": "Context restoration after component unmount",
+            "description": "test/runtime/transmission-region.test.mjs (line 76-82) tests controller.reset() directly and verifies it triggers a full update, but does not test the scenario where webglcontextrestored fires after TransmissionRegionRendering unmounts.",
+            "suggested_test": "Add a test that: (1) mounts TransmissionRegionRendering, (2) captures the region.reset handler, (3) unmounts the component, (4) fires webglcontextrestored, (5) verifies the handler runs safely without affecting the renderer state."
+          },
+          {
+            "area": "Geometry disposal timing with concurrent renders",
+            "description": "No test verifies that ModelPreloader.trimCache() does not dispose geometries that are actively being used in a render frame, or that the retainPaths() ownership mechanism prevents premature disposal.",
+            "suggested_test": "Add a test that: (1) creates a JadeModelLoader component, (2) triggers a render frame start (scene.updateMatrixWorld()), (3) synchronously unmounts the component (triggering retainPaths cleanup), (4) calls trimCache(), (5) verifies the geometry is not disposed until after the render completes or the next event loop tick."
+          },
+          {
+            "area": "Transmission region reset on material needsUpdate",
+            "description": "test/runtime/transmission-region.test.mjs (line 76-82) verifies that material.needsUpdate=true triggers a full update, but does not verify the behavior when needsUpdate is set while a partial update is in progress, or when multiple materials change in rapid succession.",
+            "suggested_test": "Add a test that: (1) establishes a valid partial update region, (2) sets material.needsUpdate=true, (3) calls update() and verifies it returns null (full update), (4) calls update() again and verifies it returns a valid region (partial update restored)."
+          }
+        ]
+      },
+      "resultBodySha256": "d69f6b1478f53822a978d5cede1d967ea292b8d6f441baf9f116ea7a2226c0c7"
+    },
+    {
+      "description": "Validation review - tests & packaging",
+      "callId": "tooluse_S5wAwfQhQ4tvno9hsBPdd4",
+      "agentId": "a29c2fd4d8524acd5",
+      "result": {
+        "review": {
+          "commit": "ac872e82eb04ce10632335b3f6e03c7146874116",
+          "reviewer": "validation",
+          "timestamp": "2026-10-24",
+          "scope": "Test effectiveness, boundary coverage, packaging integration, validation claims"
+        },
+        "findings": [
+          {
+            "id": "V001",
+            "priority": "MEDIUM",
+            "title": "Browser regression tests not executed in CI",
+            "file": "test/runtime/transmission-region-browser.mjs",
+            "start_line": 1,
+            "end_line": 73,
+            "confidence": "HIGH",
+            "trigger": "CI test runs execute only `test:runtime` and `test:deployment`, which invoke node --test on .test.mjs files. transmission-region-browser.mjs lacks .test.mjs suffix and provides only utilities (installRegionRegression, compareRegionModel, disposeRegionRegression) that require a browser automation framework (Playwright/Puppeteer) to invoke.",
+            "evidence": "package.json lines 17-18 define test:deployment and test:runtime using node --test. grep_search for playwright|puppeteer|browser in test/** returns no test runner. transmission-region-browser.mjs exports functions but contains no test() calls. File comment line 1 states 'Test-page diagnostics only: production does not expose a debug API.'",
+            "impact": "Visual correctness validation (pixel-by-pixel comparison across rotations, translations, and partially clipped positions) is not automated. Renderer changes that break transmission region visual output would not be caught before release. The unit tests in transmission-region.test.mjs validate geometry bounds calculation but cannot verify final pixel output.",
+            "verification": "Run: npm test 2>&1 | grep transmission-region-browser. Observe no execution. Check CI configuration for browser test automation.",
+            "suggested_fix": "Add E2E test runner (Playwright or Puppeteer) to package.json test scripts. Create test/runtime/transmission-region-browser.test.mjs that launches a headless browser, loads a test page with prepared models, calls installRegionRegression/compareRegionModel/disposeRegionRegression, and asserts changedPixels === 0 and maxChannelDifference === 0 for all frames."
+          },
+          {
+            "id": "V002",
+            "priority": "MEDIUM",
+            "title": "Three.js version pinning discrepancy allows unreviewed patches",
+            "file": "package.json",
+            "start_line": 30,
+            "end_line": 30,
+            "confidence": "HIGH",
+            "trigger": "package.json specifies 'three': '^0.160.0' (caret range allows 0.160.1, 0.160.2, etc.). deploy/three-transmission-region.mjs line 8 requires exact THREE_VERSION='0.160.1' and line 9 verifies THREE_SOURCE_SHA256. npm install or npm update can install 0.160.x > 0.160.1, causing prepareThreeTransmissionRegion() to throw 'Unsupported Three version' at build time.",
+            "evidence": "package.json line 30: 'three': '^0.160.0'. deploy/three-transmission-region.mjs line 107: if (version !== THREE_VERSION) throw new Error. THREE_VERSION is '0.160.1'. Caret ranges in npm allow patch version updates.",
+            "impact": "Automated dependency updates (Dependabot, Renovate) or manual npm update can install Three.js 0.160.2+, breaking builds. The SHA256 check protects against unreviewed source changes, but the version check fails before reaching SHA256 validation. This creates brittle builds dependent on exact patch version availability.",
+            "verification": "Run: npm install three@0.160.2 && npm run models:prepare. Observe 'Unsupported Three version: 0.160.2' error. Run: npm install three@0.160.1 && npm run models:prepare. Observe success.",
+            "suggested_fix": "Change package.json line 30 to 'three': '0.160.1' (exact version, no caret). Add comment explaining the adapter requires exact version match and SHA256 verification. Update deploy/three-transmission-region.mjs to provide clearer error message suggesting package.json fix when version mismatch occurs."
+          },
+          {
+            "id": "V003",
+            "priority": "LOW",
+            "title": "NaN propagation in union bounds calculation not tested",
+            "file": "src/rendering/transmissionUpdateRegion.ts",
+            "start_line": 102,
+            "end_line": 104,
+            "confidence": "MEDIUM",
+            "trigger": "If previous frame produced NaN in this.left/this.bottom/this.right/this.top (bypassing line 92-95 rejection), and current frame produces finite bounds, Math.min(left, NaN) returns NaN, propagating invalid bounds to rect. This occurs when: frame N has NaN position (rejected, this.left=NaN due to prior state), frame N+1 has valid position.",
+            "evidence": "Lines 102-104 call Math.min/Math.max with this.left/this.bottom/this.right/this.top from previous frame. Line 92-95 reject current NaN but don't reset this.left/right/bottom/top. Test line 89 sets f.object.position.x=NaN and verifies update() returns null, but doesn't test recovery on next frame.",
+            "impact": "A single NaN frame followed by valid frames could produce NaN rect dimensions, passed to Three.js state.scissor(updateRegion). WebGL behavior with NaN scissor regions is undefined (likely full clear or no rendering). Visual corruption would persist until geometry/camera change triggers full update.",
+            "verification": "Add test: const f=fixture(); f.update(); f.update(); f.object.position.x=NaN; assert.equal(f.update(), null); f.object.position.x=0; const r=f.update(); assert.ok(Number.isFinite(r.x+r.y+r.z+r.w));",
+            "suggested_fix": "In update() method after line 95 (NaN rejection), add: this.left=0; this.bottom=0; this.right=0; this.top=0; to reset previous bounds, preventing NaN propagation into union calculation."
+          },
+          {
+            "id": "V004",
+            "priority": "LOW",
+            "title": "prepareTransmissionBounds() doesn't validate stale bounding boxes",
+            "file": "src/rendering/transmissionUpdateRegion.ts",
+            "start_line": 8,
+            "end_line": 10,
+            "confidence": "MEDIUM",
+            "trigger": "prepareTransmissionBounds(geometry) early-exits if geometry.boundingBox !== null. If called on geometry with stale boundingBox (position attribute modified after box computed), returns immediately without recomputing. update() line 64-66 detects position.version changes and rejects, but prepared assets with incorrect pre-computed boxes would always fail validation.",
+            "evidence": "Line 9: if (geometry.boundingBox === null) geometry.computeBoundingBox();. No version check. Test line 37-45 verifies repeated calls don't recompute (line 42 throws if computeBoundingBox called twice), validating idempotence, but doesn't test stale box detection.",
+            "impact": "If deploy/prepare-models.mjs produces assets with incorrect boundingBox (race condition, serialization bug), region optimization would be permanently disabled for those models. No diagnostic indicates 'boundingBox present but wrong'. Silent fallback to full updates without visibility.",
+            "verification": "Create test: const g=new BoxGeometry(1,1,1); g.computeBoundingBox(); const before=g.boundingBox.clone(); g.attributes.position.setX(0, 999); prepareTransmissionBounds(g); assert.deepEqual(g.boundingBox, before); // Passes (wrong), box is stale",
+            "suggested_fix": "Add version tracking to prepareTransmissionBounds: if (!geometry.userData._coscrollBoundsVersion || geometry.userData._coscrollBoundsVersion !== geometry.attributes.position.version) { geometry.computeBoundingBox(); geometry.userData._coscrollBoundsVersion = geometry.attributes.position.version; }. Update test to verify recomputation when position changes."
+          },
+          {
+            "id": "V005",
+            "priority": "LOW",
+            "title": "Missing mid-stream decompression failure test",
+            "file": "src/components/jade/preparedModelGeometry.ts",
+            "start_line": 148,
+            "end_line": 184,
+            "confidence": "MEDIUM",
+            "trigger": "decodeGeometry() decompresses gzipped prepared model data using pako.inflate(). If network corruption produces truncated gzip stream, pako.inflate() throws after partial decompression. No test validates error handling for mid-stream decompression failure (vs initial header corruption).",
+            "evidence": "test/runtime/prepared-models.test.mjs lines 50-148 test successful decoding of valid models and line 150 tests missing model URL (fetch 404), but no test truncates valid gzip data mid-stream. decodeGeometry() line 150-154 has try/catch for decode errors, but test coverage unknown.",
+            "impact": "Network corruption causing partial gzip data would throw exception in decodeGeometry(), caught by try/catch (line 152), returning undefined. Calling code in preparedModelGeometry.ts handles this gracefully. However, no test verifies error message clarity or that geometry.dispose() isn't called on partial state. Low impact given existing try/catch, but error path untested.",
+            "verification": "Add test: Create valid prepared model JSON, gzip compress, truncate compressed bytes to 70%, attempt decodeGeometry(). Verify returns undefined and logs appropriate error.",
+            "suggested_fix": "Add test case in test/runtime/prepared-models.test.mjs: async function testTruncatedGzip() { const valid = await fetch(validModelUrl).then(r=>r.json()); const truncated = {...valid, position: valid.position.slice(0, Math.floor(valid.position.length*0.7))}; const result = await decodeGeometry(truncated); assert.equal(result, undefined); }. Verify error handling is appropriate."
+          }
+        ],
+        "summary": {
+          "total_findings": 5,
+          "critical": 0,
+          "high": 0,
+          "medium": 2,
+          "low": 3,
+          "test_coverage_gaps": [
+            "Browser visual regression tests exist but are not automated in CI",
+            "NaN propagation recovery path untested",
+            "Stale bounding box detection not validated",
+            "Mid-stream decompression failure not tested"
+          ],
+          "residual_risks": [
+            "Visual correctness regressions would only be caught by manual testing",
+            "Dependency version updates could break builds unexpectedly",
+            "Edge cases in bounds calculation may exhibit undefined behavior"
+          ]
+        }
+      },
+      "resultBodySha256": "c2e1bf0ff925d15b8e119009dd6dd1a4974e0eeb635af6831626a9670f2b6444"
+    }
+  ],
+  "reportedAggregateModelUsage": [
+    "claude-opus-5[1m]",
+    "claude-sonnet-5"
+  ],
+  "observedMessageModels": {
+    "coordinator": [
+      "claude-opus-5-5"
+    ],
+    "tooluse_FWBjzlfu8zqwWuloiRv5a5": [
+      "claude-sonnet-5"
+    ],
+    "tooluse_hV3DXmbxQHlLYoQIXkZPYX": [
+      "claude-sonnet-5"
+    ],
+    "tooluse_S5wAwfQhQ4tvno9hsBPdd4": [
+      "claude-sonnet-5"
+    ]
+  }
+}

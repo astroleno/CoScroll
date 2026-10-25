@@ -1,0 +1,134 @@
+{
+  "date": "2026-10-24",
+  "status": "verified-local",
+  "sourceCommit": "3cc87cd",
+  "scope": "Audio error/retry/buffering and executable transmission regression gate; no commit/push/deploy in this task.",
+  "tests": {
+    "runtime": {
+      "exitCode": 0,
+      "passed": 100,
+      "failed": 0,
+      "skipped": 0,
+      "logSHA256": "43c2fcfe314077052d2f1ba014e1f73b29a9693d0dbcb6d093b85ba07614c77e"
+    },
+    "deployment": {
+      "exitCode": 0,
+      "passed": 11,
+      "failed": 0,
+      "skipped": 0,
+      "logSHA256": "ae29157adfffccaba66b2cca09148e3b1a10ac0c28f1f7a7f2149a8f3ed6dcd1"
+    }
+  },
+  "modelAcceptance": {
+    "source": "docs/model-assets/v2-75-lossless-validation-20261024.json",
+    "modelCodeUnchangedSince": "3cc87cd",
+    "visualModels": 75,
+    "visualViews": 1200,
+    "maxChannelDifference": 0,
+    "sixRotationsPassed": true,
+    "actualReleaseWireReductionPercent": 5.420144544794914,
+    "provenance": "Existing independently archived model acceptance, checked against committed unchanged model sources; not counted as a new full model comparison by this task.",
+    "reportSHA256": "7e2fbf6a3d5550a42f294be47ea75099c33fe5e18dcf35eef31fabad1254ce86",
+    "residencySummary": {
+      "scope": "Actual decoded geometry buffers; same 75-glyph sequential traversal, current plus next ownership; old eight-idle LRU compared with real new cache. Excludes textures, render targets and process heap.",
+      "warmOldResidentMean": 27917156.06153846,
+      "warmNewResidentMean": 12449116.676923078,
+      "maxIdleBytes": 8381080,
+      "warmReductionPercent": 55.40693095857906
+    },
+    "offlineExtraMemorySummary": {
+      "scope": "Node22 fresh child per format/glyph/run, three alternating rounds, 1ms observed heapUsed+arrayBuffers growth including input and output; reported extra subtracts identical canonical output. No forced GC. Sampling can miss short synchronous peaks; excludes browser/GPU/phone memory.",
+      "oldMean": 29415942.166666668,
+      "binaryMean": 18217109.333333332,
+      "observedReductionPercent": 38.07062432296846
+    }
+  },
+  "earlierObserved": {
+    "runtime": {
+      "passed": 100,
+      "failed": 0,
+      "skipped": 0
+    },
+    "deployment": {
+      "passed": 11,
+      "failed": 0
+    },
+    "transmission": {
+      "models": 101,
+      "layouts": 2,
+      "posesPerModel": 11,
+      "frames": 2222,
+      "changedPixels": 0,
+      "glErrors": 0
+    },
+    "audioBrowser": {
+      "startupRetries": 2,
+      "manualRetryLoads": 1,
+      "networkAndInvalidMp3Recovery": "passed",
+      "realStreamBufferingPauseAndSeek": "passed",
+      "pausedRecoveryDoesNotPlay": "passed",
+      "midstreamErrorCode": 2,
+      "midstreamAutomaticReloads": 0,
+      "restoredTime": 12.103324,
+      "minimumRetryTargetHeight": 44,
+      "viewports": [
+        320,
+        360,
+        390
+      ],
+      "retryThenRecordingSwitch": "passed",
+      "sourceCleanupLoadsOnPlayingSwitch": 1
+    },
+    "receipt": "Observed tool outputs; temporary raw files disappeared before final archival. Fresh executable checks recorded separately below."
+  },
+  "cleanup": {
+    "completed": true,
+    "currentTaskPending": false,
+    "workspaceTemporaryDirectoryAbsent": true,
+    "earlierTemporaryDirectoryAbsent": true,
+    "browserSpaceLookup": {
+      "originalId": 10,
+      "originalIdPresent": false,
+      "sameNameCount": 0
+    },
+    "retained": "Implementation, executable tests, plan/result document and compact verification JSON. No screenshots or raw temporary logs retained.",
+    "completedAtUTC": "2026-10-24T11:03:07.670418+00:00"
+  },
+  "build": {
+    "exitCode": 0,
+    "typeAndLintIncluded": true,
+    "productFilesChecked": 234,
+    "allProductFilesMatchCurrent": true,
+    "inputMapSHA256": "e7eeba380654f4754afb00dccf6fe05a6d104bb7c23c8f43d09e78d15d691b62",
+    "logSHA256": "d0c3bb4b75ad6c14c4b468428b9bccc6d43470b51b0a6bba36afb38a463ff8d0",
+    "buildId": "gJqL9vTiA6Dzs9mTtQK3N",
+    "ownedFileSHA256": {
+      "package.json": "3c4f2fe62cbf0308d8956d68c59baa269662ba7e910ffa25a0afa19d7099ff09",
+      "src/components/ReadingSession.tsx": "3b6fe171acc3f109f372a2e86c29488d64e440d7368dff73f6dd3a0373018c5e",
+      "src/components/audio/AudioEngine.tsx": "6be6342bac8a1f4bde5473a5c489ebad5a8b019c6afbd45ba744688851e30c47",
+      "src/components/audio/EnhancedAudioPlayer.tsx": "fd8f87c1ac9324843d0528cf625c2c7e515312f53ea1856f528f8bccf81e1b3b",
+      "test/runtime/transmission-region-browser.mjs": "5ed4536f58807fe9eae54c4a375531786aac5a51ff99e122bf0a9caaf418e058",
+      "test/runtime/ego-transmission-regression.mjs": "e3237995d84defa7fc0bece6642f673273d510ca43cb03620db278d8e07dfee0",
+      "test/runtime/audio-recovery.test.mjs": "b2d84707ed4b3a9c0e1e251652d8de03cf7f68cdfa5df08f9ec3b7fa0a317b1f",
+      "test/runtime/transmission-browser-gate.test.mjs": "5d80c7f8fd67d996de6321ba9ccf6da192c3499b58e4028effea45726ead4480"
+    },
+    "archiveRepair": "Build succeeded. The first receipt writer used an incorrect relative documentation path and failed with ENOENT; this receipt was reconstructed from the successful build log and verified source map using the explicit repository path."
+  },
+  "verifiedAtUTC": "2026-10-24T10:54:37.333Z",
+  "timezone": "Asia/Shanghai",
+  "browserVerification": {
+    "source": "Successful browser tool results earlier in this task on the unchanged final product files. Raw temporary receipts disappeared before archival; their observed summary is preserved in earlierObserved.",
+    "ownedTaskSpace": "CoScroll audio and visual iteration 20261024",
+    "ownedTaskSpaceCurrentlyAbsent": true,
+    "supplementaryOldNewCheck": "Interrupted before full completion and excluded as full evidence. Complete 75-model / 1200-view / six-rotation acceptance is reused from the committed matching model report.",
+    "localVisualEntry": "npm run test:visual -- --url http://127.0.0.1:3248/",
+    "assetScope": "Local application build with model assets beneath its base path; publication CORS/HTTP verification uses existing release tools."
+  },
+  "limitations": [
+    "No new production deployment or public smoke run in this iteration.",
+    "Real phones and iOS Safari not tested.",
+    "Existing context-restore colour difference not fixed.",
+    "Network reduction is around 5% depending on compression runtime, below the earlier aspirational 20%.",
+    "Supplemental duplicate model comparison was interrupted; the independently archived model acceptance is cited with source revision and report hash."
+  ]
+}

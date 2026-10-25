@@ -1,6 +1,6 @@
 /** Test-page diagnostics only: production does not expose a debug API. */
-export async function installRegionRegression(page, decoderSource, boundsSource) {
-  return page.evaluate(({decoderSource,boundsSource}) => {
+export async function installRegionRegression(page, decoderSource, boundsSource, binaryDecoderSource) {
+  return page.evaluate(({decoderSource,boundsSource,binaryDecoderSource}) => {
     const states=window.__renderProbe.stores.map(store=>store.getState());
     const main=states.find(state=>!state.gl.domElement.closest('[data-coscroll-background]'));
     const meshes=[];main.scene.traverse(o=>{if(o.material?.isMeshPhysicalMaterial)meshes.push(o);});
@@ -10,9 +10,15 @@ export async function installRegionRegression(page, decoderSource, boundsSource)
     const three={BufferGeometry:geometry.constructor,BufferAttribute:geometry.attributes.position.constructor,
       Box3:geometry.boundingBox.constructor,Vector3:geometry.boundingBox.min.constructor,Sphere:geometry.boundingSphere.constructor};
     const exports={};new Function('require','exports',decoderSource)(name=>{if(name!=='three')throw Error(name);return three;},exports);
+    const binary={};
+    if(binaryDecoderSource)new Function('require','exports',binaryDecoderSource)(name=>{
+      if(name==='three')return three;
+      if(name==='./preparedModelGeometry')return exports;
+      throw Error(name);
+    },binary);
     const boundsModule={};new Function('require','exports',boundsSource)(name=>{if(name!=='three')throw Error(name);return three;},boundsModule);
     const q=window.__regionRegression={main,states,inner,outer,decoder:exports,provider:main.gl.transmissionUpdateRegion,
-      originalGeometries:[inner.geometry,outer.geometry],loops:states.map(s=>s.frameloop),
+      binary,originalGeometries:[inner.geometry,outer.geometry],loops:states.map(s=>s.frameloop),
       rotator:inner.parent.parent,originalRotation:inner.parent.parent.rotation.toArray(),
       originalPosition:inner.parent.parent.position.toArray(),full:0,partial:0,areas:[],targets:[],owned:[],
       originalTarget:main.gl.setRenderTarget,prepareBounds:boundsModule.prepareTransmissionBounds};
@@ -30,15 +36,22 @@ export async function installRegionRegression(page, decoderSource, boundsSource)
     return {canvases:states.length,pixels:[main.gl.domElement.width,main.gl.domElement.height],
       zoom:main.camera.zoom,ua:navigator.userAgent,viewport:[innerWidth,innerHeight],
       contexts:states.map(s=>s.gl.getContext().getContextAttributes())};
-  },{decoderSource,boundsSource});
+  },{decoderSource,boundsSource,binaryDecoderSource});
 }
 
-export async function compareRegionModel(page, {url,sourcePath}) {
-  return page.evaluate(async ({url,sourcePath})=>{
+export async function compareRegionModel(page, {url,sourcePath,format,generation,geometryGeneration,sourceSha256}) {
+  const result = await page.evaluate(async ({url,sourcePath,format,generation,geometryGeneration,sourceSha256})=>{
     const q=window.__regionRegression,{main,inner,outer,rotator}=q,renderer=main.gl,gl=renderer.getContext();
     const response=await fetch(url);if(!response.ok)throw Error('Prepared model fetch failed '+url);
-    const prepared=await response.json();
-    const pair=[await q.decoder.decodeGeometry(prepared.base),await q.decoder.decodeGeometry(prepared.outer)];
+    let decoded;
+    if(format==='binary-v2'){
+      if(!q.binary.decodePreparedModelDelivery)throw Error('Binary decoder missing');
+      decoded=await q.binary.decodePreparedModelDelivery(await response.arrayBuffer(),{generation,geometryGeneration,sourceSha256});
+    }else{
+      const prepared=await response.json();
+      decoded=await q.decoder.decodePreparedModel(prepared,{generation:generation??prepared.generation,sourceSha256:sourceSha256??prepared.sourceSha256});
+    }
+    const pair=[decoded.base,decoded.outer];
     const prepareStart=performance.now();q.prepareBounds(pair[0]);const prepareBoundsMs=performance.now()-prepareStart;
     inner.geometry=pair[0];outer.geometry=pair[1];for(const g of q.owned)g.dispose();q.owned=pair;
     const w=renderer.domElement.width,h=renderer.domElement.height;
@@ -48,6 +61,7 @@ export async function compareRegionModel(page, {url,sourcePath}) {
     const pe=rotator.parent.matrixWorld.elements;
     const edge=main.camera.right/main.camera.zoom/Math.hypot(pe[0],pe[1],pe[2]);
     const poses=[[0,0],[.37,0],[Math.PI/2,0],[2.2,0],[Math.PI,0],[4.71,0],[5.6,0],[1.1,0],[0,-edge],[.7,edge],[0,0]];
+    const originalScissor=renderer.getScissorTest();
     const render=pose=>{rotator.rotation.set(0,pose[0],0);rotator.position.x=q.originalPosition[0]+pose[1];renderer.render(main.scene,main.camera);};
     const read=()=>{const pixels=new Uint8Array(w*h*4);gl.readPixels(0,0,w,h,gl.RGBA,gl.UNSIGNED_BYTE,pixels);return pixels;};
     const references=[];renderer.transmissionUpdateRegion=null;
@@ -62,10 +76,25 @@ export async function compareRegionModel(page, {url,sourcePath}) {
     }
     const result={sourcePath,vertices:pair.map(g=>g.attributes.position.count),bounds:!!pair[0].boundingBox,
       frames,prepareBoundsMs,full:q.full,partial:q.partial,meanArea:q.areas.reduce((a,b)=>a+b,0)/q.areas.length,
-      target:q.targets.at(-1),glError:gl.getError(),canvases:document.querySelectorAll('canvas').length};
-    if(q.partial<poses.length)throw Error('Region path not exercised '+JSON.stringify(result));
+      target:q.targets.at(-1),glError:gl.getError(),canvases:document.querySelectorAll('canvas').length,
+      originalScissor,scissorAfter:renderer.getScissorTest()};
     return result;
-  },{url,sourcePath});
+  },{url,sourcePath,format,generation,geometryGeneration,sourceSha256});
+  assertRegionComparison(result);
+  return result;
+}
+
+/** The CLI and other callers share the same fail-closed acceptance gate. */
+export function assertRegionComparison(result) {
+  if(!result.frames?.length || result.frames.some(frame=>frame.changedPixels!==0 ||
+      frame.maxChannelDifference!==0 || frame.meanChannelDifference!==0)) {
+    throw Error('Transmission pixel regression: '+JSON.stringify(result));
+  }
+  if(result.glError!==0)throw Error('Transmission WebGL error: '+JSON.stringify(result));
+  if(result.partial<result.frames.length || !Number.isFinite(result.meanArea) || result.meanArea<=0 || result.meanArea>=1) {
+    throw Error('Region path not exercised: '+JSON.stringify(result));
+  }
+  if(result.canvases!==2 || result.scissorAfter!==result.originalScissor)throw Error('Renderer state leaked: '+JSON.stringify(result));
 }
 
 export async function disposeRegionRegression(page) {

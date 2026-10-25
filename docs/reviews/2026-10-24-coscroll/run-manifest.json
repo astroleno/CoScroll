@@ -1,0 +1,192 @@
+{
+  "reviewDate": "2026-10-24",
+  "sourceCommit": "ac872e82eb04ce10632335b3f6e03c7146874116",
+  "primaryProductCommit": "65f94ffd28da1c9e9a2acd02a8479332cabcc139",
+  "scope": "Current tracked CoScroll implementation and recent deployed transmission-region changes; in-progress model delivery changes excluded.",
+  "providers": [
+    {
+      "provider": "claude-code",
+      "sourceCommit": "ac872e82eb04ce10632335b3f6e03c7146874116",
+      "requestedSubagents": 3,
+      "startedAt": "2026-10-24T06:45:56.232Z",
+      "status": "returned",
+      "pid": 76487,
+      "code": 0,
+      "signal": null,
+      "endedAt": "2026-10-24T07:02:23.123Z",
+      "acceptedReview": true,
+      "completedSubagents": 3,
+      "report": "claude-code-review.md",
+      "subagents": [
+        {
+          "agentId": "a7c531d4e405498d5",
+          "role": "Correctness review - audio & config",
+          "model": null
+        },
+        {
+          "agentId": "a5e2a515f6531500e",
+          "role": "Rendering review - transmission region",
+          "model": null
+        },
+        {
+          "agentId": "a29c2fd4d8524acd5",
+          "role": "Validation review - tests & packaging",
+          "model": null
+        }
+      ],
+      "cliVersion": "2.1.201",
+      "coordinatorInitModel": "claude-opus-5[1m]",
+      "observedMessageModels": {
+        "coordinator": [
+          "claude-opus-5-5"
+        ],
+        "tooluse_FWBjzlfu8zqwWuloiRv5a5": [
+          "claude-sonnet-5"
+        ],
+        "tooluse_hV3DXmbxQHlLYoQIXkZPYX": [
+          "claude-sonnet-5"
+        ],
+        "tooluse_S5wAwfQhQ4tvno9hsBPdd4": [
+          "claude-sonnet-5"
+        ]
+      }
+    },
+    {
+      "provider": "deepseek-harness",
+      "sourceCommit": "ac872e82eb04ce10632335b3f6e03c7146874116",
+      "requestedSubagents": 3,
+      "startedAt": "2026-10-24T07:06:42.071Z",
+      "status": "returned",
+      "pid": 90581,
+      "code": 0,
+      "signal": null,
+      "endedAt": "2026-10-24T07:13:23.274Z",
+      "acceptedReview": true,
+      "completedSubagents": 3,
+      "report": "deepseek-harness-review.md",
+      "subagents": [
+        {
+          "agentId": "529a76d4-064a-4f7e-bbd1-865a7b633117",
+          "role": "correctness",
+          "model": "deepseek-flash"
+        },
+        {
+          "agentId": "2a19a13d-d495-48d2-835e-a7409ad81a18",
+          "role": "rendering",
+          "model": "deepseek-flash"
+        },
+        {
+          "agentId": "7a823ea6-9b51-4f1a-be57-ca3598a2fdc5",
+          "role": "validation",
+          "model": "deepseek-flash"
+        }
+      ],
+      "cliVersion": "0.2.1-rc.2",
+      "entry": "/Applications/DeepSeek Harness.app/Contents/Resources/runtime/cli/bin/dsh",
+      "model": "deepseek-official/deepseek-flash",
+      "snapshotFiles": 243
+    },
+    {
+      "provider": "kimi-cli",
+      "sourceCommit": "ac872e82eb04ce10632335b3f6e03c7146874116",
+      "requestedSubagents": 3,
+      "startedAt": "2026-10-24T06:47:08.580Z",
+      "status": "failed",
+      "pid": 77421,
+      "code": 1,
+      "signal": null,
+      "endedAt": "2026-10-24T06:47:45.992Z",
+      "acceptedReview": false,
+      "cliVersion": "2.3.1",
+      "completedSubagents": 0,
+      "failedSubagents": 3,
+      "agentIds": [
+        "agent-0",
+        "agent-1",
+        "agent-2"
+      ],
+      "errorCode": 429,
+      "error": "Five-hour usage quota exhausted; reset time not supplied.",
+      "report": "kimi-cli-review.md",
+      "model": "not confirmed from failed run"
+    }
+  ],
+  "discardedOrFailedStartupAttempts": [
+    {
+      "record": "deepseek-harness-startup-error-state.json",
+      "provider": "deepseek-harness",
+      "sourceCommit": "ac872e82eb04ce10632335b3f6e03c7146874116",
+      "requestedSubagents": 3,
+      "startedAt": "2026-10-24T06:54:28.462Z",
+      "status": "returned",
+      "pid": 81972,
+      "code": 0,
+      "signal": null,
+      "endedAt": "2026-10-24T06:54:52.248Z",
+      "acceptedAsReview": false,
+      "reason": "Initial invocation omitted required subagent provider in local overlay; no subagent tool activated. Corrected and restarted."
+    },
+    {
+      "record": "deepseek-harness-workspace-drift-state.json",
+      "provider": "deepseek-harness",
+      "sourceCommit": "ac872e82eb04ce10632335b3f6e03c7146874116",
+      "requestedSubagents": 3,
+      "startedAt": "2026-10-24T06:55:03.791Z",
+      "status": "returned",
+      "pid": 82274,
+      "code": 0,
+      "signal": null,
+      "endedAt": "2026-10-24T07:06:05.389Z",
+      "acceptedAsReview": false,
+      "reason": "Shared workspace changed during review; stopped and restarting against immutable Git archive inputs."
+    },
+    {
+      "record": "kimi-cli-startup-error-state.json",
+      "provider": "kimi-cli",
+      "sourceCommit": "ac872e82eb04ce10632335b3f6e03c7146874116",
+      "requestedSubagents": 3,
+      "startedAt": "2026-10-24T06:45:56.232Z",
+      "status": "failed",
+      "pid": 76489,
+      "code": 1,
+      "signal": null,
+      "endedAt": "2026-10-24T06:45:57.021Z"
+    }
+  ],
+  "mainThreadTriage": {
+    "confirmedRuntime": [
+      {
+        "source": "deepseek correctness-1",
+        "priority": "P2",
+        "subject": "Terminal audio startup errors have no user-facing failure or retry path"
+      },
+      {
+        "source": "deepseek correctness-2",
+        "priority": "P3",
+        "subject": "Buffering state never reaches player UI"
+      }
+    ],
+    "confirmedValidationGapGroups": 1,
+    "unconfirmedRuntimeCandidates": [
+      "deepseek correctness-4 duplicate request on source switch"
+    ],
+    "details": "findings-triage.md"
+  },
+  "sideEffects": {
+    "nativeCollaborationSubagentsSpawned": false,
+    "branchCreated": false,
+    "worktreeCreated": false,
+    "productSourceModifiedByThisTask": false,
+    "commitCreated": false,
+    "pushed": false,
+    "deployed": false
+  },
+  "cleanup": {
+    "scope": "Owned temporary review input archive, helper configuration, raw stdout/stderr streams and scratch reproductions under .cache/multi-review-20261024. Normal CLI-owned durable session records are outside this cleanup.",
+    "completed": true,
+    "completedAt": "2026-10-24T07:27:51.537158+00:00",
+    "temporaryDirectoryAbsent": true,
+    "screenshotsCreated": 0
+  },
+  "recordedAt": "2026-10-24T07:26:15.260430+00:00"
+}

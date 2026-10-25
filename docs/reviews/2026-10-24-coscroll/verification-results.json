@@ -1,0 +1,182 @@
+{
+  "sourceCommit": "ac872e82eb04ce10632335b3f6e03c7146874116",
+  "runtimeTests": {
+    "command": "node --test test/runtime/loop-and-cache.test.mjs test/runtime/project-content.test.mjs test/runtime/transmission-region.test.mjs",
+    "exitCode": 0,
+    "tests": 25,
+    "pass": 25,
+    "fail": 0,
+    "skipped": 0,
+    "input": "Original working copy before concurrent delivery edits; completed successfully."
+  },
+  "nanRecoveryReproduction": {
+    "finding": "Claude V003",
+    "verdict": "not-reproduced; invalid frame does not update previous bounds and invalidates valid flag",
+    "outputs": [
+      {
+        "stage": "valid-partial",
+        "rect": [
+          147,
+          147,
+          106,
+          106
+        ]
+      },
+      {
+        "stage": "NaN",
+        "rect": null
+      },
+      {
+        "stage": "recovery-full",
+        "rect": null
+      },
+      {
+        "stage": "recovery-partial",
+        "rect": [
+          147,
+          147,
+          106,
+          106
+        ]
+      }
+    ]
+  },
+  "truncatedGzipReproduction": {
+    "finding": "Claude V005",
+    "verdict": "truncated gzip rejects and partially constructed geometry is disposed once",
+    "compressedBytes": 49,
+    "truncatedBytes": 34,
+    "disposed": 1,
+    "error": {
+      "name": "TypeError",
+      "message": ""
+    }
+  },
+  "baselineChecks": [
+    {
+      "path": "src/rendering/transmissionUpdateRegion.ts",
+      "baselineSha256": "083f366cb8b2bcce0563bbdde44ee962d7d293d38d394ffcc554975861b17f08",
+      "workingCopyMatchesBaselineAtVerification": true
+    },
+    {
+      "path": "src/components/jade/preparedModelGeometry.ts",
+      "baselineSha256": "6d05bcdf85c0e1274f0fcc46ec5fcef9a11f0be1642e7a57d87b61655561c58f",
+      "workingCopyMatchesBaselineAtVerification": true
+    },
+    {
+      "path": "src/components/audio/AudioEngine.tsx",
+      "baselineSha256": "e9dcdb76c33270586230cfb663044a8cd8070202256743c417d33931c51023c5",
+      "workingCopyMatchesBaselineAtVerification": true
+    },
+    {
+      "path": "src/components/audio/EnhancedAudioPlayer.tsx",
+      "baselineSha256": "635c7d9af1aeda0a7212dd4816ab8e43388dc82ecfb9ec99890be4e1808b87a6",
+      "workingCopyMatchesBaselineAtVerification": true
+    },
+    {
+      "path": "src/components/ReadingSession.tsx",
+      "baselineSha256": "5fdb2edfdc787592f8d62c4a2c5ed8a7fea2c627d5946b23e5088ebcdf2ead81",
+      "workingCopyMatchesBaselineAtVerification": true
+    },
+    {
+      "path": "src/hooks/useLyricsFromConfig.ts",
+      "baselineSha256": "72f0821d8d80fee7a544dd0ef7714a2070b44a9132dfbe1238b779a80ba42fd2",
+      "workingCopyMatchesBaselineAtVerification": true
+    },
+    {
+      "path": "src/config/prepareProject.ts",
+      "baselineSha256": "eda571e14d25bfa45c448a49d015eb1fbeec41466176ef66eeca405e3245e912",
+      "workingCopyMatchesBaselineAtVerification": true
+    },
+    {
+      "path": "src/config/entryBootstrap.ts",
+      "baselineSha256": "e962fe98170f01509d2412d2ae4e7bf7d61d263effe6824f3fa46c8abd3e27f9",
+      "workingCopyMatchesBaselineAtVerification": true
+    },
+    {
+      "path": "test/runtime/transmission-region.test.mjs",
+      "baselineSha256": "520002a461daf9f54f14ebff7964c13b5274aade939089da6dbef4de03508362",
+      "workingCopyMatchesBaselineAtVerification": true
+    },
+    {
+      "path": "test/runtime/transmission-region-browser.mjs",
+      "baselineSha256": "b6e9f94c02fac61e81ab001488290c944940019077963034ba0c27342127cbc3",
+      "workingCopyMatchesBaselineAtVerification": true
+    },
+    {
+      "path": "package.json",
+      "baselineSha256": "8969c51d21d60e7b985fdedea32b0617133b70d56cac031f3c6c358822c5a073",
+      "workingCopyMatchesBaselineAtVerification": true
+    },
+    {
+      "path": "package-lock.json",
+      "baselineSha256": "c2b1dfec7907d23ddab408152c46a35f52d01be9a290bb8ec712b16bb5db4f9d",
+      "workingCopyMatchesBaselineAtVerification": true
+    },
+    {
+      "path": "next.config.mjs",
+      "baselineSha256": "b9e804720242ecbc93ad86d78e7e79396023d3ffe8008286ad31536f38a14566",
+      "workingCopyMatchesBaselineAtVerification": true
+    },
+    {
+      "path": "deploy/three-transmission-region.mjs",
+      "baselineSha256": "715c3b7e7399cdb615a386960c4f4126f9346dcc78b2cf2527c44562ed85377d",
+      "workingCopyMatchesBaselineAtVerification": true
+    }
+  ],
+  "scopeNote": "Main-thread final findings and reproducer use the Git baseline. The shared working copy has concurrent model delivery edits that are outside this review; earlier matching working-copy checks are timestamped, not a claim that current files are unchanged.",
+  "initialWorkingCopyCheckAt": "2026-10-24T07:00:56.433747+00:00",
+  "frozenBaselineRuntimeTests": {
+    "sourceCommit": "ac872e82eb04ce10632335b3f6e03c7146874116",
+    "command": "node --test test/runtime/loop-and-cache.test.mjs test/runtime/project-content.test.mjs test/runtime/transmission-region.test.mjs",
+    "exitCode": 0,
+    "tests": 25,
+    "pass": 25,
+    "fail": 0,
+    "skipped": 0,
+    "durationMs": 4174.76875,
+    "fixtures": "Git-baseline LRC plus existing installed dependencies and source model asset references. Source model directory was checked unchanged against the baseline with git diff --quiet."
+  },
+  "frozenTestSetupAttempt": {
+    "exitCode": 1,
+    "cause": "The intentionally partial source review archive initially lacked source model fixtures, yielding ENOENT and follow-on asynchronous test cleanup errors.",
+    "resolution": "Added a temporary reference to baseline-matching source model fixtures and reran the exact tests successfully. No production or test source was modified."
+  },
+  "audioHandlerReproduction": {
+    "sourceCommit": "ac872e82eb04ce10632335b3f6e03c7146874116",
+    "method": "Execute baseline TSX handlers with a lightweight hook runner, fake audio and deterministic timers. This is not a browser or React DOM lifecycle/network test.",
+    "startupFailure": {
+      "retryLoads": 2,
+      "terminalConsoleErrors": 1,
+      "parentCallbacks": [],
+      "ready": false
+    },
+    "buffering": {
+      "internalBuffering": true,
+      "parentCallbacks": [
+        "duration",
+        "ready",
+        "time"
+      ]
+    },
+    "pointerCancel": {
+      "seeksBeforeCancel": [
+        20
+      ],
+      "seeksAfterCancel": [
+        20,
+        20
+      ],
+      "verdict": "The drag already applied the same target before cancellation; no newly different target is introduced."
+    },
+    "reproducer": "reproduce-audio-findings.mjs",
+    "reproducerSha256": "d70ff1e2537d873499e2d26c9c28a6c2c5337b3951f312fe519289d9c8685d93"
+  },
+  "immutableInputVerification": {
+    "checkedAt": "2026-10-24T07:26:15.260430+00:00",
+    "fileCount": 243,
+    "mismatches": [],
+    "manifest": "baseline-manifest.json",
+    "note": "Original review inputs were checked unchanged after all accepted subagent reviews; later test support files/links were separate from those inputs."
+  }
+}

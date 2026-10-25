@@ -8,7 +8,7 @@ import { loopPhase, timeInCurrentCycle } from '@/utils/loopTimeline';
 // import { LRC_LYRICS } from './constants'; // 不再使用硬编码歌词
 import { useScrollVelocity } from '@/components/hooks/useScrollVelocity';
 import EnhancedAudioPlayer from '@/components/audio/EnhancedAudioPlayer';
-import AudioEngine from '@/components/audio/AudioEngine';
+import AudioEngine, { type AudioLoadState } from '@/components/audio/AudioEngine';
 import PageVisibilityManager from '@/components/audio/PageVisibilityManager';
 import AutoPlayGuard from '@/components/AutoPlayGuard';
 import ModelPreloader from '@/components/jade/ModelPreloader';
@@ -93,7 +93,10 @@ export default function ReadingSession({sessionRevision, config, lyrics, mediaDu
 
   // ==================== 音频相关状态 ====================
   const [isPlaying, setIsPlaying] = useState(initialPlaying);
-  const [isReady, setIsReady] = useState(false);
+  const [audioLoadState, setAudioLoadState] = useState<AudioLoadState>({status: 'loading'});
+  const [audioRetrySignal, setAudioRetrySignal] = useState(0);
+  const isReady = audioLoadState.status === 'ready' || audioLoadState.status === 'buffering';
+  const isBuffering = audioLoadState.status === 'buffering';
   const [audioTime, setAudioTime] = useState(0); // 唯一真相源：音频时间
   const [previewTime, setPreviewTime] = useState<number | null>(null); // 手动滚动预览
   const [duration, setDuration] = useState(mediaDuration);
@@ -102,7 +105,6 @@ export default function ReadingSession({sessionRevision, config, lyrics, mediaDu
   const [hasUserInteracted, setHasUserInteracted] = useState(entered);
   const [isMobile, setIsMobile] = useState(false);
   const [loopCount, setLoopCount] = useState(0);
-  const [isBuffering, setIsBuffering] = useState(false);
   const [debugLogs, setDebugLogs] = useState<string[]>([]);
   const [seekSignal, setSeekSignal] = useState(0);
   // 字体选择（应用于 DOM 歌词层）
@@ -388,16 +390,26 @@ export default function ReadingSession({sessionRevision, config, lyrics, mediaDu
   }, []);
 
   const handleAudioReady = useCallback(() => {
-      setIsReady(true);
     addDebugLog('Audio engine ready');
   }, [addDebugLog]);
+
+  const handleAudioStatusChange = useCallback((state: AudioLoadState) => {
+    if (currentSession.current === sessionRevision) setAudioLoadState(state);
+  }, [sessionRevision]);
+
+  const handleAudioRetry = useCallback(() => {
+    gesturePlayGeneration.current++;
+    setIsIntroPlaying(false);
+    setIsPlaying(false);
+    onPlayingChange(false);
+    setAudioLoadState({status: 'loading'});
+    setAudioRetrySignal(signal => signal + 1);
+  }, [onPlayingChange]);
 
   const handleAudioPlayStateChange = useCallback((playing: boolean) => {
     setIsPlaying(playing);
     onPlayingChange(playing);
-    if (playing) {
-      setIsIntroPlaying(false);
-    }
+    setIsIntroPlaying(false);
   }, [onPlayingChange]);
 
   const handleAudioLoopComplete = useCallback((newLoopCount: number) => {
@@ -612,7 +624,7 @@ export default function ReadingSession({sessionRevision, config, lyrics, mediaDu
     lastCommittedTimeRef.current = {stamp: 0, display: 0};
     setInternalScrollVelocity(0); handleScrollVelocityChange(0);
     setAudioTime(0); setLoopCount(0); setPreviewTime(null);
-    setDuration(mediaDuration); setIsReady(false); setIsIntroPlaying(false);
+    setDuration(mediaDuration); setAudioLoadState({status: 'loading'}); setIsIntroPlaying(false);
     setIsPlaying(startingIntent.current.entered && startingIntent.current.initialPlaying);
     setHasUserInteracted(startingIntent.current.entered);
     setDisplayedModelPath(''); setFailedModelPath('');
@@ -816,6 +828,8 @@ export default function ReadingSession({sessionRevision, config, lyrics, mediaDu
           onReady={handleAudioReady}
           onPlayStateChange={handleAudioPlayStateChange}
           onLoopComplete={handleAudioLoopComplete}
+          onStatusChange={handleAudioStatusChange}
+          retrySignal={audioRetrySignal}
           enableWebAudio={false}
           preload={hasUserInteracted ? 'auto' : 'metadata'}
           initialTime={0}
@@ -895,11 +909,13 @@ export default function ReadingSession({sessionRevision, config, lyrics, mediaDu
         <EnhancedAudioPlayer
           key={sessionRevision}
           accent={palette.accent}
-          isPlaying={isPlaying}
+          isPlaying={isPlaying || isIntroPlaying}
           isReady={isReady}
           duration={duration}
           currentTime={displayTime}
           isBuffering={isBuffering}
+          errorMessage={audioLoadState.status === 'error' ? audioLoadState.message : undefined}
+          onRetry={handleAudioRetry}
           onPlayPause={handlePlayPause}
           onSeek={(time) => {
             // 支持快退与快进：显示层loopCount随目标时间重算
