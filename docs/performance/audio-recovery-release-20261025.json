@@ -1,0 +1,790 @@
+{
+  "date": "2026-10-25",
+  "status": "verified-public",
+  "releaseId": "coscroll-faaafd88f5c86efc",
+  "sourceDigest": "faaafd88f5c86efc708b388e7a229d38182e94a756228f65b980cae5677b550d",
+  "artifactClosureSha256": "08987282eb71581846cfa362f90652849ea372da3f05898b77a272b1796d2805",
+  "assetsBase": "https://assets.aitoshuu.me/releases/aitoshuu-me/coscroll-faaafd88f5c86efc/",
+  "mediaBase": "https://media.aitoshuu.me/releases/aitoshuu-me/coscroll-faaafd88f5c86efc/",
+  "sourceCommit": "9878ffa80fd663cdc9d1686f67e2f2ef3266b330",
+  "sourceFiles": 446,
+  "entries": 376,
+  "cdnObjects": 305,
+  "bytes": 250440970,
+  "node": "v22.22.0",
+  "manifestSHA256": "c619c49d0a77f6d41e85ca95a4cafe1f831c9a16130a0e2e89236fef164a70e1",
+  "rollbackReleaseId": "coscroll-40fe007d0f638ddd",
+  "tests": {
+    "runtime": {
+      "passed": 100,
+      "failed": 0,
+      "skipped": 0
+    },
+    "deployment": {
+      "passed": 11,
+      "failed": 0,
+      "skipped": 0
+    },
+    "productionBuild": "passed including type and lint checks",
+    "sourceFilesMatchingCommit": 446
+  },
+  "cdnRecovery": {
+    "action": "Start existing assets.aitoshuu.me CDN domain",
+    "cause": "Configured instant bandwidth cap reached at 2026-10-24 10:11:00 Asia/Shanghai",
+    "bandwidthCapMbps": 10,
+    "capChanged": false,
+    "certificateChanged": false,
+    "existingCertificateId": "bgB5UJV9",
+    "certificateExpires": "2027-01-17 02:19:50 Asia/Shanghai",
+    "row": " \t\nassets.aitoshuu.me\n\tCDN 网页小文件\t部署中\t\n\n..\n\n\tCOS源\t中国境内\t管理关闭\n更多",
+    "at": "2026-10-25T04:57:19.666Z",
+    "lastObservedRow": " \t\nassets.aitoshuu.me\n\tCDN 网页小文件\t部署中\t\n\nassets.aitoshuu.me.cdn.dnsv1.com\n\n\tCOS源\t中国境内\t管理关闭\n更多",
+    "lastObservedAt": "2026-10-25T04:59:29.301Z"
+  },
+  "independentTls": [
+    {
+      "ip": "183.134.9.99",
+      "exit": 0,
+      "tail": [
+        "200 0"
+      ]
+    },
+    {
+      "ip": "61.170.88.228",
+      "exit": 0,
+      "tail": [
+        "200 0"
+      ]
+    }
+  ],
+  "cdn": {
+    "releaseId": "coscroll-faaafd88f5c86efc",
+    "mode": "public",
+    "origin": "https://aitoshuu.me",
+    "cdnOnly": true,
+    "checked": 305,
+    "encoded": 208,
+    "audioRanges": 4,
+    "hashes": "passed",
+    "decodedHashes": "passed",
+    "mime": "passed",
+    "cache": "passed",
+    "cors": "passed",
+    "resumedFrom": 300,
+    "verifiedThisRun": 5,
+    "orderedCheckpointSHA256": "4b291904a309e2a985c427576bb3e1ae57e007e0088174bf56b1c845d283808b",
+    "checkpointEvidence": "The completed sequential batches logged 300 successes after all assertions; this run verified the remaining five entries.",
+    "mediaConnection": "211.95.70.106 from independent origin DNS lookup; original HTTPS hostname and certificate verification preserved."
+  },
+  "http": [
+    {
+      "releaseId": "coscroll-faaafd88f5c86efc",
+      "mode": "public",
+      "origin": "https://aitoshuu.me",
+      "cdnOnly": false,
+      "checked": 376,
+      "encoded": 208,
+      "audioRanges": 4,
+      "hashes": "passed",
+      "decodedHashes": "passed",
+      "mime": "passed",
+      "cache": "passed",
+      "cors": "passed",
+      "fullBodyFiles": 71,
+      "cdnMetadataFiles": 305,
+      "cdnBodyEvidence": "Complete pre-switch verification of the same immutable release; current HEAD checks match its storage SHA metadata, length, encoding and release ID."
+    },
+    {
+      "releaseId": "coscroll-faaafd88f5c86efc",
+      "mode": "public",
+      "origin": "https://tongye.me",
+      "cdnOnly": false,
+      "checked": 376,
+      "encoded": 208,
+      "audioRanges": 4,
+      "hashes": "passed",
+      "decodedHashes": "passed",
+      "mime": "passed",
+      "cache": "passed",
+      "cors": "passed",
+      "fullBodyFiles": 71,
+      "cdnMetadataFiles": 305,
+      "cdnBodyEvidence": "Complete pre-switch verification of the same immutable release; current HEAD checks match its storage SHA metadata, length, encoding and release ID."
+    }
+  ],
+  "activation": {
+    "configurationWrites": 0,
+    "files": 71,
+    "mode": "activate",
+    "reviewedRoutes": "unchanged",
+    "snapshot": {
+      "configs": {
+        "/www/server/panel/vhost/nginx/html_aitoshuu.me.conf": "3dd2cd090e97568be66e511d216f551e3808f8b3c68c527c99832bc88ff1d036",
+        "/www/server/panel/vhost/nginx/html_tongye.me.conf": "5fc2a3d75a64b7c7a838414ccecefbd2bd5cd3ce2255e7bd02342e990b859257",
+        "/www/server/panel/vhost/nginx/infidao-locations.inc": "dce39a928f6139f70b7c3a407ab5461c602b02b746d617765bcab58844abe188",
+        "/www/server/panel/vhost/nginx/tongye-experience-routes.inc": "812e8ee9a1ab65c812198227b8bf49b32aff65e8cad4e11d4fa470fb9660a1fd",
+        "/www/server/panel/vhost/nginx/tongye-lubirth-routes.inc": "4339bc728f133eca43e8925fbf78426f6a5f370da07576bbf1c689a2cf5e1356",
+        "/www/server/panel/vhost/nginx/tongye-seo-routes.inc": "08e89b2c5fecfa45e9be4ed24d5a2a476586db22c6aaebdb222960cb9115481f"
+      },
+      "links": {
+        "/www/wwwroot/aitoshuu.me-current": "/www/wwwroot/aitoshuu.me-releases/aitoshuu-me-021aea50bcbd-cdn-d52b3fed50e9/web",
+        "/www/wwwroot/coscroll-current": "/www/wwwroot/coscroll-releases/coscroll-faaafd88f5c86efc/web",
+        "/www/wwwroot/lubirth-current": "/www/wwwroot/lubirth-releases/lubirth-a4d0bbfd76774f67/web"
+      },
+      "neighborHtml": {
+        "/www/wwwroot/aitoshuu.me-current/index.html": "de5f736ac5a9bd532b87d79a8c52a3271f6dcb34bde152b22563d017d671ac91",
+        "/www/wwwroot/lubirth-current/index.html": "0ed04abc1fd163c3612bf0ee8fb830750aeeb346113106b2b4c51548056d79a6"
+      }
+    },
+    "target": "/www/wwwroot/coscroll-releases/coscroll-faaafd88f5c86efc/web"
+  },
+  "originFinal": {
+    "configs": {
+      "/www/server/panel/vhost/nginx/focuence-public-locations.inc": "07640e3375fb54fa55bd1f9f4de19cc0a969f00bd5b23bda8a504746ec9fab5b",
+      "/www/server/panel/vhost/nginx/html_aitoshuu.me.conf": "ef9b9a29f09c4edc2ac57e59ef49307ca7afa6dc6121e53584e7c123537b5978",
+      "/www/server/panel/vhost/nginx/html_tongye.me.conf": "b8f3191feb0332da0b2355c5c0b760868a99b4fccded82ca828feff9e5c6db73",
+      "/www/server/panel/vhost/nginx/infidao-locations.inc": "dce39a928f6139f70b7c3a407ab5461c602b02b746d617765bcab58844abe188",
+      "/www/server/panel/vhost/nginx/outset-proxy-locations.inc": "7aa6001da5c2da9523cce46f31d9da5e79ef5efe5a1a8cbfb7e985e663e49fe0",
+      "/www/server/panel/vhost/nginx/tongye-experience-routes.inc": "812e8ee9a1ab65c812198227b8bf49b32aff65e8cad4e11d4fa470fb9660a1fd",
+      "/www/server/panel/vhost/nginx/tongye-lubirth-routes.inc": "4339bc728f133eca43e8925fbf78426f6a5f370da07576bbf1c689a2cf5e1356",
+      "/www/server/panel/vhost/nginx/tongye-seo-routes.inc": "08e89b2c5fecfa45e9be4ed24d5a2a476586db22c6aaebdb222960cb9115481f",
+      "/www/server/panel/vhost/snippets/familytree-public.conf": "4b77dd4cbf4eda96f51b13cb5abcaf086c131c180b9318e038c0f9ddc70d2942",
+      "/www/server/panel/vhost/snippets/sonoscope-public.conf": "04b213078b2d032a5ee0209be5ab452cd98847472fd8de69bb4100e37aed2d1f"
+    },
+    "links": {
+      "/www/wwwroot/aitoshuu.me-current": "/www/wwwroot/aitoshuu.me-releases/aitoshuu-me-021aea50bcbd-cdn-d52b3fed50e9/web",
+      "/www/wwwroot/coscroll-current": "/www/wwwroot/coscroll-releases/coscroll-faaafd88f5c86efc/web",
+      "/www/wwwroot/lubirth-current": "/www/wwwroot/lubirth-releases/lubirth-a4d0bbfd76774f67/web"
+    },
+    "neighborHtml": {
+      "/www/wwwroot/aitoshuu.me-current/index.html": "de5f736ac5a9bd532b87d79a8c52a3271f6dcb34bde152b22563d017d671ac91",
+      "/www/wwwroot/lubirth-current/index.html": "0ed04abc1fd163c3612bf0ee8fb830750aeeb346113106b2b4c51548056d79a6"
+    }
+  },
+  "browser": [
+    {
+      "origin": "https://aitoshuu.me",
+      "project": "heart-sutra",
+      "releaseId": "coscroll-faaafd88f5c86efc",
+      "viewport": [
+        390,
+        844
+      ],
+      "dpr": 3,
+      "canvasPixels": [
+        702,
+        1288
+      ],
+      "canvases": 2,
+      "errors": [],
+      "glError": 0,
+      "regionProviderCalls": 3,
+      "validRegionReturns": 3,
+      "scissorLeaked": false,
+      "binaryModelsLoaded": [],
+      "playAndPausePassed": true,
+      "gestures": [
+        {
+          "touchDrag": true,
+          "touchScrub": false,
+          "keyboardAcrossBoundary": false,
+          "absolute": 75,
+          "phase": 75,
+          "cycle": 0,
+          "paused": true
+        },
+        {
+          "touchDrag": true,
+          "touchScrub": false,
+          "keyboardAcrossBoundary": false,
+          "absolute": 60,
+          "phase": 60,
+          "cycle": 0,
+          "paused": true
+        },
+        {
+          "touchDrag": false,
+          "touchScrub": true,
+          "keyboardAcrossBoundary": false,
+          "absolute": 187,
+          "phase": 187,
+          "cycle": 0,
+          "paused": true
+        },
+        {
+          "touchDrag": false,
+          "touchScrub": true,
+          "keyboardAcrossBoundary": false,
+          "absolute": -935.7689809999999,
+          "phase": 187,
+          "cycle": -3,
+          "paused": true
+        },
+        {
+          "touchDrag": false,
+          "touchScrub": false,
+          "keyboardAcrossBoundary": true,
+          "absolute": 0,
+          "phase": 0,
+          "cycle": 0,
+          "paused": true
+        }
+      ]
+    },
+    {
+      "origin": "https://aitoshuu.me",
+      "project": "lotus-sutra-zanshi",
+      "releaseId": "coscroll-faaafd88f5c86efc",
+      "viewport": [
+        390,
+        844
+      ],
+      "dpr": 3,
+      "canvasPixels": [
+        702,
+        1288
+      ],
+      "canvases": 2,
+      "errors": [],
+      "glError": 0,
+      "regionProviderCalls": 3,
+      "validRegionReturns": 3,
+      "scissorLeaked": false,
+      "binaryModelsLoaded": [
+        "https://assets.aitoshuu.me/releases/aitoshuu-me/coscroll-faaafd88f5c86efc/models/prepared/050_%E5%A6%99.bin",
+        "https://assets.aitoshuu.me/releases/aitoshuu-me/coscroll-faaafd88f5c86efc/models/prepared/073_%E7%AB%B9.bin",
+        "https://assets.aitoshuu.me/releases/aitoshuu-me/coscroll-faaafd88f5c86efc/models/prepared/027_%E6%B5%B7.bin",
+        "https://assets.aitoshuu.me/releases/aitoshuu-me/coscroll-faaafd88f5c86efc/models/prepared/099_%E5%8C%96.bin",
+        "https://assets.aitoshuu.me/releases/aitoshuu-me/coscroll-faaafd88f5c86efc/models/prepared/099_%E5%8C%96.bin"
+      ],
+      "playAndPausePassed": true,
+      "gestures": [
+        {
+          "touchDrag": true,
+          "touchScrub": false,
+          "keyboardAcrossBoundary": false,
+          "absolute": 75,
+          "phase": 75,
+          "cycle": 0,
+          "paused": true
+        },
+        {
+          "touchDrag": true,
+          "touchScrub": false,
+          "keyboardAcrossBoundary": false,
+          "absolute": 60,
+          "phase": 60,
+          "cycle": 0,
+          "paused": true
+        },
+        {
+          "touchDrag": false,
+          "touchScrub": true,
+          "keyboardAcrossBoundary": false,
+          "absolute": 121,
+          "phase": 121,
+          "cycle": 0,
+          "paused": true
+        },
+        {
+          "touchDrag": false,
+          "touchScrub": true,
+          "keyboardAcrossBoundary": false,
+          "absolute": -604.531313,
+          "phase": 121,
+          "cycle": -3,
+          "paused": true
+        },
+        {
+          "touchDrag": false,
+          "touchScrub": false,
+          "keyboardAcrossBoundary": true,
+          "absolute": 0,
+          "phase": 0,
+          "cycle": 0,
+          "paused": true
+        }
+      ]
+    },
+    {
+      "origin": "https://tongye.me",
+      "project": "heart-sutra",
+      "releaseId": "coscroll-faaafd88f5c86efc",
+      "viewport": [
+        390,
+        844
+      ],
+      "dpr": 3,
+      "canvasPixels": [
+        702,
+        1288
+      ],
+      "canvases": 2,
+      "errors": [],
+      "glError": 0,
+      "regionProviderCalls": 3,
+      "validRegionReturns": 3,
+      "scissorLeaked": false,
+      "binaryModelsLoaded": [],
+      "playAndPausePassed": true,
+      "gestures": [
+        {
+          "touchDrag": true,
+          "touchScrub": false,
+          "keyboardAcrossBoundary": false,
+          "absolute": 75,
+          "phase": 75,
+          "cycle": 0,
+          "paused": true
+        },
+        {
+          "touchDrag": true,
+          "touchScrub": false,
+          "keyboardAcrossBoundary": false,
+          "absolute": 60,
+          "phase": 60,
+          "cycle": 0,
+          "paused": true
+        },
+        {
+          "touchDrag": false,
+          "touchScrub": true,
+          "keyboardAcrossBoundary": false,
+          "absolute": 187,
+          "phase": 187,
+          "cycle": 0,
+          "paused": true
+        },
+        {
+          "touchDrag": false,
+          "touchScrub": true,
+          "keyboardAcrossBoundary": false,
+          "absolute": -935.7689809999999,
+          "phase": 187,
+          "cycle": -3,
+          "paused": true
+        },
+        {
+          "touchDrag": false,
+          "touchScrub": false,
+          "keyboardAcrossBoundary": true,
+          "absolute": 0,
+          "phase": 0,
+          "cycle": 0,
+          "paused": true
+        }
+      ]
+    },
+    {
+      "origin": "https://tongye.me",
+      "project": "lotus-sutra-zanshi",
+      "releaseId": "coscroll-faaafd88f5c86efc",
+      "viewport": [
+        390,
+        844
+      ],
+      "dpr": 3,
+      "canvasPixels": [
+        702,
+        1288
+      ],
+      "canvases": 2,
+      "errors": [],
+      "glError": 0,
+      "regionProviderCalls": 3,
+      "validRegionReturns": 3,
+      "scissorLeaked": false,
+      "binaryModelsLoaded": [
+        "https://assets.aitoshuu.me/releases/aitoshuu-me/coscroll-faaafd88f5c86efc/models/prepared/050_%E5%A6%99.bin",
+        "https://assets.aitoshuu.me/releases/aitoshuu-me/coscroll-faaafd88f5c86efc/models/prepared/073_%E7%AB%B9.bin",
+        "https://assets.aitoshuu.me/releases/aitoshuu-me/coscroll-faaafd88f5c86efc/models/prepared/027_%E6%B5%B7.bin",
+        "https://assets.aitoshuu.me/releases/aitoshuu-me/coscroll-faaafd88f5c86efc/models/prepared/099_%E5%8C%96.bin",
+        "https://assets.aitoshuu.me/releases/aitoshuu-me/coscroll-faaafd88f5c86efc/models/prepared/099_%E5%8C%96.bin"
+      ],
+      "playAndPausePassed": true,
+      "gestures": [
+        {
+          "touchDrag": true,
+          "touchScrub": false,
+          "keyboardAcrossBoundary": false,
+          "absolute": 75,
+          "phase": 75,
+          "cycle": 0,
+          "paused": true
+        },
+        {
+          "touchDrag": true,
+          "touchScrub": false,
+          "keyboardAcrossBoundary": false,
+          "absolute": 60,
+          "phase": 60,
+          "cycle": 0,
+          "paused": true
+        },
+        {
+          "touchDrag": false,
+          "touchScrub": true,
+          "keyboardAcrossBoundary": false,
+          "absolute": 121,
+          "phase": 121,
+          "cycle": 0,
+          "paused": true
+        },
+        {
+          "touchDrag": false,
+          "touchScrub": true,
+          "keyboardAcrossBoundary": false,
+          "absolute": -604.531313,
+          "phase": 121,
+          "cycle": -3,
+          "paused": true
+        },
+        {
+          "touchDrag": false,
+          "touchScrub": false,
+          "keyboardAcrossBoundary": true,
+          "absolute": 0,
+          "phase": 0,
+          "cycle": 0,
+          "paused": true
+        }
+      ]
+    }
+  ],
+  "desktop": [
+    {
+      "origin": "https://aitoshuu.me",
+      "viewport": [
+        1440,
+        900
+      ],
+      "switches": 2,
+      "pausedSwitch": {
+        "project": "lotus-sutra-zanshi",
+        "title": "妙法莲华经 · 赞诗 | CoScroll",
+        "url": "https://aitoshuu.me/coscroll/?project=lotus-sutra-zanshi",
+        "duration": 241.843771,
+        "time": 0,
+        "paused": true,
+        "status": "",
+        "stableAudio": true,
+        "stableCanvases": true,
+        "contexts": 2,
+        "memory": [
+          {
+            "geometries": 1,
+            "textures": 0,
+            "programs": 1
+          },
+          {
+            "geometries": 5,
+            "textures": 12,
+            "programs": 6
+          }
+        ]
+      },
+      "playingSwitch": {
+        "project": "heart-sutra",
+        "title": "心经 · 王菲 | CoScroll",
+        "url": "https://aitoshuu.me/coscroll/",
+        "duration": 374.256327,
+        "time": 0.013889,
+        "paused": false,
+        "status": "",
+        "stableAudio": true,
+        "stableCanvases": true,
+        "contexts": 2,
+        "memory": [
+          {
+            "geometries": 1,
+            "textures": 0,
+            "programs": 1
+          },
+          {
+            "geometries": 5,
+            "textures": 15,
+            "programs": 7
+          }
+        ]
+      },
+      "heldMousePresses": [
+        {
+          "sameButton": true,
+          "sameIcon": true,
+          "pressedNodeConnected": true,
+          "mediaAdvanced": 0.586583,
+          "paused": true,
+          "clicks": [
+            {
+              "trusted": true,
+              "button": true
+            }
+          ]
+        },
+        {
+          "sameButton": true,
+          "sameIcon": true,
+          "pressedNodeConnected": true,
+          "mediaAdvanced": 0.665713,
+          "paused": true,
+          "clicks": [
+            {
+              "trusted": true,
+              "button": true
+            }
+          ]
+        }
+      ],
+      "errors": [],
+      "overflow": false
+    },
+    {
+      "origin": "https://tongye.me",
+      "viewport": [
+        1440,
+        900
+      ],
+      "switches": 2,
+      "pausedSwitch": {
+        "project": "lotus-sutra-zanshi",
+        "title": "妙法莲华经 · 赞诗 | CoScroll",
+        "url": "https://tongye.me/coscroll/?project=lotus-sutra-zanshi",
+        "duration": 241.843771,
+        "time": 0,
+        "paused": true,
+        "status": "",
+        "stableAudio": true,
+        "stableCanvases": true,
+        "contexts": 2,
+        "memory": [
+          {
+            "geometries": 1,
+            "textures": 0,
+            "programs": 1
+          },
+          {
+            "geometries": 5,
+            "textures": 12,
+            "programs": 6
+          }
+        ]
+      },
+      "playingSwitch": {
+        "project": "heart-sutra",
+        "title": "心经 · 王菲 | CoScroll",
+        "url": "https://tongye.me/coscroll/",
+        "duration": 374.256327,
+        "time": 0.057305,
+        "paused": false,
+        "status": "",
+        "stableAudio": true,
+        "stableCanvases": true,
+        "contexts": 2,
+        "memory": [
+          {
+            "geometries": 1,
+            "textures": 0,
+            "programs": 1
+          },
+          {
+            "geometries": 5,
+            "textures": 15,
+            "programs": 7
+          }
+        ]
+      },
+      "heldMousePresses": [
+        {
+          "sameButton": true,
+          "sameIcon": true,
+          "pressedNodeConnected": true,
+          "mediaAdvanced": 0.547148,
+          "paused": true,
+          "clicks": [
+            {
+              "trusted": true,
+              "button": true
+            }
+          ]
+        },
+        {
+          "sameButton": true,
+          "sameIcon": true,
+          "pressedNodeConnected": true,
+          "mediaAdvanced": 0.5996849999999998,
+          "paused": true,
+          "clicks": [
+            {
+              "trusted": true,
+              "button": true
+            }
+          ]
+        }
+      ],
+      "errors": [],
+      "overflow": false
+    }
+  ],
+  "recovery": [
+    {
+      "origin": "https://aitoshuu.me",
+      "mode": "Page-scoped CDP Fetch interception of Media requests only; real startup Range fetch and all other resources remain available. Actual native media failures; server unchanged.",
+      "mediaRequests": [
+        {
+          "url": "https://media.aitoshuu.me/releases/aitoshuu-me/coscroll-faaafd88f5c86efc/audio/%E5%BF%83%E7%BB%8F_2.mp3",
+          "resourceType": "Media"
+        },
+        {
+          "url": "https://media.aitoshuu.me/releases/aitoshuu-me/coscroll-faaafd88f5c86efc/audio/%E5%BF%83%E7%BB%8F_2.mp3",
+          "resourceType": "Media"
+        },
+        {
+          "url": "https://media.aitoshuu.me/releases/aitoshuu-me/coscroll-faaafd88f5c86efc/audio/%E5%BF%83%E7%BB%8F_2.mp3",
+          "resourceType": "Media"
+        }
+      ],
+      "failed": {
+        "loads": 2,
+        "errors": [
+          4,
+          4,
+          4
+        ],
+        "playing": 0,
+        "message": "录音暂时无法播放，请重试或切换经文。",
+        "status": "error",
+        "paused": true,
+        "retryRect": {
+          "x": 285,
+          "y": 752,
+          "width": 48,
+          "height": 44
+        },
+        "viewport": [
+          390,
+          844
+        ],
+        "release": "coscroll-faaafd88f5c86efc",
+        "overflow": false
+      },
+      "recovered": {
+        "loads": 3,
+        "errors": [
+          "https://media.aitoshuu.me/releases/aitoshuu-me/coscroll-faaafd88f5c86efc/audio/%E5%BF%83%E7%BB%8F_2.mp3",
+          "https://media.aitoshuu.me/releases/aitoshuu-me/coscroll-faaafd88f5c86efc/audio/%E5%BF%83%E7%BB%8F_2.mp3",
+          "https://media.aitoshuu.me/releases/aitoshuu-me/coscroll-faaafd88f5c86efc/audio/%E5%BF%83%E7%BB%8F_2.mp3"
+        ],
+        "playing": 0,
+        "paused": true,
+        "time": 0,
+        "errorVisible": false
+      },
+      "explicitPlaybackPassed": true
+    },
+    {
+      "origin": "https://tongye.me",
+      "mode": "Page-scoped CDP Fetch interception of Media requests only; real startup Range fetch and all other resources remain available. Actual native media failures; server unchanged.",
+      "mediaRequests": [
+        {
+          "url": "https://media.aitoshuu.me/releases/aitoshuu-me/coscroll-faaafd88f5c86efc/audio/%E5%BF%83%E7%BB%8F_2.mp3",
+          "resourceType": "Media"
+        },
+        {
+          "url": "https://media.aitoshuu.me/releases/aitoshuu-me/coscroll-faaafd88f5c86efc/audio/%E5%BF%83%E7%BB%8F_2.mp3",
+          "resourceType": "Media"
+        },
+        {
+          "url": "https://media.aitoshuu.me/releases/aitoshuu-me/coscroll-faaafd88f5c86efc/audio/%E5%BF%83%E7%BB%8F_2.mp3",
+          "resourceType": "Media"
+        }
+      ],
+      "failed": {
+        "loads": 2,
+        "errors": [
+          4,
+          4,
+          4
+        ],
+        "playing": 0,
+        "message": "录音暂时无法播放，请重试或切换经文。",
+        "status": "error",
+        "paused": true,
+        "retryRect": {
+          "x": 285,
+          "y": 752,
+          "width": 48,
+          "height": 44
+        },
+        "viewport": [
+          390,
+          844
+        ],
+        "release": "coscroll-faaafd88f5c86efc",
+        "overflow": false
+      },
+      "recovered": {
+        "loads": 3,
+        "errors": [
+          "https://media.aitoshuu.me/releases/aitoshuu-me/coscroll-faaafd88f5c86efc/audio/%E5%BF%83%E7%BB%8F_2.mp3",
+          "https://media.aitoshuu.me/releases/aitoshuu-me/coscroll-faaafd88f5c86efc/audio/%E5%BF%83%E7%BB%8F_2.mp3",
+          "https://media.aitoshuu.me/releases/aitoshuu-me/coscroll-faaafd88f5c86efc/audio/%E5%BF%83%E7%BB%8F_2.mp3"
+        ],
+        "playing": 0,
+        "paused": true,
+        "time": 0,
+        "errorVisible": false
+      },
+      "explicitPlaybackPassed": true
+    }
+  ],
+  "evidenceSHA256": {
+    "runtime.log": "ed7213074d71e4b6179e0857a1e52524e98b6a60c5762c8b5b26ed4fe3bcc373",
+    "deployment-tests.log": "9ef6ad5795fd008c8e41fa9dfb2ec732032e9e5bd75d60934c7a860a720030a0",
+    "package.log": "31fcb35a807ee458fe63ebb7614bb8c7da98f84a48c8a322aca34bb63d5660c5",
+    "cdn-verify-first300.log": "4b291904a309e2a985c427576bb3e1ae57e007e0088174bf56b1c845d283808b",
+    "cdn-verify-recovered.log": "0aa485eee42bed1535692d4b3f89045dae64eacb3a37bc697b509e4d6b40af8b",
+    "aitoshuu-public-http.log": "f00bf10fceaeb50e528c278452d82f6ff8de8e137599021be42ed3a5eef17390",
+    "tongye-public-http.log": "ea0f166a34ada0ba93ecf58886931212bc8525601d599b9797f95c53af715b12"
+  },
+  "method": {
+    "browser": "Ego Chromium; mobile 390x844 DPR3/iPhone UA and desktop 1440x900 DPR1/desktop UA",
+    "browserDownloadBytesPerSecond": 600000,
+    "cdnBodyDownloadBytesPerSecondPerRequest": 153600,
+    "cdnBodyConcurrency": 4,
+    "metadataReuses": "All 305 immutable CDN objects were content-verified before activation. Each origin then had 71 full-body checks, 305 live HEAD metadata/CORS checks and four real media range checks.",
+    "resume": "The original ordered run logged 300 successes, then failed on media DNS resolution. Its completed first 300 entries were retained; the last five were body-verified separately. TLS remained enabled. Verified local payload copies were pruned under disk pressure.",
+    "browserSpaceReset": "The initial browser space disappeared after an external runtime reset. The user explicitly approved creating the replacement space; no account or site change was made before resuming."
+  },
+  "limits": [
+    "No physical iOS/Android or Safari test.",
+    "Existing 10Mbps bandwidth shutdown cap retained; exceeding it can stop the shared asset domain again.",
+    "The prior local 2222-frame pixel result and independent 75-model acceptance were not rerun as full public matrices. Public checks exercise the actual provider, both model formats and normal interactions."
+  ],
+  "cleanup": {
+    "complete": true,
+    "browserSpaceId": 2,
+    "browserFinish": "resolved exactly once; keep=[]",
+    "screenshotsInspected": 8,
+    "temporaryDirectoriesRemoved": [
+      ".cache/audio-release-20261025",
+      ".cache/releases/audio-recovery-20261025-cdn"
+    ],
+    "screenshotsRemoved": 8,
+    "temporaryScriptsAndLogsRemoved": true,
+    "buildCopyAndCandidateRemoved": true
+  },
+  "finalHealthChecks": [
+    {
+      "origin": "https://aitoshuu.me",
+      "site": "CoScroll",
+      "releaseId": "coscroll-faaafd88f5c86efc",
+      "sourceDigest": "faaafd88f5c86efc708b388e7a229d38182e94a756228f65b980cae5677b550d"
+    },
+    {
+      "origin": "https://tongye.me",
+      "site": "CoScroll",
+      "releaseId": "coscroll-faaafd88f5c86efc",
+      "sourceDigest": "faaafd88f5c86efc708b388e7a229d38182e94a756228f65b980cae5677b550d"
+    }
+  ]
+}
