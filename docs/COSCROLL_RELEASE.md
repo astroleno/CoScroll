@@ -1,7 +1,7 @@
 # CoScroll：双入口与 COS/CDN 发布
 
-沿用 fv_slide / LuBirth 的基础设施：阿里云 Nginx 提供 HTML、Next 静态路由载荷和版本标记；
-腾讯上海私有 COS 桶 `tongye-1327162705` 存放不可变对象。
+2026-10-26 起，阿里云 Nginx 仅提供两个主域名的 HTTPS 入口与路径转发；
+腾讯上海服务器提供 HTML、Next 静态路由载荷和版本标记，私有 COS 桶 `tongye-1327162705` 存放不可变对象。
 JS、CSS、字体、OBJ/GLB、HDR、图片、歌词和项目 JSON 使用 `assets.aitoshuu.me`；音频使用 `media.aitoshuu.me`。
 对象全部位于 `releases/aitoshuu-me/coscroll-<source-digest>/`，不覆盖已有对象。
 发布脚本启用静态导出；普通 `npm run build` / `npm run start` 保留 Next 的本地生产预览方式。
@@ -123,10 +123,11 @@ npm run models:check
    `PYTHONPATH=.cache/cos-sdk python3 deploy/upload-cos-release.py <cdn-package> --apply`。
    上传先 HEAD 比对；新对象使用禁止覆盖标志；冲突停止。凭据不进入日志、清单或前端。
 4. `node deploy/verify-release.mjs <cdn-package> --cdn-only` 验证全部 CDN 对象。
-5. 将 `web/` 完整暂存到 `/www/wwwroot/coscroll-releases/<release-id>/web`，逐文件比对哈希。
+5. 将 `web/` 完整暂存到腾讯源站的 `/www/wwwroot/coscroll-releases/<release-id>/web`，逐文件比对哈希。
    保留 Next 导出的 `.txt` 路由载荷；不能按 LuBirth 的两文件规则删掉它们。
-6. 首次接入时给现有 `html_aitoshuu.me.conf` 增加 `/CoScroll` 正式路由及 `/coscroll` 别名；
-   从历史小写入口迁移时同时准备路由草案。入口约定相同的后续更新只切换 CoScroll 发布目录。
+6. 腾讯安装 `deploy/nginx/tencent-coscroll-origin.inc` 与共享的公网域名白名单 map；
+   阿里两站使用 `deploy/nginx/aliyun-coscroll-gateway.inc`，保留共享的混写别名规则。
+   首次接入或调整配置时同时核对两端；入口约定相同的后续更新只切换腾讯 CoScroll 发布目录。
    保留现网安全响应头、TLS、首页和 LuBirth 配置。
    `stage-origin.mjs` 提供路由语义草案；实际配置须与现网合并、备份并通过 `nginx -t`。
 7. 原子切换 `/www/wwwroot/coscroll-current`，必要时 reload Nginx。
