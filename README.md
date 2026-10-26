@@ -4,6 +4,7 @@
 
 ## 当前基线与经典接入
 
+- [曲目与专属手写开场制作](docs/TRACK_PRODUCTION.md)：制曲模型自动创作短序，Inko 制作与冻结资源，构建检查每首曲目的完整开场。
 - [工程经验与多经典接入规范](docs/CLASSICS_INTEGRATION_SPEC.md)：现有能力、视觉约束、百字模型入库、配置与切换要求、验收及发布。
 - [75 个 V2 模型入库](docs/V2_75_MODEL_INTEGRATION_20261023.md)：替换 7 个、补入 68 个，连同原 26 个 OBJ 共 101 个源模型；来源、完整几何校验与交付边界。
 - [曲目切换、画面设置与模型占位方案](docs/PLAYBACK_APPEARANCE_MODEL_PLAN.md)：已实现心经/赞诗切换、明确占位与按曲目调色；保留原丝绸背景。

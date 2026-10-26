@@ -51,7 +51,7 @@
       "base": "#1f2e38",
       "overlay": "rgba(0, 0, 0, 0.5)",
       "noise": true,
-      "noiseIntensity": 1.0
+      "noiseIntensity": 1
     }
   },
   "anchors": {
@@ -231,11 +231,30 @@
       "meaning": "心性圆满"
     }
   ],
-  "appearance": {"background": "silk", "palette": "original-jade", "hueOffset": 0},
+  "appearance": {
+    "background": "silk",
+    "palette": "original-jade",
+    "hueOffset": 0
+  },
   "performance": {
     "qualityLevel": "high",
     "preloadModels": true,
     "maxConcurrentLoads": 3,
     "enableAdaptiveQuality": true
+  },
+  "opening": {
+    "text": "在般若的声息之间\n照见纷扰，也照见空明\n让一念随歌声安住",
+    "kind": "original",
+    "sourceDigest": "b6687067708eba82b8febba3f5af8032ecd1db0bdc0e873f3051717eabd99dd7",
+    "revision": "ec6e56fca7282b3d1deb7f5bcda7a202b077c07c8e31f66f4e124d8fb549eedf",
+    "attribution": "AI生成 · Inko",
+    "asset": {
+      "src": "/opening/heart-sutra/preface.43e6ed7b658855ae.png",
+      "width": 1440,
+      "height": 720,
+      "bytes": 170690,
+      "sha256": "43e6ed7b658855ae59c9321bb7bd6e3d591de0bf434d6d69e89abba628e8cb29"
+    },
+    "manifest": "/opening/heart-sutra/manifest.ec6e56fca7282b3d.json"
   }
 }

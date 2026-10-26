@@ -4,7 +4,7 @@ const regionThreeModule = await prepareThreeTransmissionRegion();
 const basePath = process.env.NEXT_PUBLIC_BASE_PATH || '';
 const releaseId = process.env.COSCROLL_RELEASE_ID;
 
-if (basePath && !/^\/[a-z0-9-]+$/.test(basePath)) {
+if (basePath && !/^\/[a-zA-Z0-9-]+$/.test(basePath)) {
   throw new Error('NEXT_PUBLIC_BASE_PATH must be empty or a single path segment');
 }
 

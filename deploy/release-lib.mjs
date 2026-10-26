@@ -5,7 +5,8 @@ import { gzipSync, gunzipSync } from 'node:zlib';
 
 export const OBJECT_ROOT = 'releases/aitoshuu-me/';
 export const CACHE = 'public, max-age=31536000, immutable';
-export const BASE_PATH = '/coscroll';
+export const BASE_PATH = '/CoScroll';
+export const LEGACY_BASE_PATH = '/coscroll';
 export const MIME = {
   '.html': 'text/html; charset=utf-8', '.txt': 'text/plain; charset=utf-8',
   '.js': 'text/javascript; charset=utf-8', '.css': 'text/css; charset=utf-8',
@@ -82,7 +83,7 @@ export function validateManifest(manifest, { production = false } = {}) {
   if (manifest.schemaVersion !== 1 || manifest.site !== 'CoScroll' ||
       !/^[0-9a-f]{64}$/.test(manifest.sourceDigest || '') ||
       manifest.releaseId !== `coscroll-${manifest.sourceDigest.slice(0, 16)}` ||
-      manifest.basePath !== BASE_PATH || (production && manifest.deliveryProfile !== 'cdn')) {
+      ![BASE_PATH, LEGACY_BASE_PATH].includes(manifest.basePath) || (production && manifest.deliveryProfile !== 'cdn')) {
     throw new Error('Invalid CoScroll release identity or delivery profile');
   }
   const expected = bases(manifest.deliveryProfile, manifest.releaseId);
@@ -111,8 +112,10 @@ export function validateManifest(manifest, { production = false } = {}) {
           entry.cacheControl !== (logical === 'release-health.json' ? 'no-store' : 'no-cache')) throw new Error('Invalid origin entry');
     } else {
       if (entry.cacheControl !== CACHE || entry.objectKey !== `${expected.objectPrefix}${logical}` || objects.has(entry.objectKey)) throw new Error('Object is outside the immutable release');
+      const assetScope = /^(?:_next\/static|fonts|models|textures|lyrics|projects|images)\//.test(logical)
+        || /^opening\/[a-z0-9]+(?:-[a-z0-9]+)*\/(?:preface\.[a-f0-9]{16}\.png|manifest\.[a-f0-9]{16}\.json)$/.test(logical);
       if (entry.channel === 'media' ? (!logical.startsWith('audio/') || !['.mp3', '.wav', '.ogg', '.flac'].includes(extension)) :
-          (!/^(?:_next\/static|fonts|models|textures|lyrics|projects|images)\//.test(logical) || extension === '.html')) throw new Error('Asset is in the wrong channel');
+          (!assetScope || extension === '.html')) throw new Error('Asset is in the wrong channel');
       objects.add(entry.objectKey);
     }
   }

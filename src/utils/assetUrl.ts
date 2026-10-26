@@ -5,7 +5,9 @@ const mediaBase = process.env.NEXT_PUBLIC_MEDIA_BASE || assetsBase;
 function logicalPath(path: string): string {
   let relativePath = path.replace(/^(?:\.\/|\/)+/, '');
   const prefix = basePath.replace(/^\//, '');
-  if (prefix && relativePath.startsWith(`${prefix}/`)) {
+  const compatiblePrefix = prefix.toLowerCase() === 'coscroll'
+    && relativePath.slice(0, prefix.length + 1).toLowerCase() === 'coscroll/';
+  if (prefix && (relativePath.startsWith(`${prefix}/`) || compatiblePrefix)) {
     relativePath = relativePath.slice(prefix.length + 1);
   }
   if (relativePath.split(/[/?#]/).some(part => decodeURIComponent(part) === '..') || /%2f|%5c|\\/i.test(relativePath)) {

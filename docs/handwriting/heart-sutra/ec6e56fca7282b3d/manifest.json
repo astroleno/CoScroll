@@ -1,0 +1,91 @@
+{
+  "schemaVersion": 1,
+  "projectId": "heart-sutra",
+  "opening": {
+    "text": "在般若的声息之间\n照见纷扰，也照见空明\n让一念随歌声安住",
+    "kind": "original",
+    "sourceDigest": "b6687067708eba82b8febba3f5af8032ecd1db0bdc0e873f3051717eabd99dd7",
+    "revision": "ec6e56fca7282b3d1deb7f5bcda7a202b077c07c8e31f66f4e124d8fb549eedf",
+    "attribution": "AI生成 · Inko",
+    "asset": {
+      "src": "/opening/heart-sutra/preface.43e6ed7b658855ae.png",
+      "width": 1440,
+      "height": 720,
+      "bytes": 170690,
+      "sha256": "43e6ed7b658855ae59c9321bb7bd6e3d591de0bf434d6d69e89abba628e8cb29"
+    },
+    "manifest": "/opening/heart-sutra/manifest.ec6e56fca7282b3d.json"
+  },
+  "provider": "Inko",
+  "model": "lyric-1",
+  "style": "12",
+  "sdkRevision": "a1e2d4929d8e97807961a536d7f1e224f5e42b31",
+  "generationCostCny": "0.00",
+  "jobId": "fc39ece0-b65f-4f4f-980c-b1984a218e47",
+  "inputs": {
+    "version": 1,
+    "project": {
+      "id": "heart-sutra",
+      "name": "心经",
+      "description": "心经可视化项目 - 王菲版本"
+    },
+    "audio": {
+      "src": "/audio/心经_2.mp3",
+      "format": "mp3",
+      "duration": 374.256327,
+      "title": "心经",
+      "artist": "王菲"
+    },
+    "lyrics": {
+      "src": "/lyrics/心经.lrc",
+      "sha256": "530e801aafe3cd091190120d47801422e4d7e088fddb419152562647d2e234c6"
+    },
+    "audioSha256": "1b9bdc106948104038425cc8b9e66da3131dc29c0146ab80c4ebcd28e74f8fbb"
+  },
+  "source": {
+    "pngSha256": "2848b29b7271a6a8caddafac46eb63c5fb7fbc1851633f090d2bb2dc406da31e",
+    "sceneSha256": "c86412d57e842d3266e3011e7b664fa33ef7a18009ee28b86eaa8db7741c23fc"
+  },
+  "render": {
+    "width": 1440,
+    "height": 720,
+    "bytes": 170690,
+    "sha256": "43e6ed7b658855ae59c9321bb7bd6e3d591de0bf434d6d69e89abba628e8cb29",
+    "sceneText": "在般若的声息之间\n照见纷扰，也照见空明\n让一念随歌声安住",
+    "glyphs": [
+      "在",
+      "般",
+      "若",
+      "的",
+      "声",
+      "息",
+      "之",
+      "间",
+      "照",
+      "见",
+      "纷",
+      "扰",
+      "，",
+      "也",
+      "照",
+      "见",
+      "空",
+      "明",
+      "让",
+      "一",
+      "念",
+      "随",
+      "歌",
+      "声",
+      "安",
+      "住"
+    ],
+    "labelBounds": [
+      955,
+      631,
+      1390,
+      704
+    ],
+    "layoutVersion": 1
+  }
+}

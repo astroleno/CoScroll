@@ -21,6 +21,32 @@ JS、CSS、字体、OBJ/GLB、HDR、图片、歌词和项目 JSON 使用 `assets
 [此前手机渲染优化](MOBILE_RENDER_RELEASE_20261021.md)、
 [此前公网复测](PUBLIC_RELEASE_20261021.md)及更早发布记录保留如下。
 
+## 入口大小写（2026-10-26，本地改动，尚未发布）
+
+新候选统一使用 `/CoScroll/`，对应两个站点的 `aitoshuu.me/CoScroll/` 与
+`tongye.me/CoScroll/`。`/CoScroll` 补齐末尾斜杠；旧 `/coscroll`、`/coscroll/`
+及其子路径以 308 转到对应的 `/CoScroll/` 路径，保留编码后的子路径和完整查询参数，
+包括 `?project=lotus-sutra-zanshi`。缺失资源在跳转后仍须返回 404。
+
+此约定覆盖新构建的 Next basePath、三通道本地预览、离线 Nginx 草案和发布校验。
+CDN 对象前缀、`coscroll-<digest>` 发布标识及源站目录保持原有形式。
+校验器仍接受历史 `/coscroll` manifest，旧包的校验不要求其具备后来新增的别名。
+上面的当前公网版本与历史验收记录继续表示实际已发布状态。
+
+`stage-origin.mjs` 可将工具原先生成的三条小写规则迁移为正式入口与别名规则；
+只识别完整的已知规则块，遇到自定义或重复规则会停止。它只写另一个草案文件，
+不覆盖基线，也不连接或修改服务器。实际发布仍须审阅现网差异并通过 `nginx -t`。
+
+本轮本地验收：发布测试 16/16、运行测试 113/113，生产编译、类型检查与静态导出通过。
+真实本地候选为 `coscroll-7bea906a65ece936`，交付闭包 SHA-256 为
+`cd0345d7a45876fab64d4c37bcc76b4fae7f382a2692077892ea5c398132f175`。
+三通道 HTTP 完整校验 380 个文件（其中 190 个 gzip 表示）、4 个音频 Range 和 5 个跳转，
+哈希、解码后哈希、MIME、缓存和 CORS 均通过。两首曲目分别经大小写入口读取，
+查询参数和返回 HTML 一致，首载脚本使用 `/CoScroll`。
+
+本轮未运行公网或浏览器交互回归，也未执行服务器 `nginx -t`、提交、推送或发布。
+预览进程已停止，本轮临时候选、`.next` 与 `out` 已核对构建身份后清理，未创建截图。
+
 ## 本地候选验证
 
 ```sh
@@ -32,7 +58,8 @@ npm run release:preview -- .cache/releases/local-1
 npm run release:verify -- .cache/releases/local-1 --local
 ```
 
-预览只监听本机：页面 `http://127.0.0.1:4318/coscroll/`，资源、音频分别使用 4319 和 4320 端口。
+预览只监听本机：页面 `http://127.0.0.1:4318/CoScroll/`，小写 `/coscroll/` 自动跳转，
+资源、音频分别使用 4319 和 4320 端口。历史候选按其 manifest 中的路径预览。
 浏览器验证桌面和手机尺寸的模型、歌词、播放、暂停、拖动与滚动同步。
 回退回归：暂停播放后向后滚动，停止滚动后音频实际位置与进度条应一致；恢复播放从新位置继续。
 本地与 CDN 候选具有不同构建身份；本地候选不能用于生产上传或源站计划。
@@ -96,13 +123,15 @@ npm run models:check
 4. `node deploy/verify-release.mjs <cdn-package> --cdn-only` 验证全部 CDN 对象。
 5. 将 `web/` 完整暂存到 `/www/wwwroot/coscroll-releases/<release-id>/web`，逐文件比对哈希。
    保留 Next 导出的 `.txt` 路由载荷；不能按 LuBirth 的两文件规则删掉它们。
-6. 首次接入时才给现有 `html_aitoshuu.me.conf` 增加 `/coscroll` 路由；后续更新只切换 CoScroll 入口。
+6. 首次接入时给现有 `html_aitoshuu.me.conf` 增加 `/CoScroll` 正式路由及 `/coscroll` 别名；
+   从历史小写入口迁移时同时准备路由草案。入口约定相同的后续更新只切换 CoScroll 发布目录。
    保留现网安全响应头、TLS、首页和 LuBirth 配置。
    `stage-origin.mjs` 提供路由语义草案；实际配置须与现网合并、备份并通过 `nginx -t`。
 7. 原子切换 `/www/wwwroot/coscroll-current`，必要时 reload Nginx。
 8. `node deploy/verify-release.mjs <cdn-package>` 验证公网文件、重定向、404、缓存和邻站；再做浏览器交互检查。
 
-首次上线前保存现网 vhost 的完整备份和基线。更新时回滚只切回旧 `coscroll-current`；
+首次上线前保存现网 vhost 的完整备份和基线。入口约定相同的更新回滚只切回旧 `coscroll-current`；
+大小写迁移的回滚须同时恢复与旧包 basePath 一致的路由配置并通过 `nginx -t`。
 首次接入失败则还原新增路由和旧入口状态。COS 不可变对象保留，不把删除当作回滚。
 云端上传、修改配置和正式切换须在对应发布批准后执行；离线计划本身不授予这些权限。
 

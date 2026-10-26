@@ -159,6 +159,27 @@ const PerformanceConfigSchema = z.object({
   enableAdaptiveQuality: z.boolean().optional(),
 }) satisfies z.ZodType<PerformanceConfig>;
 
+const DigestSchema = z.string().regex(/^[a-f0-9]{64}$/);
+const OpeningSchema = z.object({
+  text: z.string().min(12).max(64).refine(text => {
+    const lines = text.split('\n');
+    return lines.length >= 2 && lines.length <= 3 && lines.every(line => line.trim() === line && line.length > 0 && Array.from(line).length <= 16)
+      && !/[\u0000-\u0009\u000b-\u001f\u007f<>]/.test(text);
+  }, '序言须为 2–3 行，每行不超过 16 字'),
+  kind: z.enum(['original', 'excerpt']),
+  sourceDigest: DigestSchema,
+  revision: DigestSchema,
+  attribution: z.literal('AI生成 · Inko'),
+  asset: z.object({
+    src: z.string().regex(/^\/opening\/[a-z0-9-]+\/[a-z0-9.-]+\.png$/),
+    width: z.number().int().positive().max(4096),
+    height: z.number().int().positive().max(4096),
+    bytes: z.number().int().positive().max(2 * 1024 * 1024),
+    sha256: DigestSchema,
+  }),
+  manifest: z.string().regex(/^\/opening\/[a-z0-9-]+\/[a-z0-9.-]+\.json$/),
+});
+
 // ==================== 完整项目配置 Schema ====================
 
 const ProjectConfigSchema = z.object({
@@ -185,6 +206,7 @@ const ProjectConfigSchema = z.object({
       }
     ),
   performance: PerformanceConfigSchema,
+  opening: OpeningSchema.optional(),
   appearance: z.object({
     background: z.literal('silk'),
     palette: z.enum(['original-jade', 'ink-green', 'warm-gold', 'violet-gray']),
@@ -192,9 +214,11 @@ const ProjectConfigSchema = z.object({
   }).optional(),
 }).refine(config => {
   const anchors = new Set(config.anchors.mappings.map(mapping => mapping.anchor));
-  return anchors.size === config.anchors.mappings.length && config.timeline.every(item => anchors.has(item.anchor));
+  return anchors.size === config.anchors.mappings.length && config.timeline.every(item => anchors.has(item.anchor))
+    && (!config.opening || (config.opening.asset.src.startsWith(`/opening/${config.project.id}/`)
+      && config.opening.manifest.startsWith(`/opening/${config.project.id}/`)));
 }, {
-  message: '锚字映射不可重复，且必须覆盖全部时间轴锚字',
+  message: '锚字映射须完整且不重复；开场资源必须属于当前曲目',
 }) satisfies z.ZodType<ProjectConfig>;
 
 /**

@@ -3,7 +3,7 @@ import { execFile } from 'node:child_process';
 import { resolve } from 'node:path';
 import { promisify } from 'node:util';
 import { request as httpRequest } from 'node:http';
-import { decodeDelivery, sameCachePolicy, sha, verifyPackage } from './release-lib.mjs';
+import { BASE_PATH, LEGACY_BASE_PATH, decodeDelivery, sameCachePolicy, sha, verifyPackage } from './release-lib.mjs';
 
 const run = promisify(execFile);
 async function request(url, extra = {}) {
@@ -64,12 +64,12 @@ try {
   const originIndex = process.argv.indexOf('--origin');
   const origin = local ? 'http://127.0.0.1:4318' : originIndex < 0 ? 'https://aitoshuu.me' : process.argv[originIndex + 1];
   if (!local && !['https://aitoshuu.me', 'https://tongye.me'].includes(origin)) throw new Error('Origin is outside the approved CoScroll scope');
-  let checked = 0, ranges = 0, encoded = 0;
+  let checked = 0, ranges = 0, encoded = 0, redirects = 0;
   const entries = manifest.entries.filter(entry => !cdnOnly || entry.channel !== 'origin');
   // Four independent reads at a time; every file still receives all checks.
   for (let offset = 0; offset < entries.length; offset += 4) await Promise.all(entries.slice(offset, offset + 4).map(async entry => {
     const logical = entry.packagePath.slice((entry.channel === 'origin' ? 'web' : entry.channel).length + 1);
-    const url = entry.channel === 'origin' ? `${origin}/coscroll/${logical}` :
+    const url = entry.channel === 'origin' ? `${origin}${manifest.basePath}/${logical}` :
       `${entry.channel === 'media' ? manifest.mediaBase : manifest.assetsBase}${logical}`;
     const response = await request(encodeURI(url), { Origin: origin, 'Accept-Encoding': entry.contentEncoding || 'identity' });
     if (response.status !== 200 || response.bytes.length !== entry.bytes || sha(response.bytes) !== entry.sha256) throw new Error(`HTTP/hash check failed: ${url} (${response.status})`);
@@ -88,10 +88,23 @@ try {
     checked++;
   }));
   if (!cdnOnly) {
-    const canonical = await request(`${origin}/coscroll?probe=1`);
-    if (canonical.status !== 308 || new URL(canonical.headers.get('location'), origin).pathname !== '/coscroll/' ||
-        new URL(canonical.headers.get('location'), origin).search !== '?probe=1') throw new Error('Canonical redirect failed');
-    const missing = await request(`${origin}/coscroll/_next/static/does-not-exist.js`);
+    const checkRedirect = async (path, target) => {
+      const response = await request(`${origin}${path}`);
+      const location = response.headers.get('location');
+      if (response.status !== 308 || !location || new URL(location, origin).href !== `${origin}${target}`) {
+        throw new Error(`CoScroll redirect failed: ${path}`);
+      }
+      redirects++;
+    };
+    await checkRedirect(`${manifest.basePath}?probe=1`, `${manifest.basePath}/?probe=1`);
+    if (manifest.basePath === BASE_PATH) {
+      for (const [path, target] of [
+        ['', '/'], ['/', '/'], ['/release-health.json', '/release-health.json'],
+        ['/_next/static/does-not-exist.js', '/_next/static/does-not-exist.js'],
+      ]) await checkRedirect(`${LEGACY_BASE_PATH}${path}?project=lotus-sutra-zanshi&probe=1`,
+        `${BASE_PATH}${target}?project=lotus-sutra-zanshi&probe=1`);
+    }
+    const missing = await request(`${origin}${manifest.basePath}/_next/static/does-not-exist.js`);
     if (missing.status !== 404) throw new Error('Missing resource must return 404');
     if (!local) for (const path of ['/', '/lubirth/']) {
       const neighbor = await request(`${origin}${path}`);
@@ -100,5 +113,6 @@ try {
     }
   }
   console.log(JSON.stringify({ releaseId: manifest.releaseId, mode: local ? 'local' : 'public', origin, cdnOnly,
-    checked, encoded, audioRanges: ranges, hashes: 'passed', decodedHashes: 'passed', mime: 'passed', cache: 'passed', cors: 'passed' }));
+    basePath: manifest.basePath, checked, encoded, audioRanges: ranges, redirects,
+    hashes: 'passed', decodedHashes: 'passed', mime: 'passed', cache: 'passed', cors: 'passed' }));
 } catch (error) { console.error(error.message); process.exitCode = 1; }

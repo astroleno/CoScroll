@@ -1,18 +1,22 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useId, useState } from "react";
+import OpeningPrompt from './OpeningPrompt';
+import type { OpeningConfig } from '@/config/types';
 
 interface AutoPlayGuardProps {
   title?: string;
+  opening?: OpeningConfig;
   onUserInteraction: () => void;
   isReady: boolean;
   isPlaying: boolean;
 }
 
-export default function AutoPlayGuard({ onUserInteraction, title = '心经' }: AutoPlayGuardProps) {
+export default function AutoPlayGuard({ onUserInteraction, title = '心经', opening }: AutoPlayGuardProps) {
   const [mounted, setMounted] = useState(false);
   const [shouldShow, setShouldShow] = useState(false);
   const [hasClicked, setHasClicked] = useState(false);
+  const prefaceId = useId();
 
   useEffect(() => {
     if (!hasClicked) {
@@ -33,6 +37,7 @@ export default function AutoPlayGuard({ onUserInteraction, title = '心经' }: A
     <button
       type="button"
       aria-label={`点击开始${title}`}
+      aria-describedby={opening ? prefaceId : undefined}
       data-coscroll-intro
       className="intro-start"
       style={{
@@ -64,15 +69,7 @@ export default function AutoPlayGuard({ onUserInteraction, title = '心经' }: A
       onClick={handleClick}
     >
       <span className="intro-copy" style={{ display: 'block', textAlign: 'center' }}>
-        <span style={{
-          display: 'block',
-          fontSize: '2.5rem',
-          fontWeight: 600,
-          color: '#e2e8f0',
-          marginBottom: '0.5rem'
-        }}>
-          点击开始
-        </span>
+        {opening && <OpeningPrompt key={opening.revision} opening={opening} textId={prefaceId} />}
         <span style={{
           display: 'block',
           fontSize: '3rem',

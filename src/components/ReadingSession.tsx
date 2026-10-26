@@ -840,6 +840,7 @@ export default function ReadingSession({sessionRevision, config, lyrics, mediaDu
       {/* 自动播放引导 */}
       {!hasUserInteracted && <AutoPlayGuard
         title={config.project.name}
+        opening={config.opening}
         onUserInteraction={handleUserInteraction}
         isReady={isReady}
         isPlaying={isPlaying || isIntroPlaying}

@@ -1,0 +1,95 @@
+{
+  "schemaVersion": 1,
+  "projectId": "lotus-sutra-zanshi",
+  "opening": {
+    "text": "听一声妙法，散入十方\n心中的疑网随声消散\n愿欢喜如花雨轻轻落下",
+    "kind": "original",
+    "sourceDigest": "63e952bf92241929ab479c18fac7b3ef3259abd4f94a4c37c9e390c45aa11197",
+    "revision": "9b44fbd1f8149e2ea29331fc6a713b7439f24e14cbb5509624530638f0ec28ee",
+    "attribution": "AI生成 · Inko",
+    "asset": {
+      "src": "/opening/lotus-sutra-zanshi/preface.afe5138aa22bbacb.png",
+      "width": 1440,
+      "height": 720,
+      "bytes": 176832,
+      "sha256": "afe5138aa22bbacbf31c9971ea9d20ff6b07f7e4c0091f0c43c28d77161ce3ac"
+    },
+    "manifest": "/opening/lotus-sutra-zanshi/manifest.9b44fbd1f8149e2e.json"
+  },
+  "provider": "Inko",
+  "model": "lyric-1",
+  "style": "12",
+  "sdkRevision": "a1e2d4929d8e97807961a536d7f1e224f5e42b31",
+  "generationCostCny": "0.00",
+  "jobId": "5d96de11-f2a0-47f5-a739-f07b5d509203",
+  "inputs": {
+    "version": 1,
+    "project": {
+      "id": "lotus-sutra-zanshi",
+      "name": "妙法莲华经",
+      "description": "赞诗歌曲录音版，摘编自《妙法莲华经》，非全本诵读。"
+    },
+    "audio": {
+      "src": "/audio/lotus-sutra-zanshi.mp3",
+      "format": "mp3",
+      "duration": 241.843771,
+      "title": "妙法莲华经",
+      "artist": "赞诗",
+      "album": "神农尝百草·卷一"
+    },
+    "lyrics": {
+      "src": "/lyrics/lotus-sutra-zanshi.lrc",
+      "sha256": "ec5f5a056bffee1cf1f422cce1096c7a5178342e4c529b7466e76d6d508a0c1e"
+    },
+    "audioSha256": "9f490076336c34f0cad3e6bb28208c08f053b416a1a17d016256cfb9125a0eb0"
+  },
+  "source": {
+    "pngSha256": "9f89016341545d67741f6004907764d8415debe802f25d4b75f7588af628cfef",
+    "sceneSha256": "56618320d6c4a80084349449ec3fe8c81a2fa791dacb379d33917c2a8fc4016e"
+  },
+  "render": {
+    "width": 1440,
+    "height": 720,
+    "bytes": 176832,
+    "sha256": "afe5138aa22bbacbf31c9971ea9d20ff6b07f7e4c0091f0c43c28d77161ce3ac",
+    "sceneText": "听一声妙法，散入十方\n心中的疑网随声消散\n愿欢喜如花雨轻轻落下",
+    "glyphs": [
+      "听",
+      "一",
+      "声",
+      "妙",
+      "法",
+      "，",
+      "散",
+      "入",
+      "十",
+      "方",
+      "心",
+      "中",
+      "的",
+      "疑",
+      "网",
+      "随",
+      "声",
+      "消",
+      "散",
+      "愿",
+      "欢",
+      "喜",
+      "如",
+      "花",
+      "雨",
+      "轻",
+      "轻",
+      "落",
+      "下"
+    ],
+    "labelBounds": [
+      955,
+      631,
+      1390,
+      704
+    ],
+    "layoutVersion": 1
+  }
+}

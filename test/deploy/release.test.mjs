@@ -4,9 +4,10 @@ import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
 import { test } from 'node:test';
 import vm from 'node:vm';
-import { execFileSync } from 'node:child_process';
+import { execFileSync, spawn } from 'node:child_process';
 import ts from 'typescript';
-import { BASE_PATH, CACHE, MIME, bases, closureHash, decodeDelivery, encodeDelivery, sameCachePolicy, sha, validateManifest, verifyPackage } from '../../deploy/release-lib.mjs';
+import { BASE_PATH, LEGACY_BASE_PATH, CACHE, MIME, bases, closureHash, decodeDelivery, encodeDelivery, sameCachePolicy, sha, validateManifest, verifyPackage } from '../../deploy/release-lib.mjs';
+import { draftNginxConfig, nginxLocations } from '../../deploy/stage-origin.mjs';
 
 test('CDN cache directives may reorder while stale, private or incomplete policies fail', () => {
   assert.ok(sameCachePolicy('public, immutable, max-age=31536000', CACHE));
@@ -27,29 +28,40 @@ function resolver(env = {}) {
 }
 
 test('release builds export static files; ordinary build/start retains Next server support', () => {
-  const check = "import config from './next.config.mjs'; console.log(config.output || 'server');";
-  const output = releaseId => execFileSync(process.execPath, ['--input-type=module', '-e', check], {
+  const check = "import config from './next.config.mjs'; console.log(JSON.stringify({output: config.output || 'server', basePath: config.basePath}));";
+  const output = (releaseId, basePath = '') => JSON.parse(execFileSync(process.execPath, ['--input-type=module', '-e', check], {
     cwd: new URL('../../', import.meta.url), encoding: 'utf8',
-    env: { ...process.env, COSCROLL_RELEASE_ID: releaseId, NEXT_PUBLIC_BASE_PATH: '' },
-  }).trim();
-  assert.equal(output(''), 'server');
-  assert.equal(output('coscroll-aaaaaaaaaaaaaaaa'), 'export');
+    env: { ...process.env, COSCROLL_RELEASE_ID: releaseId, NEXT_PUBLIC_BASE_PATH: basePath }, stdio: 'pipe',
+  }));
+  assert.deepEqual(output(''), {output: 'server', basePath: ''});
+  assert.deepEqual(output('coscroll-aaaaaaaaaaaaaaaa', '/CoScroll'), {output: 'export', basePath: '/CoScroll'});
+  assert.deepEqual(output('', '/coscroll'), {output: 'server', basePath: '/coscroll'});
+  for (const path of ['/CoScroll/', '/CoScroll/nested', '/..', '/%2f', '//CoScroll', '/CoScroll?x=1']) {
+    assert.throws(() => output('', path), /single path segment/);
+  }
 });
 
 test('logical resources work at the root and under a subdirectory', () => {
   assert.equal(resolver().assetUrl('/models/空.obj'), '/models/空.obj');
-  const { assetUrl, mediaUrl } = resolver({ NEXT_PUBLIC_BASE_PATH: '/coscroll' });
-  assert.equal(assetUrl('/fonts/心经.ttf'), '/coscroll/fonts/心经.ttf');
-  assert.equal(assetUrl('/coscroll/fonts/心经.ttf'), '/coscroll/fonts/心经.ttf');
-  assert.equal(mediaUrl('./audio/心经.mp3'), '/coscroll/audio/心经.mp3');
+  for (const basePath of ['/CoScroll', '/coscroll']) {
+    const { assetUrl, mediaUrl } = resolver({ NEXT_PUBLIC_BASE_PATH: basePath });
+    assert.equal(assetUrl('/fonts/心经.ttf'), `${basePath}/fonts/心经.ttf`);
+    for (const prefix of ['/CoScroll', '/coscroll']) {
+      assert.equal(assetUrl(`${prefix}/fonts/心经.ttf`), `${basePath}/fonts/心经.ttf`);
+      assert.equal(mediaUrl(`${prefix}/audio/心经.mp3`), `${basePath}/audio/心经.mp3`);
+    }
+    assert.equal(mediaUrl('./audio/心经.mp3'), `${basePath}/audio/心经.mp3`);
+    assert.equal(assetUrl('/coscrolling/fonts/心经.ttf'), `${basePath}/coscrolling/fonts/心经.ttf`);
+  }
 });
 
 test('CDN channels keep configured resources in their own immutable release', () => {
-  const { assetUrl, mediaUrl } = resolver({ NEXT_PUBLIC_BASE_PATH: '/coscroll',
+  const { assetUrl, mediaUrl } = resolver({ NEXT_PUBLIC_BASE_PATH: '/CoScroll',
     NEXT_PUBLIC_ASSET_BASE: 'https://assets.aitoshuu.me/releases/x/', NEXT_PUBLIC_MEDIA_BASE: 'https://media.aitoshuu.me/releases/x/' });
   assert.equal(assetUrl('/models/空.obj'), 'https://assets.aitoshuu.me/releases/x/models/空.obj');
   assert.equal(assetUrl('/audio/心经.mp3'), 'https://media.aitoshuu.me/releases/x/audio/心经.mp3');
   assert.equal(assetUrl('/coscroll/audio/心经.mp3'), 'https://media.aitoshuu.me/releases/x/audio/心经.mp3');
+  assert.equal(assetUrl('/CoScroll/audio/心经.mp3'), 'https://media.aitoshuu.me/releases/x/audio/心经.mp3');
   const resolved = mediaUrl('/audio/心经.mp3');
   assert.equal(assetUrl(resolved), resolved);
   assert.equal(assetUrl('blob:local'), 'blob:local');
@@ -57,7 +69,7 @@ test('CDN channels keep configured resources in their own immutable release', ()
   assert.throws(() => assetUrl('/models/%2e%2e/private'), /inside the release/);
 });
 
-async function fixture(t, profile = 'cdn') {
+async function fixture(t, profile = 'cdn', basePath = BASE_PATH) {
   const root = await mkdtemp(join(tmpdir(), 'coscroll-release-test-'));
   t.after(() => rm(root, { recursive: true, force: true }));
   const sourceDigest = 'a'.repeat(64), releaseId = `coscroll-${sourceDigest.slice(0, 16)}`;
@@ -67,7 +79,8 @@ async function fixture(t, profile = 'cdn') {
     ['origin', 'index.html', `<meta name="coscroll-release-id" content="${releaseId}"><script src="${urls.assetsBase}_next/static/app.js"></script>`],
     ['origin', 'release-health.json', JSON.stringify({ site: 'CoScroll', releaseId, sourceDigest })],
     ['assets', '_next/static/app.js', 'console.log("CoScroll");'],
-    ['media', 'audio/心经.mp3', 'fake-audio-bytes'],
+    ['media', 'audio/心经.mp3', 'fake-audio-bytes'.repeat(100)],
+    ['origin', 'examples/空/index.html', '<title>Nested CoScroll route</title>'],
   ];
   for (const [channel, name, text] of files) {
     const packagePath = `${channel === 'origin' ? 'web' : channel}/${name}`, bytes = Buffer.from(text);
@@ -78,7 +91,7 @@ async function fixture(t, profile = 'cdn') {
       ...(channel === 'origin' ? {} : { objectKey: urls.objectPrefix + name }) });
   }
   const manifest = { schemaVersion: 1, site: 'CoScroll', sourceDigest, releaseId, deliveryProfile: profile,
-    basePath: BASE_PATH, ...urls, entries, artifactClosureSha256: closureHash(entries) };
+    basePath, ...urls, entries, artifactClosureSha256: closureHash(entries) };
   await writeFile(join(root, 'manifests/release-manifest.json'), JSON.stringify(manifest));
   return { root, manifest };
 }
@@ -89,6 +102,144 @@ test('complete packages pass, preview packages cannot be promoted', async t => {
   const local = await fixture(t, 'local');
   await verifyPackage(local.root);
   await assert.rejects(verifyPackage(local.root, { production: true }), /identity or delivery profile/);
+});
+
+test('new packages use CoScroll while historical lowercase manifests remain verifiable', async t => {
+  assert.equal(BASE_PATH, '/CoScroll');
+  const { root, manifest } = await fixture(t, 'cdn', '/coscroll');
+  assert.equal((await verifyPackage(root, {production: true})).basePath, '/coscroll');
+  for (const basePath of ['/COSCROLL', '/CoScroll/', '/other', '//CoScroll']) {
+    assert.throws(() => validateManifest({...manifest, basePath}), /identity or delivery profile/);
+  }
+});
+
+const nginxBaseline = `server {
+    root /www/wwwroot/aitoshuu.me-current;
+    add_header Cache-Control $fv_cache_control always;
+    add_header X-Content-Type-Options nosniff always;
+    location = /lubirth { return 308 /lubirth/; }
+    location / { try_files $uri $uri/ =404; }
+}
+`;
+const legacyNginxBlock = `    location = /coscroll { return 308 /coscroll/$is_args$args; }
+    location = /coscroll/release-health.json { alias /www/wwwroot/coscroll-current/release-health.json; set $fv_cache_control "no-store"; }
+    location ^~ /coscroll/ { alias /www/wwwroot/coscroll-current/; index index.html; try_files $uri $uri/ =404; set $fv_cache_control "no-cache"; }
+`;
+
+test('Nginx drafts add or migrate only recognized CoScroll routes and retain shared-site configuration', () => {
+  const {after} = draftNginxConfig(nginxBaseline);
+  assert.equal(after.replace(nginxLocations().map(line => `    ${line}\n`).join('') + '\n', ''), nginxBaseline);
+  assert.ok(after.includes('location = /CoScroll { return 308 /CoScroll/$is_args$args; }'));
+  assert.ok(after.includes('location = /coscroll { return 308 /CoScroll/$is_args$args; }'));
+  assert.ok(after.includes('if ($request_uri ~ "^/coscroll(/.*)$") { return 308 /CoScroll$1; }'));
+  assert.equal(draftNginxConfig(after).after, after, 'repeating the draft introduces no duplicates');
+  const existing = nginxBaseline.replace('    location = /lubirth {', legacyNginxBlock + '\n    location = /lubirth {');
+  assert.equal(draftNginxConfig(existing).after, after, 'historical routes are replaced, not shadowed');
+  const rollback = draftNginxConfig(after, LEGACY_BASE_PATH).after;
+  assert.ok(rollback.includes('location = /CoScroll { return 308 /coscroll/$is_args$args; }'));
+  assert.equal(draftNginxConfig(rollback).after, after, 'legacy package routing can migrate back');
+  for (const unknown of [
+    existing.replace('index index.html;', 'index custom.html;'),
+    existing.replace('    location / {', '    location = /CoScroll/private { return 403; }\n    location / {'),
+    existing.replace('add_header Cache-Control $fv_cache_control always;', ''),
+    nginxBaseline.replace('    location / {', '    location = /CoScroll { return 302 /other; }\n    location / {'),
+  ]) assert.throws(() => draftNginxConfig(unknown), /baseline differs|routing differs/);
+});
+
+test('staging writes a separate draft, leaves the baseline intact and refuses to overwrite output', async t => {
+  const {root} = await fixture(t);
+  const baseline = join(root, 'baseline.conf'), output = join(root, 'proposed.conf');
+  await writeFile(baseline, nginxBaseline);
+  const args = ['deploy/stage-origin.mjs', root, '--nginx-baseline', baseline, '--output', output];
+  const plan = JSON.parse(execFileSync(process.execPath, args, {cwd: new URL('../../', import.meta.url), encoding: 'utf8', stdio: 'pipe'}));
+  assert.equal(plan.mode, 'offline-plan');
+  assert.equal(plan.basePath, '/CoScroll');
+  assert.equal(await readFile(baseline, 'utf8'), nginxBaseline);
+  assert.equal(sha(await readFile(output)), plan.configPlan.proposedSha256);
+  assert.throws(() => execFileSync(process.execPath, args, {cwd: new URL('../../', import.meta.url), stdio: 'pipe'}), /EEXIST/);
+});
+
+async function startPreview(t, root) {
+  const child = spawn(process.execPath, ['deploy/preview-release.mjs', root], {
+    cwd: new URL('../../', import.meta.url), stdio: ['ignore', 'pipe', 'pipe'],
+  });
+  let finished = false, stderr = '';
+  const closed = new Promise(resolve => child.once('close', () => { finished = true; resolve(); }));
+  const stop = async () => { if (!finished) { child.kill('SIGTERM'); await closed; } };
+  t.after(stop);
+  child.stderr.on('data', bytes => { stderr += bytes; });
+  const ready = await new Promise((resolve, reject) => {
+    let stdout = '';
+    const timeout = setTimeout(() => reject(new Error('Preview did not become ready')), 15000);
+    child.once('error', error => { clearTimeout(timeout); reject(error); });
+    child.once('close', code => { clearTimeout(timeout); reject(new Error(`Preview exited ${code}: ${stderr}`)); });
+    child.stdout.on('data', bytes => {
+      stdout += bytes;
+      if (stdout.includes('\n')) {
+        clearTimeout(timeout);
+        try { resolve(JSON.parse(stdout.split('\n')[0])); } catch (error) { reject(error); }
+      }
+    });
+  });
+  return {ready, stop};
+}
+
+test('real preview HTTP accepts both casings, retains encoded subpaths and queries, and passes the release verifier', {timeout: 60000}, async t => {
+  for (const basePath of ['/CoScroll', '/coscroll']) {
+    const {root, manifest} = await fixture(t, 'local', basePath);
+    const {ready, stop} = await startPreview(t, root);
+    try {
+      assert.equal(ready.url, `http://127.0.0.1:4318${basePath}/`);
+      const alias = basePath === '/CoScroll' ? '/coscroll' : '/CoScroll';
+      const query = '?project=lotus-sutra-zanshi&note=%E5%A6%99%20%E6%B3%95&repeat=1&repeat=2';
+      for (const [path, target] of [
+        [basePath, `${basePath}/`], [alias, `${basePath}/`], [`${alias}/`, `${basePath}/`],
+        [`${alias}/release-health.json`, `${basePath}/release-health.json`],
+        [`${alias}/examples/%E7%A9%BA/`, `${basePath}/examples/%E7%A9%BA/`],
+        [`${alias}/_next/static/does-not-exist.js`, `${basePath}/_next/static/does-not-exist.js`],
+      ]) {
+        const response = await fetch(`http://127.0.0.1:4318${path}${query}`, {redirect: 'manual'});
+        assert.equal(response.status, 308, path);
+        assert.equal(response.headers.get('location'), target + query, path);
+        await response.arrayBuffer();
+      }
+      const home = await fetch(`${ready.url}${query}`);
+      assert.equal(home.status, 200);
+      assert.equal(sha(Buffer.from(await home.arrayBuffer())), manifest.entries[0].sha256);
+      const nested = await fetch(`http://127.0.0.1:4318${alias}/examples/%E7%A9%BA/${query}`);
+      assert.equal(nested.status, 200);
+      assert.match(await nested.text(), /Nested CoScroll route/);
+      for (const path of [`${alias}/_next/static/does-not-exist.js`, '/coscrolling/', '/COSCROLL/']) {
+        const missing = await fetch(`http://127.0.0.1:4318${path}`);
+        assert.equal(missing.status, 404, path);
+        await missing.arrayBuffer();
+      }
+      const report = JSON.parse(execFileSync(process.execPath, ['deploy/verify-release.mjs', root, '--local'], {
+        cwd: new URL('../../', import.meta.url), encoding: 'utf8', timeout: 30000, stdio: 'pipe',
+      }));
+      assert.equal(report.basePath, basePath);
+      assert.equal(report.checked, manifest.entries.length);
+      assert.equal(report.audioRanges, 1);
+      assert.equal(report.redirects, basePath === '/CoScroll' ? 5 : 1);
+    } finally { await stop(); }
+  }
+});
+
+test('dedicated opening images and manifests are release assets; source packages and arbitrary opening files are excluded', async t => {
+  const {manifest} = await fixture(t);
+  for (const [path, accepted] of [
+    ['opening/heart-sutra/preface.0123456789abcdef.png', true],
+    ['opening/heart-sutra/manifest.0123456789abcdef.json', true],
+    ['opening/heart-sutra/source.png', false], ['opening/heart-sutra/scene.zip', false],
+    ['opening/shared.js', false], ['opening/heart-sutra/preface.png', false],
+  ]) {
+    const next = structuredClone(manifest), bytes = Buffer.from('fixture');
+    next.entries.push({channel: 'assets', packagePath: `assets/${path}`, bytes: bytes.length, sha256: sha(bytes),
+      mime: MIME[path.slice(path.lastIndexOf('.'))], cacheControl: CACHE, objectKey: manifest.objectPrefix + path});
+    next.artifactClosureSha256 = closureHash(next.entries);
+    if (accepted) assert.equal(validateManifest(next), next);
+    else assert.throws(() => validateManifest(next));
+  }
 });
 
 test('tampered files and unlisted source material block release', async t => {

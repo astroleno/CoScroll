@@ -1,0 +1,642 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-10-25",
+  "scope": "Local production package; no commit, push or public deployment",
+  "tests": {
+    "runtime": {
+      "passed": 113,
+      "failed": 0,
+      "skipped": 0
+    },
+    "deployment": {
+      "passed": 12,
+      "failed": 0,
+      "skipped": 0
+    },
+    "typeCheck": true,
+    "productionBuild": true
+  },
+  "localPackage": {
+    "releaseId": "coscroll-9653d076e3f37862",
+    "sourceDigest": "9653d076e3f3786220089ae70542f7da0652653dbff0c0c8319a82b9c97e7264",
+    "artifactClosureSha256": "d1d79f1820e48266b92403b3bc6ec86f5f917affc1ebb87e255af4defb5eeb12",
+    "files": 380
+  },
+  "recordings": [
+    {
+      "id": "heart-sutra",
+      "title": "心经",
+      "opening": {
+        "text": "在般若的声息之间\n照见纷扰，也照见空明\n让一念随歌声安住",
+        "kind": "original",
+        "sourceDigest": "b6687067708eba82b8febba3f5af8032ecd1db0bdc0e873f3051717eabd99dd7",
+        "revision": "ec6e56fca7282b3d1deb7f5bcda7a202b077c07c8e31f66f4e124d8fb549eedf",
+        "attribution": "AI生成 · Inko",
+        "asset": {
+          "src": "/opening/heart-sutra/preface.43e6ed7b658855ae.png",
+          "width": 1440,
+          "height": 720,
+          "bytes": 170690,
+          "sha256": "43e6ed7b658855ae59c9321bb7bd6e3d591de0bf434d6d69e89abba628e8cb29"
+        },
+        "manifest": "/opening/heart-sutra/manifest.ec6e56fca7282b3d.json"
+      },
+      "aigcFieldsEqualSource": true
+    },
+    {
+      "id": "lotus-sutra-zanshi",
+      "title": "妙法莲华经",
+      "opening": {
+        "text": "听一声妙法，散入十方\n心中的疑网随声消散\n愿欢喜如花雨轻轻落下",
+        "kind": "original",
+        "sourceDigest": "63e952bf92241929ab479c18fac7b3ef3259abd4f94a4c37c9e390c45aa11197",
+        "revision": "9b44fbd1f8149e2ea29331fc6a713b7439f24e14cbb5509624530638f0ec28ee",
+        "attribution": "AI生成 · Inko",
+        "asset": {
+          "src": "/opening/lotus-sutra-zanshi/preface.afe5138aa22bbacb.png",
+          "width": 1440,
+          "height": 720,
+          "bytes": 176832,
+          "sha256": "afe5138aa22bbacbf31c9971ea9d20ff6b07f7e4c0091f0c43c28d77161ce3ac"
+        },
+        "manifest": "/opening/lotus-sutra-zanshi/manifest.9b44fbd1f8149e2e.json"
+      },
+      "aigcFieldsEqualSource": true
+    }
+  ],
+  "http": {
+    "releaseId": "coscroll-9653d076e3f37862",
+    "artifactClosureSha256": "d1d79f1820e48266b92403b3bc6ec86f5f917affc1ebb87e255af4defb5eeb12",
+    "files": 380,
+    "checks": [
+      {
+        "path": "assets/opening/heart-sutra/manifest.ec6e56fca7282b3d.json",
+        "status": 200,
+        "sha256": "35c529f243bd6697aacb3f92bc66f59578d74eff5203960f7b96f63c13b044c1",
+        "bytes": 2386
+      },
+      {
+        "path": "assets/opening/heart-sutra/preface.43e6ed7b658855ae.png",
+        "status": 200,
+        "sha256": "43e6ed7b658855ae59c9321bb7bd6e3d591de0bf434d6d69e89abba628e8cb29",
+        "bytes": 170690
+      },
+      {
+        "path": "assets/opening/lotus-sutra-zanshi/manifest.9b44fbd1f8149e2e.json",
+        "status": 200,
+        "sha256": "8a43767bf6349c7a2aeda67acff4f67429bb9c58fa25df4cfc8b87adad0f2422",
+        "bytes": 2592
+      },
+      {
+        "path": "assets/opening/lotus-sutra-zanshi/preface.afe5138aa22bbacb.png",
+        "status": 200,
+        "sha256": "afe5138aa22bbacbf31c9971ea9d20ff6b07f7e4c0091f0c43c28d77161ce3ac",
+        "bytes": 176832
+      },
+      {
+        "path": "assets/projects/heart-sutra.json",
+        "status": 200,
+        "sha256": "80d9959d51601d4fed66086cf5d77e9598167de70e6d1f71284e4f33db9875f4",
+        "bytes": 6253
+      },
+      {
+        "path": "assets/projects/lotus-sutra-zanshi.json",
+        "status": 200,
+        "sha256": "366a9e03757458bbe17472566df45492863d3215b2209ad79603ff0e7cae4a9c",
+        "bytes": 5991
+      }
+    ],
+    "htmlStatus": 200,
+    "bootstrappedPrefaces": 2,
+    "ranges": [
+      {
+        "id": "heart-sutra",
+        "status": 206,
+        "sha256": "d3b6766f7e2c72305e4cf5ac5a17580861b01964542d66cf3d3365835f916048"
+      },
+      {
+        "id": "lotus-sutra-zanshi",
+        "status": 206,
+        "sha256": "1eed469637700b856587c2d88db39ebecf4911b56a9b2fd209b9ed6c2242f154"
+      }
+    ],
+    "frontendGenerationServices": []
+  },
+  "browser": {
+    "engine": "Chromium through Ego Lite",
+    "replacementSpaceId": 1,
+    "replacementAuthorizedByUser": true,
+    "viewportEmulation": true,
+    "realDevicesTested": false,
+    "faultInjection": "Page-scoped fetch responses for missing/corrupt images and deferred promises for slow images; server files unchanged",
+    "passed": 16,
+    "failed": 0,
+    "cases": [
+      {
+        "projectId": "heart-sutra",
+        "mode": "normal",
+        "viewport": "portrait",
+        "activation": "tap",
+        "revision": "ec6e56fca7282b3d1deb7f5bcda7a202b077c07c8e31f66f4e124d8fb549eedf",
+        "textMatched": true,
+        "imageDecoded": true,
+        "bounds": {
+          "left": 24,
+          "top": 288.5,
+          "right": 366,
+          "bottom": 459.5
+        },
+        "viewportPixels": {
+          "width": 390,
+          "height": 844
+        },
+        "noOverflow": true,
+        "noAutoplay": true,
+        "blobUrlsBefore": 1,
+        "blobUrlsAfter": 0,
+        "abortsBefore": 0,
+        "abortsAfter": 0,
+        "trustedStartClicks": 1,
+        "gestureBoundPlayCalls": 3,
+        "pageErrors": [],
+        "inferenceRequests": 0
+      },
+      {
+        "projectId": "lotus-sutra-zanshi",
+        "mode": "normal",
+        "viewport": "portrait",
+        "activation": "tap",
+        "revision": "9b44fbd1f8149e2ea29331fc6a713b7439f24e14cbb5509624530638f0ec28ee",
+        "textMatched": true,
+        "imageDecoded": true,
+        "bounds": {
+          "left": 24,
+          "top": 288.5,
+          "right": 366,
+          "bottom": 459.5
+        },
+        "viewportPixels": {
+          "width": 390,
+          "height": 844
+        },
+        "noOverflow": true,
+        "noAutoplay": true,
+        "blobUrlsBefore": 1,
+        "blobUrlsAfter": 0,
+        "abortsBefore": 0,
+        "abortsAfter": 0,
+        "trustedStartClicks": 1,
+        "gestureBoundPlayCalls": 3,
+        "pageErrors": [],
+        "inferenceRequests": 0
+      },
+      {
+        "projectId": "heart-sutra",
+        "mode": "normal",
+        "viewport": "landscape",
+        "activation": "tap",
+        "revision": "ec6e56fca7282b3d1deb7f5bcda7a202b077c07c8e31f66f4e124d8fb549eedf",
+        "textMatched": true,
+        "imageDecoded": true,
+        "bounds": {
+          "left": 295.25,
+          "top": 83.625,
+          "right": 548.75,
+          "bottom": 210.375
+        },
+        "viewportPixels": {
+          "width": 844,
+          "height": 390
+        },
+        "noOverflow": true,
+        "noAutoplay": true,
+        "blobUrlsBefore": 1,
+        "blobUrlsAfter": 0,
+        "abortsBefore": 0,
+        "abortsAfter": 0,
+        "trustedStartClicks": 1,
+        "gestureBoundPlayCalls": 3,
+        "pageErrors": [],
+        "inferenceRequests": 0
+      },
+      {
+        "projectId": "lotus-sutra-zanshi",
+        "mode": "normal",
+        "viewport": "landscape",
+        "activation": "tap",
+        "revision": "9b44fbd1f8149e2ea29331fc6a713b7439f24e14cbb5509624530638f0ec28ee",
+        "textMatched": true,
+        "imageDecoded": true,
+        "bounds": {
+          "left": 295.25,
+          "top": 83.625,
+          "right": 548.75,
+          "bottom": 210.375
+        },
+        "viewportPixels": {
+          "width": 844,
+          "height": 390
+        },
+        "noOverflow": true,
+        "noAutoplay": true,
+        "blobUrlsBefore": 1,
+        "blobUrlsAfter": 0,
+        "abortsBefore": 0,
+        "abortsAfter": 0,
+        "trustedStartClicks": 1,
+        "gestureBoundPlayCalls": 3,
+        "pageErrors": [],
+        "inferenceRequests": 0
+      },
+      {
+        "projectId": "heart-sutra",
+        "mode": "normal",
+        "viewport": "desktop",
+        "activation": "Enter",
+        "revision": "ec6e56fca7282b3d1deb7f5bcda7a202b077c07c8e31f66f4e124d8fb549eedf",
+        "textMatched": true,
+        "imageDecoded": true,
+        "bounds": {
+          "left": 480,
+          "top": 282,
+          "right": 960,
+          "bottom": 522
+        },
+        "viewportPixels": {
+          "width": 1440,
+          "height": 900
+        },
+        "noOverflow": true,
+        "noAutoplay": true,
+        "blobUrlsBefore": 1,
+        "blobUrlsAfter": 0,
+        "abortsBefore": 0,
+        "abortsAfter": 0,
+        "trustedStartClicks": 1,
+        "gestureBoundPlayCalls": 3,
+        "pageErrors": [],
+        "inferenceRequests": 0
+      },
+      {
+        "projectId": "lotus-sutra-zanshi",
+        "mode": "normal",
+        "viewport": "desktop",
+        "activation": "Space",
+        "revision": "9b44fbd1f8149e2ea29331fc6a713b7439f24e14cbb5509624530638f0ec28ee",
+        "textMatched": true,
+        "imageDecoded": true,
+        "bounds": {
+          "left": 480,
+          "top": 282,
+          "right": 960,
+          "bottom": 522
+        },
+        "viewportPixels": {
+          "width": 1440,
+          "height": 900
+        },
+        "noOverflow": true,
+        "noAutoplay": true,
+        "blobUrlsBefore": 1,
+        "blobUrlsAfter": 0,
+        "abortsBefore": 0,
+        "abortsAfter": 0,
+        "trustedStartClicks": 1,
+        "gestureBoundPlayCalls": 3,
+        "pageErrors": [],
+        "inferenceRequests": 0
+      },
+      {
+        "projectId": "heart-sutra",
+        "mode": "missing",
+        "viewport": "portrait",
+        "activation": "tap",
+        "revision": "ec6e56fca7282b3d1deb7f5bcda7a202b077c07c8e31f66f4e124d8fb549eedf",
+        "textMatched": true,
+        "imageDecoded": false,
+        "bounds": {
+          "left": 24,
+          "top": 288.5,
+          "right": 366,
+          "bottom": 459.5
+        },
+        "viewportPixels": {
+          "width": 390,
+          "height": 844
+        },
+        "noOverflow": true,
+        "noAutoplay": true,
+        "blobUrlsBefore": 0,
+        "blobUrlsAfter": 0,
+        "abortsBefore": 0,
+        "abortsAfter": 0,
+        "trustedStartClicks": 1,
+        "gestureBoundPlayCalls": 3,
+        "pageErrors": [],
+        "inferenceRequests": 0
+      },
+      {
+        "projectId": "lotus-sutra-zanshi",
+        "mode": "missing",
+        "viewport": "portrait",
+        "activation": "tap",
+        "revision": "9b44fbd1f8149e2ea29331fc6a713b7439f24e14cbb5509624530638f0ec28ee",
+        "textMatched": true,
+        "imageDecoded": false,
+        "bounds": {
+          "left": 24,
+          "top": 288.5,
+          "right": 366,
+          "bottom": 459.5
+        },
+        "viewportPixels": {
+          "width": 390,
+          "height": 844
+        },
+        "noOverflow": true,
+        "noAutoplay": true,
+        "blobUrlsBefore": 0,
+        "blobUrlsAfter": 0,
+        "abortsBefore": 0,
+        "abortsAfter": 0,
+        "trustedStartClicks": 1,
+        "gestureBoundPlayCalls": 3,
+        "pageErrors": [],
+        "inferenceRequests": 0
+      },
+      {
+        "projectId": "heart-sutra",
+        "mode": "corrupt",
+        "viewport": "portrait",
+        "activation": "tap",
+        "revision": "ec6e56fca7282b3d1deb7f5bcda7a202b077c07c8e31f66f4e124d8fb549eedf",
+        "textMatched": true,
+        "imageDecoded": false,
+        "bounds": {
+          "left": 24,
+          "top": 288.5,
+          "right": 366,
+          "bottom": 459.5
+        },
+        "viewportPixels": {
+          "width": 390,
+          "height": 844
+        },
+        "noOverflow": true,
+        "noAutoplay": true,
+        "blobUrlsBefore": 0,
+        "blobUrlsAfter": 0,
+        "abortsBefore": 0,
+        "abortsAfter": 0,
+        "trustedStartClicks": 1,
+        "gestureBoundPlayCalls": 3,
+        "pageErrors": [],
+        "inferenceRequests": 0
+      },
+      {
+        "projectId": "lotus-sutra-zanshi",
+        "mode": "corrupt",
+        "viewport": "portrait",
+        "activation": "tap",
+        "revision": "9b44fbd1f8149e2ea29331fc6a713b7439f24e14cbb5509624530638f0ec28ee",
+        "textMatched": true,
+        "imageDecoded": false,
+        "bounds": {
+          "left": 24,
+          "top": 288.5,
+          "right": 366,
+          "bottom": 459.5
+        },
+        "viewportPixels": {
+          "width": 390,
+          "height": 844
+        },
+        "noOverflow": true,
+        "noAutoplay": true,
+        "blobUrlsBefore": 0,
+        "blobUrlsAfter": 0,
+        "abortsBefore": 0,
+        "abortsAfter": 0,
+        "trustedStartClicks": 1,
+        "gestureBoundPlayCalls": 3,
+        "pageErrors": [],
+        "inferenceRequests": 0
+      },
+      {
+        "projectId": "heart-sutra",
+        "mode": "delayed",
+        "viewport": "portrait",
+        "activation": "tap",
+        "revision": "ec6e56fca7282b3d1deb7f5bcda7a202b077c07c8e31f66f4e124d8fb549eedf",
+        "textMatched": true,
+        "imageDecoded": false,
+        "bounds": {
+          "left": 24,
+          "top": 288.5,
+          "right": 366,
+          "bottom": 459.5
+        },
+        "viewportPixels": {
+          "width": 390,
+          "height": 844
+        },
+        "noOverflow": true,
+        "noAutoplay": true,
+        "blobUrlsBefore": 0,
+        "blobUrlsAfter": 0,
+        "abortsBefore": 0,
+        "abortsAfter": 1,
+        "trustedStartClicks": 1,
+        "gestureBoundPlayCalls": 3,
+        "pageErrors": [],
+        "inferenceRequests": 0
+      },
+      {
+        "projectId": "lotus-sutra-zanshi",
+        "mode": "delayed",
+        "viewport": "portrait",
+        "activation": "tap",
+        "revision": "9b44fbd1f8149e2ea29331fc6a713b7439f24e14cbb5509624530638f0ec28ee",
+        "textMatched": true,
+        "imageDecoded": false,
+        "bounds": {
+          "left": 24,
+          "top": 288.5,
+          "right": 366,
+          "bottom": 459.5
+        },
+        "viewportPixels": {
+          "width": 390,
+          "height": 844
+        },
+        "noOverflow": true,
+        "noAutoplay": true,
+        "blobUrlsBefore": 0,
+        "blobUrlsAfter": 0,
+        "abortsBefore": 0,
+        "abortsAfter": 1,
+        "trustedStartClicks": 1,
+        "gestureBoundPlayCalls": 3,
+        "pageErrors": [],
+        "inferenceRequests": 0
+      },
+      {
+        "projectId": "lotus-sutra-zanshi",
+        "mode": "pending-track-switch",
+        "viewport": "portrait",
+        "activation": "Enter",
+        "revision": "9b44fbd1f8149e2ea29331fc6a713b7439f24e14cbb5509624530638f0ec28ee",
+        "textMatched": true,
+        "imageDecoded": true,
+        "bounds": {
+          "left": 24,
+          "top": 288.5,
+          "right": 366,
+          "bottom": 459.5
+        },
+        "viewportPixels": {
+          "width": 390,
+          "height": 844
+        },
+        "noOverflow": true,
+        "noAutoplay": true,
+        "blobUrlsBefore": 1,
+        "blobUrlsAfter": 0,
+        "abortsBefore": 1,
+        "abortsAfter": 1,
+        "trustedStartClicks": 1,
+        "gestureBoundPlayCalls": 3,
+        "pageErrors": [],
+        "inferenceRequests": 0
+      },
+      {
+        "projectId": "heart-sutra",
+        "mode": "timeout",
+        "viewport": "desktop",
+        "activation": "Space",
+        "revision": "ec6e56fca7282b3d1deb7f5bcda7a202b077c07c8e31f66f4e124d8fb549eedf",
+        "textMatched": true,
+        "imageDecoded": false,
+        "bounds": {
+          "left": 480,
+          "top": 282,
+          "right": 960,
+          "bottom": 522
+        },
+        "viewportPixels": {
+          "width": 1440,
+          "height": 900
+        },
+        "noOverflow": true,
+        "noAutoplay": true,
+        "blobUrlsBefore": 0,
+        "blobUrlsAfter": 0,
+        "abortsBefore": 1,
+        "abortsAfter": 1,
+        "trustedStartClicks": 1,
+        "gestureBoundPlayCalls": 3,
+        "pageErrors": [],
+        "inferenceRequests": 0
+      }
+    ],
+    "enteredSwitches": {
+      "paused": {
+        "projectId": "heart-sutra",
+        "paused": true,
+        "time": 0,
+        "introVisible": false,
+        "sameAudio": true,
+        "sameCanvases": true,
+        "activeUrls": 0,
+        "errors": []
+      },
+      "playing": {
+        "projectId": "lotus-sutra-zanshi",
+        "paused": false,
+        "time": 0.387101,
+        "introVisible": false,
+        "sameAudio": true,
+        "sameCanvases": true,
+        "activeUrls": 0,
+        "errors": []
+      }
+    },
+    "screenshots": {
+      "captured": 8,
+      "visuallyInspected": 8,
+      "files": [
+        {
+          "name": "heart-sutra-desktop.png",
+          "sha256": "0f11c4137c4d9652d8004f0cc709cdbad5b4952e4f8b45e7ee99996be46c9187",
+          "width": 1440,
+          "height": 900
+        },
+        {
+          "name": "heart-sutra-landscape.png",
+          "sha256": "8496622688698304b4ece87805f9eb4ce34cf787f89626b977fa6deac091a159",
+          "width": 844,
+          "height": 390
+        },
+        {
+          "name": "heart-sutra-missing.png",
+          "sha256": "94d9d9de327c2fb56e460f91e40428579ff6072d24bc3b2ca17e7cbcb79ff3f2",
+          "width": 390,
+          "height": 844
+        },
+        {
+          "name": "heart-sutra-portrait.png",
+          "sha256": "52e99682e5fee34e3899a55ac93c28b33b36e6c942a2b8ee087ef758646a923d",
+          "width": 390,
+          "height": 844
+        },
+        {
+          "name": "lotus-sutra-zanshi-corrupt.png",
+          "sha256": "71de731d729c000f75af51e607cd41601405b2400d7f745db8408bc625a04fbf",
+          "width": 390,
+          "height": 844
+        },
+        {
+          "name": "lotus-sutra-zanshi-desktop.png",
+          "sha256": "e42c5906c79dcb7c941b8150221a468f24e05920171d4dec5b88863b2d9ea465",
+          "width": 1440,
+          "height": 900
+        },
+        {
+          "name": "lotus-sutra-zanshi-landscape.png",
+          "sha256": "f62f3af34ddece2d3053e5dd6416abec554315614659f525fe9e387e21b74f86",
+          "width": 844,
+          "height": 390
+        },
+        {
+          "name": "lotus-sutra-zanshi-portrait.png",
+          "sha256": "459c27212a311921202d91ffa4dca2af5341251ae55c46df678165ef2a0ae518",
+          "width": 390,
+          "height": 844
+        }
+      ],
+      "localFilesRemoved": true
+    },
+    "finished": true,
+    "keptPages": []
+  },
+  "evidenceLogSha256": {
+    "runtime.tap": "f7bcd6e99dc0541c25b615631091c73f63713fba77ebea9039b62db52c62df66",
+    "deployment.tap": "6cfd78a462dad470a58310553b21aa9393a5a9db872332d91ed0848aa4b0985d",
+    "build.log": "24f21738eafa86e63d86755589981b973d7506ed8f00e8283fc53500771cbaa0"
+  },
+  "cleanup": {
+    "status": "complete",
+    "removed": [
+      ".cache/inko-production-20261025",
+      ".cache/releases/track-openings-20261025-local",
+      ".cache/inko-sdk/a1e2d4929d8e97807961a536d7f1e224f5e42b31",
+      ".next",
+      "out"
+    ],
+    "previewStopped": true,
+    "testPagesKept": 0,
+    "screenshotsRemoved": 8,
+    "publicAssetsAndSourceArchivePreserved": true,
+    "producerAuthenticationPreservedAndGitIgnored": true
+  }
+}

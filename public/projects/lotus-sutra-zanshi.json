@@ -52,7 +52,7 @@
       "base": "#1f2e38",
       "overlay": "rgba(0, 0, 0, 0.5)",
       "noise": true,
-      "noiseIntensity": 1.0
+      "noiseIntensity": 1
     }
   },
   "anchors": {
@@ -231,5 +231,20 @@
     "background": "silk",
     "palette": "ink-green",
     "hueOffset": 0
+  },
+  "opening": {
+    "text": "听一声妙法，散入十方\n心中的疑网随声消散\n愿欢喜如花雨轻轻落下",
+    "kind": "original",
+    "sourceDigest": "63e952bf92241929ab479c18fac7b3ef3259abd4f94a4c37c9e390c45aa11197",
+    "revision": "9b44fbd1f8149e2ea29331fc6a713b7439f24e14cbb5509624530638f0ec28ee",
+    "attribution": "AI生成 · Inko",
+    "asset": {
+      "src": "/opening/lotus-sutra-zanshi/preface.afe5138aa22bbacb.png",
+      "width": 1440,
+      "height": 720,
+      "bytes": 176832,
+      "sha256": "afe5138aa22bbacbf31c9971ea9d20ff6b07f7e4c0091f0c43c28d77161ce3ac"
+    },
+    "manifest": "/opening/lotus-sutra-zanshi/manifest.9b44fbd1f8149e2e.json"
   }
 }

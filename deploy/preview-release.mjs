@@ -2,26 +2,31 @@
 import { createServer } from 'node:http';
 import { readFile } from 'node:fs/promises';
 import { join, resolve } from 'node:path';
-import { verifyPackage } from './release-lib.mjs';
+import { BASE_PATH, LEGACY_BASE_PATH, verifyPackage } from './release-lib.mjs';
 
 const root = resolve(process.argv[2] || '');
 if (!process.argv[2]) throw new Error('Usage: preview-release.mjs <local-package>');
 const manifest = await verifyPackage(root);
 if (manifest.deliveryProfile !== 'local') throw new Error('Only local-profile packages may use loopback preview');
+const basePath = manifest.basePath;
+const aliasPath = basePath === BASE_PATH ? LEGACY_BASE_PATH : BASE_PATH;
 const servers = [];
 for (const [channel, port] of [['origin', 4318], ['assets', 4319], ['media', 4320]]) {
   const routes = new Map();
   for (const entry of manifest.entries.filter(item => item.channel === channel)) {
     const logical = entry.packagePath.slice((channel === 'origin' ? 'web' : channel).length + 1);
-    const path = channel === 'origin' ? `/coscroll/${logical}` : `/${entry.objectKey}`;
+    const path = channel === 'origin' ? `${basePath}/${logical}` : `/${entry.objectKey}`;
     routes.set(path, entry);
     if (channel === 'origin' && path.endsWith('/index.html')) routes.set(path.slice(0, -10), entry);
   }
   const server = createServer(async (request, response) => {
     try {
       const url = new URL(request.url, `http://127.0.0.1:${port}`);
-      if (channel === 'origin' && url.pathname === '/coscroll') {
-        response.writeHead(308, { Location: `/coscroll/${url.search}` }); response.end(); return;
+      if (channel === 'origin') {
+        let location;
+        if (url.pathname === basePath || url.pathname === aliasPath) location = `${basePath}/${url.search}`;
+        else if (url.pathname.startsWith(`${aliasPath}/`)) location = `${basePath}${url.pathname.slice(aliasPath.length)}${url.search}`;
+        if (location) { response.writeHead(308, { Location: location }); response.end(); return; }
       }
       const entry = routes.get(decodeURIComponent(url.pathname));
       const headers = { 'Access-Control-Allow-Origin': '*',
@@ -54,6 +59,6 @@ for (const [channel, port] of [['origin', 4318], ['assets', 4319], ['media', 432
   await new Promise((accept, reject) => { server.once('error', reject); server.listen(port, '127.0.0.1', accept); });
   servers.push(server);
 }
-console.log(JSON.stringify({ url: 'http://127.0.0.1:4318/coscroll/', releaseId: manifest.releaseId,
+console.log(JSON.stringify({ url: `http://127.0.0.1:4318${basePath}/`, alias: `http://127.0.0.1:4318${aliasPath}/`, releaseId: manifest.releaseId,
   channels: ['http://127.0.0.1:4319', 'http://127.0.0.1:4320'], mode: 'loopback-only' }));
 for (const signal of ['SIGINT', 'SIGTERM']) process.on(signal, () => servers.forEach(server => server.close()));

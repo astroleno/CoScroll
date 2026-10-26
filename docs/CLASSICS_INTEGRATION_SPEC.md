@@ -30,6 +30,7 @@
 
 新增经典按以下实际入口接入：
 
+- 每首新曲目必须由制曲模型依据本曲歌词自动创作原创短序，再执行 `tracks:prepare` 生成专属 Inko 手写开场；写作资料、制作命令、缓存复用及发布门槛见[曲目制作流程](TRACK_PRODUCTION.md)。修改录音或歌词时同步更新；构建不接受缺少或过期的开场。
 - 在 [catalog](../src/config/catalog.ts) 登记录音版本、稳定 ID 与时长，并增加独立项目 JSON、音频和 LRC。
 - [prepareProject](../src/config/prepareProject.ts) 准备配置、字体、歌词、音频及初始模型；
   [projectConfigStore](../src/stores/projectConfigStore.ts) 取消过时请求，只原子提交最新会话。失败保留原曲。

@@ -72,6 +72,18 @@ test('invalid placeholders, missing timeline mappings, and out-of-range hue cann
   }
 });
 
+test('opening configuration retains text and rejects invalid metadata or another track’s image', () => {
+  assert.equal(safeValidateProjectConfig(heart).data.opening.text, heart.opening.text);
+  for (const edit of [p => {p.opening.asset.src = lotus.opening.asset.src;},
+    p => {p.opening.text = 'invalid one-line preface';}, p => {p.opening.asset.sha256 = 'bad';},
+    p => {p.opening.asset.bytes = 3 * 1024 * 1024;}]) {
+    const invalid = structuredClone(heart); edit(invalid);
+    assert.equal(safeValidateProjectConfig(invalid).success, false);
+  }
+  const legacy = structuredClone(heart); delete legacy.opening;
+  assert.equal(safeValidateProjectConfig(legacy).success, true, 'older configurations remain readable');
+});
+
 test('timed lyrics retain repeated phrases, blank interludes, and the actual 栴 character', () => {
   const lines = parseLRC(lrc);
   assert.equal(lines.filter(line => line.text).length, 33);

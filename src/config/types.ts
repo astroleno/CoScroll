@@ -45,6 +45,25 @@ export interface AssetConfig {
   models: ModelsConfig;
 }
 
+export interface OpeningImageAsset {
+  src: string;
+  width: number;
+  height: number;
+  bytes: number;
+  sha256: string;
+}
+
+/** Frozen during track production; the browser never calls the handwriting service. */
+export interface OpeningConfig {
+  text: string;
+  kind: 'original' | 'excerpt';
+  sourceDigest: string;
+  revision: string;
+  attribution: 'AI生成 · Inko';
+  asset: OpeningImageAsset;
+  manifest: string;
+}
+
 // ==================== 主题配置 ====================
 
 export interface AnchorThemeConfig {
@@ -140,4 +159,5 @@ export interface ProjectConfig {
   timeline: TimelineItem[];     // 时间轴配置
   performance: PerformanceConfig; // 性能配置
   appearance?: AppearanceSettings;
+  opening?: OpeningConfig;
 }
