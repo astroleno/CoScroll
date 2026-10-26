@@ -14,6 +14,27 @@
 - [iPhone 字形分包、加载与长帧验收](docs/IPHONE_PERFORMANCE_RELEASE_20261022.md)：同源字形、完整字体回退、慢网对照与实际性能边界。
 - [妙法莲华经接入与公网验收](docs/LOTUS_SUTRA_RELEASE_20261022.md)、[此前无限滚动验收](docs/CONTINUOUS_SCROLL_RELEASE_20261021.md)与 [COS/CDN 发布流程](docs/COSCROLL_RELEASE.md)。
 
+## 发布与交接规则
+
+提交、推送和公网发布按用户本次授权执行。用户已授权完整发布链路时，连续完成提交推送、部署替换、双站验收和清理；以两站公网 `release-health.json` 和页面内容均匹配本次正式候选作为上线完成标准。
+
+| 站点 | 正式入口 | 兼容入口 |
+| --- | --- | --- |
+| aitoshuu.me | [CoScroll](https://aitoshuu.me/CoScroll/) | [coscroll](https://aitoshuu.me/coscroll/) |
+| tongye.me | [CoScroll](https://tongye.me/CoScroll/) | [coscroll](https://tongye.me/coscroll/) |
+
+正式路径固定为驼峰 `/CoScroll/`；小写 `/coscroll`、`/coscroll/` 及子路径以 308 跳转到本站正式路径，保留曲目参数、重复查询参数和编码子路径。缺失资源仍返回 404。发布标识 `coscroll-<digest>`、CDN 对象前缀及服务器目录沿用原有小写形式。
+
+1. **制曲与检查**：新增曲目或替换 MP3/LRC 时，由制曲模型自动创作专属短序并按[制作流程](docs/TRACK_PRODUCTION.md)生成、冻结真实 Inko 开场；输入未变时复用已验收资源。执行 `npm run tracks:check`、`npm run test:deployment` 和 `npm run test:runtime`，必要检查失败须修复后再发布。
+2. **提交与构建**：先将本轮产品改动 commit、push，再从该提交的干净源码生成 `cdn` 正式候选，完成生产构建、类型检查和包校验。可用普通构建副本隔离无关的未提交文件；记录提交 ID、release ID 和交付闭包 SHA-256。
+3. **上传与切换**：上传不可变 COS 对象，完整核验 CDN 内容后暂存并核验源站文件。保存配置、当前发布链接、邻站基线与回滚目标；切换前再次核对现网，发现并行维护时按最新状态重新审阅合并，保留其他项目的更新。通过 `nginx -t` 后，原子切换 CoScroll 自身发布链接并按需重载。CDN 校验按现有 10 Mbps 封顶限速，四路、每路最高 150 KiB/s，并与浏览器大文件下载错开。
+4. **公网 HTTP 验收**：逐一检查上表四个入口，核验两站全部源站文件及 CDN 交付物的内容摘要、编码、MIME、缓存、CORS 和音频 Range；检查规范跳转、参数保留、真实 404、安全响应头及首页、LuBirth 入口。共享 CDN 内容可完整校验一次，再按两站分别核验现场元数据和跨域行为，记录清楚两种校验口径。
+5. **真实浏览器验收**：两站、两种入口逐一覆盖《心经》《妙法莲华经》及本轮受影响曲目；覆盖手机竖屏、横屏和桌面，检查专属手写开场、触摸/Enter/Space 开始、播放暂停及相关交互。补测图片失败时的同文后备，确认无意外自动播放、页面错误或资源泄漏；未做的真机、Safari 等检查如实记录。
+6. **清理与回滚保留**：截图查看后删除，关闭本轮测试页面/空间，清理本轮临时候选、构建副本、隔离依赖、脚本和日志。保留正式手写资源及来源档案、生产交付物、旧版本和配置回滚备份；仅清理本轮材料。回滚时核对最新共享配置，合并恢复与旧包 basePath 一致的 CoScroll 规则，保留后续维护。
+7. **归档与交付**：将发布身份、双站验收结果、清理结果、回滚依据及未测项写入 `docs/`，再将验证记录 commit、push，核实远端同步后交付。
+
+命令、基础设施和发布细节见 [COS/CDN 发布流程](docs/COSCROLL_RELEASE.md)；完整交接示例见[专属序言与入口大小写公网发布](docs/INKO_CASE_ENTRY_RELEASE_20261026.md)。
+
 下文保留了早期 MVP 的实现说明；新增经典请先阅读接入规范，其中明确区分现状与待实现模块。
 
 ## 项目概述
