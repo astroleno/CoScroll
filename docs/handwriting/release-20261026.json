@@ -1,0 +1,3715 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-10-26",
+  "status": "deployed, public verification passed, task cleanup complete",
+  "authorization": "Commit, push, deploy replacement, validate both sites and path casings, clean task files",
+  "productCommit": "58c5225134b80ba356c9a2c3f6b141a9b67b8a51",
+  "branch": "decoupled",
+  "sourceProof": {
+    "commit": "58c5225134b80ba356c9a2c3f6b141a9b67b8a51",
+    "filesVerified": 621,
+    "ordinaryBuildCopy": true,
+    "untrackedProductFilesIncluded": false
+  },
+  "release": {
+    "site": "CoScroll",
+    "releaseId": "coscroll-7d9ac4d71fe38b81",
+    "sourceDigest": "7d9ac4d71fe38b81ec454638446385f177432064b349b2f2b88b24c61adb091a",
+    "basePath": "/CoScroll",
+    "artifactClosureSha256": "c3ac7695b3269ef0acdff3f8f012666a018e07b6a21197d36aaf2e5abef0d5a3",
+    "deliveryProfile": "cdn",
+    "assetsBase": "https://assets.aitoshuu.me/releases/aitoshuu-me/coscroll-7d9ac4d71fe38b81/",
+    "mediaBase": "https://media.aitoshuu.me/releases/aitoshuu-me/coscroll-7d9ac4d71fe38b81/"
+  },
+  "package": {
+    "files": 380,
+    "originFiles": 71,
+    "cdnFiles": 309,
+    "bytes": 250918823
+  },
+  "upload": {
+    "releaseId": "coscroll-7d9ac4d71fe38b81",
+    "uploaded": 310,
+    "skipped": 0
+  },
+  "publishedManifest": {
+    "url": "https://assets.aitoshuu.me/releases/aitoshuu-me/coscroll-7d9ac4d71fe38b81/manifests/release-manifest.json",
+    "status": 200,
+    "bytes": 181419,
+    "sha256": "6c99ccf47cad8dd8ea57ebfc9baee06a5542cb71551198a8ffa8becdcc07c191",
+    "cacheControl": "no-store"
+  },
+  "automaticTests": {
+    "deployment": {
+      "passed": 16,
+      "failed": 0,
+      "skipped": 0
+    },
+    "runtime": {
+      "passed": 113,
+      "failed": 0,
+      "skipped": 0
+    },
+    "productionBuild": "passed compilation, types, lint and static export",
+    "existingWarnings": "Existing Hook dependency warnings and stale browser data notices; no new module warnings"
+  },
+  "cdnContentVerification": {
+    "releaseId": "coscroll-7d9ac4d71fe38b81",
+    "contentHashes": 309,
+    "decodedHashes": 210,
+    "audioRanges": 4,
+    "bytes": 248268869,
+    "mime": "passed",
+    "cache": "passed",
+    "cors": "passed",
+    "TLS": "verified",
+    "maxParallel": 4,
+    "perRequestKiBps": 150
+  },
+  "cdnContentObjects": [
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/_next/static/chunks/1712-50bd14b54c882254.js",
+      "sha256": "7598926ab4308bfe4c172cdb8c8a9c1e2756ccc2f3a54b9e0452a5653e874a80",
+      "bytes": 3837,
+      "decoded": true,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/_next/static/chunks/226-0c21dcfffb3a84d9.js",
+      "sha256": "d0167c011e79eea415104179e5c5b2265626a485bc2196a7d03cfcc42f960541",
+      "bytes": 3837,
+      "decoded": true,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/_next/static/chunks/201-b46ac1dc4ad667ab.js",
+      "sha256": "2112b51da5b029ad0d5a78ac53a4759e15be0b42a1e4b1883385ad7ee65c2033",
+      "bytes": 5509,
+      "decoded": true,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/_next/static/chunks/2986-c24d200aac7d44b7.js",
+      "sha256": "b49f4818ad23b8c958cdf9020b2888e6c2cd4514f57c9a6a5ba2c4c5bfc61a52",
+      "bytes": 19144,
+      "decoded": true,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/_next/static/chunks/3530-9ff40e38c8b7d69c.js",
+      "sha256": "d27ca8f34d6a884a9e4b806a1871f3a672d4f6c362b4b6a2353a0da21397c15c",
+      "bytes": 1036,
+      "decoded": true,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/_next/static/chunks/3654-0513c3be514bc581.js",
+      "sha256": "2d46fc266a6c744337b39e60bd959eeb819fa6e7dfae6689abe283739ac8a504",
+      "bytes": 12875,
+      "decoded": true,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/_next/static/chunks/3238-ac436622d00b29f0.js",
+      "sha256": "3fc3c3ef5a3072f70a67d2de16f4f3b58231d3336ba294ce47f6672c42fd0dec",
+      "bytes": 44051,
+      "decoded": true,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/_next/static/chunks/3535-1ff765914168fccf.js",
+      "sha256": "b331e1277fad44fd8e3dfe5c477df3acc13a3be97d1c8628b25a51b538ff3a04",
+      "bytes": 44171,
+      "decoded": true,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/_next/static/chunks/3888-4344da9e8325b794.js",
+      "sha256": "83de7b82e8089cc37fef44a02bd9a59ff74cf25a8710ffd87413e9befa78216c",
+      "bytes": 6263,
+      "decoded": true,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/_next/static/chunks/3781-6d0c537f318baed4.js",
+      "sha256": "354c6a36cf2e21d0d8c89fb53383861a89aa3b917bb1005203a90cf468f9e8a8",
+      "bytes": 166241,
+      "decoded": true,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/_next/static/chunks/4618-04cc3caadf0cba64.js",
+      "sha256": "7086b1c4bc4f18cc3d478039726b999c84d0ac44de389fd43be7945af74a511a",
+      "bytes": 6498,
+      "decoded": true,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/_next/static/chunks/4401.3ade2c57c25f8975.js",
+      "sha256": "18b52b7b68045e098b78b8d705923c07bb92f5246c0fed4eefd7510d3d423891",
+      "bytes": 210408,
+      "decoded": true,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/_next/static/chunks/4779-92eb97c984ee3120.js",
+      "sha256": "7fbc0f52ad202abcedc56cc9c9db818bb5592260d7f7204912a6f4e5a9a1e7ed",
+      "bytes": 3078,
+      "decoded": true,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/_next/static/chunks/4840-a364d85f1f043312.js",
+      "sha256": "9476ebc88e5e841fe825a23ec32a77e6a81a907e4a7b8a49720402532ea3a153",
+      "bytes": 3654,
+      "decoded": true,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/_next/static/chunks/483-471e78cb55e76eae.js",
+      "sha256": "6c779498ee5c31d1888c9250409ca3105b045c4ba31c72efeafbbb5c2a6c8310",
+      "bytes": 45041,
+      "decoded": true,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/_next/static/chunks/5810-4c1775aec7a62555.js",
+      "sha256": "d4029d59782206338064a580fbcb95d1f1190a82c7afb08fd50b8e24c1c9a84e",
+      "bytes": 2877,
+      "decoded": true,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/_next/static/chunks/6137.e8c921da2be5e4fb.js",
+      "sha256": "95ce76d35e2d0f5aed601941e80af6d5861117566478023091ed8d0d8999f4bf",
+      "bytes": 5653,
+      "decoded": true,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/_next/static/chunks/6576-536f829e23500969.js",
+      "sha256": "a399f446df7da5eb2972c4b5db9f210b4a7922965677a6e63fa035c1acfba8fe",
+      "bytes": 3654,
+      "decoded": true,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/_next/static/chunks/6905.2e19a1fefed95ebb.js",
+      "sha256": "66fd2019c354c60a7054e52a0735a12b638c4b01ad71990a0b115d7e2e743273",
+      "bytes": 7105,
+      "decoded": true,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/_next/static/chunks/7180-427fbbc1822c5c0e.js",
+      "sha256": "cf69b5e8f914e2d8ae3ef3b95740fbe2e5570934063f880dd7389203b0f8a4f8",
+      "bytes": 45478,
+      "decoded": true,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/_next/static/chunks/7623-2f5dda7004634662.js",
+      "sha256": "546fce1f90b16d587f3264212d58d6f944dd089806a96befd943028ba01eb814",
+      "bytes": 13726,
+      "decoded": true,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/_next/static/chunks/7768-4f74522a000b73fb.js",
+      "sha256": "e997f186098d8509d1d788a7f13a8342dbb7b91a6d980e7df816fa304c4f8742",
+      "bytes": 3654,
+      "decoded": true,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/_next/static/chunks/7892-a16fc58258899110.js",
+      "sha256": "f01da3ab2b8ebe2e7ad6c351546c43d7e1923f91141bce20ed339cbb19bcf6d9",
+      "bytes": 43711,
+      "decoded": true,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/_next/static/chunks/8122-b12418773b6bd74e.js",
+      "sha256": "6c0ab9641c8c0d7413163934c489fc9aacae33c55c2c88619b7d764185e5bbc3",
+      "bytes": 3932,
+      "decoded": true,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/_next/static/chunks/815-ce194899458287b3.js",
+      "sha256": "526da7cf033ab64f1789ce6bd7548f59121a7d1d7b1d33b2616acc99c5043924",
+      "bytes": 13723,
+      "decoded": true,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/_next/static/chunks/8342-94bf66bb69f2f7c9.js",
+      "sha256": "7e2aac66dda0d85e4267ca1d363c6162c676831f5696741a1f036476ac252f4c",
+      "bytes": 47306,
+      "decoded": true,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/_next/static/chunks/8683-42d7a854913e8d76.js",
+      "sha256": "eb138a420b8cb40502639a05c4a622e327da83dccd63ddbcc08192f5d0707dbc",
+      "bytes": 4646,
+      "decoded": true,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/_next/static/chunks/8387-f7a8146f0dc6849a.js",
+      "sha256": "26f63e330eb3a00fe46e2976eb41cc0faf6247df801ce5418500c76dba9e8c97",
+      "bytes": 49633,
+      "decoded": true,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/_next/static/chunks/9024-cbb9a07b66701670.js",
+      "sha256": "704e9f9005fd259b5d9e2ff4e841f543a994e5c127058f89c17c5219b1bfe866",
+      "bytes": 43621,
+      "decoded": true,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/_next/static/chunks/9289.9245b2504f679f64.js",
+      "sha256": "54e5791cf7c4f9042482494d89a283062ec01cfba2784ca0b77eeef87d57398f",
+      "bytes": 1629,
+      "decoded": true,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/_next/static/chunks/9564-6ce91ed588076cc4.js",
+      "sha256": "59fefa493d683e4430d91a23a5d8a84fac350502590806a355d8de29eb0941fd",
+      "bytes": 3837,
+      "decoded": true,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/_next/static/chunks/9123-a622567c02af180e.js",
+      "sha256": "680294e8dd927b4b1c33dd00c5dec095afbca6f3701bdb553cdb014fee6d24aa",
+      "bytes": 44051,
+      "decoded": true,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/_next/static/chunks/9915-9b0991df2f021067.js",
+      "sha256": "1de91c0b3b84ce35c701d93fbb20bf00575705e84420a46bd047f151c9710d67",
+      "bytes": 3654,
+      "decoded": true,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/_next/static/chunks/app/_not-found-8d96b385220bfcf7.js",
+      "sha256": "206ca2ab80f5aa4c21fd944e3170218ec945db6b24788516c5992b2d83ff922b",
+      "bytes": 872,
+      "decoded": true,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/_next/static/chunks/app/arhived/mochi-compare/page-d95ecde81377243a.js",
+      "sha256": "c40354562c8ee780fe73b3637041eba06ebf2232cc9c9066c22538b34c9510cb",
+      "bytes": 4004,
+      "decoded": true,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/_next/static/chunks/app/arhived/mochi-debug2/page-7da939a959cc0634.js",
+      "sha256": "5d80e05807635dd6015a509a0faff7a517464bd26437e961203118550b493517",
+      "bytes": 4127,
+      "decoded": true,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/_next/static/chunks/app/arhived/mochi-debug/page-3b3790dac68fe53c.js",
+      "sha256": "5d0357b05e5880eca13c012660c148069b1ca682d9ad35852cae7cf684c71500",
+      "bytes": 2786,
+      "decoded": true,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/_next/static/chunks/app/arhived/mochi-v3-fixed/page-a26e21d84867e1f3.js",
+      "sha256": "55d381593c8320e41b4ece03d5bb184f18fcd76b844d3bd5c9b7af7386a63d39",
+      "bytes": 4710,
+      "decoded": true,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/_next/static/chunks/app/arhived/mochi-v3/page-354af76f484e86a6.js",
+      "sha256": "c4b4dcc0bdce58497a64be2b4a9d30ea5140963022f6122624eb4baa91c553aa",
+      "bytes": 455,
+      "decoded": false,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/_next/static/chunks/app/aurora/page-27cfa29fc448b929.js",
+      "sha256": "621856f0686e86d7711b6d8866f32fee4cbea5038564f7b9ad756381a8f45850",
+      "bytes": 4572,
+      "decoded": true,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/_next/static/chunks/app/background-b/page-b14c9d11e2c092de.js",
+      "sha256": "a615375cf5ba325209ec081d1754b3e879dcb7d0e10fd9bf792609fdd60e41aa",
+      "bytes": 172548,
+      "decoded": true,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/_next/static/chunks/app/jade-v2/page-bd7fad57cad2ecf4.js",
+      "sha256": "6c8ff5bfdbd1352b58edc457a5a94cecf375aca7f703ae9c74b80ccac114b864",
+      "bytes": 170483,
+      "decoded": true,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/_next/static/chunks/app/jade-v4/page-6f1e565998d0bc52.js",
+      "sha256": "f8b9eca842917dae97697af011714a96eec5073d011990e52432cfe3a2316455",
+      "bytes": 171670,
+      "decoded": true,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/_next/static/chunks/app/jade-v3/page-419c106eb69021dc.js",
+      "sha256": "eaeea83ad1000282d26369986a364b6e9e1fbaeb39a6bf6659f9643e0ec7807c",
+      "bytes": 167355,
+      "decoded": true,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/_next/static/chunks/app/jade-v5/page-2e73f9f3a1ff792a.js",
+      "sha256": "b984b9dcbca008b86814e5037c2fd805289699304afa848a547167d2e0319f5d",
+      "bytes": 3303,
+      "decoded": true,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/_next/static/chunks/app/jade/page-6d20e375f59e711b.js",
+      "sha256": "55c02105aaa71eaec7cacc371f45aa6e0338e120b018d2884b7ee4b7cb9e1f60",
+      "bytes": 5501,
+      "decoded": true,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/_next/static/chunks/app/jade-v6-debug/page-aecea9460f1cf0ad.js",
+      "sha256": "d0e99bcc066cc7e22ea8ca4d6611041f353b3d9bd0ae497fa397935a06bc5fa0",
+      "bytes": 167533,
+      "decoded": true,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/_next/static/chunks/app/jade-v6/page-9bd5cfd8ad87ecd0.js",
+      "sha256": "3e2520d2ce69ec614fd26f5e1ec311e24f0623264d201c6600e05b6601b8343e",
+      "bytes": 198280,
+      "decoded": true,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/_next/static/chunks/app/layer-test/page-14419171876c2b4e.js",
+      "sha256": "a957c545c341da9eec56ddc6216864904665ae5a5a726d8676e9146a3940431d",
+      "bytes": 32874,
+      "decoded": true,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/_next/static/chunks/app/layout-9f6534d10d67393f.js",
+      "sha256": "2b304dfe81bd8d3402e80e001e74dd92a83f91be404e2a1647552dc630bb5065",
+      "bytes": 225,
+      "decoded": false,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/_next/static/chunks/app/lyrics-sync/page-9210c78dccd334f7.js",
+      "sha256": "0172ed54b6124dc86d27d47429f7d38ea3da679d0127a1f8b76014771746aaf0",
+      "bytes": 6650,
+      "decoded": true,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/_next/static/chunks/app/lyrics3d-basic/page-19a0fb72aeb6ad3e.js",
+      "sha256": "73cbc1c045681aa69d37a241047a253570592d1909831172a21a74dc7819dcef",
+      "bytes": 35668,
+      "decoded": true,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/_next/static/chunks/app/lyrics3d-simple/page-96aa4bf4b2827d18.js",
+      "sha256": "5815ba5dc90a4f03b1abdd5bb6e0226d557db50e7e71832b8fa82d3f808bb01d",
+      "bytes": 2151,
+      "decoded": true,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/_next/static/chunks/app/lyrics3d-test/page-926637a62dd8c32d.js",
+      "sha256": "5dec1515515d0d8526d74f9022c4978b9dd05391a471369868a3f28d39341daa",
+      "bytes": 9429,
+      "decoded": true,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/_next/static/chunks/app/lyricsync-v2/page-8d727c8ecae215a7.js",
+      "sha256": "80cf5f5b03c359d11eb2d85771c27b0bb1b88cee9c5256597aca99f28cf36c80",
+      "bytes": 210,
+      "decoded": false,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/_next/static/chunks/app/lyricsync-v3/page-21e544f628395c00.js",
+      "sha256": "39103d1b2b2c0edf25224d9d9fe77d8d76cd04e301555a32a8cda51928bd4006",
+      "bytes": 16799,
+      "decoded": true,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/_next/static/chunks/app/mochi-expanded/page-4935a2a3b7ed1c60.js",
+      "sha256": "e27b19599415065de566192d6cfbcb5f84cb1aff11596be3a614c5b75b9a4f96",
+      "bytes": 5339,
+      "decoded": true,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/_next/static/chunks/app/mochi-b/page-7c6629cb9e8c4dfc.js",
+      "sha256": "725d49ebdc90dd3a38395adecced01aed3d62894dd6d01248c9dfe4d60a2e5e1",
+      "bytes": 168270,
+      "decoded": true,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/_next/static/chunks/app/mochi-final/page-21e716f82efd1b79.js",
+      "sha256": "81b411369e3261617e2a178fb9feb2bc45bf2ef10d1ad7b29fb84369897ca2ac",
+      "bytes": 5757,
+      "decoded": true,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/_next/static/chunks/app/mochi-jade/page-b2019e18f3c3141f.js",
+      "sha256": "9597ecd5ab040e1dc65053d5b39876fb1164cf7321c3b7712d296df2b78e3ab6",
+      "bytes": 8150,
+      "decoded": true,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/_next/static/chunks/app/mochi-obj/page-6db50712c7d3bf26.js",
+      "sha256": "eb026f98916509850994a2c950aa4a57ac0d8315c9f8e2e5dfbde38421b02ff5",
+      "bytes": 7056,
+      "decoded": true,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/_next/static/chunks/app/mochi-simple/page-f07ad841ae6706be.js",
+      "sha256": "068753f05bdeb08ee3293344bf84ccdefd9aebec26cb2a9b9cf0cbca71da68e2",
+      "bytes": 707,
+      "decoded": true,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/_next/static/chunks/app/mochi-test/page-487fbced25c74846.js",
+      "sha256": "1b58bc631324e40ebb5abd779b747314cc8ee0cee8554d91e5dbd336e0bbea25",
+      "bytes": 5328,
+      "decoded": true,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/_next/static/chunks/app/mochi-thickness/page-164e990e71413f81.js",
+      "sha256": "d53558054a48713eb551f830481662f460638d0f7a4ec18bcffa5f4211b20209",
+      "bytes": 6199,
+      "decoded": true,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/_next/static/chunks/app/noise-test/page-934598e62121f0bc.js",
+      "sha256": "9c9187775bc803458ebf9f83c9aba2b78e16d5575f341a640a44c705b42a695d",
+      "bytes": 2037,
+      "decoded": true,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/_next/static/chunks/app/page-d7b1ccf157f697a5.js",
+      "sha256": "6cc2c5f90493d539f7bd2f0ae25a8631fda50f92eaf51c508c1a07e4ad482002",
+      "bytes": 202,
+      "decoded": false,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/_next/static/chunks/app/rotation-test/page-7998fde9aaee11ac.js",
+      "sha256": "a7df978b635fbdcc9680c5429c90033d000196ed7076c0c1295961e4b416ce8d",
+      "bytes": 33119,
+      "decoded": true,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/_next/static/chunks/app/silk/page-3cbce1b685a27fd6.js",
+      "sha256": "ff28f71ed4cc280884c189a1054fb4d2a6c2734530aa56f61ba779e36d6e51ee",
+      "bytes": 1612,
+      "decoded": true,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/_next/static/chunks/b2af3bad-8faba550487ae216.js",
+      "sha256": "018e91cfcd1b8cbc58887581064c5b10ff4153fb10ab170160545654f76e5d1c",
+      "bytes": 14218,
+      "decoded": true,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/_next/static/chunks/app/unified-test/page-b802fca19c772fb9.js",
+      "sha256": "cfe0cb4905f0774e3f05cdedcfb20f14abaa0c426ea0749cd486d872d7078966",
+      "bytes": 209193,
+      "decoded": true,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/_next/static/chunks/d5026042-dda30aa1b09bd48a.js",
+      "sha256": "316877aca5a3371e7c0e1530e7b38429425b477844a97ce45f467e707138c851",
+      "bytes": 28265,
+      "decoded": true,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/_next/static/chunks/coscroll-entry-7bb79e933f537889.js",
+      "sha256": "ecf4f0b3835b13155050bb5fa08b5e8f07c7065d31b6b1ec36730cf5f3735cdf",
+      "bytes": 369372,
+      "decoded": true,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/_next/static/chunks/main-a05b95f93c83122a.js",
+      "sha256": "868b7ffe45b1d555f4be283291d6fd9a4d10daf455a9edf5b90d7c9a3946e149",
+      "bytes": 31826,
+      "decoded": true,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/_next/static/chunks/framework-764fdbceec22329c.js",
+      "sha256": "350121286c2f093812a4f3358eba65f95df0f8ac00d364cf831b1cbe1735b300",
+      "bytes": 45022,
+      "decoded": true,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/_next/static/chunks/main-app-29608355720e9454.js",
+      "sha256": "51fa1def5f541445758fd125c1210cb93e77adeb931207f443d862ba7ec747ec",
+      "bytes": 460,
+      "decoded": false,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/_next/static/chunks/pages/_app-f5013898c416c37a.js",
+      "sha256": "01792a7d55fd5423cce7c137ecdb66482c7cc06819e9586b63481a6766317d87",
+      "bytes": 282,
+      "decoded": false,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/_next/static/chunks/pages/_error-2c5cc4aa42ce3052.js",
+      "sha256": "cf719ec696eb7af8481fc8c4e76059cc09e127ccdad374273a27ab0657ae42ad",
+      "bytes": 247,
+      "decoded": false,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/_next/static/chunks/polyfills-c67a75d1b6f99dc8.js",
+      "sha256": "aba23275a3c1380bfc8d467fd921b0c209e7182dbdaa02611c3a496b0b3b34ec",
+      "bytes": 31016,
+      "decoded": true,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/_next/static/chunks/webpack-c0ccbd513525fd09.js",
+      "sha256": "c2a5dccbecdedd08db41ffb305830e851e825777841ab5a4a9817272d0d0fdc4",
+      "bytes": 1963,
+      "decoded": true,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/_next/static/coscroll-7d9ac4d71fe38b81/_ssgManifest.js",
+      "sha256": "678f6ce2cb80b1fe72fc67e7412be6e2ab6ada083111b64f7c40d35e3cba5e00",
+      "bytes": 80,
+      "decoded": false,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/_next/static/coscroll-7d9ac4d71fe38b81/_buildManifest.js",
+      "sha256": "bb197c5073d1771ea28da165a54ef0972c1dc87cec53df4b5ed0f08110c7219f",
+      "bytes": 224,
+      "decoded": false,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/_next/static/css/43945835684ac71c.css",
+      "sha256": "82884f21eecf976296f383b70211be8fa43802ccd2b691c2514d903e53d43de5",
+      "bytes": 4776,
+      "decoded": true,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/_next/static/media/InterVariable.0336a89f.woff2",
+      "sha256": "693b77d4f32ee9b8bfc995589b5fad5e99adf2832738661f5402f9978429a8e3",
+      "bytes": 352240,
+      "decoded": false,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/fonts/lotus-supplement.woff2",
+      "sha256": "face7960f325be0aad43cd36d47369d52e5265aa5ef178fea3620608e4ed2991",
+      "bytes": 1100,
+      "decoded": false,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/fonts/coscroll-entry.woff2",
+      "sha256": "946382846364d5c0797b69227e47d01fe7a394130869af1ecd94bbcb4c245363",
+      "bytes": 68828,
+      "decoded": false,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/fonts/OFL-Inter.txt",
+      "sha256": "262481e844521b326f5ecd053e59b98c8b2da78c8ee1bdbb6e8174305e54935a",
+      "bytes": 4380,
+      "decoded": false,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/fonts/OFL-NotoSerifSC.txt",
+      "sha256": "5e0da210fb04058a8c0087985d2d456b931c2579811a49655721d3cf0c36b6d6",
+      "bytes": 4350,
+      "decoded": false,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/lyrics/heart_sutra.srt",
+      "sha256": "22656770077d4918d9dc07835349268e96749a26e809b8d52f5730674e5fa2f6",
+      "bytes": 1069,
+      "decoded": true,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/lyrics/lotus-sutra-zanshi.lrc",
+      "sha256": "ef1bbfab0a12b23d9a82503d4d4db754a7289cab96558967be8f27d38fb41953",
+      "bytes": 640,
+      "decoded": true,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/lyrics/心经_spacer.lrc",
+      "sha256": "65a63b5f5a33ee1e81584ffad526f50127eaa5dc37db5759d91a5b5cc451cf59",
+      "bytes": 815,
+      "decoded": true,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/lyrics/心经.lrc",
+      "sha256": "ddb5b2273c725b467db6852f2b033fb98090404c4b253108bc092654c1513370",
+      "bytes": 770,
+      "decoded": true,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/models/10k_obj/001_空.obj",
+      "sha256": "d6599378d5f0841f8268815db7f1c17d0353d9b06fbb93c88f11a0864c9add0e",
+      "bytes": 356700,
+      "decoded": true,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/models/10k_obj/002_心.obj",
+      "sha256": "f7812531e589544d2c55c437e632def646dda0d220a172db110c1b644edcbbb4",
+      "bytes": 299294,
+      "decoded": true,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/models/10k_obj/003_道.obj",
+      "sha256": "85b5276e44235a87e717cef3a55168b519e7e54b8b09abe075fd7fed4bc2c770",
+      "bytes": 444659,
+      "decoded": true,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/models/10k_obj/004_善.obj",
+      "sha256": "66501542bcba109f8470ae92b02745e2cfeaa589a03f3f7dc27c8229a6e872bb",
+      "bytes": 355740,
+      "decoded": true,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/models/10k_obj/005_和.obj",
+      "sha256": "27a9a458892d14a7cc475bd4153e4647f79f43bf0d9e12a32b78fec9e06633a0",
+      "bytes": 415707,
+      "decoded": true,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/models/10k_obj/006_静.obj",
+      "sha256": "cfb118c6039b49a80c450130a7195dbefddc532b632ab0432bf567e81970a0f4",
+      "bytes": 496167,
+      "decoded": true,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/models/10k_obj/007_明.obj",
+      "sha256": "2d9b9b98a0e56dd898d60ea4794a2fc7cc3e7c64bd34e39e5751876613d345a8",
+      "bytes": 428296,
+      "decoded": true,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/models/10k_obj/008_悟.obj",
+      "sha256": "f064a52cd965d3056cb2fc4ebe3e7d41c1e0c8f2c00d6f2b65fff909e6f0c9ae",
+      "bytes": 431505,
+      "decoded": true,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/fonts/润植家康熙字典美化体.woff2",
+      "sha256": "76e1269db23aa03c8515da4a937bc5a2cb437db3caf65bf3a0fe7b7b26a57af6",
+      "bytes": 2447968,
+      "decoded": false,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/models/10k_obj/009_真.obj",
+      "sha256": "7fa30872bc9a819e2a9d79bc3cb66ba97a5ae76aed19acabbc9c11f45f0f71a5",
+      "bytes": 382223,
+      "decoded": true,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/models/10k_obj/010_圆.obj",
+      "sha256": "fb6777f5355eec3bed16f8a7e9f93756c608566049e82e9336bea18256c66895",
+      "bytes": 380737,
+      "decoded": true,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/models/10k_obj/012_无.obj",
+      "sha256": "0d15ffaef2ff1c76396b97e535818b2cd9e35b0e290d6bf63bfe588e7c29130c",
+      "bytes": 320788,
+      "decoded": true,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/models/10k_obj/011_缘.obj",
+      "sha256": "84bf484c579fe07e88faa4e43df56c0640f261f68a1c6cb26a3118ebc2cbf036",
+      "bytes": 467267,
+      "decoded": true,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/models/10k_obj/013_水.obj",
+      "sha256": "930e3227c4bf8c3050754a23c179894c92edf7c34e52bb6820ba3331e956cf6b",
+      "bytes": 334239,
+      "decoded": true,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/models/10k_obj/014_山.obj",
+      "sha256": "953bc767da681c917207016ad695373df7f5bc0e8b2f194d0bee25c2254eef3d",
+      "bytes": 362599,
+      "decoded": true,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/models/10k_obj/015_月.obj",
+      "sha256": "b4800e876dddb7c1f6b683341bcc97f8496c4d9f3d97112179b6bdee1d647209",
+      "bytes": 332421,
+      "decoded": true,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/models/10k_obj/016_日.obj",
+      "sha256": "4f00bd5df1f887c12a7d376f6737c77e9929d337490c440c911ac5bc1edeee65",
+      "bytes": 361796,
+      "decoded": true,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/models/10k_obj/017_风.obj",
+      "sha256": "9d393b5947c60bb7926dac9fa293ef8c76ba412b04de54bd48b7ba4303da9d61",
+      "bytes": 359233,
+      "decoded": true,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/models/10k_obj/018_光.obj",
+      "sha256": "cb6f3d7e21efa88664b400232c00c92269e05f0fbae704e3f17b2cae8592e98d",
+      "bytes": 349655,
+      "decoded": true,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/models/10k_obj/019_生.obj",
+      "sha256": "b7bc98571bfafb72c53b1b5b0a9464831f6218349fccb4dfc6706440a78dcdf8",
+      "bytes": 409433,
+      "decoded": true,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/models/10k_obj/020_死.obj",
+      "sha256": "6bc91231eabd802d87812f4db2b7c59a68e74044e5c12d6306095fa3d683f51e",
+      "bytes": 327243,
+      "decoded": true,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/models/10k_obj/021_德.obj",
+      "sha256": "96a37d118b0b85806f601fdd4e7cb7ce2c4cdd99e962df2f251f7a6dcb776b6d",
+      "bytes": 437787,
+      "decoded": true,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/models/10k_obj/022_法.obj",
+      "sha256": "2b85f0c3c451d154709bca4844b86a21b119b524de33c05d5238e22dbb7e3070",
+      "bytes": 387553,
+      "decoded": true,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/models/10k_obj/024_宁.obj",
+      "sha256": "d6ad0a706f0dfd80e22d35a02625874d4aebeb0cab0ff189cc4cb4d98c188fa7",
+      "bytes": 330369,
+      "decoded": true,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/models/10k_obj/023_安.glb",
+      "sha256": "146d608656e165d3ead7289480ebcf529eed4abee1753d9c4f5d59b00898e438",
+      "bytes": 801118,
+      "decoded": true,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/models/10k_obj/025_觉.glb",
+      "sha256": "72bcd7a463649ba7be9dc36dbcd66fa0218c219ec7263fa8c853a11ec4dd537e",
+      "bytes": 787299,
+      "decoded": true,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/models/10k_obj/026_川.glb",
+      "sha256": "569c6206e21fd32b715d003038212f742ee3da0d167ca1a52d82f902c3ef7c91",
+      "bytes": 792470,
+      "decoded": true,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/models/10k_obj/027_海.glb",
+      "sha256": "0291e46f25fd0fd1a63584711220fd7601f9e0e4ec42d69fa97277eff4a8f84d",
+      "bytes": 822222,
+      "decoded": true,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/models/10k_obj/028_江.glb",
+      "sha256": "0c7e8900a92843983a149403f8df9800d63fd5a0507e9bae25ae7feb0e9dd60b",
+      "bytes": 800206,
+      "decoded": true,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/models/10k_obj/029_河.glb",
+      "sha256": "cc0f8c37574ad90dbcdc77633c391b04e7bfe247b1ea56819d086c5bd8eba4d0",
+      "bytes": 780846,
+      "decoded": true,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/fonts/润植家康熙字典美化体.ttf",
+      "sha256": "8ad47e81f84bfc2d4c2f82bc15d1de95da5ffe281ca147fceb2abd4370217062",
+      "bytes": 6048788,
+      "decoded": false,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/models/10k_obj/030_湖.glb",
+      "sha256": "2e05ca1f7b6c783e3123328e4715fcb5d9e80834117daafaf241f6f30e141769",
+      "bytes": 794212,
+      "decoded": true,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/models/10k_obj/031_泉.glb",
+      "sha256": "9701ebb2cd809f48a18762bbe01f478194d06f7d648ede6115f67dca1b6b744c",
+      "bytes": 824997,
+      "decoded": true,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/models/10k_obj/032_雨.glb",
+      "sha256": "a7a27c57a359fe55c99c87c8ef58667b79d5df720245157ee46fd577f293f204",
+      "bytes": 816417,
+      "decoded": true,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/models/10k_obj/033_云.glb",
+      "sha256": "54d5dd5e55cdcc79e2e876ed83fb95b6729cb8acd2363dfa98b16db7fe43ff3a",
+      "bytes": 803287,
+      "decoded": true,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/models/10k_obj/034_雾.glb",
+      "sha256": "1e4dc35e8a3d55cd680299435faab4294c0a6b28cbaf4eb497c6212e427e36c7",
+      "bytes": 780627,
+      "decoded": true,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/models/10k_obj/035_雪.glb",
+      "sha256": "d5a038e1fea6a7d61f317863f9373a47647c31368a1dd2f3f4f127212d3ff9da",
+      "bytes": 796720,
+      "decoded": true,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/models/10k_obj/036_星.glb",
+      "sha256": "857ec585f8343e509dc7e596035df2aebef7b3151dca342f52087bcac95ef960",
+      "bytes": 831325,
+      "decoded": true,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/models/10k_obj/037_辰.glb",
+      "sha256": "32ee468183a1235aa46756bbe09aa63e57da3db2cf89473846fc78d5f0214eb0",
+      "bytes": 825346,
+      "decoded": true,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/models/10k_obj/038_影.glb",
+      "sha256": "8b175094a0481fb44f8ed0d76c862101c8f44f35748c4ea808916c00c597e08b",
+      "bytes": 785492,
+      "decoded": true,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/models/10k_obj/039_梦.glb",
+      "sha256": "7ee46e911206430860c59bdb63e9ad9eda3ca980b51497acb8a39760deb595f1",
+      "bytes": 831625,
+      "decoded": true,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/models/10k_obj/040_幻.glb",
+      "sha256": "309b22dc0b724e6c69a64da61d8ccef3d8950e74ce23e3a8f5dc4d4a2eb60515",
+      "bytes": 793149,
+      "decoded": true,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/models/10k_obj/041_寂.glb",
+      "sha256": "ffb70680ec360f53f9aeeeb99c471eefe5aab43de3b821badf983da98dc1efd5",
+      "bytes": 809022,
+      "decoded": true,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/models/10k_obj/042_灭.glb",
+      "sha256": "66f9ea40562c40dc4eae1275ec9a0738024a09592a1d57dd25cbe0ed2b4f19df",
+      "bytes": 812801,
+      "decoded": true,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/models/10k_obj/045_苦.obj",
+      "sha256": "fda71eb2446f850272ba061c39179fe89feac4a4af71fb93dc43a9d76dbef9ba",
+      "bytes": 422111,
+      "decoded": true,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/models/10k_obj/043_常.glb",
+      "sha256": "2fba880c12eb149490b40b7b3ace5b843e2807aa23cde7da20aefb1a7200238f",
+      "bytes": 829793,
+      "decoded": true,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/models/10k_obj/044_乐.glb",
+      "sha256": "9a65646f3aaf22ce7085067ff50eabc250b7e0afb0c8185bd367c3604dc43dd6",
+      "bytes": 816004,
+      "decoded": true,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/models/10k_obj/046_净.glb",
+      "sha256": "f4bc1158c76e9e3ec1950092de4c425e9e9c9b02dfa3d98669a8d64895c4a17a",
+      "bytes": 812074,
+      "decoded": true,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/models/10k_obj/047_清.glb",
+      "sha256": "e13904cb3b32be319261f394d4cb998f36dad64d3650db4bc4efca0832d47985",
+      "bytes": 819290,
+      "decoded": true,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/models/10k_obj/048_虚.glb",
+      "sha256": "48d56cc94e45345b1a8422199bc1fd104073b62ff33d1f95d9cab0f4cabfe6be",
+      "bytes": 831574,
+      "decoded": true,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/models/10k_obj/049_灵.glb",
+      "sha256": "9356d456a52d6e0222bd7538e015ea4159faba5b2eb95c1674709b8a5a28fc74",
+      "bytes": 828274,
+      "decoded": true,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/models/10k_obj/050_妙.glb",
+      "sha256": "8eeb70f8e79c3c9f3f429fffe9c1a01c5a11880ea860c9768c53dfaa41728cf0",
+      "bytes": 793099,
+      "decoded": true,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/models/10k_obj/051_仁.glb",
+      "sha256": "8a7b3cdd9346ebb74b34129e31d91b892d84c4c7bbc2f775edf486e0c8af8ee5",
+      "bytes": 790785,
+      "decoded": true,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/models/10k_obj/052_义.glb",
+      "sha256": "7ef1889ab12c8917b769c8c5c311da3416c8c94adbc78356f6104db2b7500978",
+      "bytes": 818657,
+      "decoded": true,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/models/10k_obj/053_礼.glb",
+      "sha256": "3036c1a3685c7dc7245ce23960a14272db835470324e16530555edb963618f16",
+      "bytes": 796696,
+      "decoded": true,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/models/10k_obj/054_智.glb",
+      "sha256": "8938186805846ad13585463d446cc2582aadea5324e9bb62fcfa8e3f3591da6f",
+      "bytes": 799451,
+      "decoded": true,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/models/10k_obj/055_信.glb",
+      "sha256": "4d6418c58a2f52d39e7f8e9e5f730d53d2ec3be292c9cb61a50913780260cb92",
+      "bytes": 794623,
+      "decoded": true,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/models/10k_obj/056_勇.glb",
+      "sha256": "cc1c3586cba492df652ce16277807ffc9ceadd1b0577a699204bcfec30c70f38",
+      "bytes": 828327,
+      "decoded": true,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/models/10k_obj/057_孝.glb",
+      "sha256": "61a1264797bb763821f3fa8f4dc50455aa87614ff6975cf079c4c894ecfb4d4f",
+      "bytes": 830367,
+      "decoded": true,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/models/10k_obj/058_悌.glb",
+      "sha256": "6dd9d38eb51ad6bd4f170a86d0547b80e528f69dc790276d55b5c42c853149e9",
+      "bytes": 803819,
+      "decoded": true,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/models/10k_obj/059_忠.glb",
+      "sha256": "376a275d188bc21d0bfb3deb528a655fc6204d00e911449d2909c6363ee18e80",
+      "bytes": 794996,
+      "decoded": true,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/models/10k_obj/060_恕.glb",
+      "sha256": "9ebedb4be290f95d4ec1117a6cd63cfd4357a6a4c7b3c6e3f92228af77d860fc",
+      "bytes": 835020,
+      "decoded": true,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/models/10k_obj/061_忍.glb",
+      "sha256": "eaa7a2c5f6aa4675fbc16fce011a17ab078212267bf521464e0de846d8067c3d",
+      "bytes": 791516,
+      "decoded": true,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/models/10k_obj/062_宽.glb",
+      "sha256": "97ebbac8dd1986684d19a939aa35eb2437460e0d6fd8e1d3b6566613de4ff4ae",
+      "bytes": 814692,
+      "decoded": true,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/models/10k_obj/063_福.glb",
+      "sha256": "74686fd3bfdf3259b116057a46de01669a9baef9d5178d918bb3f049dafed068",
+      "bytes": 799738,
+      "decoded": true,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/models/10k_obj/064_寿.glb",
+      "sha256": "f107ee06aaebd3f3fb217e716c6668f5bc6458b1aaf0c495085a337a9c918f9d",
+      "bytes": 826089,
+      "decoded": true,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/models/10k_obj/065_吉.glb",
+      "sha256": "e79eb469879ec5b53e2565cbb05a89b818e4850df4d7f4a9bd3f07e8242b2e2a",
+      "bytes": 830830,
+      "decoded": true,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/models/10k_obj/066_祥.glb",
+      "sha256": "b9d25f7710ee72e6c4f2adcb13ca0f62676e79981bde034a7fc69ac1d3b42893",
+      "bytes": 821839,
+      "decoded": true,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/models/10k_obj/067_康.glb",
+      "sha256": "d82eb7dac862c91452670cd55c24927bad9fe5d3a49b40c901bbd825a34d4f8e",
+      "bytes": 827184,
+      "decoded": true,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/models/10k_obj/068_泰.glb",
+      "sha256": "9699bf5fc69baedefe883c8f01638308ed44d525027d5436238c17457e2ee0c0",
+      "bytes": 835032,
+      "decoded": true,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/models/10k_obj/069_春.glb",
+      "sha256": "da83495752c18dc5f6e948f18b586647893c8827ed0694381288ec68d3645935",
+      "bytes": 831179,
+      "decoded": true,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/models/10k_obj/070_夏.glb",
+      "sha256": "3110966f8d6816b1bb6761a6b0173889cefe5e90168d7837fdcb2a06397a265d",
+      "bytes": 834652,
+      "decoded": true,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/models/10k_obj/071_秋.glb",
+      "sha256": "bfb8eb3c7ec8789b42499ef3ab640d19186e5cb09bd55b05f01eb046bbf96c9c",
+      "bytes": 815219,
+      "decoded": true,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/models/10k_obj/072_冬.glb",
+      "sha256": "6584b1464dc081372b71b4e7003df108276c765e722c93b4e25afad56b873fd0",
+      "bytes": 813759,
+      "decoded": true,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/models/10k_obj/073_竹.glb",
+      "sha256": "582e0a7562ca1b8fdcf91ee033ccc593783b0913b3a70f28c5c30599aa6e3351",
+      "bytes": 798621,
+      "decoded": true,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/models/10k_obj/074_松.glb",
+      "sha256": "2bfb517e949e991fa8ad902f492c81e896297c1d35a1fb326a1cf00fc89ee8bf",
+      "bytes": 797004,
+      "decoded": true,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/models/10k_obj/075_梅.glb",
+      "sha256": "255ea0a02096630fae944dfcb9a29719b845d15966d8c0b2d95308b9c7eeee75",
+      "bytes": 830455,
+      "decoded": true,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/models/10k_obj/076_兰.glb",
+      "sha256": "6204a0507e0071f59ffa92b601ed1e7fa7b869552218d5ae932d032538584aae",
+      "bytes": 787209,
+      "decoded": true,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/models/10k_obj/077_花.glb",
+      "sha256": "4d6f87669c258c6150429666ac765d57cc1ec892b44699327d860feeb274d913",
+      "bytes": 804799,
+      "decoded": true,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/models/10k_obj/078_草.glb",
+      "sha256": "87288dcc6456bda2272347f1d47fab7eb5f14ff726aaa7b7967b8af761301eae",
+      "bytes": 830099,
+      "decoded": true,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/models/10k_obj/079_石.glb",
+      "sha256": "94bc9013d0548eba5ee03f3621f0a93e9a94942701602b92cd9d2aee24bacf32",
+      "bytes": 822840,
+      "decoded": true,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/models/10k_obj/080_玉.glb",
+      "sha256": "cd98585eda4b97533265c00fd2435f5b38d04339644436ddd6a7bb15a7cfbcb0",
+      "bytes": 823287,
+      "decoded": true,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/models/10k_obj/081_金.glb",
+      "sha256": "644139eb9d703da9420658391d838d17ecb310505b14fbb8b3a0f5d7be22a3aa",
+      "bytes": 798731,
+      "decoded": true,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/models/10k_obj/082_木.glb",
+      "sha256": "a3195f3b6d03f8d8274c205fdd2b71c6ae8bc5cc60367ecf289e4e60c16ef533",
+      "bytes": 811499,
+      "decoded": true,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/models/10k_obj/083_土.glb",
+      "sha256": "80c2d54c84a67a70228aa0beae54d0a5d3a65d2b1e324e6102a307699269e13c",
+      "bytes": 828886,
+      "decoded": true,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/models/10k_obj/084_火.glb",
+      "sha256": "815c448cd8d7744e0137e939abb1b75641f44236f7f738e0a2d19767fec9a018",
+      "bytes": 813489,
+      "decoded": true,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/models/10k_obj/085_雷.glb",
+      "sha256": "4648af54cacc24e0ea0031006e281d39e37215cecbef31b5caad817a483c876c",
+      "bytes": 796067,
+      "decoded": true,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/models/10k_obj/086_天.glb",
+      "sha256": "30d387042ae1fff7052b9870bc6b7d5d210457307b01de02039d561187278a1c",
+      "bytes": 810875,
+      "decoded": true,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/models/10k_obj/087_地.glb",
+      "sha256": "8565512017af4183688d8e61ab28cd26441b0b9139b3aa86a73cf2a14bf0b9fe",
+      "bytes": 827785,
+      "decoded": true,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/models/10k_obj/088_乾.glb",
+      "sha256": "099bcf1b20c2abac3aa47d1967954e779818009299c46b26037188017b088d8c",
+      "bytes": 827582,
+      "decoded": true,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/models/10k_obj/089_坤.glb",
+      "sha256": "6d3e851863b0636ab1bf779b515926e95dae7c5100959e6afbc10b8ef9a70371",
+      "bytes": 806536,
+      "decoded": true,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/models/10k_obj/090_宇.glb",
+      "sha256": "f8ba091afd29d3413978d2c2fd5031cba07b6739d906a3551dcf5a8cbefb39ac",
+      "bytes": 798160,
+      "decoded": true,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/models/10k_obj/091_宙.glb",
+      "sha256": "17cfda21e658cb2edd7ebb584e41dd1c142709276879330a104370b1ac37a9e8",
+      "bytes": 814355,
+      "decoded": true,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/models/10k_obj/094_色.obj",
+      "sha256": "4c91290215ecb59f78684f19f822ef3d4e03b065d514a00d7ce9b9284512ea80",
+      "bytes": 354469,
+      "decoded": true,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/models/10k_obj/092_源.glb",
+      "sha256": "d3612e4c6b4cddaef7ec15c7c4da3a87889715d281c30e80015fb7af0e5b4c86",
+      "bytes": 783085,
+      "decoded": true,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/models/10k_obj/093_流.glb",
+      "sha256": "e75fc235e5160bc869bf88b1d3a49f5c65efe6f6077b33909c569a83e6cc8700",
+      "bytes": 782766,
+      "decoded": true,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/models/10k_obj/095_潮.glb",
+      "sha256": "ce6f3981dc8c13381f7218b1173742e27f2ba77eeaec9d02f1257ad97f65bf1f",
+      "bytes": 796579,
+      "decoded": true,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/models/10k_obj/096_露.glb",
+      "sha256": "c77d61e75fe2267ace63bee1f46c046a5e7566bb90994431f4c1320d2cff8d18",
+      "bytes": 798653,
+      "decoded": true,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/models/10k_obj/097_霜.glb",
+      "sha256": "ae429277eb33762addd360e8eb6abdec3dbb0ee4a599ef4b4e51ea64fa2077a1",
+      "bytes": 830687,
+      "decoded": true,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/models/10k_obj/098_美.glb",
+      "sha256": "b1e597a3cd46ff1ed155883521940a5965d7f3e93aa2b05377182444c80cb068",
+      "bytes": 825100,
+      "decoded": true,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/models/10k_obj/099_化.glb",
+      "sha256": "dbb127cbebc45afcb6f97a42e0aaf17f0d6fc03d0bec89189b8e07abc90933f1",
+      "bytes": 549230,
+      "decoded": true,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/models/10k_obj/101_观.obj",
+      "sha256": "57b44759349aed36b3948c20cf049abf0018e9d29fa5fb6cb2281ddf295c6978",
+      "bytes": 368084,
+      "decoded": true,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/models/prepared/001_空.json",
+      "sha256": "e7cc874cd6752ebdbb83c5f8717dab92746f3c8c0093db83d0442cf736fcb60a",
+      "bytes": 567139,
+      "decoded": true,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/models/10k_obj/100_通.glb",
+      "sha256": "5303bbccf6e640fc0e8fcc2ea601d54e2463ee2b8010215f8456319c955d21e0",
+      "bytes": 814559,
+      "decoded": true,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/models/prepared/002_心.json",
+      "sha256": "018e4e77600693fab84d4b42e19c8156d6a00e3cffae64122838687daf6420eb",
+      "bytes": 526332,
+      "decoded": true,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/models/prepared/003_道.json",
+      "sha256": "841cc78c6ce70bb77910ed482df097c287b2d532a87ffed3ac3f90d8aa64bcab",
+      "bytes": 945619,
+      "decoded": true,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/models/prepared/004_善.json",
+      "sha256": "449f79685c224752ffe9d46db52deea2201966e790a6eb5bb2f2a18024721224",
+      "bytes": 796748,
+      "decoded": true,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/models/prepared/005_和.json",
+      "sha256": "d1d40aa09a59117339cfb83a0273c91a702a56af96945798dc29513192d45ee7",
+      "bytes": 765287,
+      "decoded": true,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/models/prepared/006_静.json",
+      "sha256": "cb443283dd4cd4f214acd1d77edc3fbe8559b14cef39689412f44b0027034167",
+      "bytes": 1073492,
+      "decoded": true,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/models/prepared/007_明.json",
+      "sha256": "b5bb16068d23540c3e557dc180d28a22e5406fabc66d67ad41b57187ee2825e6",
+      "bytes": 770266,
+      "decoded": true,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/models/prepared/008_悟.json",
+      "sha256": "3e6b2304b126fa4f7e84bbc704dfec58e65d6453db205949b8ba9a97581bec53",
+      "bytes": 809290,
+      "decoded": true,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/models/prepared/009_真.json",
+      "sha256": "6449a0dff334ab99e155b66895530a8655c099892df33fa31e1335921ffb9814",
+      "bytes": 786799,
+      "decoded": true,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/models/prepared/010_圆.json",
+      "sha256": "0add427afce4d2204fb51b20af2b87de637c482e1ba51ff0f57beb63eee7029d",
+      "bytes": 710225,
+      "decoded": true,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/models/prepared/012_无.json",
+      "sha256": "6ff60ec9913f58d1a224a1dbcf6a7353b4c8196927043bc1b9605c4c2b29b312",
+      "bytes": 542526,
+      "decoded": true,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/models/prepared/013_水.json",
+      "sha256": "bb5442fc296f0fdc04b5f1a4a1ddbdbee831687db19be240dacc699a87c72917",
+      "bytes": 601849,
+      "decoded": true,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/models/prepared/011_缘.json",
+      "sha256": "8a70bd43042e1226a5d33715c7a4266858f3efe95c6b7ae975171a2216de1e8f",
+      "bytes": 914520,
+      "decoded": true,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/models/prepared/014_山.json",
+      "sha256": "f7c8c9fdd3db87a9e872695ee732241adfcb077faea8aea1095f329d75cf657c",
+      "bytes": 616533,
+      "decoded": true,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/models/prepared/015_月.json",
+      "sha256": "183f5791e08681ac6b657b93de688a49ad0fe1434f93674960f244148a469a83",
+      "bytes": 530873,
+      "decoded": true,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/models/prepared/016_日.json",
+      "sha256": "62991fa8139824af7c7e8d33052d338911335da24ddacbe72b6dbd22a56a685a",
+      "bytes": 588276,
+      "decoded": true,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/models/prepared/017_风.json",
+      "sha256": "c7dc9c987bf861eaa8998c8509eef5d81d41bf1fd4284a737115b16cad1c48e4",
+      "bytes": 644113,
+      "decoded": true,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/models/prepared/018_光.json",
+      "sha256": "254b1ff38548cb5e7531852e8a42403f08cff7c234c10013549273a9beff4af0",
+      "bytes": 641005,
+      "decoded": true,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/models/prepared/020_死.json",
+      "sha256": "34ac7468a93ad395e21280a95707ab2b085619fd18ba3f72fdcdd98ee08b7ba2",
+      "bytes": 537273,
+      "decoded": true,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/models/prepared/019_生.json",
+      "sha256": "d39e0d70c029bee9980387f346d72e8088f4adde848e779de386283aabca2175",
+      "bytes": 752319,
+      "decoded": true,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/models/prepared/024_宁.json",
+      "sha256": "4786deda8d5ab0029b937a107bddb0bb48b4e9785057be94e38de9ed1ebde962",
+      "bytes": 578978,
+      "decoded": true,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/models/prepared/021_德.json",
+      "sha256": "c0780310b22975357a6b6ea02d55a32802b0835de269c0066e967cd77b304bb0",
+      "bytes": 951301,
+      "decoded": true,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/models/prepared/022_法.json",
+      "sha256": "45c6eea1c5f7895b60fc5788b20706a201b1c29ad8dda73c042fe87cfddfc9ba",
+      "bytes": 788686,
+      "decoded": true,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/models/prepared/023_安.bin",
+      "sha256": "a837b5e4f1dff26bc959180a80c628f54f9ab53e9794fbdf62bf9e9f685b1d2a",
+      "bytes": 1702014,
+      "decoded": false,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/models/prepared/025_觉.bin",
+      "sha256": "3dd782e5d7f222f4b659a956414a926d20326009e51631f618dd882694baf1d8",
+      "bytes": 1546087,
+      "decoded": false,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/models/prepared/027_海.bin",
+      "sha256": "713b0098b943592b429ed2c067fda9939524b5cf938fdca1dca3932d408394a0",
+      "bytes": 1611944,
+      "decoded": false,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/models/prepared/026_川.bin",
+      "sha256": "03061169a6e55655487c39b0839ebd4babbe04beba53aed42ad98cbf0595613c",
+      "bytes": 1799187,
+      "decoded": false,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/models/prepared/028_江.bin",
+      "sha256": "82da7d1e12271b87539871ea5dfa712653ff0a55e074a3c80766d5577e2cbc6b",
+      "bytes": 1333191,
+      "decoded": false,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/models/prepared/029_河.bin",
+      "sha256": "6d7b5307567ce53578679072021405940c54295987bc606e48b861401ac3a8ac",
+      "bytes": 1599724,
+      "decoded": false,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/models/prepared/030_湖.bin",
+      "sha256": "1cac52046d8089e334b7aeb26d822726476da5586b4c2ca210adbc60d2628c4c",
+      "bytes": 1718675,
+      "decoded": false,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/models/prepared/031_泉.bin",
+      "sha256": "125be03741a10b2d115503e2784fb3157e07ee48e5951bdeadc16a21ec7238a8",
+      "bytes": 1740301,
+      "decoded": false,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/models/prepared/032_雨.bin",
+      "sha256": "ffe3f9e745c50eb944ed8e9b2ee37df7510be33cab4bc868ca2d40b4eda3f18c",
+      "bytes": 1560970,
+      "decoded": false,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/models/prepared/033_云.bin",
+      "sha256": "c6a809f1610310e34cb81326bfd573e0dde092dd8b8e2eab6a105a8ce9cee8b3",
+      "bytes": 1234317,
+      "decoded": false,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/models/prepared/034_雾.bin",
+      "sha256": "b39b4ab521b79cc973cc946e27f376578372df499dc5b39a78daeaaa1eebce32",
+      "bytes": 1859801,
+      "decoded": false,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/models/prepared/035_雪.bin",
+      "sha256": "bbe755bddce3f9d517275f654211480c647925ed69b80c028bfb74e1e93ee016",
+      "bytes": 1761600,
+      "decoded": false,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/models/prepared/036_星.bin",
+      "sha256": "1191f5d5ced7be78c2a3e63032e10c90ee5c460a5d50dd48806df12de161a02d",
+      "bytes": 1673580,
+      "decoded": false,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/models/prepared/037_辰.bin",
+      "sha256": "63d24a490223b6318f350cd41d6490cae78355ad377e1fda6e7c85a4b965982d",
+      "bytes": 1549266,
+      "decoded": false,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/models/prepared/040_幻.bin",
+      "sha256": "b8a44a6602e82429519a4de836531742b3544b1741f095a5f1c1bc7e48fa5a82",
+      "bytes": 1272203,
+      "decoded": false,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/models/prepared/038_影.bin",
+      "sha256": "a0713f0d8fb9166c5d1d4775ce5fc6321b690723335e1c8de0cfdb1ade49c990",
+      "bytes": 1734806,
+      "decoded": false,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/models/prepared/039_梦.bin",
+      "sha256": "5dd1e0dff33a93cadc65d82ce1a98e1c57007b3993da13a9cf4eeb835b85ddba",
+      "bytes": 1792373,
+      "decoded": false,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/models/prepared/041_寂.bin",
+      "sha256": "af04a48a11e385575b5c474b567ae5d8647c8aa1393859fb5eb9a1dcb55111fa",
+      "bytes": 1635957,
+      "decoded": false,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/models/prepared/042_灭.bin",
+      "sha256": "23f592bbb5c9ddec55b86a36074ae42aa4034c4c35eac2577556f5eb908ab554",
+      "bytes": 1426813,
+      "decoded": false,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/models/prepared/045_苦.json",
+      "sha256": "7fe9e9ceeffdbc7af1c5b91ef7d71509af49320d76e214aa34b9c21c485d3a26",
+      "bytes": 842638,
+      "decoded": true,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/models/prepared/044_乐.bin",
+      "sha256": "81b545b49a94f17de76b494db35116d03ef87aaf609430810544d74161a7f24f",
+      "bytes": 1394138,
+      "decoded": false,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/models/prepared/043_常.bin",
+      "sha256": "2a04e3bdd22d8affc9cde9bdad8f5fbfc9251785e8654960666bceed21e25fb4",
+      "bytes": 1729313,
+      "decoded": false,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/models/prepared/046_净.bin",
+      "sha256": "2d6e506e0f55dc10db053b95a2f08ce01c7369cca5c09f47d01a539d9a604fb8",
+      "bytes": 1541105,
+      "decoded": false,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/models/prepared/047_清.bin",
+      "sha256": "0b346d0e43ce9da892d5ac0377dc59a5d304de715377117f928843e800aa5320",
+      "bytes": 1698952,
+      "decoded": false,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/models/prepared/048_虚.bin",
+      "sha256": "06d426b621e12f0bfdd9ca8f19a593d37513134b6a5418a7ee3d3ef61c2e4283",
+      "bytes": 1744922,
+      "decoded": false,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/models/prepared/049_灵.bin",
+      "sha256": "64056268a6eb1f6bafe5c92a2e472cf5d5c8df704869e464a467ef6c13d3344b",
+      "bytes": 1697457,
+      "decoded": false,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/models/prepared/051_仁.bin",
+      "sha256": "20ff17969a0daac5021adcbebe79d0f42d27bc2aeb01fd291e247af31e1d6ab2",
+      "bytes": 1212454,
+      "decoded": false,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/models/prepared/052_义.bin",
+      "sha256": "3dddc8bf2ad1cb7e6d6ccf3c1776b9c8fc7678568b908392ef76b6249b3e2b89",
+      "bytes": 1311336,
+      "decoded": false,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/models/prepared/050_妙.bin",
+      "sha256": "6bbbfdcf9e73f9dd8ae0376df9f99bb80da0b1c7792428978b7d99894c69e2da",
+      "bytes": 1681224,
+      "decoded": false,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/models/prepared/053_礼.bin",
+      "sha256": "22e1faab487cdaf9a9821f02046bfc35c890246fa3c201e2bee00f0d6cf20490",
+      "bytes": 1459940,
+      "decoded": false,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/models/prepared/054_智.bin",
+      "sha256": "a363c84d4daa07f00d9473bd525a89b00ada1f50020d93720bf401b7306fdcc1",
+      "bytes": 1758364,
+      "decoded": false,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/models/prepared/055_信.bin",
+      "sha256": "39024298babd6c6994ed2e12dbdf52b927517e7adde3c60db0bc113a9f6882ec",
+      "bytes": 1640155,
+      "decoded": false,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/models/prepared/056_勇.bin",
+      "sha256": "86832cc24408808cc10d74ebb0b836d3033899749987e703d03389d6af9e728a",
+      "bytes": 1651934,
+      "decoded": false,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/models/prepared/057_孝.bin",
+      "sha256": "3d67a6a2036cd35b26151c3464ae76fa4a1dfc3584a3526ee23b17256e490750",
+      "bytes": 1561921,
+      "decoded": false,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/models/prepared/059_忠.bin",
+      "sha256": "982e223abb14292d4eecd2a63d7f3cba6267e41b8ea8819b7a743582f2ea87b6",
+      "bytes": 1456755,
+      "decoded": false,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/models/prepared/058_悌.bin",
+      "sha256": "f72771f0c5cb7e271e5b14589186e89676f693a342bb866ba14b6675839f8d97",
+      "bytes": 1613427,
+      "decoded": false,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/models/prepared/061_忍.bin",
+      "sha256": "6f9b3284baf71bac8b8124c66609268f01c8dae84e1b20c71214cc3f279c4014",
+      "bytes": 1410946,
+      "decoded": false,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/models/prepared/060_恕.bin",
+      "sha256": "4d42768cbe7f3f446e6e57f6088e38a84c7efea0853805a27a0a98e000e28021",
+      "bytes": 1734904,
+      "decoded": false,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/models/prepared/063_福.bin",
+      "sha256": "ebd566820bd60898f6e542659de00fe7cf89ff759c567ea42792c500262a4dad",
+      "bytes": 1631703,
+      "decoded": false,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/models/prepared/062_宽.bin",
+      "sha256": "a558ad816ac3e27001ab8952871c14b90f6859f864436b6029cde9160da127eb",
+      "bytes": 1686019,
+      "decoded": false,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/models/prepared/064_寿.bin",
+      "sha256": "ec8444a7b7c87296936c11bce0139c38f0eaa8caef0bba79bdc43daddee9c0f8",
+      "bytes": 1705005,
+      "decoded": false,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/models/prepared/065_吉.bin",
+      "sha256": "a3ee0ec575b6cf6aa342b06399f9c19ec1b31cbfb67c665a684a85f045ff0bdd",
+      "bytes": 1605096,
+      "decoded": false,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/models/prepared/067_康.bin",
+      "sha256": "b14fca504476d5c96e592789fdd8a028b4ff8defb95da1be061db26e390ed2df",
+      "bytes": 1550664,
+      "decoded": false,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/models/prepared/066_祥.bin",
+      "sha256": "0a653efcfa493b3aecebd2442b33d5cc0d57daec29e22382634a0705908d0a40",
+      "bytes": 1840024,
+      "decoded": false,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/models/prepared/069_春.bin",
+      "sha256": "a12350fe40ca70d8fbc0714e32f5f46dd2a1c025eb5a484e20b8028212286d7e",
+      "bytes": 1635890,
+      "decoded": false,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/models/prepared/068_泰.bin",
+      "sha256": "02a1d0132859ca2709b56e059b9588ea2f7047a3c1db93385610b04654c4ecd5",
+      "bytes": 1904407,
+      "decoded": false,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/models/prepared/070_夏.bin",
+      "sha256": "0678a40b29227924de6b83828935385ae1d738b256dc4b2beb90c48675e65cdd",
+      "bytes": 1521921,
+      "decoded": false,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/models/prepared/072_冬.bin",
+      "sha256": "4abb42835711e2d5503b6961260fea60b0e0cd10bbda9fadc32f542e59ed8daa",
+      "bytes": 1431929,
+      "decoded": false,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/models/prepared/071_秋.bin",
+      "sha256": "327b741dcb9cc06c2e0f7d6d7c714b62d4d02b6528b08ec585b1ea6445f2a11e",
+      "bytes": 1582968,
+      "decoded": false,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/models/prepared/073_竹.bin",
+      "sha256": "529b21e1a44014323bf43a8bf2b2fbd6027dce5db9c9cf1fd353ce88c0d6ac1a",
+      "bytes": 1512476,
+      "decoded": false,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/models/prepared/074_松.bin",
+      "sha256": "82886b48598ae00b21c1cdc215ce23beaec1e5d69382481ef483e27fdb181e3c",
+      "bytes": 1541798,
+      "decoded": false,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/models/prepared/076_兰.bin",
+      "sha256": "18cd115b481b6cc0d7e39f8142cb2f542e8b7facc322dbb8d1ab1a22435cb5fc",
+      "bytes": 1383496,
+      "decoded": false,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/models/prepared/075_梅.bin",
+      "sha256": "e8444df4a4e2644ee8d6771f455775c8ab5499ec613cf3b55b846f299928b902",
+      "bytes": 1680922,
+      "decoded": false,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/models/prepared/077_花.bin",
+      "sha256": "45260e6fa2b2d358ac9bbf7190a66fb52bbdb03d91768244758cefeb261986e5",
+      "bytes": 1582762,
+      "decoded": false,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/models/prepared/079_石.bin",
+      "sha256": "67d764a4b6575bca50d5c4686cfb367b088c7356bf64487cf00ff18672274933",
+      "bytes": 1345544,
+      "decoded": false,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/models/prepared/078_草.bin",
+      "sha256": "00ea797fb3e58889e24a291c50da8985040eee74b7c1e54a0c04047aaf5785b6",
+      "bytes": 1768528,
+      "decoded": false,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/models/prepared/080_玉.bin",
+      "sha256": "c3653b6ad8ce52cae6734d0fb6f18ca295fdafe63b2d2c67a043ebbfe22f7806",
+      "bytes": 1374008,
+      "decoded": false,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/models/prepared/081_金.bin",
+      "sha256": "ad9f0d26201699ef434a718049c07c78fb8439183aea7c4cb1fd86b538ac6d6c",
+      "bytes": 1597998,
+      "decoded": false,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/models/prepared/082_木.bin",
+      "sha256": "9c97041947b23f165e5b26bd3d28ebdac9460efce3763410f337cb6450de0811",
+      "bytes": 1384989,
+      "decoded": false,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/models/prepared/084_火.bin",
+      "sha256": "56ec12d442ebc1d61e5fcf13dabe47d5c1b591307916db7d794ea4dff893a02f",
+      "bytes": 1362958,
+      "decoded": false,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/models/prepared/083_土.bin",
+      "sha256": "f56b2a156947f23de9aa7e2078b373fc7b9a9d46b349a168bbc97777fb83c6f5",
+      "bytes": 1460508,
+      "decoded": false,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/models/prepared/085_雷.bin",
+      "sha256": "1ec576bed0018f0c95692ecac4053864d106702b8e2f41f74ac968022883c40e",
+      "bytes": 1711665,
+      "decoded": false,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/models/prepared/086_天.bin",
+      "sha256": "4f94b845725b1c5743bad6069c82df624acd28e497923ea173dfa39d03d22082",
+      "bytes": 1372068,
+      "decoded": false,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/models/prepared/087_地.bin",
+      "sha256": "7bcfa9c29f1c4c0793032cfc187f636d17118fc0c809f29b753a23e04932ddc8",
+      "bytes": 1632830,
+      "decoded": false,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/models/prepared/088_乾.bin",
+      "sha256": "887e0de2c170741492b716435a936fe70081b88c321a9f12c1da1f0bfd42c46a",
+      "bytes": 1619731,
+      "decoded": false,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/models/prepared/089_坤.bin",
+      "sha256": "edcf6afa6cee214939ac3b57cc1939a405c00380edcde481e0fb738d45de1587",
+      "bytes": 1621159,
+      "decoded": false,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/models/prepared/090_宇.bin",
+      "sha256": "4aad43a18f219b35fb9234fa7ffdcf4c3ad04edc8f7ec3e78e062f33ad054bb3",
+      "bytes": 1558192,
+      "decoded": false,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/models/prepared/091_宙.bin",
+      "sha256": "001af157cc929b00502be86d2972a42d6bb044ad16622995f809269027bdb530",
+      "bytes": 1474271,
+      "decoded": false,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/models/prepared/092_源.bin",
+      "sha256": "e7ffe20b28a3dea0a7f3131ffce51e373d67f5fcc322f2935dd79c5946b48141",
+      "bytes": 1548658,
+      "decoded": false,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/models/prepared/094_色.json",
+      "sha256": "deb38e5ae9ff8fc291f2a102d34f761226b03d71b2a6a2d0bd08e78623a6936b",
+      "bytes": 579843,
+      "decoded": true,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/models/prepared/093_流.bin",
+      "sha256": "d26f5ca25b940ff9080058f039ee0d27c973613c455b6c930a6bfacb9fb1e7cf",
+      "bytes": 1770042,
+      "decoded": false,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/models/prepared/095_潮.bin",
+      "sha256": "ffddce3a6b59077b2e803a86844026780d4fc478417173acf8086f0290f06603",
+      "bytes": 1722673,
+      "decoded": false,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/models/prepared/096_露.bin",
+      "sha256": "12ab28332d0137c2b19c646c28a9f374993e4fa25ddd911e3cf7e9ab00c84a42",
+      "bytes": 1793295,
+      "decoded": false,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/models/prepared/097_霜.bin",
+      "sha256": "56ac17972e4f6377fe4bcfe5d17c01c14afa4e9b105660098ecfa13694fbb61d",
+      "bytes": 1779752,
+      "decoded": false,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/models/prepared/099_化.bin",
+      "sha256": "fa396f1d75dc9db5cfa12fa674bd6a02e7c99720d46803d7636dea9cb5cb9e4d",
+      "bytes": 999725,
+      "decoded": false,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/models/prepared/101_观.json",
+      "sha256": "e858364b84e86a26a5d35da4f4be427ab644a74a1333bf4968a4f5985b4078a2",
+      "bytes": 662965,
+      "decoded": true,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/models/prepared/098_美.bin",
+      "sha256": "ec8f4b0933efe74273aba4552b5b00ac659cb3ee33964022ddaf517a38477121",
+      "bytes": 1810556,
+      "decoded": false,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/opening/heart-sutra/manifest.ec6e56fca7282b3d.json",
+      "sha256": "3696dc15dc96ea7345fac99d09e305b76ca5dd314f164d3b456b5bb2157334a2",
+      "bytes": 1121,
+      "decoded": true,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/opening/heart-sutra/preface.43e6ed7b658855ae.png",
+      "sha256": "43e6ed7b658855ae59c9321bb7bd6e3d591de0bf434d6d69e89abba628e8cb29",
+      "bytes": 170690,
+      "decoded": false,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/opening/lotus-sutra-zanshi/manifest.9b44fbd1f8149e2e.json",
+      "sha256": "54c70f4618b72ec02ee1374dfb313195ab491874ab318c2858650bde1770f9d0",
+      "bytes": 1214,
+      "decoded": true,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/opening/lotus-sutra-zanshi/preface.afe5138aa22bbacb.png",
+      "sha256": "afe5138aa22bbacbf31c9971ea9d20ff6b07f7e4c0091f0c43c28d77161ce3ac",
+      "bytes": 176832,
+      "decoded": false,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/projects/lotus-sutra-zanshi.json",
+      "sha256": "f3f823d78989f700f2eb177db4bc06d4a81914b5b03a1b68482ae5710e92a8b1",
+      "bytes": 1931,
+      "decoded": true,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/projects/heart-sutra.json",
+      "sha256": "89280e2f57f338c7c2fcc977e636418fa802553817051e024031c3d4dfe856d2",
+      "bytes": 2060,
+      "decoded": true,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/models/prepared/100_通.bin",
+      "sha256": "c210c42116c3d93c3353d50bdff076d070ba1e7aa30a34b9c4c90f4f6baca020",
+      "bytes": 1668614,
+      "decoded": false,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/textures/qwantani_dusk_2_puresky_1k.hdr",
+      "sha256": "5556903fc5ae897d12c5c863f619da4084c08b9145c6df1de3495ce3da44bc55",
+      "bytes": 612072,
+      "decoded": true,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/textures/texture.jpg",
+      "sha256": "ed1eae6acd2fabc0f4ec9e4bb99ed202828975e640de1233b592a4822fd3a40e",
+      "bytes": 280297,
+      "decoded": false,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/textures/qwantani_moon_noon_puresky_1k.hdr",
+      "sha256": "b7eb693c20e1e07a59b1fc5da8751eb6df5381f8b1371097f8e7302d68daae09",
+      "bytes": 688777,
+      "decoded": true,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "assets/textures/normal.jpg",
+      "sha256": "e1b8ace30fafcff58b8f21787bcc502b3ccd8afefeb7b4b6d6f4c4a63fe7a34e",
+      "bytes": 1262965,
+      "decoded": false,
+      "audioRange": false
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "media/audio/tone_singing_bowl.mp3",
+      "sha256": "cbf27b767a6d1429507e8192f7dee572a02dd276c6e024143f053a1d53bbcfcf",
+      "bytes": 129402,
+      "decoded": false,
+      "audioRange": true
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "media/audio/lotus-sutra-zanshi.mp3",
+      "sha256": "9f490076336c34f0cad3e6bb28208c08f053b416a1a17d016256cfb9125a0eb0",
+      "bytes": 3870381,
+      "decoded": false,
+      "audioRange": true
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "media/audio/心经_2.mp3",
+      "sha256": "1b9bdc106948104038425cc8b9e66da3131dc29c0146ab80c4ebcd28e74f8fbb",
+      "bytes": 5988772,
+      "decoded": false,
+      "audioRange": true
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "path": "media/audio/心经.mp3",
+      "sha256": "268683bbe9d57e1444f83fe94782d3de840b4134765e40e5a360c76eef866b30",
+      "bytes": 15040382,
+      "decoded": false,
+      "audioRange": true
+    }
+  ],
+  "sites": [
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "origin": "https://aitoshuu.me",
+      "basePath": "/CoScroll",
+      "originContentHashes": 71,
+      "cdnMetadataAndCors": 309,
+      "audioRanges": 4,
+      "redirects": [
+        "/CoScroll",
+        "/coscroll",
+        "/coscroll/",
+        "/coscroll/release-health.json",
+        "/coscroll/aurora/",
+        "/coscroll/aurora/index.html",
+        "/coscroll/%E7%A9%BA/",
+        "/coscroll/_next/static/missing.js"
+      ],
+      "missing404": 2,
+      "neighbors": {
+        "/": {
+          "status": 200,
+          "location": null,
+          "bytes": 994,
+          "sha256": "de5f736ac5a9bd532b87d79a8c52a3271f6dcb34bde152b22563d017d671ac91"
+        },
+        "/lubirth/": {
+          "status": 308,
+          "location": "https://aitoshuu.me/LuBirth/",
+          "bytes": 164,
+          "sha256": "43a81fb3d47b34e7d42d6b8444f592ed9251b8e57db8f67d32419aa40b1480d0"
+        }
+      },
+      "securityHeaders": "passed",
+      "cdnContentEvidence": "cdn-summary.json"
+    },
+    {
+      "releaseId": "coscroll-7d9ac4d71fe38b81",
+      "origin": "https://tongye.me",
+      "basePath": "/CoScroll",
+      "originContentHashes": 71,
+      "cdnMetadataAndCors": 309,
+      "audioRanges": 4,
+      "redirects": [
+        "/CoScroll",
+        "/coscroll",
+        "/coscroll/",
+        "/coscroll/release-health.json",
+        "/coscroll/aurora/",
+        "/coscroll/aurora/index.html",
+        "/coscroll/%E7%A9%BA/",
+        "/coscroll/_next/static/missing.js"
+      ],
+      "missing404": 2,
+      "neighbors": {
+        "/": {
+          "status": 302,
+          "location": "https://tongye.me/experience/",
+          "bytes": 138,
+          "sha256": "753e0dd54f28c4f7009b9c0b18a68aed175416bd8b7d134858264586eaac56f0"
+        },
+        "/lubirth/": {
+          "status": 308,
+          "location": "https://tongye.me/LuBirth/",
+          "bytes": 164,
+          "sha256": "43a81fb3d47b34e7d42d6b8444f592ed9251b8e57db8f67d32419aa40b1480d0"
+        }
+      },
+      "securityHeaders": "passed",
+      "cdnContentEvidence": "cdn-summary.json"
+    }
+  ],
+  "activation": {
+    "backups": {
+      "/www/server/panel/vhost/nginx/html_aitoshuu.me.conf": "/www/server/panel/vhost/nginx/html_aitoshuu.me.conf.coscroll-7d9ac4d71fe38b81.bak",
+      "/www/server/panel/vhost/nginx/html_tongye.me.conf": "/www/server/panel/vhost/nginx/html_tongye.me.conf.coscroll-7d9ac4d71fe38b81.bak"
+    },
+    "configurationWrites": 2,
+    "files": 71,
+    "localHealth": {
+      "aitoshuu.me": {
+        "releaseId": "coscroll-7d9ac4d71fe38b81",
+        "site": "CoScroll",
+        "sourceDigest": "7d9ac4d71fe38b81ec454638446385f177432064b349b2f2b88b24c61adb091a"
+      },
+      "tongye.me": {
+        "releaseId": "coscroll-7d9ac4d71fe38b81",
+        "site": "CoScroll",
+        "sourceDigest": "7d9ac4d71fe38b81ec454638446385f177432064b349b2f2b88b24c61adb091a"
+      }
+    },
+    "mode": "activated",
+    "nginxReload": "passed",
+    "nginxTest": "passed",
+    "releaseId": "coscroll-7d9ac4d71fe38b81",
+    "rollbackTarget": "/www/wwwroot/coscroll-releases/coscroll-faaafd88f5c86efc/web",
+    "target": "/www/wwwroot/coscroll-releases/coscroll-7d9ac4d71fe38b81/web",
+    "unrelatedConfigurationAndNeighbors": "unchanged"
+  },
+  "configurationChanges": [
+    {
+      "path": "/www/server/panel/vhost/nginx/html_aitoshuu.me.conf",
+      "beforeSha256": "a190e035bd625519ac3c32e684ca6b07a943583d3aec53a928edb50439245330",
+      "afterSha256": "c40c13ce544cf5d2c7ae6d49a8a8e07a0783e81e65ec3e4ca35bf15ca8f0eb86",
+      "outsideRoutingBlock": "unchanged"
+    },
+    {
+      "path": "/www/server/panel/vhost/nginx/html_tongye.me.conf",
+      "beforeSha256": "e1e4829e592c03cbbd66f8c8e07468802e200b69ff871bbb085d346e42f416fd",
+      "afterSha256": "27604c1e694307036c60e23c58518a59ab2f635e4b1eaaeb554db298193d025a",
+      "outsideRoutingBlock": "unchanged"
+    }
+  ],
+  "preservedConcurrentUpdates": {
+    "changes": {
+      "/www/server/panel/vhost/nginx/aitoshuu-lubirth-routes.inc": {
+        "before": "327d380df94756e62def03505b80e2de1e1ab8a19481c073da5723ffb9ad2bbb",
+        "latest": "d856fec9ee80a10ffec49dd00fde455f1e725dd3c94e68503a0266add621ca84"
+      },
+      "/www/server/panel/vhost/nginx/tongye-lubirth-routes.inc": {
+        "before": "d44d01b67f3e78a70de741d4e57b5db61be94fa2ad2d2da6fe630c694a781727",
+        "latest": "e9c3ec10973d7b503082411a8b30b95f6e2094cc2fc43a49931386d9e0861b03"
+      },
+      "/www/server/panel/vhost/nginx/seampage-proxy-locations.inc": {
+        "before": null,
+        "latest": "a43b18a5728cc2a1f86da996aaa089ba7625722f283b268e184d146560f0df58"
+      },
+      "/www/server/panel/vhost/nginx/infidao-locations.inc": {
+        "before": "aa6c1781c11b67fdb2270a0ad1365d1abc267479c78592d11a9481061bfd0292",
+        "latest": "cf35cbd3218956da0896bac8d0bc4d1541c9e264467f270ef9a40a9689035647"
+      },
+      "/www/server/panel/vhost/nginx/html_tongye.me.conf": {
+        "before": "575b333e289cd58a7f06c708d4c85001c6b3c1cb3b0a2e65813088ddc8e433cb",
+        "latest": "e1e4829e592c03cbbd66f8c8e07468802e200b69ff871bbb085d346e42f416fd"
+      },
+      "/www/server/panel/vhost/nginx/html_aitoshuu.me.conf": {
+        "before": "7a1c4da2b6b95d052166ae372b05fdbe11ade6ef39fd9c8aa3dca2aeb8478675",
+        "latest": "a190e035bd625519ac3c32e684ca6b07a943583d3aec53a928edb50439245330"
+      }
+    },
+    "CoScrollRoutes": "unchanged",
+    "CoScrollTarget": "unchanged",
+    "neighborHtml": "unchanged",
+    "initialActivationWrites": 0
+  },
+  "finalOriginScope": {
+    "CoScrollTarget": "/www/wwwroot/coscroll-releases/coscroll-7d9ac4d71fe38b81/web",
+    "CoScrollRoutes": {
+      "html_aitoshuu.me.conf": {
+        "count": 5,
+        "sha256": "5955a83aa2601522fe0657a5adad6a95e1f402cd1f5d54f211068412189e7d66",
+        "matchReviewedProposal": true
+      },
+      "html_tongye.me.conf": {
+        "count": 5,
+        "sha256": "53bb919ce9c4cdd40f967a17d6ecae8ad65dc94b5d80f4c41a7d0be5ca79f475",
+        "matchReviewedProposal": true
+      }
+    },
+    "laterConcurrentChanges": {
+      "configs": {
+        "/www/server/panel/vhost/snippets/project-prefix-canonical.inc": {
+          "atCutover": "1d06600de07aa7407ad9e6c3aed8e8466d26e799d649f7b3b297980b5e3f3258",
+          "later": "d60e867f05a2a83134abd43735d98b76094364e641ae620fb5ed48220278e006"
+        }
+      },
+      "links": {},
+      "neighborHtml": {}
+    },
+    "action": "Preserved later unrelated maintenance; no further server writes"
+  },
+  "finalPublicHTTP": {
+    "releaseId": "coscroll-7d9ac4d71fe38b81",
+    "finalPublicChecks": [
+      {
+        "origin": "https://aitoshuu.me",
+        "canonicalHTML": 200,
+        "indexSha256": "0cbfa9a9382133dd155ddeb1f4b81f87adf4211b20b575287744d698f824ebc9",
+        "redirects": 3,
+        "releaseHealth": {
+          "site": "CoScroll",
+          "releaseId": "coscroll-7d9ac4d71fe38b81",
+          "sourceDigest": "7d9ac4d71fe38b81ec454638446385f177432064b349b2f2b88b24c61adb091a"
+        }
+      },
+      {
+        "origin": "https://tongye.me",
+        "canonicalHTML": 200,
+        "indexSha256": "0cbfa9a9382133dd155ddeb1f4b81f87adf4211b20b575287744d698f824ebc9",
+        "redirects": 3,
+        "releaseHealth": {
+          "site": "CoScroll",
+          "releaseId": "coscroll-7d9ac4d71fe38b81",
+          "sourceDigest": "7d9ac4d71fe38b81ec454638446385f177432064b349b2f2b88b24c61adb091a"
+        }
+      }
+    ],
+    "browserAlreadyFinished": true
+  },
+  "browserCases": [
+    {
+      "id": "browser-01",
+      "baseUrl": "https://aitoshuu.me/CoScroll/",
+      "projectId": "heart-sutra",
+      "mode": "normal",
+      "activation": "tap",
+      "viewport": {
+        "width": 390,
+        "height": 844,
+        "mobile": true
+      },
+      "result": {
+        "before": {
+          "url": "https://aitoshuu.me/CoScroll/",
+          "title": "心经 · 王菲 | CoScroll",
+          "projectId": "heart-sutra",
+          "mode": "handwriting",
+          "text": "在般若的声息之间\n照见纷扰，也照见空明\n让一念随歌声安住",
+          "revision": "ec6e56fca7282b3d1deb7f5bcda7a202b077c07c8e31f66f4e124d8fb549eedf",
+          "imageDecoded": true,
+          "bounds": {
+            "left": 24,
+            "top": 288.5,
+            "right": 366,
+            "bottom": 459.5
+          },
+          "viewport": {
+            "width": 390,
+            "height": 844
+          },
+          "overflow": false,
+          "canvases": 2,
+          "activeUrls": 1,
+          "aborted": 0,
+          "clicks": [],
+          "playCalls": [],
+          "errors": [],
+          "inferenceRequests": 0
+        },
+        "after": {
+          "url": "https://aitoshuu.me/CoScroll/",
+          "title": "心经 · 王菲 | CoScroll",
+          "projectId": "heart-sutra",
+          "imageDecoded": false,
+          "viewport": {
+            "width": 390,
+            "height": 844
+          },
+          "overflow": false,
+          "canvases": 2,
+          "activeUrls": 0,
+          "aborted": 0,
+          "clicks": [
+            true
+          ],
+          "playCalls": [
+            {
+              "gestureActive": true,
+              "at": 3375.2999999970198
+            },
+            {
+              "gestureActive": true,
+              "at": 3379.699999988079
+            },
+            {
+              "gestureActive": true,
+              "at": 3425.0999999940395
+            }
+          ],
+          "errors": [],
+          "inferenceRequests": 0
+        }
+      },
+      "screenshot": {
+        "file": "browser-01.png",
+        "bytes": 571256,
+        "sha256": "26ab08813167f6954b0f3be1ad563260b6084e755ad15794b43733a51df7182a"
+      },
+      "networkCapKiBps": 450
+    },
+    {
+      "id": "browser-02",
+      "baseUrl": "https://aitoshuu.me/CoScroll/",
+      "projectId": "lotus-sutra-zanshi",
+      "mode": "normal",
+      "activation": "Space",
+      "viewport": {
+        "width": 844,
+        "height": 390,
+        "mobile": true
+      },
+      "result": {
+        "before": {
+          "url": "https://aitoshuu.me/CoScroll/?project=lotus-sutra-zanshi",
+          "title": "妙法莲华经 · 赞诗 | CoScroll",
+          "projectId": "lotus-sutra-zanshi",
+          "mode": "handwriting",
+          "text": "听一声妙法，散入十方\n心中的疑网随声消散\n愿欢喜如花雨轻轻落下",
+          "revision": "9b44fbd1f8149e2ea29331fc6a713b7439f24e14cbb5509624530638f0ec28ee",
+          "imageDecoded": true,
+          "bounds": {
+            "left": 295.25,
+            "top": 83.625,
+            "right": 548.75,
+            "bottom": 210.375
+          },
+          "viewport": {
+            "width": 844,
+            "height": 390
+          },
+          "overflow": false,
+          "canvases": 2,
+          "activeUrls": 1,
+          "aborted": 0,
+          "clicks": [],
+          "playCalls": [],
+          "errors": [],
+          "inferenceRequests": 0
+        },
+        "after": {
+          "url": "https://aitoshuu.me/CoScroll/?project=lotus-sutra-zanshi",
+          "title": "妙法莲华经 · 赞诗 | CoScroll",
+          "projectId": "lotus-sutra-zanshi",
+          "imageDecoded": false,
+          "viewport": {
+            "width": 844,
+            "height": 390
+          },
+          "overflow": false,
+          "canvases": 2,
+          "activeUrls": 0,
+          "aborted": 0,
+          "clicks": [
+            true
+          ],
+          "playCalls": [
+            {
+              "gestureActive": true,
+              "at": 7158.70000000298
+            },
+            {
+              "gestureActive": true,
+              "at": 7160.29999999702
+            },
+            {
+              "gestureActive": true,
+              "at": 7190.20000000298
+            }
+          ],
+          "errors": [],
+          "inferenceRequests": 0
+        }
+      },
+      "screenshot": {
+        "file": "browser-02.png",
+        "bytes": 562424,
+        "sha256": "2cf9007d74d97c2a73cce0cd84626325f14aab054221448296b9df8000f58d4d"
+      },
+      "networkCapKiBps": 450
+    },
+    {
+      "id": "browser-03",
+      "baseUrl": "https://aitoshuu.me/coscroll/",
+      "projectId": "heart-sutra",
+      "mode": "normal",
+      "activation": "Enter",
+      "viewport": {
+        "width": 1440,
+        "height": 900,
+        "mobile": false
+      },
+      "result": {
+        "before": {
+          "url": "https://aitoshuu.me/CoScroll/",
+          "title": "心经 · 王菲 | CoScroll",
+          "projectId": "heart-sutra",
+          "mode": "handwriting",
+          "text": "在般若的声息之间\n照见纷扰，也照见空明\n让一念随歌声安住",
+          "revision": "ec6e56fca7282b3d1deb7f5bcda7a202b077c07c8e31f66f4e124d8fb549eedf",
+          "imageDecoded": true,
+          "bounds": {
+            "left": 480,
+            "top": 282,
+            "right": 960,
+            "bottom": 522
+          },
+          "viewport": {
+            "width": 1440,
+            "height": 900
+          },
+          "overflow": false,
+          "canvases": 2,
+          "activeUrls": 1,
+          "aborted": 0,
+          "clicks": [],
+          "playCalls": [],
+          "errors": [],
+          "inferenceRequests": 0
+        },
+        "after": {
+          "url": "https://aitoshuu.me/CoScroll/",
+          "title": "心经 · 王菲 | CoScroll",
+          "projectId": "heart-sutra",
+          "imageDecoded": false,
+          "viewport": {
+            "width": 1440,
+            "height": 900
+          },
+          "overflow": false,
+          "canvases": 2,
+          "activeUrls": 0,
+          "aborted": 0,
+          "clicks": [
+            true
+          ],
+          "playCalls": [
+            {
+              "gestureActive": true,
+              "at": 4345.29999999702
+            },
+            {
+              "gestureActive": true,
+              "at": 4349.100000008941
+            },
+            {
+              "gestureActive": true,
+              "at": 4407.5
+            }
+          ],
+          "errors": [],
+          "inferenceRequests": 0
+        }
+      },
+      "screenshot": {
+        "file": "browser-03.png",
+        "bytes": 2194927,
+        "sha256": "ac292ae3df60a2b4a91009110e01c6c7ffc80061c563d439604a335d5e4d741f"
+      },
+      "networkCapKiBps": 450
+    },
+    {
+      "id": "browser-04",
+      "baseUrl": "https://aitoshuu.me/coscroll/",
+      "projectId": "lotus-sutra-zanshi",
+      "mode": "normal",
+      "activation": "tap",
+      "viewport": {
+        "width": 390,
+        "height": 844,
+        "mobile": true
+      },
+      "result": {
+        "before": {
+          "url": "https://aitoshuu.me/CoScroll/?project=lotus-sutra-zanshi",
+          "title": "妙法莲华经 · 赞诗 | CoScroll",
+          "projectId": "lotus-sutra-zanshi",
+          "mode": "handwriting",
+          "text": "听一声妙法，散入十方\n心中的疑网随声消散\n愿欢喜如花雨轻轻落下",
+          "revision": "9b44fbd1f8149e2ea29331fc6a713b7439f24e14cbb5509624530638f0ec28ee",
+          "imageDecoded": true,
+          "bounds": {
+            "left": 24,
+            "top": 288.5,
+            "right": 366,
+            "bottom": 459.5
+          },
+          "viewport": {
+            "width": 390,
+            "height": 844
+          },
+          "overflow": false,
+          "canvases": 2,
+          "activeUrls": 1,
+          "aborted": 0,
+          "clicks": [],
+          "playCalls": [],
+          "errors": [],
+          "inferenceRequests": 0
+        },
+        "after": {
+          "url": "https://aitoshuu.me/CoScroll/?project=lotus-sutra-zanshi",
+          "title": "妙法莲华经 · 赞诗 | CoScroll",
+          "projectId": "lotus-sutra-zanshi",
+          "imageDecoded": false,
+          "viewport": {
+            "width": 390,
+            "height": 844
+          },
+          "overflow": false,
+          "canvases": 2,
+          "activeUrls": 0,
+          "aborted": 0,
+          "clicks": [
+            true
+          ],
+          "playCalls": [
+            {
+              "gestureActive": true,
+              "at": 5170
+            },
+            {
+              "gestureActive": true,
+              "at": 5174.70000000298
+            },
+            {
+              "gestureActive": true,
+              "at": 5216.5
+            }
+          ],
+          "errors": [],
+          "inferenceRequests": 0
+        }
+      },
+      "screenshot": {
+        "file": "browser-04.png",
+        "bytes": 553197,
+        "sha256": "c932f0ac73e90adaf928e3b4309600f75f635cfcb5186fac4bd0d2ac6ed34562"
+      },
+      "networkCapKiBps": 450
+    },
+    {
+      "id": "browser-05",
+      "baseUrl": "https://tongye.me/CoScroll/",
+      "projectId": "heart-sutra",
+      "mode": "normal",
+      "activation": "Space",
+      "viewport": {
+        "width": 1440,
+        "height": 900,
+        "mobile": false
+      },
+      "result": {
+        "before": {
+          "url": "https://tongye.me/CoScroll/",
+          "title": "心经 · 王菲 | CoScroll",
+          "projectId": "heart-sutra",
+          "mode": "handwriting",
+          "text": "在般若的声息之间\n照见纷扰，也照见空明\n让一念随歌声安住",
+          "revision": "ec6e56fca7282b3d1deb7f5bcda7a202b077c07c8e31f66f4e124d8fb549eedf",
+          "imageDecoded": true,
+          "bounds": {
+            "left": 480,
+            "top": 282,
+            "right": 960,
+            "bottom": 522
+          },
+          "viewport": {
+            "width": 1440,
+            "height": 900
+          },
+          "overflow": false,
+          "canvases": 2,
+          "activeUrls": 1,
+          "aborted": 0,
+          "clicks": [],
+          "playCalls": [],
+          "errors": [],
+          "inferenceRequests": 0
+        },
+        "after": {
+          "url": "https://tongye.me/CoScroll/",
+          "title": "心经 · 王菲 | CoScroll",
+          "projectId": "heart-sutra",
+          "imageDecoded": false,
+          "viewport": {
+            "width": 1440,
+            "height": 900
+          },
+          "overflow": false,
+          "canvases": 2,
+          "activeUrls": 0,
+          "aborted": 0,
+          "clicks": [
+            true
+          ],
+          "playCalls": [
+            {
+              "gestureActive": true,
+              "at": 14972.09999999404
+            },
+            {
+              "gestureActive": true,
+              "at": 14981.59999999404
+            },
+            {
+              "gestureActive": true,
+              "at": 15046.09999999404
+            }
+          ],
+          "errors": [],
+          "inferenceRequests": 0
+        }
+      },
+      "screenshot": {
+        "file": "browser-05.png",
+        "bytes": 2209930,
+        "sha256": "f415747321919d1129794e852ed1cb9ecfc76b7465d981ac72b6606ac56e9665"
+      },
+      "networkCapKiBps": 450
+    },
+    {
+      "id": "browser-06",
+      "baseUrl": "https://tongye.me/CoScroll/",
+      "projectId": "lotus-sutra-zanshi",
+      "mode": "normal",
+      "activation": "tap",
+      "viewport": {
+        "width": 390,
+        "height": 844,
+        "mobile": true
+      },
+      "result": {
+        "before": {
+          "url": "https://tongye.me/CoScroll/?project=lotus-sutra-zanshi",
+          "title": "妙法莲华经 · 赞诗 | CoScroll",
+          "projectId": "lotus-sutra-zanshi",
+          "mode": "handwriting",
+          "text": "听一声妙法，散入十方\n心中的疑网随声消散\n愿欢喜如花雨轻轻落下",
+          "revision": "9b44fbd1f8149e2ea29331fc6a713b7439f24e14cbb5509624530638f0ec28ee",
+          "imageDecoded": true,
+          "bounds": {
+            "left": 24,
+            "top": 288.5,
+            "right": 366,
+            "bottom": 459.5
+          },
+          "viewport": {
+            "width": 390,
+            "height": 844
+          },
+          "overflow": false,
+          "canvases": 2,
+          "activeUrls": 1,
+          "aborted": 0,
+          "clicks": [],
+          "playCalls": [],
+          "errors": [],
+          "inferenceRequests": 0
+        },
+        "after": {
+          "url": "https://tongye.me/CoScroll/?project=lotus-sutra-zanshi",
+          "title": "妙法莲华经 · 赞诗 | CoScroll",
+          "projectId": "lotus-sutra-zanshi",
+          "imageDecoded": false,
+          "viewport": {
+            "width": 390,
+            "height": 844
+          },
+          "overflow": false,
+          "canvases": 2,
+          "activeUrls": 0,
+          "aborted": 0,
+          "clicks": [
+            true
+          ],
+          "playCalls": [
+            {
+              "gestureActive": true,
+              "at": 10943.199999988079
+            },
+            {
+              "gestureActive": true,
+              "at": 10950.29999999702
+            },
+            {
+              "gestureActive": true,
+              "at": 10984.5
+            }
+          ],
+          "errors": [],
+          "inferenceRequests": 0
+        }
+      },
+      "screenshot": {
+        "file": "browser-06.png",
+        "bytes": 557511,
+        "sha256": "4ffd233eab742b1488ce3d535986818c509f5a763da5c1ca49cd0c0ab9bf7626"
+      },
+      "networkCapKiBps": 450
+    },
+    {
+      "id": "browser-07",
+      "baseUrl": "https://tongye.me/coscroll/",
+      "projectId": "heart-sutra",
+      "mode": "normal",
+      "activation": "tap",
+      "viewport": {
+        "width": 844,
+        "height": 390,
+        "mobile": true
+      },
+      "result": {
+        "before": {
+          "url": "https://tongye.me/CoScroll/",
+          "title": "心经 · 王菲 | CoScroll",
+          "projectId": "heart-sutra",
+          "mode": "handwriting",
+          "text": "在般若的声息之间\n照见纷扰，也照见空明\n让一念随歌声安住",
+          "revision": "ec6e56fca7282b3d1deb7f5bcda7a202b077c07c8e31f66f4e124d8fb549eedf",
+          "imageDecoded": true,
+          "bounds": {
+            "left": 295.25,
+            "top": 83.625,
+            "right": 548.75,
+            "bottom": 210.375
+          },
+          "viewport": {
+            "width": 844,
+            "height": 390
+          },
+          "overflow": false,
+          "canvases": 2,
+          "activeUrls": 1,
+          "aborted": 0,
+          "clicks": [],
+          "playCalls": [],
+          "errors": [],
+          "inferenceRequests": 0
+        },
+        "after": {
+          "url": "https://tongye.me/CoScroll/",
+          "title": "心经 · 王菲 | CoScroll",
+          "projectId": "heart-sutra",
+          "imageDecoded": false,
+          "viewport": {
+            "width": 844,
+            "height": 390
+          },
+          "overflow": false,
+          "canvases": 2,
+          "activeUrls": 0,
+          "aborted": 0,
+          "clicks": [
+            true
+          ],
+          "playCalls": [
+            {
+              "gestureActive": true,
+              "at": 7321.800000011921
+            },
+            {
+              "gestureActive": true,
+              "at": 7326
+            },
+            {
+              "gestureActive": true,
+              "at": 7370.20000000298
+            }
+          ],
+          "errors": [],
+          "inferenceRequests": 0
+        }
+      },
+      "screenshot": {
+        "file": "browser-07.png",
+        "bytes": 567944,
+        "sha256": "9509cca4a61a71397848e599b93aa822f8ca52cb3f7d95e7457f58cd33ac48e4"
+      },
+      "networkCapKiBps": 450
+    },
+    {
+      "id": "browser-08",
+      "baseUrl": "https://tongye.me/coscroll/",
+      "projectId": "lotus-sutra-zanshi",
+      "mode": "normal",
+      "activation": "Enter",
+      "viewport": {
+        "width": 390,
+        "height": 844,
+        "mobile": true
+      },
+      "result": {
+        "before": {
+          "url": "https://tongye.me/CoScroll/?project=lotus-sutra-zanshi",
+          "title": "妙法莲华经 · 赞诗 | CoScroll",
+          "projectId": "lotus-sutra-zanshi",
+          "mode": "handwriting",
+          "text": "听一声妙法，散入十方\n心中的疑网随声消散\n愿欢喜如花雨轻轻落下",
+          "revision": "9b44fbd1f8149e2ea29331fc6a713b7439f24e14cbb5509624530638f0ec28ee",
+          "imageDecoded": true,
+          "bounds": {
+            "left": 24,
+            "top": 288.5,
+            "right": 366,
+            "bottom": 459.5
+          },
+          "viewport": {
+            "width": 390,
+            "height": 844
+          },
+          "overflow": false,
+          "canvases": 2,
+          "activeUrls": 1,
+          "aborted": 0,
+          "clicks": [],
+          "playCalls": [],
+          "errors": [],
+          "inferenceRequests": 0
+        },
+        "after": {
+          "url": "https://tongye.me/CoScroll/?project=lotus-sutra-zanshi",
+          "title": "妙法莲华经 · 赞诗 | CoScroll",
+          "projectId": "lotus-sutra-zanshi",
+          "imageDecoded": false,
+          "viewport": {
+            "width": 390,
+            "height": 844
+          },
+          "overflow": false,
+          "canvases": 2,
+          "activeUrls": 0,
+          "aborted": 0,
+          "clicks": [
+            true
+          ],
+          "playCalls": [
+            {
+              "gestureActive": true,
+              "at": 4308.4000000059605
+            },
+            {
+              "gestureActive": true,
+              "at": 4314.5
+            },
+            {
+              "gestureActive": true,
+              "at": 4332.5
+            }
+          ],
+          "errors": [],
+          "inferenceRequests": 0
+        }
+      },
+      "screenshot": {
+        "file": "browser-08.png",
+        "bytes": 559023,
+        "sha256": "0ebd286a9aef2de43b1e5fcb190c551cf13fa338ec2c981e9786f2b1347c7eef"
+      },
+      "networkCapKiBps": 450
+    },
+    {
+      "id": "browser-09",
+      "baseUrl": "https://aitoshuu.me/CoScroll/",
+      "projectId": "heart-sutra",
+      "mode": "missing",
+      "activation": "Enter",
+      "viewport": {
+        "width": 390,
+        "height": 844,
+        "mobile": true
+      },
+      "result": {
+        "before": {
+          "url": "https://aitoshuu.me/CoScroll/",
+          "title": "心经 · 王菲 | CoScroll",
+          "projectId": "heart-sutra",
+          "mode": "text",
+          "text": "在般若的声息之间\n照见纷扰，也照见空明\n让一念随歌声安住",
+          "revision": "ec6e56fca7282b3d1deb7f5bcda7a202b077c07c8e31f66f4e124d8fb549eedf",
+          "imageDecoded": false,
+          "bounds": {
+            "left": 24,
+            "top": 288.5,
+            "right": 366,
+            "bottom": 459.5
+          },
+          "viewport": {
+            "width": 390,
+            "height": 844
+          },
+          "overflow": false,
+          "canvases": 2,
+          "activeUrls": 0,
+          "aborted": 0,
+          "clicks": [],
+          "playCalls": [],
+          "errors": [],
+          "inferenceRequests": 0
+        },
+        "after": {
+          "url": "https://aitoshuu.me/CoScroll/",
+          "title": "心经 · 王菲 | CoScroll",
+          "projectId": "heart-sutra",
+          "imageDecoded": false,
+          "viewport": {
+            "width": 390,
+            "height": 844
+          },
+          "overflow": false,
+          "canvases": 2,
+          "activeUrls": 0,
+          "aborted": 0,
+          "clicks": [
+            true
+          ],
+          "playCalls": [
+            {
+              "gestureActive": true,
+              "at": 4365.9000000059605
+            },
+            {
+              "gestureActive": true,
+              "at": 4371
+            },
+            {
+              "gestureActive": true,
+              "at": 4433.70000000298
+            }
+          ],
+          "errors": [],
+          "inferenceRequests": 0
+        }
+      },
+      "networkCapKiBps": 450
+    },
+    {
+      "id": "browser-10",
+      "baseUrl": "https://tongye.me/coscroll/",
+      "projectId": "lotus-sutra-zanshi",
+      "mode": "corrupt",
+      "activation": "Space",
+      "viewport": {
+        "width": 390,
+        "height": 844,
+        "mobile": true
+      },
+      "result": {
+        "before": {
+          "url": "https://tongye.me/CoScroll/?project=lotus-sutra-zanshi",
+          "title": "妙法莲华经 · 赞诗 | CoScroll",
+          "projectId": "lotus-sutra-zanshi",
+          "mode": "text",
+          "text": "听一声妙法，散入十方\n心中的疑网随声消散\n愿欢喜如花雨轻轻落下",
+          "revision": "9b44fbd1f8149e2ea29331fc6a713b7439f24e14cbb5509624530638f0ec28ee",
+          "imageDecoded": false,
+          "bounds": {
+            "left": 24,
+            "top": 288.5,
+            "right": 366,
+            "bottom": 459.5
+          },
+          "viewport": {
+            "width": 390,
+            "height": 844
+          },
+          "overflow": false,
+          "canvases": 2,
+          "activeUrls": 0,
+          "aborted": 0,
+          "clicks": [],
+          "playCalls": [],
+          "errors": [],
+          "inferenceRequests": 0
+        },
+        "after": {
+          "url": "https://tongye.me/CoScroll/?project=lotus-sutra-zanshi",
+          "title": "妙法莲华经 · 赞诗 | CoScroll",
+          "projectId": "lotus-sutra-zanshi",
+          "imageDecoded": false,
+          "viewport": {
+            "width": 390,
+            "height": 844
+          },
+          "overflow": false,
+          "canvases": 2,
+          "activeUrls": 0,
+          "aborted": 0,
+          "clicks": [
+            true
+          ],
+          "playCalls": [
+            {
+              "gestureActive": true,
+              "at": 2905.0999999940395
+            },
+            {
+              "gestureActive": true,
+              "at": 2907
+            },
+            {
+              "gestureActive": true,
+              "at": 2961
+            }
+          ],
+          "errors": [],
+          "inferenceRequests": 0
+        }
+      },
+      "networkCapKiBps": 450
+    }
+  ],
+  "browserHarnessAdjustment": {
+    "kind": "test assumption corrected",
+    "initialAssertion": "Expected redundant project=heart-sutra to remain in client URL",
+    "observed": "Existing ClassicExperience removes the default track parameter after reading it",
+    "source": "src/components/ClassicExperience.tsx:43",
+    "actualTrack": "heart-sutra",
+    "trustedStartAndPause": "passed",
+    "pageErrors": 0,
+    "blobUrlsAfter": 0,
+    "productChanged": false,
+    "resolution": "Keep strict lotus selection check; expect the existing canonical default URL for heart-sutra; rerun case in round-01-recheck.mjs",
+    "initialScreenshot": {
+      "file": "browser-01-initial.png",
+      "sha256": "23b97090d4fab38ec54fbc6fcd07509c781debffad00330252be230e1c9e366a",
+      "bytes": 573079,
+      "viewed": true
+    }
+  },
+  "screenshots": [
+    {
+      "file": "browser-01-initial.png",
+      "bytes": 573079,
+      "sha256": "23b97090d4fab38ec54fbc6fcd07509c781debffad00330252be230e1c9e366a",
+      "viewed": true
+    },
+    {
+      "file": "browser-01.png",
+      "bytes": 571256,
+      "sha256": "26ab08813167f6954b0f3be1ad563260b6084e755ad15794b43733a51df7182a",
+      "viewed": true
+    },
+    {
+      "file": "browser-02.png",
+      "bytes": 562424,
+      "sha256": "2cf9007d74d97c2a73cce0cd84626325f14aab054221448296b9df8000f58d4d",
+      "viewed": true
+    },
+    {
+      "file": "browser-03.png",
+      "bytes": 2194927,
+      "sha256": "ac292ae3df60a2b4a91009110e01c6c7ffc80061c563d439604a335d5e4d741f",
+      "viewed": true
+    },
+    {
+      "file": "browser-04.png",
+      "bytes": 553197,
+      "sha256": "c932f0ac73e90adaf928e3b4309600f75f635cfcb5186fac4bd0d2ac6ed34562",
+      "viewed": true
+    },
+    {
+      "file": "browser-05.png",
+      "bytes": 2209930,
+      "sha256": "f415747321919d1129794e852ed1cb9ecfc76b7465d981ac72b6606ac56e9665",
+      "viewed": true
+    },
+    {
+      "file": "browser-06.png",
+      "bytes": 557511,
+      "sha256": "4ffd233eab742b1488ce3d535986818c509f5a763da5c1ca49cd0c0ab9bf7626",
+      "viewed": true
+    },
+    {
+      "file": "browser-07.png",
+      "bytes": 567944,
+      "sha256": "9509cca4a61a71397848e599b93aa822f8ca52cb3f7d95e7457f58cd33ac48e4",
+      "viewed": true
+    },
+    {
+      "file": "browser-08.png",
+      "bytes": 559023,
+      "sha256": "0ebd286a9aef2de43b1e5fcb190c551cf13fa338ec2c981e9786f2b1347c7eef",
+      "viewed": true
+    }
+  ],
+  "browserCompletion": {
+    "spaceId": 1,
+    "finished": true,
+    "keep": [],
+    "caseResults": 10,
+    "at": "2026-10-26T05:52:39.723Z"
+  },
+  "logFingerprints": {
+    "build.log": {
+      "bytes": 14241,
+      "sha256": "f2195d466d1d9c81d16890486c45f16db987ae24b66de57534bd23212b9a26d1"
+    },
+    "cdn-audit.log": {
+      "bytes": 1347,
+      "sha256": "4babee4c208d3a7d5ebf3f61825d85bcbde7d8709bbf4f1df9880ffe5be1254f"
+    },
+    "dependencies.log": {
+      "bytes": 3850,
+      "sha256": "9cbdd711f1004d4adf522fa47b6e1dce74e1f46270c957a26480f47135009bf5"
+    },
+    "deployment-tests.log": {
+      "bytes": 3915,
+      "sha256": "32c79a9d155f9545ecbd37f0cda20adc7771e674f0ac07cf3eec8bade11c599b"
+    },
+    "neighbors-baseline.log": {
+      "bytes": 693,
+      "sha256": "ce89a8b682fef5505f2d4b42041fde23018ae88dcbc9b85eebfeb7bbb2e7e331"
+    },
+    "origin-activate.initial.log": {
+      "bytes": 1057,
+      "sha256": "c13594f4608608566b4b034e64fd570799a137cc9cd2cb25efd9a8bf2ccd593e"
+    },
+    "origin-activate.log": {
+      "bytes": 3859,
+      "sha256": "6c9b61208117ecd5177dcc8e7ccd5c36237eaa894951a7912ce230dbba7bde1e"
+    },
+    "origin-final-audit.log": {
+      "bytes": 2704,
+      "sha256": "0a8a301b183f717da7a37475d40fe27d5ca30febbc4b1077dc3327791e8aaf82"
+    },
+    "origin-guard-audit.log": {
+      "bytes": 2704,
+      "sha256": "4097077d6077f004f5036229c015e26ca1d4a5567bbaf72ae96a699da51a3d8a"
+    },
+    "origin-refresh.log": {
+      "bytes": 21291,
+      "sha256": "e7d0e6a2b4de44c2050fe6567a5b2b96db6b378c0637f0c8a2c642ed0ff77d42"
+    },
+    "origin-stage.log": {
+      "bytes": 116,
+      "sha256": "219f1eaa49249be866599a33f15bc086e495c1d153cf01cfa10c945abef83e30"
+    },
+    "public-aitoshuu.log": {
+      "bytes": 829,
+      "sha256": "800678cb95bd430e4ad2ad6132225fe55a1cd5c53c8d686268aa2659c0daeef2"
+    },
+    "public-tongye.log": {
+      "bytes": 850,
+      "sha256": "39fb3178ea0e1d9984d5f932481e07ea867e894786353a701a05918e622a8d38"
+    },
+    "runtime-tests.log": {
+      "bytes": 28143,
+      "sha256": "52b155cb1558b4d5095e3f9af5747c34d74fed991e7c4db41542d698e1557745"
+    },
+    "upload.log": {
+      "bytes": 74,
+      "sha256": "baa562e8746c35b1cb5add39689c41349ea860ceb096e0c62ca4c54140716dc0"
+    }
+  },
+  "temporaryVerifierFingerprints": {
+    "public-audit.py": {
+      "bytes": 8765,
+      "sha256": "a84d26d1bdbdac9c5167390fa1893dd830e596adaa24353dd3c8e1b19260f97d"
+    },
+    "origin.py": {
+      "bytes": 7394,
+      "sha256": "1a8eb7269482339d3bf3562df2dad3a207536806986e8bba017aab3a6a5d3c32"
+    },
+    "config-plan.mjs": {
+      "bytes": 2944,
+      "sha256": "51da77893031c9025f0251fa32997fd40465aa8d3ebe21ff5bedb5c8c5824548"
+    },
+    "browser-case.mjs": {
+      "bytes": 2044,
+      "sha256": "a5db5352e3149ff09903b265ae4ae84c1742dacf1c39f40c950f50fc20a92572"
+    }
+  },
+  "limits": [
+    "Ego Chromium at deviceScaleFactor 1 with 450 KiB/s page throttle; phone dimensions are emulation",
+    "No physical iOS/Android or Safari run",
+    "No new GL pixel or frame-rate benchmark claimed; rendering changes were outside this release"
+  ],
+  "cleanup": {
+    "status": "complete",
+    "taskDirectoryRemoved": true,
+    "taskDirectory": ".cache/inko-casing-release-20261026",
+    "screenshots": 9,
+    "browserFinished": true,
+    "keepPages": [],
+    "retained": [
+      "Committed track prefaces and Inko source archives",
+      "Production release and previous rollback release",
+      "Server configuration rollback backups",
+      "Gitignored producer authentication under .inko/"
+    ],
+    "unrelatedWorkspaceFiles": "untouched"
+  }
+}

@@ -6,9 +6,10 @@ JS、CSS、字体、OBJ/GLB、HDR、图片、歌词和项目 JSON 使用 `assets
 对象全部位于 `releases/aitoshuu-me/coscroll-<source-digest>/`，不覆盖已有对象。
 发布脚本启用静态导出；普通 `npm run build` / `npm run start` 保留 Next 的本地生产预览方式。
 
-当前线上版本为 `coscroll-faaafd88f5c86efc`，两个入口为 `aitoshuu.me/coscroll/` 和
-`tongye.me/coscroll/`。最新复测、发布身份与回滚记录见
-[音频恢复与无损模型加载公网发布](AUDIO_RECOVERY_RELEASE_20261025.md)。
+当前线上版本为 `coscroll-7d9ac4d71fe38b81`，两个正式入口为 `aitoshuu.me/CoScroll/` 和
+`tongye.me/CoScroll/`，两站的小写 `/coscroll/` 均兼容跳转。最新复测、发布身份与回滚记录见
+[专属序言与入口大小写公网发布](INKO_CASE_ENTRY_RELEASE_20261026.md)。
+[此前音频恢复与无损模型加载公网发布](AUDIO_RECOVERY_RELEASE_20261025.md)、
 [此前区域透射更新公网发布](TRANSMISSION_REGION_RELEASE_20261024.md)、
 [此前手机首载、帧调度与播放器节点生命周期验收](MOBILE_FRAME_STARTUP_RELEASE_20261023.md)、
 [此前手机首载、无损压缩交付与长帧验收](MOBILE_BOOT_STALL_RELEASE_20261023.md)、
@@ -21,9 +22,9 @@ JS、CSS、字体、OBJ/GLB、HDR、图片、歌词和项目 JSON 使用 `assets
 [此前手机渲染优化](MOBILE_RENDER_RELEASE_20261021.md)、
 [此前公网复测](PUBLIC_RELEASE_20261021.md)及更早发布记录保留如下。
 
-## 入口大小写（2026-10-26，本地改动，尚未发布）
+## 入口大小写（2026-10-26，已上线）
 
-新候选统一使用 `/CoScroll/`，对应两个站点的 `aitoshuu.me/CoScroll/` 与
+现行发布统一使用 `/CoScroll/`，对应两个站点的 `aitoshuu.me/CoScroll/` 与
 `tongye.me/CoScroll/`。`/CoScroll` 补齐末尾斜杠；旧 `/coscroll`、`/coscroll/`
 及其子路径以 308 转到对应的 `/CoScroll/` 路径，保留编码后的子路径和完整查询参数，
 包括 `?project=lotus-sutra-zanshi`。缺失资源在跳转后仍须返回 404。
@@ -37,15 +38,16 @@ CDN 对象前缀、`coscroll-<digest>` 发布标识及源站目录保持原有�
 只识别完整的已知规则块，遇到自定义或重复规则会停止。它只写另一个草案文件，
 不覆盖基线，也不连接或修改服务器。实际发布仍须审阅现网差异并通过 `nginx -t`。
 
-本轮本地验收：发布测试 16/16、运行测试 113/113，生产编译、类型检查与静态导出通过。
+发布前的本地验收：发布测试 16/16、运行测试 113/113，生产编译、类型检查与静态导出通过。
 真实本地候选为 `coscroll-7bea906a65ece936`，交付闭包 SHA-256 为
 `cd0345d7a45876fab64d4c37bcc76b4fae7f382a2692077892ea5c398132f175`。
 三通道 HTTP 完整校验 380 个文件（其中 190 个 gzip 表示）、4 个音频 Range 和 5 个跳转，
 哈希、解码后哈希、MIME、缓存和 CORS 均通过。两首曲目分别经大小写入口读取，
 查询参数和返回 HTML 一致，首载脚本使用 `/CoScroll`。
 
-本轮未运行公网或浏览器交互回归，也未执行服务器 `nginx -t`、提交、推送或发布。
-预览进程已停止，本轮临时候选、`.next` 与 `out` 已核对构建身份后清理，未创建截图。
+上述为提交前的本地证据，当时未运行公网或浏览器交互回归，也未执行服务器 `nginx -t` 或发布。
+该阶段预览进程、临时候选、`.next` 与 `out` 已核对构建身份后清理，未创建截图。
+后续正式候选、实际配置迁移和双站公网验收另见[本轮发布记录](INKO_CASE_ENTRY_RELEASE_20261026.md)。
 
 ## 本地候选验证
 
