@@ -14,6 +14,65 @@
 - [iPhone 字形分包、加载与长帧验收](docs/IPHONE_PERFORMANCE_RELEASE_20261022.md)：同源字形、完整字体回退、慢网对照与实际性能边界。
 - [妙法莲华经接入与公网验收](docs/LOTUS_SUTRA_RELEASE_20261022.md)、[此前无限滚动验收](docs/CONTINUOUS_SCROLL_RELEASE_20261021.md)与 [COS/CDN 发布流程](docs/COSCROLL_RELEASE.md)。
 
+## 新曲目制作流程
+
+新增曲目、接入 MP3/LRC 或替换录音时，连续完成以下流程。由当前负责制曲的模型根据实际歌词自动创作专属序言，再交给 Inko 制作手写开场，用户无需另写文案或逐首提醒。当前按仓库文件接入；只有 MP3 时，先准备并校准 LRC，尚未接入自动 Whisper 转写。
+
+1. **准备素材与完整配置**：按[经典接入规范](docs/CLASSICS_INTEGRATION_SPEC.md)放入真实 MP3 和匹配的 UTF-8 LRC，创建完整的 `public/projects/<id>.json`，并在 [src/config/catalog.ts](src/config/catalog.ts) 登记稳定 ID、曲名、演唱者、录音版本和实际时长。LRC 每行一个 `[mm:ss.xx]` 或 `[mm:ss.xxx]` 时间戳；离线核实这份录音的时长、歌词和锚字时间，不能沿用其他版本的数据。仅放入文件不会自动出现在选曲目录。以下命令中的 `<id>` 均替换为实际曲目 ID。
+
+2. **同步字体与锚字模型**：为新增歌词、曲名等用字重新生成首屏字体包，并将字体与 `src/config/entry-font.json` 一起交付：
+
+   ```sh
+   python3 deploy/compress-font.py
+   python3 deploy/compress-font.py --check
+   ```
+
+   锚字可以复用已有模型；新增或替换模型时，按接入规范准备完整几何和字形映射，再执行 `npm run models:prepare`、`npm run models:check`。遇到现有完整字体未覆盖的字，先补齐字形；不能以缺字或未经确认的替代模型交付。
+
+3. **读取资料并自动撰写原创短序**：
+
+   ```sh
+   npm run tracks:prepare -- --project <id> --brief
+   ```
+
+   制曲模型读取返回的曲目资料、完整歌词和 `sourceDigest`，创作推荐 20–35 字、2–3 行、每行至多 16 字的原创短序。文案紧扣实际唱词，不冒充经文原句，不把摘编歌曲称为全本诵读，也不写点击提示。将结果保存为 `docs/handwriting/<id>/preface.json`：
+
+   ```json
+   {
+     "text": "第一行原创短序\n第二行原创短序\n第三行原创短序",
+     "kind": "original",
+     "sourceDigest": "填写本次 brief 返回的完整摘要"
+   }
+   ```
+
+   `sourceDigest` 绑定实际 MP3 字节、LRC 和录音资料；音频内容改变，即使文件名相同也必须更新。文案由当前制曲模型直接完成，命令本身不另行调用文案模型。
+
+4. **用 Inko 生成并接入专属手写开场**：
+
+   ```sh
+   npm run tracks:prepare -- --project <id> --preface docs/handwriting/<id>/preface.json
+   ```
+
+   按[制作环境与认证说明](docs/TRACK_PRODUCTION.md#制作环境)准备依赖和 Inko 认证；密钥仅留在制作环境，不进入源码、提交或浏览器。工具检查报价与生成结果，生成真实 Inko 透明手写图、保留来源和生成标识，校验通过后写回配置。人工查看最终图片并逐字核对。缺少认证、生成失败或校验失败时保留原配置并说明阻塞，不能以普通字体或共用“点击开始”图片替代后声称完成。
+
+   输入未变且资源已验收时，运行 `npm run tracks:prepare -- --project <id>` 校验并复用；MP3、LRC、曲名或录音资料改变时，从新 brief 和新短序重新执行。
+
+5. **检查与体验验收**：
+
+   ```sh
+   npm run tracks:check
+   npm run test:deployment
+   npm run test:runtime
+   npm run type-check
+   npm run build
+   ```
+
+   `tracks:check` 核对所有公开曲目的专属序言、输入摘要、图片及制作清单；生产构建和正式打包也会执行开场检查。还须在真实浏览器中覆盖手机竖屏、横屏和桌面，检查新曲目与现有曲目的切换、歌词同步、触摸/Enter/Space 开始及播放暂停。补测手写图失败时的同文普通文字后备，确认仍可手势播放且不会意外自动播放；如实记录未做的真机等检查。
+
+6. **保留正式产物，清理并交付**：曲目配置、音频、LRC、目录登记、字体/模型改动、`public/opening/<id>/` 手写资源、`docs/handwriting/<id>/preface.json` 及其修订目录中的原图、scene ZIP、制作清单均属于正式材料。保留这些来源档案和验收记录，清理本轮截图、临时下载、构建副本及测试页面。提交、推送和公网替换按本次授权及下方[发布与交接规则](#发布与交接规则)连续执行；构建通过本身不代表已上线。
+
+完整制作细节见[曲目与专属手写开场制作](docs/TRACK_PRODUCTION.md)；配置、字体与模型要求以[经典接入规范](docs/CLASSICS_INTEGRATION_SPEC.md)为准。
+
 ## 发布与交接规则
 
 提交、推送和公网发布按用户本次授权执行。用户已授权完整发布链路时，连续完成提交推送、部署替换、双站验收和清理；以两站公网 `release-health.json` 和页面内容均匹配本次正式候选作为上线完成标准。
