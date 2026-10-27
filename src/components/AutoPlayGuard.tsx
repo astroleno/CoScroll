@@ -70,15 +70,6 @@ export default function AutoPlayGuard({ onUserInteraction, title = '心经', ope
     >
       <span className="intro-copy" style={{ display: 'block', textAlign: 'center' }}>
         {opening && <OpeningPrompt key={opening.revision} opening={opening} textId={prefaceId} />}
-        <span style={{
-          display: 'block',
-          fontSize: '3rem',
-          fontWeight: 700,
-          color: '#e2e8f0',
-          marginBottom: 0
-        }}>
-          {title}
-        </span>
       </span>
       <style jsx>{`
         .intro-start:focus-visible { outline: none; }
