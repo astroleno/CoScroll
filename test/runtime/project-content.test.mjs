@@ -20,6 +20,7 @@ await compile('src/utils/assetUrl.ts', 'assetUrl');
 const {safeValidateProjectConfig} = await compile('src/config/schema.ts', 'schema');
 const {parseLRC} = await compile('src/config/lyrics.ts', 'lyrics');
 const {resolveAnchor} = await compile('src/config/resolveAnchor.ts', 'resolveAnchor', {"'@/utils/assetUrl'": "'./assetUrl.mjs'"});
+const {DEFAULT_PROJECT_CONFIG} = await compile('src/config/defaults.ts', 'defaults');
 const appearance = await compile('src/config/appearance.ts', 'appearance');
 const {readEntryProject, serializeEntryData} = await compile('src/config/entryBootstrap.ts', 'entryBootstrap');
 const heart = JSON.parse(await readFile(resolve('public/projects/heart-sutra.json'), 'utf8'));
@@ -43,15 +44,23 @@ test('entry data is release-bound, optional, and safe to embed in HTML', () => {
   } finally {globalThis.document = oldDocument;}
 });
 
-test('both recordings validate and every timeline anchor resolves to an existing asset', async () => {
-  for (const project of [heart, lotus]) {
-    assert.equal(safeValidateProjectConfig(project).success, true);
+test('both recordings and the default resolve every anchor to its own model in the 101-model library', async () => {
+  const registry = JSON.parse(await readFile(resolve('src/components/jade/prepared-models.json'), 'utf8'));
+  const library = new Set(registry.models.map(model => model.sourcePath));
+  assert.equal(library.size, 101);
+  for (const project of [heart, lotus]) assert.equal(safeValidateProjectConfig(project).success, true);
+  for (const project of [heart, lotus, DEFAULT_PROJECT_CONFIG]) {
     for (const item of project.timeline) {
       const model = resolveAnchor(item.anchor, project);
+      assert.ok(library.has(model.modelPath), `${item.anchor}: model must belong to the existing library`);
+      assert.equal(model.renderedCharacter, item.anchor);
+      assert.equal(model.isPlaceholder, false);
+      assert.equal(model.pendingReason, undefined);
+      assert.match(model.modelPath, new RegExp(`_${item.anchor}\\.(obj|glb)$`));
       assert.ok((await readFile(resolve('public' + model.modelPath))).byteLength > 0);
     }
   }
-  assert.equal(resolveAnchor('圆', heart).renderedCharacter, '空');
+  assert.match(resolveAnchor('圆', heart).modelPath, /010_圆\.obj$/);
   assert.equal(resolveAnchor('海', lotus).renderedCharacter, '海');
   assert.match(resolveAnchor('海', lotus).modelPath, /027_海\.glb$/);
   assert.equal(resolveAnchor('水', lotus).isPlaceholder, false);
