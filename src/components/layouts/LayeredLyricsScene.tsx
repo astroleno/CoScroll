@@ -29,14 +29,14 @@ interface LayeredLyricsSceneProps {
 }
 
 function LayeredLyricsScene({lyrics, inputRef, options, frontFontSize, backFontSize, yOffset, fontFamily, fontRevision, currentColor, adjacentColor, reducedMotion = false}: LayeredLyricsSceneProps) {
-  const {gl, scene, camera, get, size} = useThree();
-  const viewportClip = useMemo(() => {
-    const c = camera as OrthographicCamera;
-    if (!c.isOrthographicCamera || c.view?.enabled || c.parent ||
-        Math.abs(c.quaternion.x) + Math.abs(c.quaternion.y) + Math.abs(c.quaternion.z) > 1e-10) return undefined;
-    return {left: c.left / c.zoom + c.position.x, right: c.right / c.zoom + c.position.x,
-      top: c.top / c.zoom + c.position.y, bottom: c.bottom / c.zoom + c.position.y, margin: 1 / c.zoom};
-  }, [camera, size.width, size.height, (camera as OrthographicCamera).zoom, camera.position.y]);
+  const {gl, scene, camera, get} = useThree();
+  const c = camera as OrthographicCamera;
+  const canClip = c.isOrthographicCamera && !c.view?.enabled && !c.parent &&
+    Math.abs(c.quaternion.x) + Math.abs(c.quaternion.y) + Math.abs(c.quaternion.z) <= 1e-10;
+  const left = c.left / c.zoom + c.position.x, right = c.right / c.zoom + c.position.x;
+  const top = c.top / c.zoom + c.position.y, bottom = c.bottom / c.zoom + c.position.y, margin = 1 / c.zoom;
+  const viewportClip = useMemo(() => canClip ? {left, right, top, bottom, margin} : undefined,
+    [canClip, left, right, top, bottom, margin]);
   const textureCache = useMemo(() => new LyricTextureCache(), []);
   const calculate = (time: number) => calculateLayeredLyrics({lyrics, scrollTime: time, duration: inputRef.current.duration, options});
   const [windowLayout, setWindowLayout] = useState(() => calculate(inputRef.current.scrollTimeRef?.current ?? inputRef.current.scrollTime));

@@ -73,7 +73,7 @@ function UnifiedLyricsAndModel(props: UnifiedLyricsAndModelProps) {
     onModelError,
     sceneKey = 0,
   } = props;
-  const lyricData = (lyrics || []) as LyricLine[];
+  const lyricData = useMemo(() => (lyrics || []) as LyricLine[], [lyrics]);
 
   const inputRef = useRef<LyricMotionInput>({scrollTime, scrollTimeRef, duration,
     velocity: scrollVelocity, velocityRef: scrollVelocityRef, isPreviewMode, isPlaying, seekRevision});
