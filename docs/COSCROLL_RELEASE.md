@@ -6,9 +6,10 @@ JS、CSS、字体、OBJ/GLB、HDR、图片、歌词和项目 JSON 使用 `assets
 对象全部位于 `releases/aitoshuu-me/coscroll-<source-digest>/`，不覆盖已有对象。
 发布脚本启用静态导出；普通 `npm run build` / `npm run start` 保留 Next 的本地生产预览方式。
 
-当前线上版本为 `coscroll-4f25db7b664a30bf`，两个正式入口为 `aitoshuu.me/CoScroll/` 和
+当前线上版本为 `coscroll-2a582f7e773a84d4`，两个正式入口为 `aitoshuu.me/CoScroll/` 和
 `tongye.me/CoScroll/`，两站的小写 `/coscroll/` 均兼容跳转。最新复测、发布身份与回滚记录见
-[圆字映射与开场精简腾讯公网发布](ROUND_MODEL_OPENING_RELEASE_20261027.md)。
+[前端沉浸体验迭代腾讯公网发布](FRONTEND_IMMERSION_RELEASE_20261028.md)。
+[此前圆字映射与开场精简腾讯公网发布](ROUND_MODEL_OPENING_RELEASE_20261027.md)、
 [此前专属序言与入口大小写公网发布](INKO_CASE_ENTRY_RELEASE_20261026.md)、
 [此前音频恢复与无损模型加载公网发布](AUDIO_RECOVERY_RELEASE_20261025.md)、
 [此前区域透射更新公网发布](TRANSMISSION_REGION_RELEASE_20261024.md)、
