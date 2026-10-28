@@ -14,6 +14,7 @@ import AutoPlayGuard from '@/components/AutoPlayGuard';
 import ModelPreloader from '@/components/jade/ModelPreloader';
 import type { LyricLine } from '@/types';
 import UnifiedLyricsAndModel from '@/components/layouts/UnifiedLyricsAndModel';
+import ReadingTranscript from './ReadingTranscript';
 // 配置系统导入
 import type { ProjectConfig } from '@/config/types';
 import type { ScenePalette } from '@/config/appearance';
@@ -57,9 +58,10 @@ interface ReadingSessionProps {
   palette: ScenePalette;
   onEnter: () => void;
   onPlayingChange: (playing: boolean) => void;
+  reducedMotion?: boolean;
 }
 
-export default function ReadingSession({sessionRevision, config, lyrics, mediaDuration, entered, initialPlaying, palette, onEnter, onPlayingChange}: ReadingSessionProps) {
+export default function ReadingSession({sessionRevision, config, lyrics, mediaDuration, entered, initialPlaying, palette, onEnter, onPlayingChange, reducedMotion = false}: ReadingSessionProps) {
   const startingIntent = useRef({entered, initialPlaying});
   startingIntent.current = {entered, initialPlaying};
   const currentSession = useRef(sessionRevision);
@@ -762,8 +764,13 @@ export default function ReadingSession({sessionRevision, config, lyrics, mediaDu
   }
 
   return (
-    <div className="flex flex-col h-screen bg-transparent font-sans overflow-hidden opacity-100 transition-opacity duration-300">
+    <div className="reading-session flex flex-col bg-transparent font-sans overflow-hidden">
       <style jsx global>{`
+        .reading-session { height: 100dvh; }
+        .reader-footer { flex: 0 0 auto; padding: 26px 0 max(26px, env(safe-area-inset-bottom)); }
+        @media (max-height: 600px) {
+          .reader-footer { padding: 0 0 env(safe-area-inset-bottom); }
+        }
         @keyframes fadeIn {
           from { opacity: 0; transform: scale(0.95); }
           to { opacity: 1; transform: scale(1); }
@@ -851,7 +858,8 @@ export default function ReadingSession({sessionRevision, config, lyrics, mediaDu
         className="relative flex-grow w-full overflow-hidden flex items-center justify-center"
         style={{ visibility: hasUserInteracted ? 'visible' : 'hidden', touchAction: 'none', userSelect: 'none', WebkitUserSelect: 'none' }}
       >
-        <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-10">
+        {hasUserInteracted && <ReadingTranscript title={config.project.name} description={config.project.description} lyrics={lyrics} />}
+        <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-10" aria-hidden="true">
           <UnifiedLyricsAndModel
             sceneKey={sessionRevision}
             currentTime={displayTime}
@@ -861,6 +869,7 @@ export default function ReadingSession({sessionRevision, config, lyrics, mediaDu
             rotationVelocityRef={rotationVelocityRef}
             seekRevision={seekSignal}
             active={hasUserInteracted}
+            reducedMotion={reducedMotion}
             duration={duration}
             isPlaying={isPlaying}
             isPreviewMode={isPreviewMode}
@@ -898,7 +907,7 @@ export default function ReadingSession({sessionRevision, config, lyrics, mediaDu
 
       {/* 音频播放器 */}
       <footer
-        className="relative w-full flex justify-center py-8 z-20"
+        className="reader-footer relative w-full flex justify-center z-20"
         style={{ visibility: hasUserInteracted ? 'visible' : 'hidden' }}
       >
         <p className="absolute top-0 left-4 right-4 text-center text-xs pointer-events-none" data-model-status

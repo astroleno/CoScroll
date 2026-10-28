@@ -2,7 +2,7 @@
 import { assetUrl } from '@/utils/assetUrl';
 
 
-import React, { Suspense, memo, useEffect, useMemo, useRef, useState } from 'react';
+import React, { Suspense, memo, useMemo, useRef } from 'react';
 import { Canvas } from '@react-three/fiber';
 import { UnifiedLayoutProps } from './types';
 import LayeredLyricsScene from './LayeredLyricsScene';
@@ -14,6 +14,8 @@ import { PALETTES } from '@/config/appearance';
 import { DEFAULT_PROJECT_CONFIG } from '@/config/defaults';
 import { resolveAnchor } from '@/config/resolveAnchor';
 import TransmissionRegionRendering from '@/rendering/TransmissionRegionRendering';
+import ReaderCamera from './ReaderCamera';
+import {readerBounds} from './readerFraming';
 
 const MemoizedJadeModel = memo(JadeModelLoader);
 
@@ -34,6 +36,7 @@ interface UnifiedLyricsAndModelProps extends UnifiedLayoutProps {
   onModelError?: (path: string) => void;
   /** Keep the warm scene mounted without rendering it behind the cover. */
   active?: boolean;
+  reducedMotion?: boolean;
   scrollTimeRef?: { readonly current: number };
   scrollVelocityRef?: { readonly current: number };
   rotationVelocityRef?: { readonly current: number };
@@ -59,6 +62,7 @@ function UnifiedLyricsAndModel(props: UnifiedLyricsAndModelProps) {
     isPreviewMode = false,
     isPlaying = true,
     active = true,
+    reducedMotion = false,
     scrollTimeRef,
     scrollVelocityRef,
     rotationVelocityRef,
@@ -78,13 +82,6 @@ function UnifiedLyricsAndModel(props: UnifiedLyricsAndModelProps) {
   const isMobile = typeof navigator !== 'undefined'
     ? /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)
     : false;
-  const [compactHeight, setCompactHeight] = useState(() => typeof window !== 'undefined' && window.innerHeight < 667);
-  useEffect(() => {
-    const resize = () => setCompactHeight(window.innerHeight < 667);
-    window.addEventListener('resize', resize);
-    return () => window.removeEventListener('resize', resize);
-  }, []);
-  const isCompactMobile = isMobile && compactHeight;
 
   // 歌词分层配置 - 正交相机下的遮挡、竖排布局
   const lyricsConfig = useMemo(() => ({
@@ -106,14 +103,18 @@ function UnifiedLyricsAndModel(props: UnifiedLyricsAndModelProps) {
   }), [isMobile]);
 
   // 字体大小配置
-  const baseFontScale = isMobile ? (isCompactMobile ? 0.48 : 0.54) : 0.6;
+  const baseFontScale = isMobile ? 0.54 : 0.6;
   const frontFontSize = baseFontScale * fontSize;
   const backFontSize = baseFontScale * fontSize;
   const baseModelScale = isMobile ? 2.2 : 2.8;
   // 在现有基础上再放大 1.1 倍
   const modelScale = baseModelScale * 1.2 * 1.1;
-  const lyricsYOffset = isMobile ? (isCompactMobile ? -0.52 : -0.6) : -0.82;
+  const lyricsYOffset = isMobile ? -0.6 : -0.82;
   const modelYOffset = lyricsYOffset * 0.5;
+  const bounds = useMemo(() => readerBounds({lyrics: lyricData, fontSize: frontFontSize,
+    topLaneY: lyricsConfig.topLaneY, bottomLaneY: lyricsConfig.bottomLaneY,
+    yOffset: lyricsYOffset, modelScale, modelYOffset}),
+  [lyricData, frontFontSize, lyricsConfig, lyricsYOffset, modelScale, modelYOffset]);
   const edgeMask = useMemo(() => {
     const edgePercent = isMobile ? 18 : 12;
     const left = `${edgePercent}%`;
@@ -122,7 +123,7 @@ function UnifiedLyricsAndModel(props: UnifiedLyricsAndModelProps) {
   }, [isMobile]);
 
   return (
-    <div className="relative flex items-center justify-center w-full h-full" style={{ minHeight: '60vh' }}>
+    <div className="relative flex items-center justify-center w-full h-full min-h-0">
       <div
         className="w-full h-full"
         style={{
@@ -147,6 +148,7 @@ function UnifiedLyricsAndModel(props: UnifiedLyricsAndModelProps) {
         }}
         style={{ background: 'transparent' }}
       >
+        <ReaderCamera bounds={bounds} baseZoom={isMobile ? 92 : 100} />
         <TransmissionRegionRendering />
         <Suspense fallback={null}>
           {/* 统一光照系统 */}
@@ -166,6 +168,7 @@ function UnifiedLyricsAndModel(props: UnifiedLyricsAndModelProps) {
             fontRevision={fontRevision}
             currentColor={palette.currentText}
             adjacentColor={palette.adjacentText}
+            reducedMotion={reducedMotion}
           />
 
           {/* 3D模型 - 中间层，Z轴在0，遮挡后层歌词 */}
@@ -176,7 +179,7 @@ function UnifiedLyricsAndModel(props: UnifiedLyricsAndModelProps) {
               onModelDisplayed={onModelDisplayed}
               onModelError={onModelError}
               fitToView={false}
-              enableRotation
+              enableRotation={!reducedMotion}
               rotationDurationSec={8}
               direction={-1}
               enableScrollControl

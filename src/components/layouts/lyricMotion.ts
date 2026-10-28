@@ -1,4 +1,6 @@
 import getSpeedProfile, { SpeedProfileState } from './speedProfile';
+import type {LyricLine} from '@/types';
+import {loopCycle, loopDuration, loopPhase} from '@/utils/loopTimeline';
 
 export interface LyricMotionInput {
   scrollTime: number;
@@ -9,6 +11,18 @@ export interface LyricMotionInput {
   isPreviewMode: boolean;
   isPlaying?: boolean;
   seekRevision?: number;
+  reducedMotion?: boolean;
+}
+
+/** Whole-line updates keep the current recording/cycle while avoiding autonomous travel. */
+export function reducedLyricTime(time: number, duration: number, lyrics: LyricLine[]) {
+  if (!lyrics.length) return time;
+  const base = loopDuration(duration), phase = loopPhase(time, base);
+  let index = lyrics.length - 1, cycle = loopCycle(time, base) - 1;
+  for (let i = 0; i < lyrics.length && lyrics[i].time <= phase; i++) {
+    index = i; cycle = loopCycle(time, base);
+  }
+  return cycle * base + lyrics[index].time;
 }
 
 export interface LyricMotionState {
@@ -24,7 +38,7 @@ export function advanceLyricMotion(previous: LyricMotionState | null, input: Lyr
   const time = Number.isFinite(sampledTime) ? sampledTime : 0;
   const duration = Math.max(1, input.duration || 1);
   const velocity = input.velocityRef?.current ?? input.velocity;
-  const reset = !previous || input.isPreviewMode || input.isPlaying === false || previous.seekRevision !== input.seekRevision ||
+  const reset = !previous || input.reducedMotion || input.isPreviewMode || input.isPlaying === false || previous.seekRevision !== input.seekRevision ||
     Math.abs(time - previous.profile.baseTime) > duration * .5;
   let manualHoldUntil = previous?.manualHoldUntil || 0;
   if (input.isPreviewMode || Math.abs(velocity) >= .016) manualHoldUntil = now + 520;

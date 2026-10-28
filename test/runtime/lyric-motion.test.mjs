@@ -7,7 +7,7 @@ import ts from 'typescript';
 
 await mkdir(resolve('.cache'), {recursive: true});
 const directory = await mkdtemp(join(resolve('.cache'), 'lyric-motion-test-'));
-let calculateLayeredLyrics, lyricWindowKey, advanceLyricMotion;
+let calculateLayeredLyrics, lyricWindowKey, advanceLyricMotion, reducedLyricTime;
 try {
   for (const name of ['speedProfile', 'lyricMotion', 'layeredLyrics', 'loopTimeline']) {
     const source = await readFile(new URL(name === 'loopTimeline' ? '../../src/utils/loopTimeline.ts' : `../../src/components/layouts/${name}.ts`, import.meta.url), 'utf8');
@@ -17,7 +17,7 @@ try {
     await writeFile(join(directory, `${name}.mjs`), output);
   }
   ({calculateLayeredLyrics, lyricWindowKey} = await import(pathToFileURL(join(directory, 'layeredLyrics.mjs')).href));
-  ({advanceLyricMotion} = await import(pathToFileURL(join(directory, 'lyricMotion.mjs')).href));
+  ({advanceLyricMotion, reducedLyricTime} = await import(pathToFileURL(join(directory, 'lyricMotion.mjs')).href));
 } finally {
   await rm(directory, {recursive: true, force: true});
 }
@@ -27,6 +27,25 @@ const lyrics = [{time: 0, text: '观自在菩萨'}, {time: 10, text: '照见五�
 const options = {range: 6, movementAxis: 'horizontal', travelSpacing: .85,
   frontDepth: 6, backNearDepth: -2.2, backFarDepth: -3.5, topLaneY: 2.1, bottomLaneY: -2.05};
 const layoutAt = scrollTime => calculateLayeredLyrics({lyrics, scrollTime, duration: 40, options});
+
+test('reduced motion follows whole recording lines through blank intervals and either loop direction', () => {
+  for (const [time, expected] of [[0, 0], [9.9, 0], [10, 10], [19.99, 10], [40.1, 40], [-.1, -10]]) {
+    assert.equal(reducedLyricTime(time, 40, lyrics), expected);
+  }
+  assert.equal(reducedLyricTime(0, 40, [{time: 3, text: '首句'}, {time: 30, text: '末句'}]), -10);
+  assert.equal(reducedLyricTime(12.34, 40, []), 12.34);
+  const blank = [{time: 0, text: '句'}, {time: 10, text: ' '}, {time: 20, text: '新句'}];
+  assert.equal(reducedLyricTime(15, 40, blank), 10);
+});
+
+test('reduced mode removes autonomous smoothing without delaying direct manipulation', () => {
+  const input = {scrollTime: 12.5, duration: 40, velocity: 4, isPlaying: true, isPreviewMode: false, reducedMotion: true};
+  let previous = advanceLyricMotion(null, input, 1000);
+  previous = advanceLyricMotion(previous, {...input, scrollTime: 12.7}, 2000);
+  assert.equal(previous.profile.time, 12.7);
+  const direct = advanceLyricMotion(previous, {...input, scrollTime: 23.45, isPreviewMode: true}, 2010);
+  assert.equal(direct.profile.time, 23.45);
+});
 
 test('the immediate gesture ref preserves the existing motion equations without waiting for React state', () => {
   const input={scrollTime:12,duration:40,velocity:0,isPlaying:true,isPreviewMode:false};

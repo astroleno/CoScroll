@@ -11,6 +11,7 @@ import {LyricTextureCache, BillboardRecipe} from './lyricTextureCache';
 import {scheduleIdle} from '@/utils/scheduleIdle';
 import {prepareMaterialPrograms} from '@/utils/prepareMaterialPrograms';
 import {loopPhase} from '@/utils/loopTimeline';
+import {reducedLyricTime} from './lyricMotion';
 import type {OrthographicCamera} from 'three';
 
 interface LayeredLyricsSceneProps {
@@ -24,9 +25,10 @@ interface LayeredLyricsSceneProps {
   fontRevision: number;
   currentColor: string;
   adjacentColor: string;
+  reducedMotion?: boolean;
 }
 
-function LayeredLyricsScene({lyrics, inputRef, options, frontFontSize, backFontSize, yOffset, fontFamily, fontRevision, currentColor, adjacentColor}: LayeredLyricsSceneProps) {
+function LayeredLyricsScene({lyrics, inputRef, options, frontFontSize, backFontSize, yOffset, fontFamily, fontRevision, currentColor, adjacentColor, reducedMotion = false}: LayeredLyricsSceneProps) {
   const {gl, scene, camera, get, size} = useThree();
   const viewportClip = useMemo(() => {
     const c = camera as OrthographicCamera;
@@ -34,7 +36,7 @@ function LayeredLyricsScene({lyrics, inputRef, options, frontFontSize, backFontS
         Math.abs(c.quaternion.x) + Math.abs(c.quaternion.y) + Math.abs(c.quaternion.z) > 1e-10) return undefined;
     return {left: c.left / c.zoom + c.position.x, right: c.right / c.zoom + c.position.x,
       top: c.top / c.zoom + c.position.y, bottom: c.bottom / c.zoom + c.position.y, margin: 1 / c.zoom};
-  }, [camera, size.width, size.height]);
+  }, [camera, size.width, size.height, (camera as OrthographicCamera).zoom, camera.position.y]);
   const textureCache = useMemo(() => new LyricTextureCache(), []);
   const calculate = (time: number) => calculateLayeredLyrics({lyrics, scrollTime: time, duration: inputRef.current.duration, options});
   const [windowLayout, setWindowLayout] = useState(() => calculate(inputRef.current.scrollTimeRef?.current ?? inputRef.current.scrollTime));
@@ -110,11 +112,14 @@ function LayeredLyricsScene({lyrics, inputRef, options, frontFontSize, backFontS
 
   useFrame(() => {
     const previousTime = motion.current?.profile.time;
-    motion.current = advanceLyricMotion(motion.current, inputRef.current, performance.now());
+    motion.current = advanceLyricMotion(motion.current, {...inputRef.current, reducedMotion}, performance.now());
     if (previousTime !== undefined && Math.abs(motion.current.profile.time - previousTime) > 1e-6) {
       travelDirection.current = Math.sign(motion.current.profile.time - previousTime);
     }
-    const layout = calculate(motion.current.profile.time);
+    const time = reducedMotion && inputRef.current.isPlaying && !inputRef.current.isPreviewMode
+      ? reducedLyricTime(motion.current.profile.time, inputRef.current.duration, lyrics)
+      : motion.current.profile.time;
+    const layout = calculate(time);
     latestLayout.current = layout;
     const nextKey = lyricWindowKey(layout);
     if (windowKey.current !== nextKey) {

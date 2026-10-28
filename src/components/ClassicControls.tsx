@@ -56,8 +56,8 @@ export default function ClassicControls({config, pendingProjectId, error, onSele
     </dialog>
     <style jsx>{`
       .classic-controls { position:fixed; top:max(14px, env(safe-area-inset-top)); left:20px; right:20px; display:flex; align-items:center; justify-content:space-between; gap:16px; z-index:2147483647; color:var(--scene-text); }
-      button { font:inherit; color:inherit; cursor:pointer; border:0; background:transparent; padding:10px 8px; border-radius:5px; }
-      button:hover { background:rgba(255,255,255,.06); }
+      button { font:inherit; color:inherit; cursor:pointer; border:0; background:transparent; padding:10px 8px; min-height:44px; border-radius:5px; }
+      @media (hover:hover) and (pointer:fine) { button:hover { background:rgba(255,255,255,.06); } }
       button:focus-visible, input:focus-visible, summary:focus-visible { outline:2px solid var(--scene-accent); outline-offset:4px; }
       .classic-controls { pointer-events:none; }
       .classic-controls button { pointer-events:auto; }

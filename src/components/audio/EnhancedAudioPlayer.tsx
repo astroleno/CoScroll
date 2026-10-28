@@ -167,7 +167,7 @@ const EnhancedAudioPlayer: React.FC<EnhancedAudioPlayerProps> = ({
           type="button"
           onClick={onPlayPause}
           disabled={!isReady && !isPlaying}
-          className="hover:text-white transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed transform hover:scale-105 active:scale-95"
+          className="player-button disabled:opacity-50 disabled:cursor-not-allowed"
           style={{color: accent}}
           aria-label={isPlaying ? 'Pause' : 'Play'}
         >
@@ -205,7 +205,7 @@ const EnhancedAudioPlayer: React.FC<EnhancedAudioPlayerProps> = ({
               value={displayTime}
               onChange={handleInputChange}
               onPointerDown={(event) => {
-                if (event.pointerType === 'mouse' && event.button !== 0) return;
+                if (isDraggingRef.current || (event.pointerType === 'mouse' && event.button !== 0)) return;
                 isDraggingRef.current = true;
                 dragTimeRef.current = currentTime;
                 setDragTime(currentTime);
@@ -214,16 +214,17 @@ const EnhancedAudioPlayer: React.FC<EnhancedAudioPlayerProps> = ({
               }}
               onPointerUp={handleInputEnd}
               onPointerCancel={handleInputEnd}
+              onLostPointerCapture={handleInputEnd}
               onMouseLeave={() => {
                 setHoverTime(null);
               }}
               onMouseMove={handleMouseMove}
               onKeyDown={handleKeyDown}
               disabled={!isReady}
-              className="w-full h-1.5 bg-gray-600/40 rounded-lg appearance-none cursor-pointer range-lg disabled:cursor-not-allowed transition-all duration-150"
+              className="range-lg disabled:cursor-not-allowed"
               style={{
-                background: `linear-gradient(to right, ${accent} ${displayProgress}%, rgba(74,85,104,0.4) ${displayProgress}%)`,
-              }}
+                '--player-fill': `linear-gradient(to right, ${accent} ${displayProgress}%, rgba(74,85,104,0.4) ${displayProgress}%)`,
+              } as React.CSSProperties}
             />
 
             {/* Buffering Indicator */}
@@ -267,6 +268,39 @@ const EnhancedAudioPlayer: React.FC<EnhancedAudioPlayerProps> = ({
 
       {/* Styles */}
       <style jsx>{`
+        .player-button {
+          display: grid;
+          place-items: center;
+          flex: 0 0 44px;
+          width: 44px;
+          height: 44px;
+          margin-inline: -6px;
+          border-radius: 4px;
+          touch-action: manipulation;
+          -webkit-tap-highlight-color: transparent;
+        }
+        .player-button:focus-visible { outline: 2px solid var(--player-accent); outline-offset: 2px; }
+        .player-button:active :global(svg) { transform: scale(.95); }
+        .range-lg {
+          display: block;
+          appearance: none;
+          width: 100%;
+          height: 44px;
+          margin: 0;
+          background: transparent;
+          cursor: pointer;
+          touch-action: none;
+        }
+        .range-lg::-webkit-slider-runnable-track {
+          height: 6px;
+          border-radius: 999px;
+          background: var(--player-fill);
+        }
+        .range-lg::-moz-range-track {
+          height: 6px;
+          border-radius: 999px;
+          background: var(--player-fill);
+        }
         .range-lg::-webkit-slider-thumb {
           appearance: none;
           width: 16px;
@@ -276,9 +310,7 @@ const EnhancedAudioPlayer: React.FC<EnhancedAudioPlayerProps> = ({
           cursor: pointer;
           opacity: 0;
           transition: opacity 0.2s;
-        }
-        .range-lg:hover::-webkit-slider-thumb {
-          opacity: 1;
+          margin-top: -5px;
         }
         .range-lg::-moz-range-thumb {
           width: 16px;
@@ -290,8 +322,13 @@ const EnhancedAudioPlayer: React.FC<EnhancedAudioPlayerProps> = ({
           transition: opacity 0.2s;
           border: none;
         }
-        .range-lg:hover::-moz-range-thumb {
-          opacity: 1;
+        @media (hover:hover) and (pointer:fine) {
+          .range-lg:hover::-webkit-slider-thumb { opacity: 1; }
+          .range-lg:hover::-moz-range-thumb { opacity: 1; }
+        }
+        @media (prefers-reduced-motion:reduce) {
+          .range-lg::-webkit-slider-thumb { transition: none; }
+          .range-lg::-moz-range-thumb { transition: none; }
         }
         .range-lg:focus {
           outline: none;

@@ -93,9 +93,10 @@ void main() {
 
 interface SilkPlaneProps {
   uniforms: SilkUniforms;
+  reducedMotion: boolean;
 }
 
-const SilkPlane = forwardRef<Mesh, SilkPlaneProps>(function SilkPlane({ uniforms }, ref) {
+const SilkPlane = forwardRef<Mesh, SilkPlaneProps>(function SilkPlane({ uniforms, reducedMotion }, ref) {
   const { viewport } = useThree();
 
   useLayoutEffect(() => {
@@ -107,7 +108,7 @@ const SilkPlane = forwardRef<Mesh, SilkPlaneProps>(function SilkPlane({ uniforms
 
   useFrame((_state: RootState, delta: number) => {
     const mesh = ref as React.MutableRefObject<Mesh | null>;
-    if (mesh.current) {
+    if (mesh.current && !reducedMotion) {
       const material = mesh.current.material as ShaderMaterial & {
         uniforms: SilkUniforms;
       };
@@ -132,9 +133,10 @@ export interface SilkR3FProps {
   rotation?: number;
   className?: string;
   style?: React.CSSProperties;
+  reducedMotion?: boolean;
 }
 
-const SilkR3F: React.FC<SilkR3FProps> = ({ speed = 5, scale = 1, color = "#7B7481", noiseIntensity = 1.5, rotation = 0, className, style }) => {
+const SilkR3F: React.FC<SilkR3FProps> = ({ speed = 5, scale = 1, color = "#7B7481", noiseIntensity = 1.5, rotation = 0, className, style, reducedMotion = false }) => {
   const meshRef = useRef<Mesh>(null);
 
   const uniforms = useMemo<SilkUniforms>(
@@ -160,7 +162,7 @@ const SilkR3F: React.FC<SilkR3FProps> = ({ speed = 5, scale = 1, color = "#7B748
   return (
     <div className={className} style={{ position: "fixed", inset: 0, pointerEvents: "none", ...style }} aria-hidden>
       <Canvas dpr={[1, 2]} frameloop="always" gl={BACKGROUND_GL}>
-        <SilkPlane ref={meshRef} uniforms={uniforms} />
+        <SilkPlane ref={meshRef} uniforms={uniforms} reducedMotion={reducedMotion} />
       </Canvas>
     </div>
   );

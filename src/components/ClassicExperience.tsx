@@ -9,10 +9,12 @@ import { isCatalogProject, PROJECT_CATALOG } from '@/config/catalog';
 import ReadingSession from './ReadingSession';
 import ClassicControls from './ClassicControls';
 import SilkBackground from './backgrounds/SilkR3F';
+import {useReducedMotion} from '@/hooks/useReducedMotion';
 
 export default function ClassicExperience() {
   const {config, lyrics, mediaDuration, sessionRevision, isLoading, pendingProjectId, error, loadProject, releasePreparation, cancelPendingProject} = useProjectConfigStore();
   const [entered, setEntered] = useState(false);
+  const reducedMotion = useReducedMotion();
   const [appearance, setAppearance] = useState<AppearanceSettings>(DEFAULT_APPEARANCE);
   const playingIntent = useRef(false);
   const revisionRef = useRef(sessionRevision);
@@ -58,16 +60,17 @@ export default function ClassicExperience() {
   }, [loadProject]);
 
   return <div data-active-project={config?.project.id ?? ''} data-session-revision={sessionRevision}
+    data-reduced-motion={reducedMotion}
     data-palette={appearance.palette} data-hue={appearance.hueOffset}
     style={{height: '100dvh', '--scene-text': palette.currentText, '--scene-accent': palette.accent,
       '--scene-container': palette.container} as CSSProperties}>
     <div data-coscroll-background className="fixed inset-0 pointer-events-none"
       style={{zIndex: entered ? 0 : 2147483646, background: palette.container}}>
-      <SilkBackground speed={4.9} scale={1} noiseIntensity={1.3} rotation={2.42} color={palette.background} />
+      <SilkBackground speed={4.9} scale={1} noiseIntensity={1.3} rotation={2.42} color={palette.background} reducedMotion={reducedMotion} />
     </div>
     {config ? <>
       <ReadingSession sessionRevision={sessionRevision} config={config} lyrics={lyrics} mediaDuration={mediaDuration}
-        palette={palette} entered={entered} initialPlaying={entered && playingIntent.current}
+        palette={palette} entered={entered} initialPlaying={entered && playingIntent.current} reducedMotion={reducedMotion}
         onEnter={onEnter} onPlayingChange={onPlayingChange} />
       <ClassicControls config={config} pendingProjectId={pendingProjectId}
         error={error}
