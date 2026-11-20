@@ -8,6 +8,13 @@ const supplementFont = assetUrl('/fonts/lotus-supplement.woff2');
 export const metadata = {
   title: 'CoScroll',
   description: '随声观经：心经与妙法莲华经',
+  icons: {
+    icon: [
+      { url: assetUrl('/icons/favicon.ico'), type: 'image/x-icon', sizes: '16x16 32x32 48x48' },
+      { url: assetUrl('/icons/favicon.svg'), type: 'image/svg+xml', sizes: 'any' },
+    ],
+    apple: [{ url: assetUrl('/icons/apple-touch-icon.png'), type: 'image/png', sizes: '180x180' }],
+  },
   other: { 'coscroll-release-id': process.env.COSCROLL_RELEASE_ID || 'development' },
 };
 

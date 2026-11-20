@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="CoScroll">
+  <rect width="64" height="64" rx="14" fill="#101b1c"/>
+  <path d="M20 13h27c-5 8-5 14-7 22s-4 16-12 16H14c7-5 8-12 10-20 2-7 4-12-4-18Z" fill="#f0e6ce"/>
+  <path d="M20 13c-8 0-9 12-1 12h6M14 51c-7-1-7-10 0-10h8" fill="none" stroke="#bd9b63" stroke-width="4" stroke-linecap="round"/>
+  <path d="m35 24-2 6m-1 6-2 6" stroke="#344743" stroke-width="4" stroke-linecap="round"/>
+</svg>
