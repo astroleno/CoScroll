@@ -1,10 +1,10 @@
 /* eslint-disable react/no-unknown-property */
 "use client";
 
-import React, { forwardRef, useMemo, useRef, useLayoutEffect } from "react";
-import { Canvas, useFrame, useThree, RootState } from "@react-three/fiber";
-import { Color, Mesh, ShaderMaterial } from "three";
-import type { IUniform } from "three";
+import React, { useEffect, useMemo, useRef, useLayoutEffect } from "react";
+import { Canvas, useFrame, useThree } from "@react-three/fiber";
+import { Color } from "three";
+import type { IUniform, Mesh } from "three";
 
 type NormalizedRGB = [number, number, number];
 
@@ -91,40 +91,6 @@ void main() {
 }
 `;
 
-interface SilkPlaneProps {
-  uniforms: SilkUniforms;
-  reducedMotion: boolean;
-}
-
-const SilkPlane = forwardRef<Mesh, SilkPlaneProps>(function SilkPlane({ uniforms, reducedMotion }, ref) {
-  const { viewport } = useThree();
-
-  useLayoutEffect(() => {
-    const mesh = ref as React.MutableRefObject<Mesh | null>;
-    if (mesh.current) {
-      mesh.current.scale.set(viewport.width, viewport.height, 1);
-    }
-  }, [ref, viewport]);
-
-  useFrame((_state: RootState, delta: number) => {
-    const mesh = ref as React.MutableRefObject<Mesh | null>;
-    if (mesh.current && !reducedMotion) {
-      const material = mesh.current.material as ShaderMaterial & {
-        uniforms: SilkUniforms;
-      };
-      material.uniforms.uTime.value += 0.1 * delta;
-    }
-  });
-
-  return (
-    <mesh ref={ref}>
-      <planeGeometry args={[1, 1, 1, 1]} />
-      <shaderMaterial uniforms={uniforms} vertexShader={vertexShader} fragmentShader={fragmentShader} depthTest={false} depthWrite={false} />
-    </mesh>
-  );
-});
-SilkPlane.displayName = "SilkPlane";
-
 export interface SilkR3FProps {
   speed?: number;
   scale?: number;
@@ -136,8 +102,11 @@ export interface SilkR3FProps {
   reducedMotion?: boolean;
 }
 
-const SilkR3F: React.FC<SilkR3FProps> = ({ speed = 5, scale = 1, color = "#7B7481", noiseIntensity = 1.5, rotation = 0, className, style, reducedMotion = false }) => {
+type SilkPlaneProps = Required<Pick<SilkR3FProps, 'speed' | 'scale' | 'color' | 'noiseIntensity' | 'rotation' | 'reducedMotion'>>;
+
+function SilkPlane({speed, scale, color, noiseIntensity, rotation, reducedMotion}: SilkPlaneProps) {
   const meshRef = useRef<Mesh>(null);
+  const {gl, invalidate, viewport: {width, height}} = useThree();
 
   const uniforms = useMemo<SilkUniforms>(
     () => ({
@@ -152,17 +121,40 @@ const SilkR3F: React.FC<SilkR3FProps> = ({ speed = 5, scale = 1, color = "#7B748
   );
 
   useLayoutEffect(() => {
+    meshRef.current?.scale.set(width, height, 1);
     uniforms.uSpeed.value = speed;
     uniforms.uScale.value = scale;
     uniforms.uNoiseIntensity.value = noiseIntensity;
     uniforms.uColor.value.setRGB(...hexToNormalizedRGB(color));
     uniforms.uRotation.value = rotation;
-  }, [uniforms, speed, scale, noiseIntensity, color, rotation]);
+    // Demand mode needs a frame after imperative changes to the plane.
+    invalidate();
+  }, [width, height, uniforms, speed, scale, noiseIntensity, color, rotation, reducedMotion, invalidate]);
+
+  useEffect(() => {
+    const canvas = gl.domElement;
+    const redraw = () => invalidate();
+    canvas.addEventListener('webglcontextrestored', redraw);
+    return () => canvas.removeEventListener('webglcontextrestored', redraw);
+  }, [gl, invalidate]);
+
+  useFrame((_, delta) => {
+    if (!reducedMotion) uniforms.uTime.value += 0.1 * delta;
+  });
 
   return (
+    <mesh ref={meshRef}>
+      <planeGeometry args={[1, 1, 1, 1]} />
+      <shaderMaterial uniforms={uniforms} vertexShader={vertexShader} fragmentShader={fragmentShader} depthTest={false} depthWrite={false} />
+    </mesh>
+  );
+}
+
+const SilkR3F: React.FC<SilkR3FProps> = ({ speed = 5, scale = 1, color = "#7B7481", noiseIntensity = 1.5, rotation = 0, className, style, reducedMotion = false }) => {
+  return (
     <div className={className} style={{ position: "fixed", inset: 0, pointerEvents: "none", ...style }} aria-hidden>
-      <Canvas dpr={[1, 2]} frameloop="always" gl={BACKGROUND_GL}>
-        <SilkPlane ref={meshRef} uniforms={uniforms} reducedMotion={reducedMotion} />
+      <Canvas dpr={[1, 2]} frameloop={reducedMotion ? 'demand' : 'always'} gl={BACKGROUND_GL}>
+        <SilkPlane speed={speed} scale={scale} color={color} noiseIntensity={noiseIntensity} rotation={rotation} reducedMotion={reducedMotion} />
       </Canvas>
     </div>
   );
