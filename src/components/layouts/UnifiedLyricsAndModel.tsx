@@ -37,6 +37,7 @@ interface UnifiedLyricsAndModelProps extends UnifiedLayoutProps {
   /** Keep the warm scene mounted without rendering it behind the cover. */
   active?: boolean;
   reducedMotion?: boolean;
+  readVisualTime?: () => number;
   scrollTimeRef?: { readonly current: number };
   scrollVelocityRef?: { readonly current: number };
   rotationVelocityRef?: { readonly current: number };
@@ -63,6 +64,7 @@ function UnifiedLyricsAndModel(props: UnifiedLyricsAndModelProps) {
     isPlaying = true,
     active = true,
     reducedMotion = false,
+    readVisualTime,
     scrollTimeRef,
     scrollVelocityRef,
     rotationVelocityRef,
@@ -75,9 +77,9 @@ function UnifiedLyricsAndModel(props: UnifiedLyricsAndModelProps) {
   } = props;
   const lyricData = useMemo(() => (lyrics || []) as LyricLine[], [lyrics]);
 
-  const inputRef = useRef<LyricMotionInput>({scrollTime, scrollTimeRef, duration,
+  const inputRef = useRef<LyricMotionInput>({scrollTime, readVisualTime, scrollTimeRef, duration,
     velocity: scrollVelocity, velocityRef: scrollVelocityRef, isPreviewMode, isPlaying, seekRevision});
-  inputRef.current = {scrollTime, scrollTimeRef, duration, velocity: scrollVelocity, velocityRef: scrollVelocityRef, isPreviewMode, isPlaying, seekRevision};
+  inputRef.current = {scrollTime, readVisualTime, scrollTimeRef, duration, velocity: scrollVelocity, velocityRef: scrollVelocityRef, isPreviewMode, isPlaying, seekRevision};
 
   const isMobile = typeof navigator !== 'undefined'
     ? /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)
@@ -232,10 +234,11 @@ function UnifiedLyricsAndModel(props: UnifiedLyricsAndModelProps) {
   );
 }
 
-// A live time ref already supplies each frame. Media time notifications should
+// A live time source already supplies each frame. Media time notifications should
 // update the player without reconciling the whole Canvas four times a second.
 export default memo(UnifiedLyricsAndModel, (previous, next) => {
-  const live = previous.scrollTimeRef && previous.scrollTimeRef === next.scrollTimeRef;
+  const live = (previous.readVisualTime && previous.readVisualTime === next.readVisualTime) ||
+    (previous.scrollTimeRef && previous.scrollTimeRef === next.scrollTimeRef);
   const keys = Object.keys(previous) as (keyof UnifiedLyricsAndModelProps)[];
   return keys.length === Object.keys(next).length && keys.every(key =>
     (live && (key === 'scrollTime' || key === 'currentTime')) || Object.is(previous[key], next[key]));

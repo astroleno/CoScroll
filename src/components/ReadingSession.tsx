@@ -142,9 +142,6 @@ export default function ReadingSession({sessionRevision, config, lyrics, mediaDu
   const lastUserInteractionRef = useRef<number>(0);
   const audioTimeRef = useRef(0);
   const lastCommittedTimeRef = useRef({ stamp: 0, display: 0 });
-  // Continuous scene time is read by the Canvas without a React update per frame.
-  const visualAbsoluteTimeRef = useRef<number>(0);
-  const rafIdRef = useRef<number | null>(null);
 
   // 从配置动态加载歌词
   const isLyricsLoading = false;
@@ -213,7 +210,6 @@ export default function ReadingSession({sessionRevision, config, lyrics, mediaDu
 
       if (force) {
         setSeekSignal((prev) => (prev + 1) % Number.MAX_SAFE_INTEGER);
-        visualAbsoluteTimeRef.current = absoluteTime;
       }
 
       lastCommittedTimeRef.current = { stamp: now, display: displayTime };
@@ -242,6 +238,10 @@ export default function ReadingSession({sessionRevision, config, lyrics, mediaDu
   const previewStartTimeRef = useRef<number | null>(null);
   const lastPreviewTimeRef = useRef<number | null>(null);
   const wheelPreviewTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  // A scene frame reads the same clock as seeks and gestures. Read it during
+  // that frame so a delayed draw cannot use a sample from before the stall.
+  const readVisualTime = useCallback(() =>
+    lastPreviewTimeRef.current ?? timelineStore.sampleAudioTime().absolute, []);
 
   // 统一 wheel 归一化（简化版，后续可抽到 hooks）
   const normalizeWheelDeltaX = useCallback((event: WheelEvent) => {
@@ -378,8 +378,6 @@ export default function ReadingSession({sessionRevision, config, lyrics, mediaDu
     // 只调用 commitTimeUpdate，它会内部更新 loopCount
     // 不要重复调用 setLoopCount，避免状态冲突
     commitTimeUpdate(displayTime, absoluteTime, true);
-    // 立即同步视觉时间与位移，保证进度条/歌词/模型同跳
-    visualAbsoluteTimeRef.current = absoluteTime;
   }, [duration, commitTimeUpdate, handleScrollVelocityChange]);
 
   // AudioEngine event handlers
@@ -430,15 +428,14 @@ export default function ReadingSession({sessionRevision, config, lyrics, mediaDu
     clearWheelPreviewTimeout();
     // 预览模式开始
     // 记录起点时间
-    previewStartTimeRef.current = lastPreviewTimeRef.current ?? visualAbsoluteTimeRef.current;
+    previewStartTimeRef.current = readVisualTime();
     lastPreviewTimeRef.current = previewStartTimeRef.current;
-  }, [clearWheelPreviewTimeout]);
+  }, [clearWheelPreviewTimeout, readVisualTime]);
 
   const handleLyricPreviewTime = useCallback((time: number, inputVelocity?: number) => {
     // 设置预览时间，不 seek
     if (DEBUG_DEV) console.log('[handleLyricPreviewTime]', { time, isPlaying });
     setPreviewTime(time);
-    visualAbsoluteTimeRef.current = time;
     const safeDuration = Math.max(1, duration);
     const displayTime = ((time % safeDuration) + safeDuration) % safeDuration;
     timelineStore.setVisualTime(displayTime, time);
@@ -577,7 +574,7 @@ export default function ReadingSession({sessionRevision, config, lyrics, mediaDu
     if (lastPreviewTimeRef.current === null) {
       handleLyricPreviewStart();
     }
-    const base = lastPreviewTimeRef.current ?? visualAbsoluteTimeRef.current;
+    const base = readVisualTime();
     const deltaTime = -(dx * DIRECTION) / Math.max(1, PIXELS_PER_SECOND);
     const nextTime = base + deltaTime;
     handleLyricPreviewTime(nextTime);
@@ -586,7 +583,7 @@ export default function ReadingSession({sessionRevision, config, lyrics, mediaDu
       handleLyricPreviewEnd();
     }, 240);
     // 惯性与持续滚轮在此不自动结束；由用户停止滚轮后短暂停顿再松手也可
-  }, [normalizeWheelDeltaX, handleLyricPreviewStart, handleLyricPreviewTime, handleLyricPreviewEnd, clearWheelPreviewTimeout]);
+  }, [normalizeWheelDeltaX, handleLyricPreviewStart, handleLyricPreviewTime, handleLyricPreviewEnd, clearWheelPreviewTimeout, readVisualTime]);
 
   const handleSmoothLoopTimeUpdate = useCallback((time: number) => {
     // If user is actively preview-scrolling, don't override UI time with loop-driven updates
@@ -605,7 +602,6 @@ export default function ReadingSession({sessionRevision, config, lyrics, mediaDu
     if (Math.abs(expectedTime - actualTime) > 0.5) {
       const sample = timelineStore.sampleAudioTime();
       commitTimeUpdate(sample.display, sample.absolute);
-      visualAbsoluteTimeRef.current = sample.absolute;
       addDebugLog(`Time synced: ${actualTime.toFixed(2)} -> ${expectedTime.toFixed(2)}`);
     }
   }, [addDebugLog, commitTimeUpdate]);
@@ -617,12 +613,10 @@ export default function ReadingSession({sessionRevision, config, lyrics, mediaDu
     timelineStore.reset();
     if (wheelPreviewTimeoutRef.current) clearTimeout(wheelPreviewTimeoutRef.current);
     wheelPreviewTimeoutRef.current = null;
-    if (rafIdRef.current !== null) cancelAnimationFrame(rafIdRef.current);
-    rafIdRef.current = null;
     isPointerPreviewingRef.current = isDraggingRef.current = false;
     activePointerIdRef.current = null;
     previewStartTimeRef.current = lastPreviewTimeRef.current = null;
-    audioTimeRef.current = visualAbsoluteTimeRef.current = 0;
+    audioTimeRef.current = 0;
     lastCommittedTimeRef.current = {stamp: 0, display: 0};
     setInternalScrollVelocity(0); handleScrollVelocityChange(0);
     setAudioTime(0); setLoopCount(0); setPreviewTime(null);
@@ -724,28 +718,6 @@ export default function ReadingSession({sessionRevision, config, lyrics, mediaDu
   useEffect(() => {
     refreshPreloadStatus();
   }, [refreshPreloadStatus]);
-
-  // RAF 驱动视觉时间（播放态）；预览态直接用 previewTime
-  useEffect(() => {
-    if (rafIdRef.current != null) {
-      cancelAnimationFrame(rafIdRef.current);
-      rafIdRef.current = null;
-    }
-    if (!isPlaying || isPreviewMode) {
-      visualAbsoluteTimeRef.current = lastPreviewTimeRef.current ?? timelineStore.sampleAudioTime().absolute;
-      return;
-    }
-    const tick = () => {
-      // Read media time through native loops and buffering, without wall-clock drift.
-      visualAbsoluteTimeRef.current = timelineStore.sampleAudioTime().absolute;
-      rafIdRef.current = requestAnimationFrame(tick);
-    };
-    rafIdRef.current = requestAnimationFrame(tick);
-    return () => {
-      if (rafIdRef.current != null) cancelAnimationFrame(rafIdRef.current);
-      rafIdRef.current = null;
-    };
-  }, [isPlaying, isPreviewMode, seekSignal]);
 
   // 如果配置或歌词正在加载，显示加载状态
   if (isConfigLoading || !config || isLyricsLoading) {
@@ -864,7 +836,7 @@ export default function ReadingSession({sessionRevision, config, lyrics, mediaDu
             sceneKey={sessionRevision}
             currentTime={displayTime}
             scrollTime={absoluteTime}
-            scrollTimeRef={visualAbsoluteTimeRef}
+            readVisualTime={readVisualTime}
             scrollVelocityRef={scrollVelocityRef}
             rotationVelocityRef={rotationVelocityRef}
             seekRevision={seekSignal}
@@ -930,7 +902,7 @@ export default function ReadingSession({sessionRevision, config, lyrics, mediaDu
           onSeek={(time) => {
             // 支持快退与快进：显示层loopCount随目标时间重算
             const safe = Math.max(1, duration);
-            const targetAbs = timeInCurrentCycle(visualAbsoluteTimeRef.current, time, safe);
+            const targetAbs = timeInCurrentCycle(readVisualTime(), time, safe);
             handleSeek(targetAbs);
           }}
         />

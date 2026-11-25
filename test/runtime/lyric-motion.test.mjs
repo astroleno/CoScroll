@@ -150,6 +150,60 @@ test('the scene reads a changing time ref without waiting for React props', () =
   assert.ok(next.profile.time > first.profile.time);
 });
 
+test('ordinary playback draws the new recording line on the first frame after a stall', () => {
+  for (const fps of [30, 60]) {
+    let time = 7.1, state = null;
+    const input = inputAt(0, {duration: 40, isPlaying: true, readVisualTime: () => time});
+    for (let frame = 0; frame <= 2 * fps; frame++) {
+      time = 7.1 + frame / fps;
+      state = advanceLyricMotion(state, input, frame * 1000 / fps);
+    }
+    time = 10.1; // The audio continues through a whole second with no draw.
+    state = advanceLyricMotion(state, input, 3000);
+    assert.equal(state.profile.time, time, `${fps} Hz resume`);
+    assert.equal(layoutAt(state.profile.time).current.text, '照见五蕴皆空');
+  }
+});
+
+test('a stalled native clock holds the lyric before the boundary and continues across the loop', () => {
+  for (const fps of [30, 60]) {
+    let time = 7.95, state = null;
+    const input = inputAt(0, {duration: 40, isPlaying: true, readVisualTime: () => time});
+    for (let frame = 0; frame <= 4 * fps; frame++) {
+      time = 7.95 + Math.min(frame / fps, 2);
+      state = advanceLyricMotion(state, input, frame * 1000 / fps);
+      assert.equal(layoutAt(state.profile.time).current.text, '观自在菩萨');
+    }
+    assert.equal(state.profile.time, time);
+    time = 39.99;
+    state = advanceLyricMotion(state, input, 5000);
+    assert.equal(layoutAt(state.profile.time).current.text, '色不异空');
+    time = 40.01;
+    state = advanceLyricMotion(state, input, 5000 + 1000 / fps);
+    assert.equal(state.profile.time, time);
+    assert.equal(layoutAt(state.profile.time).current.absoluteIndex, lyrics.length);
+  }
+});
+
+test('live clock preserves gesture momentum and resumes from an explicit seek', () => {
+  let time = 12;
+  const input = inputAt(0, {isPlaying: true, readVisualTime: () => time});
+  const initial = advanceLyricMotion(null, input, 1000);
+  time = 12.016;
+  const gesture = advanceLyricMotion(initial, {...input, velocity: 3}, 1016);
+  assert.ok(gesture.profile.manualOffset > .001);
+  time = 12.032;
+  const release = advanceLyricMotion(gesture, input, 1032);
+  assert.ok(release.profile.manualOffset > .001);
+  time = -9.5;
+  const preview = advanceLyricMotion(release, {...input, isPreviewMode: true}, 1048);
+  assert.equal(preview.profile.time, time);
+  time = -7;
+  const seek = advanceLyricMotion(preview, {...input, seekRevision: 1}, 1064);
+  assert.equal(seek.profile.time, time);
+  assert.equal(seek.profile.manualOffset, 0);
+});
+
 test('touch preview follows exact negative absolute time without inertia', () => {
   let state = advanceLyricMotion(null, inputAt(10), 1000);
   state.profile.manualOffset = 3;

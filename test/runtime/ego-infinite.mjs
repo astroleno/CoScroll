@@ -9,7 +9,7 @@ export async function installInfiniteProbe(page) {
       const stack = [fiber.stateNode?.current || fiber];
       while (stack.length) {
         const node = stack.pop(), props = node.memoizedProps;
-        if (props?.scrollTimeRef && props?.currentAnchor !== undefined && props?.duration) return props;
+        if ((props?.readVisualTime || props?.scrollTimeRef) && props?.currentAnchor !== undefined && props?.duration) return props;
         if (node.child) stack.push(node.child);
         if (node.sibling) stack.push(node.sibling);
       }
@@ -19,8 +19,9 @@ export async function installInfiniteProbe(page) {
       readProps,
       read() {
         const p = readProps(), a = document.querySelector('audio');
-        return {absolute: p.scrollTimeRef.current, propAbsolute: p.scrollTime, phase: p.currentTime,
-          cycle: Math.floor(p.scrollTimeRef.current / a.duration), duration: a.duration,
+        const absolute = p.readVisualTime?.() ?? p.scrollTimeRef.current;
+        return {absolute, propAbsolute: p.scrollTime, phase: p.currentTime,
+          cycle: Math.floor(absolute / a.duration), duration: a.duration,
           mediaTime: a.currentTime, paused: a.paused, rate: a.playbackRate,
           velocity: p.scrollVelocity,
           memory: window.__renderProbe.stores.map(s => {const r=s.getState();return {background:!!r.gl.domElement.closest('[data-coscroll-background]'),...r.gl.info.memory};})};
@@ -67,7 +68,8 @@ export async function verifyInfiniteCommands(page) {
 export async function verifyPausedLyricClock(page) {
   const result = await page.evaluate(() => {
     const p=window.__infiniteRegression.readProps(),duration=p.duration;
-    const phase=((p.scrollTimeRef.current%duration)+duration)%duration;
+    const absolute=window.__infiniteRegression.read().absolute;
+    const phase=((absolute%duration)+duration)%duration;
     let index=0;for(let i=0;i<p.lyrics.length;i++)if(p.lyrics[i].time<=phase)index=i;
     const next=index+1<p.lyrics.length?p.lyrics[index+1].time:duration+p.lyrics[0].time;
     const progress=(phase-p.lyrics[index].time)/(next-p.lyrics[index].time);

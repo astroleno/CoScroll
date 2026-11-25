@@ -4,6 +4,8 @@ import {loopCycle, loopDuration, loopPhase} from '@/utils/loopTimeline';
 
 export interface LyricMotionInput {
   scrollTime: number;
+  /** Read the live media or preview time during a scene frame. */
+  readVisualTime?: () => number;
   scrollTimeRef?: { readonly current: number };
   duration: number;
   velocity: number;
@@ -32,9 +34,9 @@ export interface LyricMotionState {
   seekRevision?: number;
 }
 
-/** Preserve the existing smoothing while keeping animation state outside React. */
+/** Follow the live clock and retain smoothing for gestures and sparse callers. */
 export function advanceLyricMotion(previous: LyricMotionState | null, input: LyricMotionInput, now: number): LyricMotionState {
-  const sampledTime = input.scrollTimeRef?.current ?? input.scrollTime;
+  const sampledTime = input.readVisualTime?.() ?? input.scrollTimeRef?.current ?? input.scrollTime;
   const time = Number.isFinite(sampledTime) ? sampledTime : 0;
   const duration = Math.max(1, input.duration || 1);
   const velocity = input.velocityRef?.current ?? input.velocity;
@@ -42,8 +44,10 @@ export function advanceLyricMotion(previous: LyricMotionState | null, input: Lyr
     Math.abs(time - previous.profile.baseTime) > duration * .5;
   let manualHoldUntil = previous?.manualHoldUntil || 0;
   if (input.isPreviewMode || Math.abs(velocity) >= .016) manualHoldUntil = now + 520;
+  // Keep the existing gesture tail until its offset is below one millisecond.
+  const followsClock = input.readVisualTime && velocity === 0 && Math.abs(previous?.profile.manualOffset ?? 0) < .001;
 
-  if (reset) {
+  if (reset || followsClock) {
     return {profile: {time, baseTime: time, timestamp: now / 1000, baseSampleTimestamp: now / 1000,
       baseVelocity: 0, manualOffset: 0}, manualHoldUntil, preview: input.isPreviewMode, seekRevision: input.seekRevision};
   }
