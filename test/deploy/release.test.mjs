@@ -251,6 +251,25 @@ test('tampered files and unlisted source material block release', async t => {
   await assert.rejects(verifyPackage(other.root), /Unlisted delivery file/);
 });
 
+test('the registered browser and home screen icons belong to the asset channel', async t => {
+  const {manifest} = await fixture(t);
+  const bytes = Buffer.from('icon fixture');
+  for (const [channel, path, accepted] of [
+    ['assets', 'icons/favicon.ico', true],
+    ['assets', 'icons/favicon.svg', true],
+    ['assets', 'icons/apple-touch-icon.png', true],
+    ['assets', 'icons/source.svg', false],
+    ['media', 'icons/favicon.ico', false],
+  ]) {
+    const entry = {channel, packagePath: `${channel}/${path}`, bytes: bytes.length, sha256: sha(bytes),
+      mime: MIME[path.slice(path.lastIndexOf('.'))], cacheControl: CACHE, objectKey: manifest.objectPrefix + path};
+    const entries = [...manifest.entries, entry];
+    const next = {...manifest, entries, artifactClosureSha256: closureHash(entries)};
+    if (accepted) assert.equal(validateManifest(next), next);
+    else assert.throws(() => validateManifest(next), /Asset is in the wrong channel/);
+  }
+});
+
 test('scope, cache, MIME, duplicates and encoded traversal are rejected', async t => {
   const { manifest } = await fixture(t);
   const attempts = [

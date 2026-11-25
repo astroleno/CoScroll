@@ -113,6 +113,7 @@ export function validateManifest(manifest, { production = false } = {}) {
     } else {
       if (entry.cacheControl !== CACHE || entry.objectKey !== `${expected.objectPrefix}${logical}` || objects.has(entry.objectKey)) throw new Error('Object is outside the immutable release');
       const assetScope = /^(?:_next\/static|fonts|models|textures|lyrics|projects|images)\//.test(logical)
+        || /^icons\/(?:favicon\.(?:ico|svg)|apple-touch-icon\.png)$/.test(logical)
         || /^opening\/[a-z0-9]+(?:-[a-z0-9]+)*\/(?:preface\.[a-f0-9]{16}\.png|manifest\.[a-f0-9]{16}\.json)$/.test(logical);
       if (entry.channel === 'media' ? (!logical.startsWith('audio/') || !['.mp3', '.wav', '.ogg', '.flac'].includes(extension)) :
           (!assetScope || extension === '.html')) throw new Error('Asset is in the wrong channel');
